@@ -1,0 +1,159 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.ReportTableViewModel
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndCompleteDate)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                    var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>库区</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.Area, AreaList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>出库日期</label>
+                </td>
+                <td>@Html.CalendarRange("CompleteDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteDate, @Model.SearchCondition.EndCompleteDate)</td>
+                <td class="TableColumnTitle">
+                    <label>出库单状态(待开发)</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.OrderStatus.Where(c => c.Text != "取消"), "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>出库类型(待开发)</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.OrderType, Model.OrderType, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>出库单号</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.OrderNumber, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>外部单号</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.ExternOrderNumber, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>库位</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.Location, new { @style = "width:100%", @class = "form-control", @placeholder = " 待开发" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>SKU</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control", @placeholder = " 待开发" })</td>
+                <td class="TableColumnTitle">
+                    <label>Article</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.Article, new { @style = "width:100%", @class = "form-control", @placeholder = " 待开发" })</td>
+
+            
+                <td class="TableColumnTitle">
+                    <label>客户代码</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.str4, new { @class = "form-control", style = "width:100%" })</td>
+           
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+            <input type="submit" class="btn btn-success" value="快速导出" id="OutboundOrder" style="display:normal;" name="Action" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        @{
+            System.Data.DataTable project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, Model.SearchCondition.CustomerID, "WMS_DiffResponTable");
+            if (project == null || project.Rows.Count == 0)
+            {
+                project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, null, "WMS_DiffResponTable");
+                if (project == null || project.Rows.Count == 0)
+                {
+                    project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(null, null, "WMS_DiffResponTable");
+                }
+            }
+        }
+        <legend>
+            出库差异列表
+            @if (Model.ReportTableChangeCollection != null && Model.ReportTableChangeCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReportTableChangeCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-x: scroll; min-height: 150px;">
+            <table id="resultTable" style="width: 130%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        @foreach (System.Data.DataRow dr in project.Rows)
+                        {
+                            if (@dr["DisplayName"].ToString() == "客户代码" || @dr["DisplayName"].ToString() == "订单状态" || @dr["DisplayName"].ToString() == "总箱数" ||
+                                    @dr["DisplayName"].ToString() == "BU" || @dr["DisplayName"].ToString() == "尺寸" || @dr["DisplayName"].ToString() == "订单数量" || dr["DisplayName"].ToString()== "出库数量" ||
+                                    @dr["DisplayName"].ToString() == "货物类型" || @dr["DisplayName"].ToString() == "价格" || @dr["DisplayName"].ToString() == "安全扣" ||
+                                    @dr["DisplayName"].ToString() == "衣架" || @dr["DisplayName"].ToString() == "Gender" || @dr["DisplayName"].ToString() == "库区" ||
+                                    @dr["DisplayName"].ToString() == "复核账号")
+                            {
+                                <th style="width:80px;">@dr["DisplayName"]</th>
+                            }
+                            else if (@dr["DisplayName"].ToString() == "外部单号" || @dr["DisplayName"].ToString() == "客户名称")
+                            {
+                                <th style="width:220px;">@dr["DisplayName"]</th>
+                            }
+                            else
+                            {
+                                <th style="width:150px;">@dr["DisplayName"]</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ReportTableChangeCollection != null && Model.ReportTableChangeCollection.Any())
+                    {
+                        foreach (var item in Model.ReportTableChangeCollection)
+                        {
+                            <tr style="line-height:12px;">
+                                @foreach (System.Data.DataRow dr in project.Rows)
+                                {
+                                    <td>
+                                        @*@typeof(Runbow.TWS.Entity.ReprotTableIn).GetProperty(dr["Columns"].ToString()).GetValue(item)*@
+                                        @{
+                                            var o = typeof(Runbow.TWS.Entity.ReprotTableIn).GetProperty(dr["Columns"].ToString()).GetValue(item);
+                                            if (@o == null)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                @o.ToString()
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

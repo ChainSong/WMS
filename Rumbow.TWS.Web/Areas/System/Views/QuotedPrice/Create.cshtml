@@ -1,0 +1,244 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.QuotedPriceViewModel
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#startCityClear').click(function () {
+            $(this).prev().find('.RegionName').val('');
+            $(this).prev().find('.RegionID').val('');
+            $(this).next().val('');
+            $(this).next().next().val('');
+        });
+
+        $('#endCityClear').click(function () {
+            $(this).prev().find('.RegionName').val('');
+            $(this).prev().find('.RegionID').val('');
+            $(this).next().val('');
+            $(this).next().next().val('');
+        });
+    });
+
+
+    function onRegionSelected(rid, rn, treeId) {
+        if (treeId === 'startCityTreeKey') {
+            $('#StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (treeId === 'endCityTreeKey') {
+            $('#EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#EndCityName').val($('#endCityTreeName').attr('value'));
+        }
+    }
+
+    function onRegionAutoCompleteSelected(globalID) {
+        if (globalID === 'startCityTreeKey') {
+            $('#StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (globalID === 'endCityTreeKey') {
+            $('#EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#EndCityName').val($('#endCityTreeName').attr('value'));
+        }
+    }
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.Str1)
+    @Html.HiddenFor(model => model.Str2)
+    @Html.HiddenFor(model => model.Str3)
+    @Html.HiddenFor(model => model.Target)
+    
+    @Html.HiddenFor(model => model.PodTypeName)
+    @Html.HiddenFor(model => model.RelatedCustomerName)
+    @Html.HiddenFor(model => model.ShipperTypeName)
+    @Html.HiddenFor(model => model.TplOrTtlName)
+    @Html.HiddenFor(model => model.SettedConfigs)
+    @Html.HiddenFor(model => model.TransportationLineID)
+
+    <fieldset>
+        <legend>@Html.ChooseString(Model.Target == 0, "新增客户报价", "新增承运商报价")&nbsp;&nbsp;@ViewBag.Message</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.Target == 0, "客户名称", "承运商名称")
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Target == 0)
+                    {
+                        @Html.DropDownListFor(model => model.TargetID, Model.CustomerOrShippers, "==请选择==", new { @class = "form-control", style = "width:200px;" })
+                        @Html.HiddenFor(model => model.TargetName)
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.TargetName, new { @class = "form-control" })
+                        @Html.HiddenFor(model => model.TargetID)
+                    }
+                    @Html.ValidationMessageFor(model => model.TargetID)
+                </td>
+                <td class="TableColumnTitle">
+                    @if (Model.Target == 1)
+                    {
+                        @Html.LabelFor(model => model.RelatedCustomerID)
+                        @Html.NecessaryFlag()
+                    }
+                </td>
+                <td>
+                    @if (Model.Target == 1)
+                    {
+                        @Html.DropDownListFor(model => model.RelatedCustomerID, Model.RelatedCustomers, "==请选择==", new { @class = "form-control", style = "width:200px;" })
+                        @Html.ValidationMessageFor(model => model.RelatedCustomerID)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @*     @Html.LabelFor(model => model.TransportationLine)*@
+                    @Html.LabelFor(model => model.StartCityID)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCityTreeKey" })
+                    <a id="startCityClear" href="#">清空</a>
+                    @Html.HiddenFor(model => model.StartCityID)
+                    @Html.HiddenFor(model => model.StartCityName)
+
+
+
+
+                    @*     @Html.DropDownListFor(model => model.TransportationLine, Model.TransportationLines, "==请选择==",new { @class = "form-control",style="width:200px;" })
+                    @Html.ValidationMessageFor(model => model.TransportationLineID)
+                    @Html.TextBox("AutoTransportationLine")*@
+                </td>
+                <td class="TableColumnTitle">
+
+
+                    @Html.LabelFor(model => model.EndCityID)
+                    @Html.NecessaryFlag()
+
+
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCityTreeKey" })
+                    <a id="endCityClear" href="#">清空</a>
+
+                    @Html.HiddenFor(model => model.EndCityID)
+                    @Html.HiddenFor(model => model.EndCityName)
+                </td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.PodTypeID)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.PodTypeID, Model.PodTypes, "==请选择==", new { @class = "form-control", style = "width:200px;" })
+                    @Html.ValidationMessageFor(model => model.PodTypes)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.TplOrTtlID)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.TplOrTtlID, Model.TplOrTtl, "==请选择==", new { @class = "form-control", style = "width:200px;" })
+                    @Html.ValidationMessageFor(model => model.TplOrTtlID)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Point)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Point, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Point)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.MinPrice)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.MinPrice, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.MinPrice)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.EmptyCarryPrice)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.EmptyCarryPrice, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EmptyCarryPrice)
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.ShipperTypeID)
+                    @Html.NecessaryFlag()</td>
+                <td>
+                    @Html.DropDownListFor(model => model.ShipperTypeID, Model.ShipperTypes, "==请选择==", new { @class = "form-control", style = "width:200px;" })
+                    @Html.ValidationMessageFor(model => model.ShipperTypeID)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.EffectiveStartTime)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.CalendarFor(model => model.EffectiveStartTime)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.EffectiveEndTime)
+                </td>
+                <td>
+                    @Html.CalendarFor(model => model.EffectiveEndTime)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Remark)
+                </td>
+                <td colspan="3">
+                    @Html.TextAreaFor(model => model.Remark, new { style = "width:95%", @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <table id="quotedPriceDetail" class="quotedPriceDetail">
+            <thead>
+                <tr>
+                    <th style="width: 30%">段位起始值</th>
+                    <th style="width: 30%">段位结束值</th>
+                    <th>价格</th>
+                </tr>
+            </thead>
+            <tbody id="quotedPriceDetailTBody">
+            </tbody>
+        </table>
+
+        <div class="actionButtonDiv">
+            <input type="submit" value="保存" class="btn btn-success" id="btnCreate" />
+            &nbsp;&nbsp;
+            <input type="button" value="查看历史报价" class="btn btn-success" id="btnViewHistory" />
+            <a href="/System/QuotedPrice/List/@Model.Target" class="btn btn-success" style="color:#fff;">返回</a>
+             
+        </div>
+    </fieldset>
+
+    <fieldset id="historyQuotedPrice" style="display: none">
+        <legend>历史报价</legend>
+        <table id="historyQuotedPriceTable">
+            <thead>
+                <tr>
+                    <th style="width: 10%">@Html.ChooseString(Model.Target == 0, "客户", "承运商")</th>
+                    <th style="width: 15%">运输线路</th>
+                    <th style="width: 8%">运输方式</th>
+                    <th style="width: 8%">运单类型</th>
+                    <th style="width: 8%">整车/零担</th>
+                    <th style="width: 21%">有效时间</th>
+                    <th>报价明细</th>
+                </tr>
+            </thead>
+            <tbody id="historyQuotedPriceTbody">
+            </tbody>
+        </table>
+    </fieldset>
+}

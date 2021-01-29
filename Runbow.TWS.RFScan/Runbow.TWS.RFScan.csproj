@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{251328C1-8713-4E33-B3B5-62E2DBAC729E}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Runbow.TWS.RFScan</RootNamespace>
+    <AssemblyName>Runbow.TWS.RFScan</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\ApplicationConfigHelper.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\EntityPropertyExtensionAttribute.cs" />
+    <Compile Include="Common\EnumerableExtension.cs" />
+    <Compile Include="Controllers\BestLocationController.cs" />
+    <Compile Include="Controllers\InventoryController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MoveController.cs" />
+    <Compile Include="Controllers\ReceiptController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ExpressPackageModel.cs" />
+    <Compile Include="Models\ReceiptViewModel.cs" />
+    <Compile Include="Models\OrderViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="Assets\CSS\bootstrap-datetimepicker.min.css" />
+    <Content Include="Assets\CSS\bootstrap.min.css" />
+    <Content Include="Assets\JS\bootstrap-datetimepicker.min.js" />
+    <Content Include="Assets\JS\bootstrap3.3.7.min.js" />
+    <Content Include="Assets\JS\jquery-1.11.3.min.js" />
+    <Content Include="Assets\JS\jquery3.3.1.js" />
+    <Content Include="Assets\JS\Layer\extend\layer.ext.js" />
+    <Content Include="Assets\JS\Layer\laydate.js" />
+    <Content Include="Assets\JS\Layer\layer.js" />
+    <Content Include="Assets\JS\Layer\layui.all.js" />
+    <Content Include="Assets\JS\Layer\skin\default\icon-ext.png" />
+    <Content Include="Assets\JS\Layer\skin\default\icon.png" />
+    <Content Include="Assets\JS\Layer\skin\default\loading-0.gif" />
+    <Content Include="Assets\JS\Layer\skin\default\loading-1.gif" />
+    <Content Include="Assets\JS\Layer\skin\default\loading-2.gif" />
+    <Content Include="Assets\JS\Layer\skin\layer.css" />
+    <Content Include="Assets\JS\Layer\skin\layer.ext.css" />
+    <Content Include="Assets\JS\moment-with-locales.min.js" />
+    <Content Include="audio\0F.mp3" />
+    <Content Include="audio\1.mp3" />
+    <Content Include="audio\1F.mp3" />
+    <Content Include="audio\2F.mp3" />
+    <Content Include="audio\3F.mp3" />
+    <Content Include="audio\4F.mp3" />
+    <Content Include="audio\success.MP3" />
+    <Content Include="audio\success_bak.mp3" />
+    <Content Include="Global.asax" />
+    <Content Include="img\abc.png" />
+    <Content Include="img\anxiang.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="img\Article.png" />
+    <Content Include="img\checkagain.png" />
+    <Content Include="img\CloseBox.png" />
+    <Content Include="img\floar.png" />
+    <Content Include="img\In.png" />
+    <Content Include="img\inventory.png" />
+    <Content Include="img\jianhuo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="img\jiedan.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="img\out.png" />
+    <Content Include="img\pandian.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="img\Putaway-QR.png" />
+    <Content Include="img\right.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="img\SKU.png" />
+    <Content Include="img\tray.png" />
+    <Content Include="img\traymove.png" />
+    <Content Include="img\yiku.png" />
+    <Content Include="img\yikubatch.png" />
+    <Content Include="Scripts\ExpressPackage.js" />
+    <Content Include="Scripts\mobile-detect.js" />
+    <Content Include="Scripts\mui.min.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Login\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Login\Main.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Receipt\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSRedis\CSRedis.csproj">
+      <Project>{d35e185e-a7e1-41e1-846c-21944f56074f}</Project>
+      <Name>CSRedis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TMS.MessageContracts\Runbow.TWS.MessageContracts.csproj">
+      <Project>{16f15667-9682-4d12-8780-db1173e5a678}</Project>
+      <Name>Runbow.TWS.MessageContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Biz\Runbow.TWS.Biz.csproj">
+      <Project>{dd71de39-7b30-49c6-858b-1806f9e64dd5}</Project>
+      <Name>Runbow.TWS.Biz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Common\Runbow.TWS.Common.csproj">
+      <Project>{a8de5d57-c805-44c0-955a-79995e3b2466}</Project>
+      <Name>Runbow.TWS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Dao\Runbow.TWS.Dao.csproj">
+      <Project>{082b9765-9b82-4316-9252-9a921d29efa8}</Project>
+      <Name>Runbow.TWS.Dao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Entity\Runbow.TWS.Entity.csproj">
+      <Project>{99059584-b657-4baf-8d7a-1160879646da}</Project>
+      <Name>Runbow.TWS.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Exceptions\Runbow.TWS.Exceptions.csproj">
+      <Project>{5631bad9-3ff0-443d-b92a-54f7c6ad7e39}</Project>
+      <Name>Runbow.TWS.Exceptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Logger\Runbow.TWS.Logger.csproj">
+      <Project>{37EFDA4C-1121-44D6-BB19-475F26B0AE1B}</Project>
+      <Name>Runbow.TWS.Logger</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\RfWeb.pubxml" />
+    <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\Order\Confirm.cshtml" />
+    <Content Include="Views\Login\SelectProject.cshtml" />
+    <Content Include="Views\Order\BandConfirm.cshtml" />
+    <Content Include="Views\Order\Confirm2.cshtml" />
+    <Content Include="Views\Order\WavePick.cshtml" />
+    <Content Include="Views\Receipt\IndexCD.cshtml" />
+    <Content Include="Views\Receipt\IndexCDByReceiptNumber.cshtml" />
+    <Content Include="Views\Receipt\YXDRBoxNumber.cshtml" />
+    <Content Include="Views\Order\Expresspackage.cshtml" />
+    <Content Include="Views\Inventory\Index.cshtml" />
+    <Content Include="Views\Inventory\CheckDetail.cshtml" />
+    <Content Include="Views\Inventory\Inventory.cshtml" />
+    <Content Include="Views\Receipt\ReceiptReceivingMain.cshtml" />
+    <Content Include="Views\Order\GetOrderListMain.cshtml" />
+    <Content Include="Views\Receipt\ReceiptGetBox.cshtml" />
+    <Content Include="Views\Receipt\ReceiptGetAdjustMents.cshtml" />
+    <Content Include="Views\Receipt\AddAdjustMent.cshtml" />
+    <Content Include="Views\Receipt\ReceiptGetAdjustMentBatchs.cshtml" />
+    <Content Include="Views\Receipt\AddAdjustMentBatch.cshtml" />
+    <Content Include="Views\Receipt\ReceiptGetPDList.cshtml" />
+    <Content Include="Views\Receipt\WarehouseCheckDetail.cshtml" />
+    <Content Include="Views\Receipt\ReceiptGetOutList.cshtml" />
+    <Content Include="Views\Receipt\ReceiptGetInventory.cshtml" />
+    <Content Include="Views\Order\Index20191113bak.cshtml" />
+    <Content Include="Views\Order\OrderCheckAgain.cshtml" />
+    <Content Include="Views\Receipt\ASNListBack_Article.cshtml" />
+    <Content Include="Views\Receipt\ASNListBack_SKU.cshtml" />
+    <Content Include="Views\Receipt\ASNListBack_ReceiptReceiving.cshtml" />
+    <Content Include="Views\Receipt\ArticleIndex.cshtml" />
+    <Content Include="Views\Receipt\SKUIndex.cshtml" />
+    <Content Include="Views\Receipt\ReceiptReceivingIndex.cshtml" />
+    <Content Include="Views\Receipt\ASNListBack_CloseBox.cshtml" />
+    <Content Include="Views\Receipt\CloseBoxIndex.cshtml" />
+    <Content Include="Views\Receipt\ASNListBack_ABC.cshtml" />
+    <Content Include="Views\Receipt\ABCIndex.cshtml" />
+    <Content Include="Views\Login\ReturnIndex.cshtml" />
+    <Content Include="Views\Receipt\ReceiptBindTray.cshtml" />
+    <Content Include="Views\Receipt\ReceiptBindTrayMove.cshtml" />
+    <Content Include="Views\Receipt\ReceiptSKUFloar.cshtml" />
+    <Content Include="Views\BestLocation\Index.cshtml" />
+    <Content Include="Views\Receipt\WholeShelves.cshtml" />
+    <Content Include="Views\Receipt\ReceiptReceivingIndex_Whole.cshtml" />
+    <Content Include="Views\Inventory\MoveInventory.cshtml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>8207</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

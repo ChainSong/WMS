@@ -1,0 +1,126 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.MaryKayOrderNoIssuedModel
+
+
+@using (Html.BeginForm())
+{ 
+    @Html.HiddenFor(m=>m.BeginOrderNoDateTime)
+    @Html.HiddenFor(m=>m.EndOrderNoDateTime)
+    @Html.HiddenFor(m=>m.ShipperID)
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        
+        <tr>
+            <td style="width:10%" class="TableColumnTitle">系统单号</td>
+            <td  style="width:30%">@Html.TextBoxFor(m=>m.SystemOrderNo)</td>
+            <td style="width:10%" class="TableColumnTitle">MK订单号</td>
+            <td style="width:30%">@Html.TextBoxFor(m=>m.MkOrderNo)</td>
+            <td style="width:10%" class="TableColumnTitle">下发状态 </td>
+            <td style="width:30%">@Html.DropDownListFor(m=>m.IssuedStatusID,Model.IssuedStatus)</td>
+           
+        </tr>
+
+        <tr>
+            <td style="width:10%" class="TableColumnTitle">订单时间</td>
+            <td  style="width:30%">@Html.CalendarRange("OrderNoDateTime","calendarRange")<a id="OrderNoDateTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+            <td style="width:10%" class="TableColumnTitle">省份</td>
+            <td style="width:30%">
+                @Html.DropDownListFor(m=>m.EndCityID,Model.Province)
+                @* @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey ="endCity" })
+                      <a id="CityClear" href="#">清空</a>
+                     @Html.HiddenFor(m=>m.EndCity)
+                     @Html.HiddenFor(m=>m.EndCityID)*@
+            </td>
+            <td style="width:10%" class="TableColumnTitle">承运商</td>
+            <td style="width:30%">
+                @*@Html.TextBoxFor(m=>m.ShipperName)*@
+                @Html.DropDownListFor(m=>m.ShipperID,Model.Shipper)
+            </td>
+           
+        </tr>
+        
+    </table>
+    <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="QueryButton" name="Query"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="订单下发" id="OrderIsSued" onclick="IsSued()"/>
+        </div>
+</fieldset>
+    
+    
+    if (Model.OrderNoIssuedTable != null)
+    {
+    
+    <fieldset>
+        <legend>数据信息</legend>
+        <div style="width:100%;">
+            <div style="overflow:scroll; height:50%;width:100%;">
+        <table  id="OrderNo" style="width:150%;text-align:center">
+           
+            <tr>
+                <td class="TableColumnTitle" style="width:20px"><input type="checkbox" id="CheckAll" onclick="CheckALL()" /></td>
+                @foreach (var columnsnames in Model.OrderNoIssuedTable.Columns)
+                {
+                    if (columnsnames.ToString()=="RowID")
+                    {
+                        continue;
+                    }
+                    if (columnsnames.ToString() == "ID")
+                    {
+                        continue;
+                    }
+
+                    
+                    <td  class="TableColumnTitle" style="width:55px">@columnsnames.ToString()</td>
+                }
+            </tr>
+       
+           @for (int i = 0; i < Model.OrderNoIssuedTable.Rows.Count; i++)
+           {
+            <tr>
+                   
+                 @if (Model.OrderNoIssuedTable.Rows[i]["下发状态"].ToString()!="同步成功")
+                   {
+                      <td><input type="checkbox" id="@Model.OrderNoIssuedTable.Rows[i]["ID"].ToString()" class="CheckIsSued"/></td>    
+                   }
+                   else
+                   {
+                      <td></td>
+                   }
+               @for (int j = 0; j < Model.OrderNoIssuedTable.Columns.Count; j++)
+               {
+                   if (Model.OrderNoIssuedTable.Columns[j].ToString() == "RowID")
+                   {
+                       continue;
+                   }
+
+
+                   
+                  
+                   
+
+                   
+
+                   if (Model.OrderNoIssuedTable.Columns[j].ToString() == "客户运单号")
+                   {
+                   <td><a id="listSystemNumber" data-id="@Model.OrderNoIssuedTable.Rows[i]["ID"].ToString()" href="/POD/POD/ViewPodAll/@Model.OrderNoIssuedTable.Rows[i]["ID"].ToString()">@Model.OrderNoIssuedTable.Rows[i]["客户运单号"].ToString()</a></td>
+                   }
+                   else
+                   {
+                       if (Model.OrderNoIssuedTable.Columns[j].ToString() != "ID")
+                       {
+                           <td>@Model.OrderNoIssuedTable.Rows[i][j].ToString()</td>
+                       }
+                   
+                   }
+                   
+                
+               }
+            </tr>
+           }
+        </table>
+                </div>
+        </div>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    
+    }
+}

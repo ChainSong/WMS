@@ -1,0 +1,72 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ProjectUserCustomerAllocateViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SelectedCustomers)
+    @Html.HiddenFor(m => m.ProjectID)
+    @Html.HiddenFor(m => m.UserID)
+    <fieldset>
+        <legend>选择用户</legend>
+        <table id="UserTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>用户</label>
+                </td>
+                <td>
+                    @Html.LabelFor(m => m.UserID, Model.ProjectUsers.Where(c => c.Value == Model.UserID.ToString()).FirstOrDefault().Text)
+                    &nbsp;&nbsp;&nbsp;
+                    <input id="submitProjectUserCustomer" type="submit" class="btn btn-success" value="提交" />
+                    <input id="btnCancel" type="button" onclick="window.location.href = '/System/User/List'" class="btn btn-success" value="返回" />
+                </td>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>客户列表</legend>
+        <table id="RoleTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>客户名称</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.ProjectCustomers)
+                {
+                    int i = 0;
+                    int j = 0;
+                    int c = 0;
+                    <tr>
+                        <td>
+                            @foreach (var cur in Model.ProjectCustomer)
+                            {
+                                i++;
+                                if (customer.CustomerID == cur.CustomerID)
+                                {
+                                    j++;
+                                    <input type="checkbox" id="select"+@customer.CustomerID data-id="@customer.CustomerID" checked="checked"  class="checkForSelect" />
+                                    break;
+                                }else{
+                                    c++; 
+                                }
+                            }
+
+                            @if (j == 0 & c > 0)
+                            {
+                                <input type="checkbox" id="select"+@customer.CustomerID data-id="@customer.CustomerID"   class="checkForSelect" /> 
+                            }
+
+                            @if(i==0)
+                            {
+                             <input type="checkbox" id="select"+@customer.CustomerID data-id="@customer.CustomerID"   class="checkForSelect" />
+                            }
+
+                          
+                        </td>
+                        <td>@customer.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}

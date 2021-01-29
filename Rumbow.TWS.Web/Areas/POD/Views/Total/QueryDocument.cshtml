@@ -1,0 +1,73 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.TotalModel.TotalPODModel
+@using (Html.BeginForm())
+{ 
+    @Html.HiddenFor(m => m.SearchCondition.StatUpLoadTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndUpLoadTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">发货时间</td>
+                <td style="width: 30%">@Html.CalendarRange("UpLoadTime", "calendarRange")</td>
+                <td style="width: 10%" class="TableColumnTitle">是否有跟踪</td>
+                <td style="width: 30%">@Html.DropDownListFor(m => m.SearchCondition.StateID, Model.States,"==请选择==")</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="QueryButton" name="Query" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>运单列表(@Model.RowCount)
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th class="TableColumnTitle">系统运单号
+                </th>
+                <td class="TableColumnTitle">客户运单号
+                </td>
+                <th class="TableColumnTitle">运单状态
+                </th>
+                <th class="TableColumnTitle">承运商
+                </th>
+                <th class="TableColumnTitle">运输类型
+                </th>
+                <th class="TableColumnTitle">起运城市
+                </th>
+                <th class="TableColumnTitle">目的城市
+                </th>
+                <th class="TableColumnTitle">运单类型
+                </th>
+                <th class="TableColumnTitle">发货日期
+                </th>
+
+            </tr>
+            <tr>
+                @if (Model.TotalPODCollection!=null )
+                {
+                foreach (var total in Model.TotalPODCollection)
+                {
+                    <tr>
+                    <td><a href="/POD/POD/ViewPodAll/@total.ID?showEditRelated=false">@total.SystemNumber</a></td>
+                    <td>@total.CustomerOrderNumber</td>
+                    <td>@total.PODStateName</td>
+                    <td>@total.ShipperName</td>
+                    <td>@total.ShipperTypeName</td> 
+                    <td>@total.StartCityName</td>
+                    <td>@total.EndCityName</td>
+                    <td>@total.PODTypeName</td>
+                    <td>@total.ActualDeliveryDate</td>
+                        </tr>
+                }
+                }
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>

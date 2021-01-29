@@ -1,0 +1,566 @@
+﻿<html>
+    <head>
+        <style type="text/css">
+            .demo-class {
+                font-size:100px;
+            }
+        </style>
+        @*<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>*@
+        <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+        <title>快递包装</title>
+        <script type="text/javascript">
+            var index = 0;
+            var OrderID;
+            var objtotal;
+            $(document).ready(function () {
+                initialization();
+            });
+            function PackageTypeSelect(event) {
+                if ($("#PackageCollection_PackageType option:selected").val() != "") {
+                    if ($("#PackageCollection_ExpressNumber").val() != "") {
+                        if (event.keyCode == 13) {
+                            var selec = $("#PackageCollection_PackageType option:selected").val(); //获取改变的选项值
+                            $.ajax({
+                                type: "POST",
+                                url: "/Order/getSupplieTypeListJSON",
+                                data: {
+                                    "PackageType": selec,
+                                },
+                                async: "false",
+                                success: function (data) {
+                                    var obj = JSON.parse(data);
+                                    $("#PackageCollection_Length").html(obj[0].Str1 / 100);
+                                    $("#PackageCollection_Width").html(obj[0].Str2 / 100);
+                                    $("#PackageCollection_Height").html(obj[0].Str3 / 100);
+                                    var vo = (obj[0].Str1 / 100) * (obj[0].Str2 / 100) * (obj[0].Str3 / 100);
+                                    $("#volume").html(vo.toFixed(5));
+                                    index = 4;
+                                    $("#engineval").val($("#PackageCollection_PackageType option:selected").text());
+                                    $("#engineval").attr("disabled", "disabled");
+                                    $("#PackageCollection_PackageType").removeClass("form-control");
+                                    $("#PackageCollection_PackageType").hide();
+                                    $("#engineval").attr("class", "form-control");
+                                    $("#engineval").show();
+                                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:green;">请扫SKU！</h3>';
+                                    $("#PackageCollection_Scan").removeAttr("disabled");
+                                    $("#PackageCollection_Scan").focus();
+                                },
+                                error: function (msg) {
+                                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">' + msg.val + '</h3>';
+                                    $("#engineval").blur();
+                                }
+                            });
+                        }
+                        else {
+                            //
+                        }
+                    } else {
+                        //
+                    }
+                }
+                else {
+                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">耗材类型不能为空！</h3>';
+                    $("#engineval").blur();
+                }
+            }
+            function PackageTypeScan(event) {
+                if (event.keyCode == 13) {
+
+                    if ($("#engineval").val() != "") {
+                        //alert("选择箱型！");
+                        var selec = $("#engineval").val(); //获取改变的选项值
+                        $.ajax({
+                            type: "POST",
+                            url: "/Order/getSupplieTypeListJSON",
+                            data: {
+                                "PackageType": selec,
+                            },
+                            async: "false",
+                            success: function (data) {
+                                if (data == "") {
+                                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">耗材类型不存在！</h3>'
+                                    $("#engineval").blur();
+                                } else {
+                                    var obj = JSON.parse(data);
+                                    $("#PackageCollection_Length").html(obj[0].Str1 / 100);
+                                    $("#PackageCollection_Width").html(obj[0].Str2 / 100);
+                                    $("#PackageCollection_Height").html(obj[0].Str3 / 100);
+                                    var vo = (obj[0].Str1 / 100) * (obj[0].Str2 / 100) * (obj[0].Str3 / 100);
+                                    $("#volume").html(vo.toFixed(5));
+                                    index = 4;
+                                    $("#engineval").val(obj[0].Name);
+                                    $("#engineval").attr("disabled", "true");
+                                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:green;">请扫SKU！</h3>';
+                                    $("#PackageCollection_Scan").removeAttr("disabled");
+                                    $("#PackageCollection_Scan").focus();
+                                }
+                            },
+                            error: function (msg) {
+                                document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">' + msg.val + '</h3>';
+                                $("#engineval").blur();
+                            }
+                        });
+                    } else {
+                        document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">耗材类型不能为空！</h3>';
+                        $("#engineval").blur();
+                    }
+                } else if (event.keyCode == 38 || event.keyCode == 40) {
+                    $("#engineval").removeClass("form-control");
+                    $("#engineval").hide();
+                    $("#PackageCollection_PackageType").attr("class", "form-control");
+                    $("#PackageCollection_PackageType").show();
+                    $("#PackageCollection_PackageType").focus();
+                } else {
+                }
+            }
+            function Scan(event) {
+                if ($("#PackageCollection_Scan").val().length > 0) {
+                    if (event.keyCode == 13) {
+                        //alert(event.keyCode);
+                        //alert(index);
+                        if (index == 0) {
+                            //上一步是选择仓库，这步扫描的应是 快递单号
+                            checkExpressNumber();
+                        } else if (index == 3) {
+                            //上一步是扫描快递单号，这步扫描的应是 订单号
+                            checkOrderNumber();
+                        } else if (index == 4) {
+                            //上一步是扫描订单号或者选择耗材，这步扫描的应是 SKU
+                            checkSKU();
+                        } else if (index == 6) {
+                            //上一步是扫描SKU，这步扫描的应是 SKU,直到数量满足
+                            checkSKU();
+                        } else if (index == 9) {
+                            //上一步是扫描SKU，这步扫描的应是 SKU,直到数量满足
+                            checkExpressNumber();
+                        } else {
+                            //上一步是其他操作
+                        }
+                    } else {
+                        //按其他按键
+                    }
+                }
+            }
+
+            function eachul(obj) {
+                if (obj.constructor == Array) {
+                    var str = "<table cellspacing='0' style='width:100%;'>";
+                    for (var i = 0, len = obj.length; i < len; i++) {
+                        str += "<tr id='" + obj[i].SKU + "'><td style='text-align:center;width:33.5%;'>" + eachul(obj[i].SKU) + "</td><td style='text-align:center;width:34.5%;'>" + eachul(obj[i].QTY) + "</td><td style='color:red;text-align:center;width:auto;' id='diff'>" + eachul(obj[i].Diff) + "</td></tr>";
+                    }
+                    str += "</table>";
+                    return str;
+                }
+                if (obj.constructor == Object) {
+                    var str = "<table cellspacing='0' style='width:100%;'>";
+                    for (var i in obj) {
+                        str += "<tr id='" + obj[i].SKU + "'><td style='text-align:center;width:31%;'>" + eachul(obj[i].SKU) + "</td><td style='text-align:center;width:32%;'>" + eachul(obj[i].QTY) + "</td><td style='color:red;text-align:center;width:auto;' id='diff'>" + eachul(obj[i].Diff) + "</td></tr>";
+                    }
+                    str += "</table>";
+                    return str;
+                }
+                return obj;
+            }
+            function eachtr(obj) {
+                if (obj.constructor == Array) {
+                    var str = "<table>";
+                    for (var i = 0, len = obj.length; i < len; i++) {
+                        str += "<tr><td><input type='checkbox' id='" + obj[i].OrderNumber + "' />" + eachtr(obj[i].OrderNumber) + "</td></tr>";
+                    }
+                    str += "</table>";
+                    return str;
+                }
+                if (obj.constructor == Object) {
+                    var str = "<table>";
+                    for (var i in obj) {
+                        str += "<tr><td><input type='checkbox' id='" + obj[i].OrderNumber + "' />" + i + " : " + eachtr(obj[i].OrderNumber) + "</td></tr>";
+                    }
+                    str += "</table>";
+                    return str;
+                }
+                return obj;
+            }
+            function showinput2(s) {
+                $("#engineval").val(s);
+            }
+            function fa2(s) {
+                $("#PackageCollection_PackageType").val("");
+            }
+
+            //显示结果
+            function showmsg() {
+                if ($("#SkuListData")[0].style.display == 'none') {
+                    $("#SkuListData")[0].style.display = 'block';
+                    $("#SkuListTable").append("<tr style='font-weight:700;'><td>SKU</td><td>Qty</td><td>差异</td></tr>")
+                    $.each(objtotal, function (index, item) {
+                        if (item.Diff == 0) {
+                            $("#SkuListTable").append("<tr><td >" + item.SKU + "</td><td>" + item.QTY + "</td><td style='color:black;'>" + item.Diff + "</td></tr>");
+
+                        } else {
+                            $("#SkuListTable").append("<tr><td >" + item.SKU + "</td><td>" + item.QTY + "</td><td style='color:red;'>" + item.Diff + "</td></tr>");
+                        }
+                    });
+                }
+            }
+            //关闭结果
+            function CloseDiv() {
+                $("#SkuListData")[0].style.display = 'none';
+                $("#SkuListTable").html("");
+                $("#PackageCollection_Scan").focus();
+                $("#PackageCollection_Scan").select();
+            }
+            function loadSKUlist() {
+                var ID = $("#PackageCollection_ExpressNumber").val();
+                var CustomerID = $("#CustomerIDs").val();
+                var WarehouseID = $("#WarehouseIDs").val();
+                $.ajax({
+                    type: "Post",
+                    url: "/Order/CheckExpressOrder",
+                    data: {
+                        "Number": ID,
+                        "Type": "Order",
+                        "CustomerID": CustomerID,
+                        "WarehouseID": WarehouseID
+                    },
+                    async: "false",
+                    success: function (data) {
+                        var obj = jQuery.parseJSON(data);
+                        if (obj[0].OrderNumber == $("#PackageCollection_OrderNumber").val()) {
+                            //document.getElementById("SkuListTable").innerHTML = eachul(obj);
+                            objtotal = obj;
+                        } else {
+                            document.getElementById("SkuListTable").innerHTML = "";
+                            //取消选中关联列表中对应的选中框
+                            //$("input[type=checkbox][checked]").removeAttr("checked");
+                            document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">订单号不匹配！</h3>';
+                            $("#PackageCollection_Scan").blur();
+
+                        }
+                    },
+                    error: function (msg) {
+                        document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">' + msg.val + '</h3>';
+                        $("#PackageCollection_Scan").blur();
+                    }
+                });
+            }
+            function Save() {
+                var CustomerID = $("#CustomerIDs").val();
+                var Warehouse = $("#Warehouses").val();
+                var express2 = $("#PackageCollection_ExpressNumber").val();
+                var PackageType = $("#engineval").val();
+                $.ajax({
+                    type: "Post",
+                    url: "/Order/SaveExpressPackage",
+                    data: {
+                        "CustomerID": CustomerID,
+                        "WarehouseName": Warehouse,
+                        "OrderID": OrderID,
+                        "ExpressNumber": express2,
+                        "PackageType": PackageType
+                    },
+                    async: "false",
+                    success: function (data) {
+                        var obj = jQuery.parseJSON(data);
+                        if (obj[0].Mess == "成功") {
+                            index = 9;
+                        } else {
+                            document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">保存失败！</h3>';
+                            $("#PackageCollection_Scan").blur();
+                        }
+                    },
+                    error: function (msg) {
+                        document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">' + msg.val + '</h3>';
+                        $("#PackageCollection_Scan").blur();
+                    }
+                });
+            }
+            function checkSKU() {
+                //alert("checkSKU");
+                //alert("checkSKU" + $("#PackageCollection_Scan").val());
+                if ($("#PackageCollection_Scan").val() != "") {
+                    //验证当前SKU不在sku列表中
+                    //alert("checkSKU" + $("#ScanMode").is(":checked"));
+                    var va;
+                    if ($("#ScanMode").is(":checked")) {
+                        va = "00" + $("#PackageCollection_Scan").val();
+                    } else {
+                        va = $("#PackageCollection_Scan").val();
+                    }
+                    //alert("checkSKUva" + va);
+                    var exists = false;
+                    $.each(objtotal, function (index, item) {
+                        if (item.SKU.toLowerCase() == va.toLowerCase()) {
+                            exists = true;
+                        }
+                    });
+                    if (exists) {
+                    } else {
+                        document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">SKU不存在，请检查！</h3>';
+                        $("#PackageCollection_Scan").blur();
+                    }
+                    $.each(objtotal, function (index, item) {
+                        //alert("checkSKU" + item.SKU.toLowerCase() + "1" + va.toLowerCase());
+                        if (item.SKU.toLowerCase() == va.toLowerCase()) {
+                            if (item.Diff < 0) {
+                                item.Diff += 1;
+                                index = 6;
+                                document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:green;">请继续扫描SKU！</h3>';
+                                $("#PackageCollection_Scan").select();
+                            } else {
+                                document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">SKU数量已满足，请勿重复扫描！</h3>';
+                                $("#PackageCollection_Scan").blur();
+                            }
+                        }
+                    });
+                    var count = 0;
+                    $.each(objtotal, function (index, item) {
+                        count += item.Diff;
+                    });
+                    if (count == 0) {
+                        Save();
+                        Next();
+                    }
+                } else {
+                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">SKU为空，请重新扫描！</h3>';
+                    $("#PackageCollection_Scan").blur();
+                }
+            }
+            function checkOrderNumber() {
+                if ($("#PackageCollection_Scan").val() != "") {
+                    //验证订单号 加载数据
+                    if ($("#PackageCollection_Scan").val() == $("#PackageCollection_OrderNumber").val()) {
+                        loadSKUlist();
+                        //选中关联列表中对应的选中框
+                        //$("#" + $("#PackageCollection_OrderNumber").val() + "").attr("checked", true);
+                        $("#PackageCollection_Scan").val("");
+                        $("#PackageCollection_Scan").attr("disabled", "disabled");
+                        index = 4;
+                        document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:green;">请选耗材！</h3>';
+                        $("#engineval").removeAttr("disabled");
+                        $("#engineval").focus();
+                    } else {
+                        document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">订单号不匹配！</h3>';
+                        $("#PackageCollection_Scan").blur();
+                    }
+                } else {
+                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">订单号为空，请重新扫描！</h3>';
+                    $("#PackageCollection_Scan").blur();
+                }
+            }
+            function checkExpressNumber() {
+                //alert("checkExpressNumber");
+                //alert($("#PackageCollection_Scan").val() + "1");
+                if ($("#PackageCollection_Scan").val() != "") {
+                    var ID = $("#PackageCollection_Scan").val();
+                    var CustomerID = $("#CustomerIDs").val();
+                    var WarehouseID = $("#WarehouseIDs").val();
+                    //alert(ID + "1");
+                    //alert(CustomerID + "1");
+                    //alert(WarehouseID + "1");
+
+                    $.ajax({
+                        type: "Post",
+                        url: "/Order/CheckExpressOrder",
+                        data: {
+                            "Number": ID,
+                            "Type": "Express",
+                            "CustomerID": CustomerID,
+                            "WarehouseID": WarehouseID
+                        },
+                        async: "false",
+                        success: function (data) {
+                            //alert("success");
+                            var obj = jQuery.parseJSON(data);
+                            if (obj[0].AssociatedStatus == "0") {
+                                //alert("无关联信息，请重新扫描！");
+
+                                document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">无关联信息，请重新扫描！</h3>';
+                                $("#PackageCollection_Scan").blur();
+                            }
+                            else {
+                                if (obj[0].PackeStatus == "0") {
+                                    $("#PackageCollection_ExpressNumber").val($("#PackageCollection_Scan").val());
+                                    $("#PackageCollection_ExpressCompany").val(obj[0].ExpressCompany);
+                                    $("#PackageCollection_OrderNumber").val(obj[0].OrderNumber);
+                                    OrderID = obj[0].OrderID;
+                                    index = 3;
+                                    //alert(index);
+                                    //alert(OrderID);
+                                    //alert("请扫订单号！");
+                                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:green;">请扫订单号！</h3>';
+                                    $("#PackageCollection_Scan").select();
+                                } else {
+                                    //1 待处理 3 已拣货 4 已复检 6 已包装 8 已交接 9 已出库
+                                    var status;
+                                    if (obj[0].OrderStatus == "1") {
+                                        status = "待处理";
+                                    } else if (obj[0].OrderStatus == "6") {
+                                        status = "已包装";
+                                    } else if (obj[0].OrderStatus == "8") {
+                                        status = "已交接";
+                                    } else if (obj[0].OrderStatus == "9") {
+                                        status = "已出库";
+                                    } else {
+                                        status = obj[0].OrderStatus;
+                                    }
+                                    //alert("当前状态【" + status + "】 不允许包装，请重新扫描！");
+
+                                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">当前状态【' + status + '】 不允许包装，请重新扫描！</h3>';
+                                    $("#PackageCollection_Scan").blur();
+                                }
+                            }
+                        },
+                        error: function (msg) {
+                            //alert("error");
+                            document.getElementById('AssociatedTable').innerHTML = msg.val;
+                            $("#PackageCollection_Scan").blur();
+                        }
+                    });
+                } else {
+                    //alert("快递单号为空，请重新扫描！");
+                    document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">快递单号为空，请重新扫描！</h3>';
+                    $("#PackageCollection_Scan").blur();
+                }
+            }
+            function initialization() {
+                $('#PackageCollection_Scan').focus();
+                $('#PackageCollection_Scan').val('');
+                $('#PackageCollection_ExpressNumber').attr('disabled', 'disabled');
+                $('#PackageCollection_ExpressNumber').val('');
+                $('#PackageCollection_ExpressCompany').attr('disabled', 'disabled');
+                $('#PackageCollection_ExpressCompany').val('');
+                $('#PackageCollection_OrderNumber').attr('disabled', 'disabled');
+                $('#PackageCollection_OrderNumber').val('');
+                $('#engineval').attr('disabled', 'disabled');
+                $('#engineval').attr('class', 'form-control');
+                $('#engineval').show();
+                $('#engineval').val('');
+                $('#PackageCollection_PackageType').removeClass('form-control');
+                $('#PackageCollection_PackageType').hide();
+                $('#PackageCollection_Length').html('');
+                $('#PackageCollection_Width').html('');
+                $('#PackageCollection_Height').html('');
+                $('#volume').html('');
+                //$('#AssociatedTable').attr('disabled', 'disabled');
+                document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:red;">请扫快递单号！</h3>';
+                document.getElementById('SkuListTable').innerHTML = '';
+            }
+            function Next() {
+                $('#PackageCollection_Scan').removeAttr('disabled');
+                $('#PackageCollection_Scan').val(' ');
+                $('#PackageCollection_ExpressNumber').attr('disabled', 'disabled');
+                $('#PackageCollection_ExpressNumber').val('');
+                $('#PackageCollection_ExpressCompany').attr('disabled', 'disabled');
+                $('#PackageCollection_ExpressCompany').val('');
+                $('#PackageCollection_OrderNumber').attr('disabled', 'disabled');
+                $('#PackageCollection_OrderNumber').val('');
+                $('#engineval').attr('disabled', 'disabled');
+                $('#engineval').attr('class', 'form-control');
+                $('#engineval').show();
+                $('#engineval').val('');
+                $('#PackageCollection_PackageType').removeClass('form-control');
+                $('#PackageCollection_PackageType').hide();
+                $('#PackageCollection_Length').html('');
+                $('#PackageCollection_Width').html('');
+                $('#PackageCollection_Height').html('');
+                $('#volume').html('');
+                //$('#AssociatedTable').attr('disabled', 'disabled');
+                document.getElementById('AssociatedTable').innerHTML = '<h3 style="color:green;">保存成功！<br/>请扫下一单快递单号！</h3>';
+                document.getElementById('SkuListTable').innerHTML = '';
+                objtotal = "";
+                OrderID = 0;
+                $('#PackageCollection_Scan').focus();
+                $('#PackageCollection_Scan').select();
+            }
+        </script>
+    </head>
+
+    <body>
+@model Runbow.TWS.RFScan.Models.ExpressPackageModel
+@using(Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SupplieTypeList)
+    @Html.HiddenFor(m => m.CustomerIDs)
+    @Html.HiddenFor(m => m.WarehouseIDs)
+    @Html.HiddenFor(m => m.Warehouses)
+    var CustomerList = ViewBag.CustomerList;
+    var WarehouseList = ViewBag.WarehouseList;
+<div id="tables" style=" margin:0;padding:0;overflow-x: no-display;overflow-y: no-display; min-height: 300px;border:1px solid black">
+    <table id="resultTable" style="font-size:11px; margin:0;padding:0; width: 99%; table-layout: fixed;">
+        <tr style=" margin:0;padding:0;">
+            <th style="margin:0;padding:0;text-align:left;" colspan="2">请扫描</th>
+            <td><input id="show" style="margin:0;padding:0;text-align:left;width:90%;" onclick="showmsg()"  type="button" value="查看"></td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <td style="margin:0;padding:0;text-align:left;" colspan="2">
+                <input id="PackageCollection_Scan" type="text" style = "margin:0;padding:0;text-align:left;width:100%;" onkeydown="Scan(event)"/>
+            </td>
+            <td style=" margin:0;padding:0;text-align:left;" rowspan="6" colspan="3">
+                <div style="margin:0;padding:0;text-align:left;height: 130px;border:1px solid #808080;" id="AssociatedTable"></div>
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th style="margin:0;padding:0;text-align:left;" colspan="2"><input id="ScanMode" title="" type="checkbox"/> 扫描模式</th>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="2">耗材</th>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <td colspan="2" style=" margin:0;padding:0;">
+                <input  id="engineval"  type="text"  onchange="fa2();" style = "margin:0;padding:0;text-align:left;width:100%;" onkeydown="PackageTypeScan(event)"/>
+                @Html.DropDownListFor(m => m.PackageCollection.PackageType, Model.SupplieTypeList, new { @style = "margin:0;padding:0;text-align:left;width:100%;",@onkeydown="PackageTypeSelect(event)" })
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">长:</th>
+            <td colspan="2" style=" margin:0;padding:0;">
+                <span style=" margin:0;padding:0;text-align:left;" id="PackageCollection_Length"></span>(米)
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">宽:</th>
+            <td colspan="2" style=" margin:0;padding:0;">
+                <span style=" margin:0;padding:0;text-align:left;" id="PackageCollection_Width"></span>(米)
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">高:</th>
+            <td colspan="2" style=" margin:0;padding:0;">
+                <span style=" margin:0;padding:0;text-align:left;" id="PackageCollection_Height"></span>(米)
+            </td>
+        </tr>
+        <tr>
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">体积:</th>
+            <td colspan="4" style=" margin:0;padding:0;">
+                <span style=" margin:0;padding:0;text-align:left;" id="volume"></span>(立方米)
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">快递单号</th>
+            <td class="" style="margin:0;padding:0;text-align:left;" colspan="4">
+                @Html.TextBoxFor(m => m.PackageCollection.ExpressNumber, new {@style = "margin:0;padding:0;text-align:left;width:100%;" })
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">订单号</th>
+            <td colspan="4" style=" margin:0;padding:0;">
+                @Html.TextBoxFor(m => m.PackageCollection.OrderNumber, new {@style = "margin:0;padding:0;text-align:left;width:100%;" })
+            </td>
+        </tr>
+        <tr style=" margin:0;padding:0;">
+            <th class="" style="margin:0;padding:0;text-align:left;" colspan="1">快递公司</th>
+            <td colspan="4" style=" margin:0;padding:0;">
+                @Html.TextBoxFor(m => m.PackageCollection.ExpressCompany, new {@style = "margin:0;padding:0;text-align:left;width:100%;" })
+            </td>
+        </tr>
+    </table>
+    <div id="SkuListData" style="position:absolute;top:10px;left:5px;width:210px;height:180px;display:none;background-color:white;border:solid 1px white;">
+        <table id="SkuListTable" style="font-size:12px; width:210px;height:180px;border:solid 1px #add9c0;" class=".td{border:solid 1px #add9c0;}">
+
+        </table>
+        <input type="button" value="关闭" onclick="CloseDiv()"/>
+    </div>
+</div>
+}
+</body>
+</html>

@@ -1,0 +1,92 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.WMS_CustomerListViewModel
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.StorerKey)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.StorerKey)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Company)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Company)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Contact1)
+                </td>
+                <td>
+                 @Html.TextBoxFor(m => m.Contact1)
+                </td>
+                 <td class="TableColumnTitle">
+                  
+                </td>
+                <td>
+                 
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>承运商列表 
+             @if (Model.Customer != null && Model.Customer.Any())
+            {
+                @Html.Raw("(" + Model.Customer.Count() + ")");
+            }
+            &nbsp;&nbsp;@ViewBag.Message
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>公司代码</th>
+                    <th>货主名称</th>
+                    <th>联系人</th>
+                    <th>联系电话</th>
+                    <th>传真</th>
+                    <th>地址</th>
+                    <th>是否有效</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Customer.Any())
+                {
+                    foreach (var shipper in Model.Customer)
+                    {
+                    <tr>
+                        <td>
+                           @* @Html.ActionLink(@shipper.Code, "Create?ViewType=0", new { id = shipper.ID })*@
+                            <a href="Create/@shipper.?ViewType=0">@shipper.StorerKey</a>
+                        </td>
+                        <td>@shipper.StorerKey</td>
+                        <td>@shipper.StorerKey</td>
+                        <td>@shipper.StorerKey</td>
+                        <td>@shipper.StorerKey</td>
+                        <td>@shipper.StorerKey</td>
+             
+              
+                
+                        <td>
+                           @* @Html.ActionLink("编辑", "Create&ViewType=1", new { id = shipper.ID })*@
+                            <a href="Create/@shipper.StorerKey?ViewType=1">编辑</a>
+                           
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

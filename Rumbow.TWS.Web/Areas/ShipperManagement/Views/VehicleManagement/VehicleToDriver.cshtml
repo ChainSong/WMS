@@ -1,0 +1,162 @@
+﻿@model Runbow.TWS.Web.Areas.ShipperManagement.Models.VehicleManagement.VehicleToDriverViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.jsrender()
+@Url.Json2() 
+<link href='/Content/Common/Pager.css' rel='stylesheet' type='text/css' />
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m=>m.VID)
+<fieldset>
+    <legend>车辆司机管理
+    </legend>
+    <div  style ="width:100%; float:left; /*background:red;*/">
+            <table id="conditionTable">
+                <tr>
+                    <td class="TableColumnTitle">
+                         车牌号码： @Html.NecessaryFlag()
+                    </td>
+                    <td style="width: 75%;">
+                        @Html.TextBoxFor(m=>m.VehicleNo, new { @class ="form-control",style ="width:40%"})
+                          &nbsp;&nbsp;&nbsp;
+              <input type="button" class="btn btn-success" value="提交" id="submitButton" name="Action" />
+                    </td>
+                </tr>
+            </table>
+        </div> 
+        <!--左边选择司机-->
+        <div id="left" class="left" style="float: left;width: 48%; /*margin-top: 42px;*/ /*background: red;*/ ">
+             <fieldset style ="height:610px; text-align:center;">
+                 <legend>司机信息
+                     @*@if (Model.Driver != null && Model.Driver.Any())
+                            {
+                        @Html.Raw("(" + Model.Driver.Count() + ")");
+                            }*@
+                 </legend>
+                 <div id ="DriverInformation">
+                     <table>
+                         <tr>
+                            <td class="TableColumnTitle">
+                            司机姓名： 
+                            </td>
+                           <td style="width: 75%;">
+                               @Html.TextAreaFor(m => m.DriverName, new { style = "width:80%", @class= "form-control"})
+                               &nbsp;&nbsp;&nbsp;
+                                    <input type="button" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+                           </td>
+                         </tr>
+                     </table>
+                 </div>
+                 <div id ="divzuo" style="text-align: center; height: 565px; border: 1px solid #DCDCDC;">
+                 <table id ="resultTable">
+                     <thead>
+                      <tr>
+                         <th style ="text-align:center;">
+                             <input type ="checkbox" id ="selectAll" class ="selectAll" name ="selectAll" />
+                         </th>
+                         <th style ="text-align:center;">司机姓名</th>
+                         <th style ="text-align:center;">司机电话</th>
+                     </tr>
+                     </thead>
+                     <tbody id ="dataList">
+                         @if (Model.Driver != null && Model.Driver.Any())
+                             {
+                                 foreach (var item in Model.Driver)
+                                 {
+                                     <tr>
+                                         <td>
+                                             <input type="checkbox" name="checkbox" id="@item.ID" data-id="@item.ID" value="@item.DriverName" class="select" />
+                                         </td>
+                                         <td>@item.DriverName</td>
+                                         <td>@item.DriverPhone</td>
+                                     </tr>
+                                 }
+                             }
+                     </tbody>
+                 </table>
+                 @*@Html.Pager(Model.PageIndex, Model.PageCount, "")*@
+                     </div>
+                  <div id="_pager" class="Pager">
+                    <span class="first clickable pagerSpan" id="_first">首页</span>
+                    <span class="prev clickable pagerSpan" id="_prev">上一页</span>
+                    <span class="current">当前第<label id="_pager_pageIndex"></label>页，共<label id="_pager_pageCount"></label>页，跳转到第
+                    </span>
+                    <input type="text" id="_customNumber" class="customInupt" />页
+                    <span class="next clickable pagerSpan" id="_next">下一页</span>
+                    <span class="last clickable pagerSpan" id="_last">末页</span>
+                </div>
+                  <input data-val="true" data-val-number="字段 PageIndex 必须是一个数字。" data-val-required="PageIndex 字段是必需的。" id="PageIndex" name="PageIndex" type="hidden" value="0" />
+                  <input data-val="true" data-val-number="字段 PageCount 必须是一个数字。" data-val-required="PageCount 字段是必需的。" id="PageCount" name="PageCount" type="hidden" value="@Model.PageCount" />
+             </fieldset>
+         </div>
+         <!--中间左右按钮-->
+        <div class ="change" id ="change" style="/*background: blue;*/  float: left; /*margin-top: 42px;*/ margin-left:4px;">
+            <input type="button" id="go" class="go btn btn-success" value=">>" style="margin-top: 300px;  width: 40px; height: 40px;" /><br />
+           <input type="button" id="bk" class="bk btn btn-success" value="<<" style="margin-top: 50px;  width: 40px; height: 40px;" />
+        </div>
+        <!--右边已选择司机-->
+        <div id ="right" class ="right" style="float: right; width:48%; ">
+              <fieldset style ="height:610px; text-align:center;">
+                 <legend>已选择司机</legend> 
+                  <div id ="DriverInformations">
+                     <table>
+                         <tr>
+                            <td class="TableColumnTitle">
+                            司机姓名： 
+                            </td>
+                           <td style="width: 75%;">
+                                <textarea id ="DriverNames" class ="form-control" style ="width:80%"></textarea>
+                               &nbsp;&nbsp;&nbsp;
+                                    <input type="button" class="btn btn-success" value="查询" id="searchButtons" name="Action" />
+                           </td>
+                         </tr>
+                     </table>
+                 </div>
+
+                 <div id="divyou" style="text-align: center; height: 565px; border: 1px solid #DCDCDC; overflow-y: auto;">
+                     <table id="you">
+                         <thead>
+                            <tr>
+                                <th style ="text-align:center; width:40%;">
+                                    <input id="reAll" type ="checkbox"  />
+                                </th>
+                                <th style ="text-align:center">司机姓名</th>
+                            </tr>
+                        </thead>
+                         <tbody id="youTbody">
+
+                         </tbody>
+                     </table>
+                 </div>
+            
+
+             
+
+
+             
+            </fieldset> 
+         </div>
+</fieldset>
+}
+
+
+
+<script id="Evaluation" type="text/x-jsrender">
+     <tr>
+         <td>
+             <input type="checkbox" name="checkbox" id="{{:ID}}" data-id="{{:ID}}" value="{{:DriverName}}" class="select" />
+             </td>
+             <td>{{:DriverName}}</td>
+             <td>{{:DriverPhone}}</td>
+         </tr>
+</script>
+
+<script id="Evaluations" type="text/x-jsrender">
+     <tr>
+         <td>
+             <input type="checkbox" name="checkbox" id="{{:DriverName}}" data-id="{{:DriverName}}" value="{{:DriverName}}" class="select" />
+             </td>
+             <td>{{:DriverName}}</td>
+             <td>{{:DriverPhone}}</td>
+         </tr>
+</script>

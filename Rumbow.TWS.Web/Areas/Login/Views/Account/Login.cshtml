@@ -1,0 +1,150 @@
+﻿<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../../../../Scripts/Login/Account/Login.js"></script>
+@model Runbow.TWS.Web.Areas.Login.Models.LoginModel
+@{
+    Layout = null;
+    var ProName = ViewBag.ProjectName;
+}
+@using (Html.BeginForm())
+{
+
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+
+}
+<!DOCTYPE html>
+
+@*<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <title>Login</title>
+        @Url.CommonCssMain()
+        @Url.JQueryBaseJs()
+        @Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+        @Url.LoadPageCssJs()
+    </head>
+    <body>
+        <table id='box'>
+            <tr>
+                <td align="center">
+                    @Html.ValidationSummary(true, "")
+                    @using (Html.BeginForm())
+                    {
+                        <div id="BoxDv">
+                            <div id="loginDv">
+                                <div class="editor-label">
+                                    @Html.LabelFor(m => m.UserName)
+                                </div>
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(m => m.UserName)
+                                    @Html.ValidationMessageFor(m => m.UserName)
+                                </div>
+                                <div class="editor-label">
+                                    @Html.LabelFor(m => m.Password)
+                                </div>
+                                <div class="editor-field">
+                                    @Html.PasswordFor(m => m.Password)
+                                    @Html.ValidationMessageFor(m => m.Password)
+                                </div>
+                                <div id="projectWrapper" style="display: none">
+                                    <div class="editor-label">
+                                        项目
+                                    </div>
+                                    <div class="editor-field">
+                                        <select name="Projects" id="Projects"></select>
+                                        @Html.HiddenFor(m => m.ProjectID)
+                                        @Html.HiddenFor(m => m.ProjectName)
+                                    </div>
+                                </div>
+                                <p>
+                                    <input id="btnLogin" type="submit" value="登录" onclick="return loginClick();" />
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>*@
+
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><!--禁止浏览器缩放-->
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>登陆</title>
+
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+    <link href="../../../../../../../Content/Login/Account/Login.css" rel="stylesheet" />
+</head>
+@*style="background-image:url('../../../../../../../Image/零星Login.jpg')"*@
+<body class="bg">
+    <div class="popMsg">
+        Loading......
+    </div>
+    <div id="aaa" style="height:100%;width:100%; position:absolute;margin-top:-120px ;z-index:-10">
+
+    </div>
+    <form action="/Login/Account/Login" method="post" enctype="application/x-www-form-urlencoded">
+        <div style="padding:0 5% 0 5%;">
+            <div id="mybody" class="container-fluid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div>
+                            <div>
+                                @if (ProName != "")
+                                {
+                                    <h3 style="color:#fff;text-align:center">@ProName</h3>
+                                }
+                                else
+                                {
+                                    <h3 style="color:#fff;text-align:center">尼望</h3>
+                                }
+                                @*<h3 class="text-center" style="color:#fff;"><img src="../../../../../../../Image/风火轮.png" /></h3>*@
+                                @*<h3 class="text-center" style="color:#fff;"><img src="../../../../../../../Image/iWorker.jpg" /></h3>*@
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
+                                    <input id="txtUser" name="UserName" type="text" class="form-control" placeholder="账  号">
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <div class="input-group">
+                                    <div class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
+                                    <input id="txtPwd" name="Password" type="password" class="form-control" placeholder="密  码">
+                                </div>
+                            </div>
+                            <input type="hidden" id="projectId" name="ProjectID" value="" />
+                            <div class="col-xs-12 col-md-12 col-sm-12">
+                                <button type="submit" class="btn btn-primary form-control" onclick="return login();">进入 GO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </form>
+    <div class="footer">
+        ©2017 尼望
+        @*上ICP证030173号*@
+        @* ©2016 Runbow-股份 苏ICP备16038553号*@
+    </div>
+</body>
+</html>
+<!--[if lt IE 9]>
+    <![endif]-->

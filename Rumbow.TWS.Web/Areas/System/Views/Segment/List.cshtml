@@ -1,0 +1,70 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.SegmentListViewModel
+            <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Name)
+                </td>
+                <td style="width:200px;">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.State)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.State, Model.States, new { @style="width:180px;height:35px;" })   
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" class="btn btn-success" id="searchButton" />
+            <input type="button" onclick="window.location.href = '/System/Segment/Create'" value="新增"  class="btn btn-success" id="btnAdd" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend style="margin-top:10px;">段位列表 
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>段位名称</th>
+                    <th style="width:50%;">描述</th>
+                    <th>是否可用</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Segments != null && Model.Segments.Any())
+                {
+                    foreach (var segment in Model.Segments)
+                    {
+                    <tr>
+                        <td>@segment.Name</td>
+                        <td>@segment.Description</td>
+                        <td>@{
+                        if (segment.State)
+                        {
+                            @Html.Raw("可用")
+                        }
+                        else
+                        {
+                            @Html.Raw("禁用")
+                        }
+                        }
+                        </td>
+                        <td>@Html.ActionLink("编辑", "CreateDetail", new { segmentID = segment.ID,@style=" font-family:微软雅黑;font-size:12px;" })
+                            &nbsp;
+                                @Html.ActionLink(segment.State ? "禁用" : "启用", "DelOrReuseSegment", new { segmentID = segment.ID, state = segment.State }, new { @class = "DelOrReuseSegment",@style=" font-family:微软雅黑;font-size:12px;", state = segment.State.ToString() })
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}

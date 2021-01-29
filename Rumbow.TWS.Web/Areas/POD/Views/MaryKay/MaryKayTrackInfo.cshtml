@@ -1,0 +1,149 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.MaryKayTrackInfoModel
+
+@using (Html.BeginForm())
+{ 
+    @Html.HiddenFor(m=>m.BeginTrackDateTime)
+    @Html.HiddenFor(m=>m.EndTrackDateTime)
+    @Html.HiddenFor(m=>m.IsExport)
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        
+        <tr>
+            <td style="width:8%" class="TableColumnTitle">系统单号</td>
+            <td  style="width:28%">@Html.TextBoxFor(m=>m.SystemOrderNo)</td>
+            <td style="width:8%" class="TableColumnTitle">MK订单号</td>
+            <td style="width:23%">@Html.TextBoxFor(m=>m.MkOrderNo)</td>
+
+           <td style="width:8%" class="TableColumnTitle">跟踪时间</td>
+            <td  style="width:28%">@Html.CalendarRange("TrackDateTime","calendarRange")<a id="TrackDateTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+        </tr>
+
+        <tr>
+            
+            <td style="width:8%" class="TableColumnTitle">上传状态 </td>
+            <td style="width:28%">@Html.DropDownListFor(m=>m.UpLoadStatusID,Model.UpLoadStatus)</td>
+            <td style="width:8%" class="TableColumnTitle">快递单号</td>
+            <td style="width:23%">
+               @Html.TextBoxFor(m=>m.ExpressOrderNo)
+            <td style="width:8%" class="TableColumnTitle">跟踪信息</td>
+            <td  style="width:28%">
+                @Html.DropDownListFor(m=>m.TrackInfoTypeID,Model.TrackInfoType)
+            </td>
+
+
+           
+           
+        </tr>
+
+        <tr>
+            <td style="width:8%" class="TableColumnTitle">省份</td>
+            <td style="width:28%">
+                 @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey ="endCity" })
+                      <a id="CityClear" href="#">清空</a>
+                     @Html.HiddenFor(m=>m.EndCity)
+                     @Html.HiddenFor(m=>m.EndCityID)
+
+            </td>
+            <td style="width:8%" class="TableColumnTitle"></td>
+            <td style="width:23%"></td>
+            <td style="width:8%" class="TableColumnTitle"></td>
+            <td style="width:28%"></td>
+        </tr>
+        
+    </table>
+    <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="QueryButton" name="Query"/>
+            &nbsp;&nbsp;
+            <input type="button" value="韵达跟踪信息获取" id="GetYD" onclick="GetYUNDATrackInfo()"/>
+            &nbsp;&nbsp;
+            <input type="button" value="批量删除" id="Delete" onclick="DeleteTrack()" />
+            &nbsp;&nbsp;
+            <input type="submit" value="导出" id="ExprotButton" />
+            &nbsp;&nbsp;
+            <input type="button" value="上传" id="UpLoadButton" onclick="UpLoadMK()"/>
+        </div>
+</fieldset>
+    
+    
+    
+    if (Model.TrackInfoTable != null)
+    {
+    
+    <fieldset>
+        <legend>数据信息</legend>
+        <div style="width:100%;">
+            <div style="overflow-x:scroll; height:100%;width:100%;">
+        <table  id="TrackInfo" style="width:150%;text-align:center">
+           
+            <tr>
+                <td class="TableColumnTitle" style="width:20px"><input type="checkbox" id="CheckAll" onclick="CheckALL()" /></td>
+                @foreach (var columnsnames in Model.TrackInfoTable.Columns)
+                {
+                    if (columnsnames.ToString()=="RowID")
+                    {
+                        continue;
+                    }
+                    if (columnsnames.ToString() == "ID")
+                    {
+                        continue;
+                    }
+                    if (columnsnames.ToString() == "PodID")
+                    {
+                        continue;
+                    }
+                    
+                    <td  class="TableColumnTitle" style="width:55px">@columnsnames.ToString()</td>
+                }
+            </tr>
+       
+           @for (int i = 0; i < Model.TrackInfoTable.Rows.Count; i++)
+           {
+            <tr>
+                   
+                @if (Model.TrackInfoTable.Rows[i]["上传MK状态"].ToString()!="上传成功")
+                {
+                 <td><input type="checkbox" id="@Model.TrackInfoTable.Rows[i]["ID"].ToString()" class="CheckTrack"/></td>    
+                }
+                else
+                {
+                    <td></td>
+                }
+               @for (int j = 0; j < Model.TrackInfoTable.Columns.Count; j++)
+               {
+                   if (Model.TrackInfoTable.Columns[j].ToString() == "RowID")
+                   {
+                       continue;
+                   }
+                   if (Model.TrackInfoTable.Columns[j].ToString() == "ID")
+                   {
+                       continue;
+                   }
+                   if (Model.TrackInfoTable.Columns[j].ToString() == "PodID")
+                   {
+                       continue;
+                   }
+
+
+                   if (Model.TrackInfoTable.Columns[j].ToString() == "MK订单号")
+                   {
+                   <td><a id="listSystemNumber" data-id="@Model.TrackInfoTable.Rows[i]["ID"].ToString()" href="/POD/POD/ViewPodAll/@Model.TrackInfoTable.Rows[i]["PodID"].ToString()">@Model.TrackInfoTable.Rows[i]["MK订单号"].ToString()</a></td>
+                   }
+                   else
+                   {
+                       
+                           <td>@Model.TrackInfoTable.Rows[i][j].ToString()</td>
+                   }
+
+
+               }
+            </tr>
+           }
+        </table>
+                </div>
+        </div>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    
+    }
+}

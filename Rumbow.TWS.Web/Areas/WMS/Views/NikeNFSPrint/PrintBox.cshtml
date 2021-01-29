@@ -1,0 +1,210 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.NFSPrintBox
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@{
+    ViewBag.Title = "PrintBox";
+}
+
+<h2>PrintBox</h2>
+<style>
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 2px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td {
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            orientationMixed: true,   // 此属性通知控件，存在有纵有横的打印页面
+            orientation: 2,           // 设置控件的默认打印方向，是纵向
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 60px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    @*<input type="button" value="返回" class="btn btn-success" onclick="history.go(-1)">*@
+</div>
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+    var k = 0;
+    var packlistnumberheader = "";
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th style="background-color:#C0C0C0">装箱单号</th>
+                <th style="background-color:#C0C0C0">POS代码</th>
+                <th style="background-color:#C0C0C0">客户</th>
+                <th style="background-color:#C0C0C0">客户名称</th>
+                <th style="background-color:#C0C0C0">地址</th>
+            </tr>
+        </thead>
+        <tbody id="BodyTable">
+            @foreach (var CustomerInfo in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+            {
+                if (k == 0 || packlistnumberheader != CustomerInfo.PackageNumber)
+                {
+                    k++;
+                    <tr id="">
+                        <td>@CustomerInfo.PackageNumber.ToString()</td>
+                        @*门店代码 和地址为空 修改存过(需要的话)*@
+                        <td>空</td>
+                        <td>@CustomerInfo.ShipToCode</td>
+                        <td>@CustomerInfo.ShipToName</td>
+                        <td>空</td>
+                    </tr>
+                }
+                packlistnumberheader = CustomerInfo.PackageNumber;
+            }
+        </tbody>
+    </table>
+    var i = 0;
+    var packlistnumber = "";
+    var packlistnumberCount = "";
+    foreach (var item in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+    {
+        if (packlistnumberCount != item.PackageNumber)
+        {
+            i++;
+            packlistnumberCount = item.PackageNumber;
+        }
+    }
+    var ss = 0;
+    var counts = Model.EnumerableCustomerInfo.Count();// + i
+    var shang = counts / 9;
+    var yu = counts % 9;
+    var n = 0;
+    if (yu == 0)
+    {
+        n = shang;
+    }
+    else
+    {
+        n = shang + 1;
+    }
+    for (var j = 0; j < n; j++)
+    {
+        ss = ss + 1;
+        var pages = "page" + ss;
+        <div id='@pages' class='only_for_print pagestyle'>
+            <h3>Packing List By Carton</h3>
+            <table style="padding:10px 0px; " id="boxlist">
+                <tr>
+                    <td style="text-align:left;border:1px solid;" colspan="8"><strong>Shipment No: </strong>@Model.EnumerableCustomerInfo.First().ShipmentNo</td>
+                </tr>
+                <tr>
+                    <td style="text-align:left;border:1px solid;" colspan="4"><strong>Ship To Name: </strong>@Model.EnumerableCustomerInfo.First().ShipToName</td>
+                    <td style="text-align:left;border:1px solid;" colspan="4"><strong>Floor: </strong>@Model.EnumerableCustomerInfo.Select(a => a.str9).FirstOrDefault()</td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid;width:205px;">PackageKey</td>
+                    <td style="border:1px solid;width:100px;">Material</td>
+                    <td style="border:1px solid;width:50px;">Size</td>
+                    <td style="border:1px solid;width:86px;">Product</td>
+                    <td style="border:1px solid;width:96px;">Quantity</td>
+                    <td style="border:1px solid;width:84px;">Gender</td>
+                    <td style="border:1px solid;width:250px;">Category</td>
+                    <td style="border:1px solid;">Description</td>
+                </tr>
+            </table>
+            <table style="text-align: center; font-family: 黑体;height:auto;border:1px solid;">
+                @foreach (var itemdetail in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber).Skip(j * 9).Take(9))
+                {
+                    if (!packlistnumber.Equals("") && !packlistnumber.Equals(@itemdetail.PackageNumber.ToString()))
+                    {
+                        <tr>
+                            <td colspan="8" style="border:1px solid;">箱合计:@Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == packlistnumber).Select(b => b.Quantity).Sum().ToString()</td>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid;width:205px;">@itemdetail.PackageNumber.ToString()</td>
+                            <td style="border:1px solid;width:100px;">@itemdetail.Material.ToString()</td>
+                            <td style="border:1px solid;width:50px;">@itemdetail.Size.ToString()</td>
+                            <td style="border:1px solid;width:86px;">@itemdetail.Product.ToString()</td>
+                            <td style="border:1px solid;width:96px;">@itemdetail.Quantity.ToString()</td>
+                            <td style="border:1px solid;width:84px;">@itemdetail.Gender.ToString()</td>
+                            <td style="border:1px solid;width:250px;">@itemdetail.Category.ToString()</td>
+                            <td style="border:1px solid;">@itemdetail.MaterialDesc.ToString()</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td style="border:1px solid;width:205px;">@itemdetail.PackageNumber.ToString()</td>
+                            <td style="border:1px solid;width:100px;">@itemdetail.Material.ToString()</td>
+                            <td style="border:1px solid;width:50px;">@itemdetail.Size.ToString()</td>
+                            <td style="border:1px solid;width:86px;">@itemdetail.Product.ToString()</td>
+                            <td style="border:1px solid;width:96px;">@itemdetail.Quantity.ToString()</td>
+                            <td style="border:1px solid;width:84px;">@itemdetail.Gender.ToString()</td>
+                            <td style="border:1px solid;width:250px;">@itemdetail.Category.ToString()</td>
+                            <td style="border:1px solid;">@itemdetail.MaterialDesc.ToString()</td>
+                        </tr>
+                    }
+                    packlistnumber = @itemdetail.PackageNumber.ToString();
+                }
+            </table>
+            <table style="text-align: center; font-family: 黑体;border:1px solid;">
+                <tr>
+                    <td colspan="8" style="border:1px solid;">箱合计:@Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == packlistnumber).Select(b => b.Quantity).Sum().ToString()</td>
+                </tr>
+            </table>
+            <table style="text-align: center; font-family: 黑体;border:1px solid;">
+                <tr>
+                    <td colspan="8" style="border:1px solid;">总数:@Model.EnumerableCustomerInfo.Select(b => b.Quantity).Sum().ToString()</td>
+                </tr>
+            </table>
+            <table style="text-align: left; font-family: 黑体; font-weight: bold;">
+                <tr>
+                    <td style="text-align:right; width:50%;border:1px solid;"><strong>第 @ss 页,共 @n 页</strong></td>
+                    <td style="padding-left:8px;border:1px solid;"><strong>@Model.EnumerableCustomerInfo.First().OrderNumber<br />@Model.EnumerableCustomerInfo.First().ShipmentNo<br />@Model.EnumerableCustomerInfo.First().ShipToName</strong></td>
+                </tr>
+            </table>
+        </div>
+    }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

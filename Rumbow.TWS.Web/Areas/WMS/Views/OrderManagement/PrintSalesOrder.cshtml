@@ -1,0 +1,191 @@
+﻿<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/qrcode.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/WMS/OrderManagement/PrintSalesOrder.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+@Url.jsrender()
+@Url.Json2()
+@{
+    Layout = null; 
+}
+@Html.HiddenFor(m => m.SearchCondition.StartCreateTime)
+<style media="print">
+    .Noprint
+    {
+        display: none;
+    }
+    .PageNext
+    {
+        page-break-after: always;
+    }
+</style>
+ <div class ="Noprint" style ="text-align :center; height:10px;">
+      <object id="WebBrowser" class="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none"></object>
+     <input type="button" name="button-print" value="打印" onclick="PrintOrders()" />
+     <input type ="button" name ="button_return" value ="返回" onclick ="history.go(-1)" />
+ </div>
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+@if (Model.OrderCollection != null && Model.OrderCollection.Any())
+{
+    var ss = 0;
+    foreach (var item in Model.OrderCollection)
+    {
+        var counts = Model.OrderDetailCollection.Where(c => c.OID == item.ID).Count();
+        var i = counts / 10;
+        for (var j = 0; j < i + 1; j++)
+        {
+            ss = ss + 1;
+            var pages = "page" + ss;
+<div id ="@pages" style ="width:100%;height:100%;">
+    <div class ="PageNext" style ="width:100%; height:100%;">
+    <table style =" width:100%; margin-top:3px; font-weight:bolder; text-align:center; vertical-align:bottom; ">
+        <tr>
+            <td style =" font-size:20px;">
+                <span style ="">上海比瑞吉宠物用品股份有限公司仓库--销货单</span>
+            </td>
+        </tr>
+        <tr>
+            <td style =" font-size:12px;">
+                <span style ="">*请将货物签收清楚,若有疑问请于收货日当天内提出,否则视为接受本公司所载事项.</span>
+            </td>
+        </tr>
+    </table>
+    <table style ="line-height:20px; width:100%; margin-top:3px; text-align:left; border-bottom:2px solid #000; font-weight:normal; font-size:12px; ">
+        <tr style ="">
+            <td style ="">客户编号：@item.OrderNumber</td>
+            <td style ="">发货日期：@item.ExternOrderNumber</td>
+        </tr>
+        <tr style ="">
+            <td style ="">客&nbsp &nbsp &nbsp 户：@item.OrderNumber</td>
+            <td style ="">发货单号：@item.ExternOrderNumber</td>
+        </tr>
+        <tr style ="">
+            <td style ="">地&nbsp &nbsp &nbsp 址：@item.OrderNumber</td>
+            <td style ="">区域负责：@item.ExternOrderNumber</td>
+        </tr>
+        <tr style ="">
+            <td style ="">电&nbsp &nbsp &nbsp 话：@item.OrderNumber</td>
+            <td style ="">发货仓库：@item.ExternOrderNumber</td>
+        </tr>
+        <tr style ="">
+            <td style ="">联系&nbsp 人：@item.OrderNumber</td>
+            <td style ="">订单参考：@item.ExternOrderNumber</td>
+        </tr>
+        <tr style ="">
+            <td style ="">发运地点：@item.OrderNumber</td>
+            <td style ="">订单编号：@item.ExternOrderNumber</td>
+        </tr>
+        <tr style ="">
+            <td style ="">备&nbsp &nbsp &nbsp 注：@item.OrderNumber</td>
+            <td style ="">发运单号：@item.ExternOrderNumber</td>
+        </tr>
+    </table>
+    <table cellspacing="0" cellpadding="0" style ="width:100%; margin-top:3px; border-collapse:collapse;border-bottom:0px solid #000">
+        <tr style=" line-height:25px; font-weight: normal; font-size: 12px; text-align:center;">
+            <td>SKU</td>
+            <td>产品名称</td>
+            <td>产品等级</td>
+            <td>托号</td>
+            <td>批号</td>
+            <td>单位</td>
+            <td>规格</td>
+            <td>仓库</td>
+            <td>库区</td>
+        </tr>
+        @if (Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any() != null && Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any())
+        {
+            foreach (var items in Model.OrderDetailCollection.Where(c => c.OID == item.ID).Skip(j * 10).Take(10))
+            {
+                if (items.OID == item.ID)
+                {
+        <tr style="line-height:25px;font-weight: normal; font-size: 12px; text-align:center;">
+            <td>@items.SKU</td>
+            <td>@items.GoodsName</td>
+            <td>@items.GoodsType</td>
+            <td>@items.BoxNumber</td>
+            <td>@items.BatchNumber</td>
+            <td>@items.Unit</td>
+            <td>@items.Specifications</td>
+            <td>@items.Warehouse</td>
+            <td>@items.Area</td>
+        </tr>
+                }
+            }
+        }
+    </table>
+    <table style =" width:100%;font-weight:bolder; font-size:12px; vertical-align:bottom;text-align:center; margin-top:3px; border-bottom:2px solid #000;">
+    <tr>
+        <td style ="">
+            <span style ="">&nbsp</span>
+        </td>
+        <td style =" text-align:left;" colspan="2">
+            <span style ="">销售折扣</span>
+        </td>
+        <td style ="" colspan="6">
+            <span style ="">0</span>
+        </td>
+    </tr>
+    <tr style ="text-align:left; ">
+        <td>
+            <span style ="">总共：10件</span>
+        </td>
+        <td>
+            <span style ="">总计数量：67</span>
+        </td>
+        <td colspan="7">
+            <span style ="">总计金额：2061.29</span>
+        </td>
+    </tr>
+    <tr style ="text-align:left; ">
+        <td colspan="2">
+            <span style ="">金额(大写)：贰仟零陆拾壹元贰角玖分</span>
+        </td>
+        <td colspan="7">
+            <span style ="">总计重量：78.72&nbsp KG</span>
+        </td>
+    </tr>
+    </table>
+    @*二维码*@
+    <div id="qrcode" style="width:100px; margin-left:320px;"></div>
+    <table style =" width:100%;font-weight:bolder; font-size:12px; vertical-align:bottom;text-align:left; margin-top:3px; border-bottom:0px solid #000;">
+    <tr>
+        <td style ="">
+            <span style ="">制单：夏铖能</span>
+        </td>
+        <td style ="">
+            <span style ="">财务：黄慧飞</span>
+        </td>
+        <td style ="">
+            <span style ="">复核：孟文娟</span>
+        </td>
+        <td style ="">
+            <span style ="">送货人：&nbsp</span>
+        </td>
+        <td style ="">
+            <span style ="">客户签收：&nbsp</span>
+        </td>
+    </tr>
+    <tr>
+        <td style ="font-weight:bolder; font-size:12px; vertical-align:bottom;text-align:left; " colspan="5">
+            为保证您的货款安全, 如实际付款金额高于本单总计金额, 请填写本次的实际付款金额&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 元, 否则视为按总计金额付款!
+            <p>此单据不能修改,如有疑问请致电到我司021-57276666-211.谢谢您的关注!</p>
+            <p>此单一式四联:(白色)回单留存联 (红色)收货方留存联 (蓝色)发货方留存联 (黄色)财务部留存联</p>
+            <p>结算方式: 货到付款</p>
+            <p>您的欠款总额 10084.5  元; 本单应收金额 10084.5</p>
+        </td>
+    </tr>
+    </table>
+    
+    
+    
+    </div>
+    <hr size="0" noshadow="" color="black" class="Noprint">
+</div>
+        }
+    }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

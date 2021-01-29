@@ -1,0 +1,70 @@
+﻿
+<!DOCTYPE html>
+
+<html>
+<head>
+    
+<script src="//cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+    <script type="text/javascript" >
+        $(document).ready(function () {
+            $('#cancel').click(function () {
+                document.getElementById("txtuser").value == "";
+                document.getElementById("txtpwd").value == "";
+            });
+        });
+        function tabpwd() {
+            if (event.keyCode == 13) {
+                if (document.getElementById("txtuser").value == "") {
+                    alert("用户名不能为空！");
+                    return;
+                }
+                document.getElementById("txtpwd").select();
+            }
+        }
+            function tabsub() {
+                if (event.keyCode == 13) {
+                    if (document.getElementById("txtuser").value == "") {
+                        alert("用户名不能为空！");
+                        return;
+                    }
+                    if (document.getElementById("txtpwd").value == "") {
+                        alert("密码不能为空！");
+                        return;
+                    }
+                    var user = document.getElementById("txtuser").value;
+                    var pwd = document.getElementById("txtpwd").value;
+                    //window.location.href = "/login/Main/";
+                    $.ajax({
+                        type: 'post',
+                        url: '/Login/CheckUser',
+                        data: { "UserName": user, "Password": pwd },
+                        cache: false,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data == "1") {
+                                window.location.href = "/login/main/";
+                            }
+                        },
+                        error: function () {
+                            //document.getElementById("projectId").value = "";
+                            showMsg("请求出错！", 2000);
+                        }
+                    });
+                }
+            }
+            function DirMain() {
+                tabsub();
+            }
+        
+    </script>
+</head>
+<body   >
+<table style="text-align:center;height:200px;width:100%" >
+    <tr><td colspan="2">用户登录</td></tr>
+    <tr><td colspan="2">用户:<input id="txtuser" type="text" style="width:80%" onkeydown="tabpwd()" /></td></tr>
+    <tr><td colspan="2">密码:<input id="txtpwd" type="text" style="width:80%" onkeydown="tabsub()" /></td></tr>
+     <tr><td><input id="sumbit" type="button" value="登录" style="width:80%" onclick="return DirMain();" /></td><td><input id="cancel" type="button" value="重置" style="width:80%" /></td></tr>
+</table>
+</body>
+</html>
+

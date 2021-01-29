@@ -1,0 +1,348 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.SettlementManagement.HiltiModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script type="text/javascript">
+    $(function () {
+    /*JQuery 限制文本框只能输入数字和小数点*/
+        $(".form-control").keyup(function () {
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+    }).bind("paste", function () {  //CTRL+V事件处理
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+    }).css("ime-mode", "disabled"); //CSS设置输入法不可用
+        });
+   //包干费用显示
+    function AverageCost(sum) {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var d = new Date(year, month, 0);
+        var Total = Number($(sum).val());
+        var date = Number(d.getDate());
+        var Average = Total / date;
+        $(sum).parent().siblings('td.avg').children('input').val(Average.toFixed(2));
+
+    }
+    //操作费用显示
+    function OperationCost(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        $(obj).parent().siblings('td.OperationCost').children('input').val(sum.toFixed(2));
+        $('#t1Price').html(gett1Price());
+    }
+    $(function () {
+        $('#t1Price').html(gett1Price());
+    });
+
+    function gett1Price() {
+        var sum = 0;
+        $('.t1').each(function () {
+            sum = sum + Number($(this).children('td.OperationCost').children('input').val());
+        });
+
+        return sum;
+    }
+
+    //增值费用显示
+    function IncrementCost(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+
+        var sum = number * price;
+        $(obj).parent().siblings('td.IncrementCost').children('input').val(sum.toFixed(2));
+        $('#t2Price').html(gett2Price());
+    }
+    $(function () {
+        $('#t2Price').html(gett2Price());
+    });
+
+    function gett2Price() {
+        var sum = 0;
+        $('.t2').each(function () {
+            sum = sum + Number($(this).children('td.IncrementCost').children('input').val());
+        });
+
+        return sum;
+    };
+    function Returns() {
+        var url = $(window.parent.document).find(".active a").attr('href');
+        url = url.toString().split(',')[2];
+        url = url.substring(1, url.length - 2);
+        location.href = url;
+    }
+
+</script>
+@using (Html.BeginForm())
+{
+
+
+    <div>
+        <fieldset>
+            <legend>仓库堆存包干费</legend>
+            <table>
+                <tr>
+                    <th class="TableColumnTitle">
+                        <label>第一次仓库面积</label>
+                    </th>
+
+                    <th class="TableColumnTitle">
+                        <label>第二次仓库面积</label>
+                    </th>
+
+                    <th class="TableColumnTitle">
+                        <label>第三次仓库面积</label>
+                    </th>
+
+                    <th class="TableColumnTitle">
+                        <label>单月平均仓库面积</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>费率</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>包干总费用</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>平均费用</label>
+                    </th>
+                </tr>
+                <tr>
+
+                    <td style="width: 14%;"></td>
+
+                    <td style="width: 14%;"></td>
+                    <td style="width: 14%;"></td>
+
+                    <td style="width: 14%;"></td>
+                    <td style="width: 14%;"></td>
+
+                    <td style="width: 14%;">
+                        @*<input type="text" onblur="AverageCost(this)" id="InpTotal" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inpTotal, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", id = "InpTotal", value = "0", onblur = "AverageCost(this)" })
+                    </td>
+                    <td class="avg" style="width: 14%;">
+                        @*<input type="text" readonly="true" id="InpAvg" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inpAvg, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InpAvg", value = "0", @readonly = "true" })
+                    </td>
+
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>仓库操作费用</legend>
+            <table>
+                <tr>
+                    <th class="TableColumnTitle">
+                        <label>服务内容</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>单位</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>数量</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>单价</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>费用</label>
+                    </th>
+                </tr>
+                <tr class="t1">
+                    <td style="width: 16%;">按订单行收货</td>
+                    <td style="width: 16%;">每张订单</td>
+                    <td style="width: 16%;" id="number1"> @Html.TextBoxFor(m => m.Count1, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", @readonly = "true" })</td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="6" /></td>
+                    <td class="OperationCost" style="width: 16%;">
+                        @Html.TextBoxFor(m => m.SumCount1, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "OpCost1", @readonly = "true" })
+                        @*<input type="text" id="OpCost1" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                    </td>
+                </tr>
+                <tr class="t1">
+                    <td style="width: 16%;">按订单行出货</td>
+                    <td style="width: 16%;">每张订单</td>
+                    <td style="width: 16%;" id="number2"> @Html.TextBoxFor(m => m.Count2, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", @readonly = "true" })</td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="7" /></td>
+                    <td class="OperationCost" style="width: 16%;">
+                        @Html.TextBoxFor(m => m.SumCount2, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "OpCost2", @readonly = "true" })
+                        @*<input type="text" id="OpCost2" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                    </td>
+                </tr>
+                <tr class="t1">
+                    <td style="width: 16%;">加班费</td>
+                    <td style="width: 16%;">每人每小时</td>
+                    <td style="width: 16%;" id="number3">
+                        @*<input type="text" onblur="OperationCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.number3, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "OperationCost(this)" })
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="17.5" /></td>
+                    <td class="OperationCost" style="width: 16%;">
+                        @*<input type="text" id="OpCost3" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;"/>*@
+                        @Html.TextBoxFor(m => m.opCost3, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "OpCost3", @readonly = "true" })
+                    </td>
+                </tr>
+                <tr class="t1">
+                    <td style="width: 16%;">加班费(周末)</td>
+                    <td style="width: 16%;">每人每小时</td>
+                    <td style="width: 16%;" id="number4">
+                        @*<input type="text" onblur="OperationCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.number4, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "OperationCost(this)" })
+                    </td>
+
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="24" /></td>
+                    <td class="OperationCost" style="width: 16%;">
+                        @*<input type="text" id="OpCost4" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.opCost4, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "OpCost4", @readonly = "true" })
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        总计：
+                        <span style="color:red;" id="t1Price">0</span>
+                    </td>
+                </tr>
+
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>其他增值服务费</legend>
+            <table>
+
+                <tr>
+                    <th class="TableColumnTitle">
+                        <label>服务内容</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>数量</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>费率</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>费用</label>
+                    </th>
+                    <th class="TableColumnTitle">
+                        <label>备注</label>
+                    </th>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">中文标签费</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber1" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber1, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="0.2" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost1" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost1, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost1", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">防火标签费</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber2" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber2, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="1" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost2" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost2, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost2", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">贴保修卡费</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber3" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber3, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="2" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost3" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost3, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost3", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">购买纸箱包装费</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber4" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber4, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="9.6" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost4" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost4, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost4", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">槽钢包装材料费</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber5" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber5, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="0.6" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost5" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost5, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost5", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">产品合格证费</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber6" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber6, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="0.5" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost6" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost6, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost6", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr class="t2">
+                    <td style="width: 16%;">其他</td>
+                    <td style="width: 16%;">
+                        @*<input type="text" id="InNumber7" onblur="IncrementCost(this)" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;" value="0" />*@
+                        @Html.TextBoxFor(m => m.inNumber7, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;background-color:#ffe9ac;", onblur = "IncrementCost(this)" })
+
+                    </td>
+                    <td style="width: 16%;"><input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="1" /></td>
+                    <td class="IncrementCost" style="width: 16%;">
+                        @*<input type="text" id="InCost7" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" />*@
+                        @Html.TextBoxFor(m => m.inCost7, new { @class = "form-control", style = "width:100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;", id = "InCost7", @readonly = "true" })
+
+                    </td>
+                    <td style="width: 16%;"></td>
+                </tr>
+                <tr>
+                <tr>
+                    <td colspan="5">总计：<span style="color:red;" id="t2Price">0</span></td>
+                </tr>
+
+            </table>
+        </fieldset>
+
+
+
+
+        <div class="actionButtonDiv">
+            <input type="submit" value="提交" class="btn btn-success" />
+            <input type="button" value="返回" id="returnButton" class="btn btn-success" onclick="Returns();" />
+        </div>
+    </div>
+}

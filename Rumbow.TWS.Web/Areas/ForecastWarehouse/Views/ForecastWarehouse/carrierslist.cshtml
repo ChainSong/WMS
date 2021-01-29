@@ -1,0 +1,70 @@
+﻿@model Runbow.TWS.Web.Areas.ForecastWarehouse.Models.ForecastOrdersModel
+ @Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@*预报订单查询页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+      @Html.HiddenFor(m => m.ShipToSity)
+    @Html.HiddenFor(m => m.WaveReleaseTime)
+   <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        <tr>
+           
+            
+            <td class="TableColumnTitle">
+               @Html.LabelFor(m => m.ForecastOrders.State)
+            </td>
+            <td>
+              @Html.DropDownListFor(m => m.States,Model.State2)
+                     
+            </td>
+            <td colspan="2">
+                 <input type="submit" value="查询" id="query" />
+             </td>
+        </tr>
+        
+            
+        
+        
+    </table>
+   @* <div class="actionButtonDiv">
+                <input type="submit" value="查询" id="query" />
+
+    </div>*@
+</fieldset>
+    @Model.Message
+       if(Model !=null){
+    <fieldset>
+        <legend></legend>
+        @if (Model.IEnumerableForecastOrders != null)
+        {
+        <table id="CrmInfoTable">
+            
+            <tr>
+           
+            <th class="TableColumnTitle">城市</th>
+             <th class="TableColumnTitle">地址</th>
+            <th class="TableColumnTitle">箱数</th>
+            </tr>
+
+                @foreach (var info in Model.IEnumerableForecastOrders)
+                {
+                   <tr>
+                        
+                       <td>@info.ShipToSity</td>
+                       <td>@info.Shiptoname</td>
+                       <td>@info.Cartons</td>
+                       
+                      
+                   </tr>
+                }
+            
+        </table>
+      
+        }
+        
+    </fieldset>
+    }
+}

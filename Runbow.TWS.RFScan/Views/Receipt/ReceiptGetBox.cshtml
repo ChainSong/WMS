@@ -1,0 +1,352 @@
+﻿@{
+    ViewBag.Title = "领用";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <script src="~/Assets/JS/Layer/layer.js"></script>
+    @model Runbow.TWS.RFScan.Models.ReceiptViewModel
+    <title>领用</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#boxnum").focus();
+        });
+        var boxcount = 0;
+        //查看自己领用
+        function showzjmsg() {
+            $.ajax({
+                type: "POST",
+                url: "/Receipt/GetBoxNumStatusList",
+                data: {
+                },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Code == "0") {
+                        alert("异常错误");
+                        return;
+                    }
+                    else {
+                        var tablediffs = $("#checkzjtable");
+                        $('#checkzjtable tbody').html('');
+                        if (data.data.length == 0) {
+                            alert("无领用信息");
+                            return;
+                        }
+                        else {
+                            for (var i = 0; i < data.data.length; i++) {
+                                var tr = "<tr style='text-align: left'>" +
+                                    "<td> " + data.data[i].PackageNumber + "</td>" +
+                                    "<td> " + (data.data[i].PackageStatus=="0"?"未上架":"已上架") + "</td>" +
+                                    "<td> " + Format(eval('new ' + data.data[i].CreateTime.substr(1, data.data[i].CreateTime.length - 2)), "yyyy-MM-dd hh:mm:ss") + "</td>" +
+                                    "</tr > ";
+                                tablediffs.append(tr);
+                            }
+                            layer.open({
+                                type: 1,
+                                skin: 'layui-layer-rim', //加上边框
+                                area: ['320px', '400px'], //宽高
+                                content: $("#showzjdata"),
+                                end: function () {
+                                    $("#boxnum").select();
+                                }
+                            });
+                        }
+
+
+
+                    }
+                },
+                error: function (msg) {
+                    showMsg("检查差异失败！", 4000);
+                }
+            });
+        }
+
+        //全屏
+        function fullScreen() {
+            var el = document.documentElement;
+            var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+            if (typeof rfs != "undefined" && rfs) {
+                rfs.call(el);
+            };
+            return;
+        }
+
+
+        //验证数据是否是箱号
+        function checkBoxNumber() {
+            var result = false;
+            $.ajax({
+                type: "Post",
+                url: '/Receipt/CheckBoxNumber_RFGetBox',
+                data: { "BoxNumber": $("#boxnum").val() },
+                async: false,
+                success: function (data) {
+                    if (data.Code == "0") {
+                        $("#Audio")[0].play();
+                        alert("异常错误");
+                        $("#boxnum").select();
+                        
+                    }
+                    if (data.Code == "1") {
+                        $("#ScanMsgShow")[0].innerText = "领用成功";
+                        boxcount++;
+                        $("#BoxCountID").val(boxcount);
+                        $("#Qty")[0].innerText = parseInt($("#Qty")[0].innerText) + 1;
+                        $("#AllQty")[0].innerText = parseInt($("#AllQty")[0].innerText) + 1;
+                        $("#boxnum").select();
+                        $("#SuccessAudio")[0].play();
+                        return;
+                    }
+                    if (data.Code == "4") {
+                        $("#Audio")[0].play();
+                        alert("箱号不存在");
+                        $("#boxnum").select();
+                       
+                            return;              
+                    }
+                    if (data.Code == "5") {
+                        $("#Audio")[0].play();
+                        alert("当前箱已上架，请勿领用");
+                        $("#boxnum").select();
+                        
+                        return;
+                    }
+                    if (data.Code == "2") {
+                        $("#Audio")[0].play();
+                        alert("已领用，请勿重复领用");
+                        $("#boxnum").select();
+                        
+                        return;
+                    }
+                    if (data.Code == "3") {
+                        $("#Audio")[0].play();
+                        alert("当前箱已被其他人领用");
+                        $("#boxnum").select();
+                        
+                        return;
+                    }
+
+
+                },
+                error: function (msg) {
+                    result = false;
+                }
+
+            });
+
+            return result;
+        }
+
+        //扫描框回车
+        function Scan(event) {
+            if (event.keyCode == 13) {
+                if ($("#boxnum").val() == "") {
+                    $("#Audio")[0].play();
+                    alert("箱号不能为空！");
+                    $("#boxnum").focus();
+                    return;
+                }
+                else {
+                    
+                    if ($("#boxnum").val().substring(0, 3) == "TRB")
+                    {
+                        $("#boxnum").val($("#boxnum").val().substring(3, $("#boxnum").val().toString().length))
+                    }
+                    checkBoxNumber();
+                }
+              
+                }
+            }
+        function tdback() {
+            history.back(-1);
+        }
+
+        function Format(obj,fmt) { //author: meizz 
+            var o = {
+                "M+": obj.getMonth() + 1, //月份 
+                "d+": obj.getDate(), //日 
+                "h+": obj.getHours(), //小时 
+                "m+": obj.getMinutes(), //分 
+                "s+": obj.getSeconds(), //秒 
+                "q+": Math.floor((obj.getMonth() + 3) / 3), //季度 
+                "S": obj.getMilliseconds() //毫秒 
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (obj.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+            margin: 0 auto;
+        }
+
+            table tbody tr td {
+                height: 10px;
+                line-height: 40px;
+            }
+
+            table tr input {
+                border: 1px solid #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+                padding: 5px 0;
+            }
+
+            table tr select {
+                padding: 5px;
+                border-color: #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+            }
+            /*#table tr:nth-child(n+2){
+             width: 90%!important;
+        }*/
+            table img {
+                width: 15px;
+                height: 21px;
+                vertical-align: middle;
+            }
+
+        input[type=checkbox], input[type=button] {
+            cursor: pointer !important
+        }
+
+        input[type=button] {
+            background: #428BCA;
+            border: none;
+            outline: none;
+            padding: 5px 0;
+            color: white;
+            width: 100%;
+            border-radius: 15px;
+            margin: 0 auto;
+            /*margin-left: 7%;*/
+        }
+
+        #checknumber {
+            width: 48%;
+            margin-left: 10%;
+        }
+
+        .mklo {
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+            text-align: left;
+            width: 90%;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+            .mklo td {
+                border-left: 1px solid #428BCA;
+                border-top: 1px solid #428BCA;
+            }
+
+        #showdata {
+            font-size: 16px;
+        }
+
+        #showdatas {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+        }
+
+            #showdatas input {
+                margin-top: 20px;
+            }
+
+        #showtable {
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+            width: 100%;
+            text-align: center;
+        }
+
+            #showtable tbody tr td {
+                line-height: 25px !important;
+                height: 25px !important;
+            }
+
+            #showtable td {
+                border-left: 1px solid #428BCA;
+                border-top: 1px solid #428BCA
+            }
+    </style>
+</head>
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="height: 100%">
+    <table style="text-align:left;width:100%;">
+        <tr style="height:10px">
+            <td style="width:100%">扫描箱号</td>
+            <td style="text-align:right;font-weight:bold;font-size:24px" onclick="tdback()">
+                ←
+                <audio src="~/audio/1.mp3" id="Audio">
+                    您的浏览器不支持 audio 标签。
+                </audio>
+                <audio src="~/audio/success.mp3" id="SuccessAudio">
+                    您的浏览器不支持 audio 标签。
+                </audio>
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="2" style="width:100%"><input style="width:100%" id="boxnum" value="" type="text" onkeydown="Scan(event)" /></td>
+        </tr>
+
+        <tr>
+            <td style="width:30%">领用数量</td>
+            <td style="width:70%"><div style="width:180px"><font style="color:#ff0000">未完成</font>/<font style="width:70px;color:#0026ff">领用总数</font></div></td>
+        </tr>
+        <tr>
+            <td style="width:30%"><input id="BoxCountID" value="0" style="width:60px" disabled /></td>
+            <td style="width:70%"><div style="text-align:left;font-size:larger;color:#0026ff" id="ScanMsgQtyShow"><font style="color:#ff0000" id="Qty">@Model.ReceiptDetailCollection.Where(c=>c.Remark=="Qty").Select(c=>c.QtyExpected).FirstOrDefault()</font>/<font id="AllQty" style="width:70px;color:#0026ff">@Model.ReceiptDetailCollection.Where(c => c.Remark == "AllQty").Select(c => c.QtyExpected).FirstOrDefault()</font></div> </td>
+        </tr>
+       
+        <tr>           
+            <td style="width:100%"><div style="text-align:left;font-size:larger;color:#0026ff" id="ScanMsgShow"></div> </td>
+        </tr>
+        <tr>
+            <td style="width:100%;text-align:left">
+                <input id="show" style="width:80px" onclick="showzjmsg()" type="button" value="查看领用">
+            </td>
+        </tr>
+    </table>
+    <div id="showdata" style="position:absolute;top:0px;left:0px;width:400px;height:300px;display:none;background-color:white;border:solid 1px #add9c0;overflow:scroll;">
+        <table id="showtable" style="width:410px"></table>
+        <div style="text-align:center"><input style="width:50%" type="button" value="关闭" onclick="CloseDiv()" /></div>
+    </div>
+
+
+
+    <div id="showzjdata" style="display:none;width:400px">
+        <table  id="checkzjtable" style="width:450px">
+            <thead>
+                <tr style="text-align:left">
+                    <th style="text-align:left">箱号</th>
+                    <th style="text-align:left">状态</th>
+                    <th style="text-align:left">领用时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+</html>

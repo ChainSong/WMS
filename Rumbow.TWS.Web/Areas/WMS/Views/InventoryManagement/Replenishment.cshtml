@@ -1,0 +1,144 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.InventoryManagement.ReplenishmentViewModel
+@using (Html.BeginForm())
+{ 
+     @Html.HiddenFor(m => m.ReplenishmentCondition.StartCreateTime)
+    @Html.HiddenFor(m => m.ReplenishmentCondition.EndCreateTime)
+    var ProjectName = (string)ViewBag.ProjectName;
+    @Html.Hidden("ProjectName",(string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+    //var LocationList = (IEnumerable<SelectListItem>)ViewBag.LocationList;
+                }
+                <td class="TableColumnTitle"><label>客户名称</label></td>
+                <td style="width: 14%;">
+                    @Html.DropDownListFor(m => m.ReplenishmentCondition.CustomerID, CustomerList,"==请选择==",  new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.ReplenishmentCondition.WarehouseID, WarehouseList,"==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>状态</label></td>
+                <td>@Html.DropDownListFor(m => m.ReplenishmentCondition.Status, Model.ReplenishmentStatus,"==请选择==", new { @class = "form-control" })</td>
+                 <td class="TableColumnTitle"><label>创建日期</label></td>
+                <td style="width: 22%;">@Html.CalendarRange("CreateTime", "calendarRange form-control calendarRangeReWrite", @Model.ReplenishmentCondition.StartCreateTime, @Model.ReplenishmentCondition.EndCreateTime)</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增" id="addButton" onclick="createasn('@ProjectName')" />
+            
+            <input type="button" class="btn btn-success" value="批量打印" id="btnPrint" onclick="PrintBatch('@ProjectName')" />
+            @*<input type="button" value="test" onclick="FnTest()" />
+            <input type="button" value="test2" onclick="FnTest2()" />
+            <input type="button" value="test3" onclick="FnTest3()" />*@
+            @*<input type="submit" class="btn btn-success" value="导出" id="portButton" name="Action" />*@
+           @* <input type="button" class="btn btn-success" value="完成" id="CompletButton" onclick="PLComplet()" name="Action" />
+            <input type="button" class="btn btn-success" value="取消" id="StatusBackButton" onclick="Cancels()" name="Action" />*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>补货单列表
+             @if (Model.ReplenishmentCollection != null && Model.ReplenishmentCollection.Any())
+             {
+                 @Html.Raw("(" + Model.ReplenishmentCollection.Count() + ")");
+             }
+        </legend>
+        <div style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="width: 50px;">操作</th>
+                        <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                        <th>补货单号单号</th>
+                        <th>客户</th>
+                        <th>创建时间</th>
+                        <th>调整时间</th>
+                        <th>单据类型</th>
+                        <th>单据状态</th>
+                        @if(ProjectName!="Akzo")
+                        {
+                        <th>冻结单状态</th>
+                        }
+                        <th>仓库</th>
+                        <th>补货原因</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ReplenishmentCollection != null && Model.ReplenishmentCollection.Any())
+                    {
+                        foreach (var replenishment in Model.ReplenishmentCollection)
+                        {
+                            var tdd = "operateTD" + @replenishment.ID;
+                        <tr id="@replenishment.ReplenishmentNumber">
+                            <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    @if (replenishment.Status == 1)
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Complet" onclick="PrintReplenishment('@replenishment.ID',this)" >打印</label>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Complet" onclick="ComplateReplenishment('@replenishment.ID',this)" >完成</label>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Cancel"  onclick="CancelReplenishment('@replenishment.ID',this)">取消</label> 
+                                    }
+                                </div>
+                                @if (replenishment.Status == 9 || replenishment.Status == -1)
+                                {
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs " disabled="disabled">操作</label>
+                                }
+                                else
+                                {
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation" >操作</label>
+                                }
+                            </td>
+                            <td>
+                                @Html.CheckBox("check" + @replenishment.ReplenishmentNumber, new { data_ID = @replenishment.ID, data_name = @replenishment.Status, @class = "checkForSelect" })
+                            </td>
+                            <td>
+                                <a href="/WMS/InventoryManagement/AddorEditorViewReplenishment/?ID=@replenishment.ID&ViewType=0">@replenishment.ReplenishmentNumber</a>
+                            </td>
+                            <td>@replenishment.CustomerName</td>
+                            <td>@replenishment.CreateTime</td>
+                            <td>@replenishment.CreateTime</td>
+                            <td></td>
+                            <td>@if (replenishment.Status == 1)
+                                {
+                                @Html.Raw("新增");
+                                }
+                                else if (replenishment.Status == 9)
+                                {
+                                @Html.Raw("完成");
+                                }
+                                else
+                                {
+                                @Html.Raw("取消");
+                                }
+                            </td>
+                             @if(ProjectName!="Akzo")
+                             {
+                            <td>
+
+                            </td>
+                             }
+                            <td>@replenishment.WarehouseName</td>
+                            <td>@replenishment.Remark</td>
+
+                        </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    
+    
+    
+}

@@ -1,0 +1,35 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.CustomerOrShipperSegmentViewModel
+           <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>
+            @Html.ChooseString(Model.Target == 0, "客户段位设置", "承运商段位设置")
+        </legend>
+        <table id="box">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.Target == 0, "选择客户", "选择承运商")
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.SelectedCustomerOrShipperID, Model.CustomerOrShippersCollection)
+                </td>
+                @if (Model.Target == 1)
+                {
+                    <td  class="TableColumnTitle">关联客户</td>
+                    <td>@Html.DropDownListFor(model=>model.SelectedCustomerID,Model.Customers)</td>
+                }
+                <td class="TableColumnTitle">选择段位
+                </td>
+                <td>
+                @Html.DropDownListFor(model => model.SelectedCustomerOrShipperSegment, Model.Segments, "==无==")
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input id="submitProjectRole" type="button" class="btn btn-success" value="提交" />
+             <input id="btnCancel" type="button" onclick="window.location.href = '/System/Project/List'" class="btn btn-success" value="返回" />
+            @Html.HiddenFor(model => model.Target)
+            @Html.HiddenFor(model => model.ProjectID)
+        </div>
+    </fieldset>
+}

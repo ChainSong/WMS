@@ -1,0 +1,155 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.MaryKayTrackInfoModel
+<!DOCTYPE html>
+<link href="/Content/POD/MaryKay/bootstrap.min.css" rel="stylesheet" />
+<link href="/Content/POD/MaryKay/style.css" rel="stylesheet" />
+<link href="/Content/POD/MaryKay/lines.css" rel="stylesheet" />
+<link href="/Content/POD/MaryKay/font-awesome.css" rel="stylesheet" />
+<link href='http://fonts.useso.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
+<link href="/Content/POD/MaryKay/custom.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/Framework/ajaxfileupload.js"></script>
+<script src="/Scripts/System/Layer/layer.js"></script>
+
+
+<style type="text/css">
+    .table tr th
+    {
+        text-align: center;
+    }
+</style>
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.BeginTrackDateTime)
+    @Html.HiddenFor(m => m.EndTrackDateTime)
+    @Html.HiddenFor(m => m.IsExport)
+    <fieldset>
+        <legend>查询区</legend>
+        <table>
+
+            <tr>
+                <td style="width: 8%" class="TableColumnTitle">MK订单号</td>
+                <td style="width: 23%">@Html.TextAreaFor(m => m.MkOrderNo, new { @style = "border-radius:5px; width:227px;" })</td>
+                <td style="width: 8%" class="TableColumnTitle">快递单号</td>
+                <td style="width: 23%">
+                    @Html.TextAreaFor(m => m.ExpressOrderNo, new { @style = "border-radius:5px;width:227px;" })</td>
+            </tr>
+
+            <tr>
+                <td style="width: 8%" class="TableColumnTitle">创建时间</td>
+                <td style="width: 28%">@Html.CalendarRange("TrackDateTime", "calendarRange")<a id="TrackDateTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+
+
+                <td style="width: 8%" class="TableColumnTitle">跟踪信息</td>
+                <td style="width: 28%">
+                    @Html.DropDownListFor(m => m.TrackInfoTypeID, Model.TrackInfoType, new { @style = "width:227px;" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv" style="margin-top: 20px;">
+            <input type="submit" value="查询" id="QueryButton" class="btn btn-success" name="Query" />
+            <input type="button" value="批量删除" id="btnDelete" class="btn btn-success" onclick="DeleteTrack()" />
+            <input type="submit" value="导出Excel" class="btn btn-success" disabled="disabled" id="ExprotButton" />
+            <input type="button" value="导入Excel" class="btn btn-success" onclick="fileImportClick();" />
+            @*<span style="color:red;">注意：如果一次性导出的数据超过10万以上会导致内存溢出,请选择条件导出 </span>*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>数据信息</legend>
+        <div class="bs-example1" data-example-id="contextual-table" style="min-height: 550px;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@Html.CheckBox("chdAll")
+                        </th>
+                        <th>订单号
+                        </th>
+                        <th style="min-width: 8%;">运单号
+                        </th>
+                        <th style="width: 50px;">省份
+                        </th>
+                         <th style="min-width: 9%;">创建时间
+                        </th>
+                        <th>跟踪时间
+                        </th>
+                        <th style="min-width: 9%;">跟踪信息
+                        </th>
+                        <th>跟踪备注
+                        </th>
+                        <th style="min-width: 6%;">约定
+                        </th>
+                        <th style="min-width: 8%;">签收人
+                        </th>
+                        <th style="min-width: 9%;">操作
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="info">
+                    @{
+    int i = 0;
+    var obj = ""; //定义全局变量
+    var objtemp = "";
+    if (Model.TrackInfoTable != null)
+    {
+        foreach (System.Data.DataRow dr in Model.TrackInfoTable.Rows)
+        {
+            if (i % 2 == 0)
+            {
+                if (obj.Length == 0)
+                { obj = objtemp; }
+                if (obj == "active")
+                { obj = "success"; }
+                else if (obj == "success")
+                { obj = "info"; }
+                else if (obj == "info")
+                { obj = "warning"; }
+                else if (obj == "warning")
+                { obj = "danger"; }
+                else
+                { obj = "active"; }
+            }
+            else
+            {
+                objtemp = obj;
+                obj = "";
+            }
+            i++;
+                                 
+                        <tr class="@obj">
+                            <th scope="row">@Html.CheckBox("chAll_" + dr["CustomerOrderNo"].ToString(), false, new { @data_id = dr["colID"].ToString() })
+                            </th>
+                            <td><a title="查看物流详情" onclick="Detail('@dr["CustomerOrderNo"].ToString()');" style="text-decoration:none;cursor:pointer;">@dr["CustomerOrderNo"].ToString()</a>
+                            </td>
+                            <td>@dr["DeliveryNo"].ToString()
+                            </td>
+                            <td>@dr["colProvince"].ToString()
+                            </td>
+                             <td>@dr["colCreateTime"].ToString()
+                            </td>
+                            <td>@dr["colSignTime"].ToString()
+                            </td>
+                            <td>@dr["colTrackInfo"].ToString()
+                            </td>
+                            <td>@dr["colTrackComment"].ToString()
+                            </td>
+                            <td>@dr["colResponsibilityOwner"].ToString()
+                            </td>
+                            <td>@dr["colSignName"].ToString()
+                            </td>
+                            <td>
+                                <a href="#" style=" " onclick="DeleteSingle('@dr["colID"].ToString()',false);">删除</a>
+                                <a href="#" onclick=" window.location.href='/POD/MaryKay/MaryKayLogisticTrancUpdate?id=@dr["colID"].ToString()' ">编辑</a>
+                            </td>
+                        </tr> 
+        }
+    }
+   
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

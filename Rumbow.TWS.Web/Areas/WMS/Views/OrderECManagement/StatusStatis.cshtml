@@ -1,0 +1,278 @@
+﻿@Html.Partial("MsgMask")
+@Url.FrameworkJs("ajaxfileupload.js")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@{
+    ViewBag.Title = "StatusStatis";
+}
+<link rel="stylesheet" type="text/css" href="<%=path%>/resources/easytab/css/grey.css">
+<script src="<%=path%>/resources/easytab/js/easytab.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    @** @param _this 所点击的tab标签
+* @param content_prefix tab标签所对应div的id前缀。注：这里要求所有的前缀必须一样。
+* @param active 所要激活div的id最后的数字。注：这里要求数字必须从零开始，依次增1.*@
+
+</script>
+<style type="text/css">
+    ul.easytabs {
+        margin: 5px 0;
+        padding: 0 0 0 1px;
+    }
+
+        ul.easytabs li {
+            list-style: none;
+            display: inline;
+        }
+
+            ul.easytabs li a {
+                color: #464c54;
+                padding: 5px 5px;
+                font-size: 14px;
+                height: 30px;
+                width: 60px;
+                font-family: Microsoft YaHei;
+                font-weight: bold;
+            }
+
+                ul.easytabs li a.easytab_active {
+                    background-color: #e1bd12;
+                    color: #282e32;
+                    /*border: 1px solid;*/
+                    border-bottom: 2px solid #ffffff;
+                }
+
+    .easytab_content {
+        background-color: white;
+        padding: 10px;
+        height: 200px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    var PreStatus = (IEnumerable<SelectListItem>)ViewBag.Prest;//预出库单状态
+    <fieldset>
+
+        @*<legend>订单状态统计</legend>*@
+        <table id="conditionTable">
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+
+                <td class="TableColumnTitle" style="width: 20%">
+                    <label>客户</label>
+                </td>
+                <td style="width: 29%">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle" style="width: 20%">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 29%">@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>订单日期</label>
+                </td>
+                <td>@Html.CalendarRange("CreateTime", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartCreateTime, @Model.SearchCondition.EndCreateTime)</td>
+
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+        </div>
+
+    </fieldset>
+
+    <fieldset>
+        <div class="easytab_area" style="margin-bottom: 0px">
+            <ul class="easytabs">
+                <li><a name="easytab" class="easytab_active" onclick="tabSwitch2(this,'easytab_content_',0);">列表</a></li>
+                <li><a name="easytab" onclick="tabSwitch2(this,'easytab_content_',1);">明细</a></li>
+            </ul>
+        </div>
+        <legend style="margin: 0,0"></legend>
+        <div id="easytab_content_0" class="easytab_content">
+
+            <table id="resultTable" style="table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">操作</th>
+                        <th style="width: 20%;">状态</th>
+                        <th style="width: 20%;">订单数量</th>
+                        <th style="width: 20%;">客户</th>
+                        @*<th style="width: 20%;">仓库名称</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.OrderCollection != null && Model.OrderCollection.Any())
+                    {
+                        var customerName = Model.OrderCollection.Select(m => m.CustomerName).First();
+                        var warehoue = Model.OrderCollection.Select(m => m.Warehouse).First();
+                        foreach (var item in PreStatus.OrderBy(p => p.Value))
+                        {
+                            //取消的订单
+                            if (item.Value == "-1")
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="Adiv" style="position: absolute; display: none; width: 100px; left: 100px; height: 31px;">
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs SearchDetail" onclick="SearchDetail(@item.Value,this,0)">查看明细</label>
+                                        </div>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    </td>
+
+                                    @if ((Model.OrderCollection.Where(m => m.str2 == item.Value).Count()) > 0)
+                                    {
+                                        <td>@item.Text</td>
+                                        <td>@Model.OrderCollection.Where(m => m.str2 == item.Value).Count()</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.Text</td>
+                                        <td>0</td>
+                                    }
+                                    <td>@customerName</td>
+                                    @*<td>@warehoue</td>*@
+                                </tr>
+                            }
+                            //状态为新增的订单
+                            else if (item.Value == "1")
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="Adiv" style="position: absolute; display: none; width: 100px; left: 100px; height: 31px;">
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs SearchDetail" onclick="SearchDetail(@item.Value,this,0)">查看明细</label>
+                                        </div>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    </td>
+
+                                    @if ((Model.OrderCollection.Where(m => m.str2 == item.Value).Count()) > 0)
+                                    {
+                                        <td>@item.Text</td>
+                                        <td>@Model.OrderCollection.Where(m => m.str2 == item.Value).Count()</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.Text</td>
+                                        <td>0</td>
+                                    }
+                                    <td>@customerName</td>
+                                    @*<td>@warehoue</td>*@
+                                </tr>
+
+
+                            }
+                            //分配不足的
+                            else if (item.Value == "3")
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="Adiv" style="position: absolute; display: none; width: 100px; left: 100px; height: 31px;">
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs SearchDetail" onclick="SearchDetail(@item.Value,this,0)">查看明细</label>
+                                        </div>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    </td>
+
+                                    @if ((Model.OrderCollection.Where(m => m.str2 == item.Value).Count()) > 0)
+                                    {
+                                        <td>@item.Text</td>
+                                        <td>@Model.OrderCollection.Where(m => m.str2 == item.Value).Count()</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.Text</td>
+                                        <td>0</td>
+                                    }
+
+                                    <td>@customerName</td>
+                                    @* <td>@warehoue</td>*@
+
+                                </tr>
+
+                            }
+                            //已分配的订单(状态大于等于5)
+                            else
+                            {
+                                foreach (var item2 in Model.OrderStatus.OrderBy(o => o.Value))
+                                {
+
+                                    if (item2.Text == "取消")
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+
+                                        <tr>
+                                            <td>
+                                                <div class="Adiv" style="position: absolute; display: none; width: 100px; left: 100px; height: 31px;">
+                                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs SearchDetail" onclick="SearchDetail(@item2.Value,this,1)">查看明细</label>
+                                                </div>
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                            </td>
+
+
+                                            @if ((Model.OrderCollection.Where(m => m.str3 == item2.Value).Count()) > 0)
+                                            {
+                                                <td>@item2.Text</td>
+                                                <td>@Model.OrderCollection.Where(m => m.str3 == item2.Value).Count()</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item2.Text</td>
+                                                <td>0</td>
+                                            }
+                                            <td>@customerName</td>
+                                            @*<td>@warehoue</td>*@
+
+                                        </tr>
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+
+
+
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div id="easytab_content_1" class="easytab_content" style="margin: 0 auto">
+            @*<div id="easytab_content_1" class="easytab_content" style="width:90%; height:350px;overflow:scroll;margin:0 auto">*@
+            <table style="margin: 0 auto">
+                <thead>
+                    <tr>
+                        <th style="width: 25%; font-weight: bold">订单号</th>
+                        <th style="width: 25%; font-weight: bold">外部单号</th>
+                        <th style="width: 10%; font-weight: bold">订单状态</th>
+                        <th style="width: 10%; font-weight: bold">明细数量</th>
+                        <th style="width: 20%; font-weight: bold">订单类型</th>
+                        <th style="width: 10%; font-weight: bold">仓库</th>
+                    </tr>
+                </thead>
+                <tbody id="tbList"></tbody>
+            </table>
+
+        </div>
+
+    </fieldset>
+}
+<script type="text/javascript">
+    document.getElementsByName("easytab")[0].click();//页面加载完成后，点击第一个标签
+</script>
+@*订单状态查询逻辑：根据CustomerID和Warehouse查找预出库单和预入库单状态，
+    循环预出库单状态等于1新增 等于3库存不足  大于等于5开始循环出库单状态 找到对应订单数量 *@
+

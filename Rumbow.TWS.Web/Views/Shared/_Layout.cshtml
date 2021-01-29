@@ -1,0 +1,56 @@
+﻿@{
+    if (ViewBag.JQueryBaseJs == null)
+    {
+        ViewBag.JQueryBaseJs = true;
+    }
+    if (ViewBag.CommonJs == null)
+    {
+        ViewBag.CommonJs = true;
+    }
+    if (ViewBag.PageCssFile == null)
+    {
+        ViewBag.PageCssFile = true;
+    }
+    if (ViewBag.PageJsFile == null)
+    {
+        ViewBag.PageJsFile = true;
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <title>@ViewBag.Title</title>
+    @Url.CommonCssMain()
+    @Url.JQueryBaseJs((bool)ViewBag.JQueryBaseJs)
+    @Url.FrameworkJs("jquery-ui-1.8.20.min.js")
+    @Url.CommonJsMain((bool)ViewBag.CommonJs)
+    @RenderSection("headStart", false)
+    @Url.LoadPageCssJs((bool)ViewBag.PageCssFile, (bool)ViewBag.PageJsFile)
+    @Url.FrameworkCss("jquery.ui.all.css")
+
+    @Url.FrameworkJs("jquery.ui.datepicker-zh-CN.js")
+    @Url.DateTimeResource()
+    @RenderSection("headEnd", false)
+    <!--引入vue,饿了么-->
+    <script src="~/Assets/Vue/lrgvue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>   
+
+</head>
+
+<body>
+    <div class="page">
+        <div class="popMsg">
+            提示！
+        </div>
+        <div id="main">
+            @RenderBody()
+        </div>
+        @*<div id="footer">
+        </div>*@
+    </div>
+    @Html.Partial("Popup")
+</body>
+</html>

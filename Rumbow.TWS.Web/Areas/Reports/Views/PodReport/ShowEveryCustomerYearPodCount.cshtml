@@ -1,0 +1,36 @@
+﻿@Url.LoadHighchartsJS()
+<fieldset>
+    <legend>查询条件</legend>
+    <table id="conditionTable">
+        <tr>
+            <td class="TableColumnTitle">年份:
+            </td>
+            <td>
+                <select id="Year">
+                    <option value="2013">2013</option>
+                    <option value="2014" selected="selected" >2014</option>
+                    <option value="2015">2015</option>
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                    <option value="2018">2018</option>
+                </select>
+            </td>
+            <td>
+                <input type="button" id="Search" value="查询" />
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>年度统计</legend>
+    <div id="YearContainer" style="min-width: 700px; height: 400px"></div>
+</fieldset>
+<fieldset>
+    <legend>月度统计</legend>
+    <div id="MonthContainer" style="min-width: 700px; height: 400px"></div>
+</fieldset>
+@Html.Hidden("YearData")
+@Html.Hidden("MonthData")
+@Html.Hidden("DayData")
+@Html.Hidden("SelectedCustomerID")
+@Html.Hidden("SelectedCustomerName")

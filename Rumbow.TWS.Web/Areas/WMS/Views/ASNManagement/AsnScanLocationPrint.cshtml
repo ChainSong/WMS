@@ -1,0 +1,160 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+<script src="~/Scripts/Print/jquery.jqprint-0.3.js"></script>
+<script src="~/Scripts/Common/jquery-barcode.js"></script>
+@*<script src="~/Scripts/WMS/ASNManagement/LodopFuncs.js"></script>*@
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<style>
+    .bcTarget {
+        font-size: 25px;
+    }
+
+    .popover-content {
+        height: 170px
+    }
+</style>
+
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("PowerCompany", (string)ViewBag.PowerCompany)
+    <div id="asnDiv" class="panel panel-primary" style="width:300px;float:left">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                ASN打印库位标签
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="nest" id="basicClose">
+                        <div class="body-nest" id="basic">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12">
+                                    <label class="control-label" for="Name">ASN单号</label>
+                                    <div class="controls">
+                                        @Html.TextBox("AsnNumber", "", new { style = "width:100%", @class = "form-control AsnNumbercheck", placeholder = "双击选择ASN单号" })
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="nest" id="basicClose">
+                        <div class="body-nest" id="basic">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12">
+                                    <label class="control-label" for="Name">箱号</label>
+                                    <div class="controls">
+                                        @Html.TextBox("ScanBoxNumber", "", new { style = "width:100%", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="nest" id="basicClose">
+                        <div class="body-nest" id="basic">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12">
+                                    <label class="control-label" for="Name">SKU</label>
+                                    <div class="controls">
+                                        @Html.TextBox("ScanSKU", "", new { style = "width:100%", @class = "form-control" })
+                                        <audio src="/Areas/WMS/1.mp3" id="Audio">
+                                            您的浏览器不支持 audio 标签。
+                                        </audio>
+                                        <audio src="/Areas/WMS/success.mp3" id="SuccessAudio">
+                                            您的浏览器不支持 audio 标签。
+                                        </audio>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="nest" id="basicClose">
+                        <div class="body-nest" id="basic">
+                            <div class="row">
+                                <div class="col-lg-12 col-sm-12">
+                                    <div class="controls" style="margin-top:20px">
+                                        <input type="button" class="form-control btn-primary" style="width:100px;float:right" id="printlabelagain" value="查看本箱" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="asnDiv" class="panel panel-warning" style="width:230px;height:230px; float:left;margin-left:20px">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                标签信息
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div id="page1" style="width:280px;height:100px;margin-left:-10px">
+                <table style="margin:0 auto;border:none;border-spacing:5px">
+                    <tr>
+                        <td style="text-align:right;font-size:10px;border:none;width:40px">单号:</td>
+                        <td style="text-align:left;font-size:10px;border:none;width:200px" id="externnumber"></td>
+                    </tr>
+                    @*<tr>
+                            <td style="text-align:right;font-size:10px;border:none;width:90px">通道-货架：</td>
+                            <td style="text-align:left;font-size:10px;border:none" id="goodsshelves"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right;font-size:10px;border:none;width:90px">品级|楼层：</td>
+                            <td style="text-align:left;font-size:10px;border:none" id="floor"></td>
+                        </tr>*@
+
+                    <tr>
+                        <td style="text-align:right;font-size:10px;border:none;width:40px">库位:</td>
+                        <td style="text-align:left;font-size:10px;border:none;width:200px" id="location"></td>
+                    </tr>
+                    <tr>
+                        <td style="border:none;text-align:left" colspan="2"><div style="font-size:10px;text-align:left;" id="boxbarcode" class="bcTarget"></div></td>
+                    </tr>
+                </table>
+
+
+            </div>
+        </div>
+
+    </div>
+    <div id="printLocationLabel" style="display:none">
+        <table id="printLocationLabeltable" style="width:500px">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>数量</th>
+                    <th>库位</th>
+                    <th>打印次数</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody style="text-align:left"></tbody>
+        </table>
+    </div>
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

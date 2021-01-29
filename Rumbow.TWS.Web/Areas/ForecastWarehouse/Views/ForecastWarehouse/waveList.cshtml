@@ -1,0 +1,61 @@
+﻿@model Runbow.TWS.Web.Areas.ForecastWarehouse.Models.ForecastOrdersModel
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@*预报订单查询页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+    
+    if(Model !=null){
+           
+      
+
+
+    
+    if (Model.IEnumerableForecastOrders != null)
+        {
+       
+             <table id="CrmInfoTable">
+           <thead>
+            <tr>
+                <TH class="TableColumnTitle">ID</TH>
+                <TH class="TableColumnTitle">WaveID</TH>
+                <TH class="TableColumnTitle">WaveType</TH>
+                <TH class="TableColumnTitle">WaveReleaseTime</TH>
+                <TH class="TableColumnTitle">Shipment</TH>
+                <TH class="TableColumnTitle">ThreePL</TH>
+                <TH class="TableColumnTitle">ShipToCode</TH>
+                <TH class="TableColumnTitle">ShipToName</TH>
+                <TH class="TableColumnTitle">Pieces</TH>
+                <TH class="TableColumnTitle">ShipToSity</TH>
+                <TH class="TableColumnTitle">Cartons</TH>
+                <TH class="TableColumnTitle">Sorterlane</TH>
+            </tr>
+
+      </thead>
+        @foreach (var info in Model.IEnumerableForecastOrders)
+                {
+                        <tr>
+                            <td>@info.MailID</td>
+                              <td>@info.waveId</td>
+                              <td>@info.WaveType</td>
+                              <td>@info.WaveReleaseTime</td>
+                              <td>@info.Shipment</td>
+                              <td>@info.ThreePL</td>
+                              <td>@info.Shiptocode</td>
+                              <td>@info.Shiptoname</td>
+                              <td>@info.Pieces</td>
+                              <td>@info.ShipToSity</td>
+                              <td>@info.Cartons</td>
+                              <td>@info.Sorterlane</td>
+                        </tr>
+                }
+            
+            </table>
+        }
+
+
+    }
+
+    }
+

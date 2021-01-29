@@ -1,0 +1,312 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodTrackReportExportViewModel
+
+@using (Html.BeginForm("PodTrackReportExport", "Hilti", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    
+@Html.HiddenFor(m=>m.BeginOrderDate)
+@Html.HiddenFor(m=>m.EndOrderDate)
+@Html.HiddenFor(m=>m.BeginServiceDate)
+@Html.HiddenFor(m=>m.EndServiceDate)
+@Html.HiddenFor(m=>m.BeginDeliverGoodsDate)
+@Html.HiddenFor(m=>m.EndDeliverGoodsDate)
+    if(Model.UpOrDown)
+    {
+    @Html.HiddenFor(m=>m.UpOrDown)
+    }
+@Html.HiddenFor(m => m.UserType)
+
+<fieldset>
+    <legend>查询条件</legend>
+    <div style=" width:100%">
+    <table style="width:100%">
+        <tr>
+            <td  class="TableColumnTitle">订单日期</td>
+            <td class="Valuetd">@Html.CalendarRange("OrderDate","calendarRange")<a id="OrderDate_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+            <td  class="TableColumnTitle">发货日期</td>
+            <td  class="Valuetd">@Html.CalendarRange("DeliverGoodsDate","calendarRange")<a id="DeliverGoodsDate_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+            <td class="TableColumnTitle">承运商</td>
+            <td class="Valuetd">
+                
+                @if(Model.UserType==1)
+                {
+                @Html.TextBoxFor(m => m.ShipperName, new { disabled = "disabled"})
+                }
+                else
+                {
+                @Html.TextBoxFor(m=>m.ShipperName)
+                }
+                @Html.HiddenFor(m=>m.ShipperName)
+
+            </td>
+           
+
+        </tr>
+        <tr>
+            <td  class="TableColumnTitle">运单</td>
+            <td  class="Valuetd" >@Html.TextAreaFor(m=>m.CustomerOrderNoAnd103)</td>
+            <td  class="TableColumnTitle">订单类型</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m=>m.OrderTypeValue,Model.OrderType)</td>
+            <td  class="TableColumnTitle">目的省份</td>
+            <td  class="Valuetd">
+              @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "ProvinceTreeID", NameKey = "ProvinceTreeName", TreeKey = Guid.NewGuid().ToString() })
+                      <a id="ProvinceClear" href="#">清空</a>
+                     @Html.HiddenFor(m=>m.EndProvince)
+                     @Html.HiddenFor(m=>m.EndProvinceID)
+
+            </td>
+
+            </tr>
+
+
+         <tr>
+             <td   class="TableColumnTitle">目的城市</td>
+            <td class="Valuetd">
+                 @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey ="endCity" })
+                      <a id="CityClear" href="#">清空</a>
+                     @Html.HiddenFor(m=>m.EndCity)
+                     @Html.HiddenFor(m=>m.EndCityID)
+            </td>
+
+            <td  class="TableColumnTitle">客户名称</td>
+            <td class="Valuetd">@Html.TextAreaFor(m=>m.CustomerName)</td>
+
+            <td  class="TableColumnTitle">运输方式</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m=>m.SelectedShipperTypeID,Model.ShipperTypes,"==请选择==")</td>
+
+
+
+            
+        </tr>
+
+
+        <tr>
+
+            <td  class="TableColumnTitle">整车/零担</td>
+            <td  class="Valuetd">
+                @Html.DropDownListFor(m=>m.FTLOrLTLValue,Model.FTLOrLTL)
+            </td>
+
+            <td  class="TableColumnTitle">质保书是否随货</td>
+            <td  class="Valuetd">
+                 @Html.DropDownListFor(m=>m.TheWarrantyIsOrNoWithTheGoodsValue,Model.TheWarrantyIsOrNoWithTheGoods)
+            </td>
+
+            <td  class="TableColumnTitle">发票是否随货</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m=>m.IsOrNoWithTheGoodsValue,Model.IsOrNoWithTheGoods)</td>
+
+        </tr>
+       
+        <tr>
+            <td  class="TableColumnTitle">是否代收货款</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m=>m.IsOrNoTencodValue,Model.IsOrNoTencod)</td>
+
+            <td  class="TableColumnTitle">服务应到日期</td>
+            <td  class="Valuetd">@Html.CalendarRange("ServiceDate","calendarRange")<a id="ServiceDate_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+
+             <td  class="TableColumnTitle">送货状态</td>
+            <td   class="Valuetd">
+                 @Html.CheckBoxListFor(
+                 m=>m.PostedIDs,
+                 m => m.DeliveryState,
+                 m=>m.Value,
+                 m=>m.Text,
+                 m=>m.SelectedDeliveryState)
+            </td>
+            
+            
+        </tr>
+    </table>
+    <a href="#" class="CssSpanDown" style="color:red" >更多>>></a>
+    <table id="TableTwo" style="display:none;width:100%">
+        
+       
+       @* <tr>
+             <td  class="TableColumnTitle">订单类型</td>
+            <td >@Html.DropDownListFor(m=>m.OrderTypeValue,Model.OrderType)</td>
+            <td  class="TableColumnTitle">
+            净重
+            </td>
+            <td >
+                @Html.DropDownListFor(m=>m.NetWeight,Model.Weight)
+            </td>
+            <td  class="TableColumnTitle">
+                毛重
+
+            </td>
+            <td >
+               @Html.DropDownListFor(m=>m.GrossWeight,Model.Weight)
+            </td>
+        </tr>*@
+
+        <tr>
+            <td  class="TableColumnTitle">延误原因分类</td>
+            <td  class="Valuetd">
+                @Html.DropDownListFor(m=>m.DelayClassifyingValue,Model.DelayClassifying)
+            </td>
+
+            <td  class="TableColumnTitle">是否正常到货</td>
+            <td  class="Valuetd">
+
+                 @Html.DropDownListFor(m=>m.IsOrNoNormalDeliveryValue,Model.IsOrNoNormalDelivery)
+            </td>
+
+             <td  class="TableColumnTitle">销售单/非销售单</td>
+            <td   class="Valuetd">
+                @Html.DropDownListFor(m=>m.SalesOrdersOrNoSalesOrdersValue,Model.SalesOrdersOrNoSalesOrders)
+
+            </td>
+
+
+
+            
+            
+        </tr>
+
+       
+
+        <tr>
+            
+             <td  class="TableColumnTitle">备注</td>
+            <td  class="Valuetd">
+                @Html.TextAreaFor(m => m.Remarks)
+            </td>
+           
+            <td  class="TableColumnTitle">槽钢</td>
+            <td  class="Valuetd">
+                @Html.TextBoxFor(m => m.Channel)
+            </td>
+
+
+
+
+            <td  class="TableColumnTitle">运单状态</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m=>m.SelectedPodStatesID,Model.PodStates,"==请选择==")</td>
+
+           
+
+        </tr>
+
+       
+        <tr>
+           <td  class="TableColumnTitle">下单时间</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m=>m.PlaceAnOrderTimeValue,Model.PlaceAnOrderTime,"==请选择==")</td>
+            
+            <td  class="TableColumnTitle">是否上传回单</td>
+            <td class="Valuetd">
+                 @Html.DropDownListFor(m=>m.IsOrNoUpLoadReceiptValue,Model.IsOrNoUpLoadReceipt)
+            </td>
+
+             <td  class="TableColumnTitle">未及时出货原因</td>
+            <td  class="Valuetd">@Html.TextBoxFor(m=>m.NotDeliverGoodsRemark)</td>
+
+        </tr>
+
+        <tr>
+           <td  class="TableColumnTitle">投诉类型</td>
+            <td   class="Valuetd">
+                
+               @Html.DropDownListFor(m=>m.ComPlainTypeValue,Model.ComPlainType)
+            </td>
+            <td  class="TableColumnTitle">是否拒签</td>
+            <td  class="Valuetd">
+                @Html.DropDownListFor(m=>m.IsOrNoRejectionValue,Model.IsOrNoRejection)
+            </td>
+            <td  class="TableColumnTitle">是否投诉</td>
+            <td  class="Valuetd">
+                 @Html.DropDownListFor(m=>m.IsOrNoComPlainValue,Model.IsOrNoComPlain)
+            </td>
+        </tr>
+
+        <tr>
+            
+             <td  class="TableColumnTitle">销售姓名</td>
+            <td   class="Valuetd">
+                
+                @Html.TextAreaFor(m=>m.SalespersonName)
+            </td>
+            <td  class="TableColumnTitle">投诉备注</td>
+            <td  class="Valuetd">
+                @Html.TextAreaFor(m=>m.ComPlainRemarks)
+            </td>
+           
+                
+             <td  class="TableColumnTitle">运单归属</td>
+            <td  class="Valuetd">@Html.DropDownListFor(m => m.SelectedAttribution,Model.PodAttribution)</td>
+        </tr>
+
+        <tr>
+            
+             <td  class="TableColumnTitle">报表名称</td>
+            <td   class="Valuetd">
+                
+                @Html.DropDownListFor(m=>m.ReportNameValue,Model.ReportName)
+            </td>
+            <td  class="TableColumnTitle"></td>
+            <td  class="Valuetd">
+               
+            </td>
+           
+                
+             <td  class="TableColumnTitle"></td>
+            <td  class="Valuetd"></td>
+        </tr>
+
+    </table>
+  </div>
+    <a href="#" class="CssSpanUp" style="color:red;display:none">收起>>></a>
+    <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="QueryButton" name="Action"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="导出报表" name="Action" id="ExportButton"/>
+        </div>
+</fieldset>
+    if (Model.XLDTrackReport !=null)
+    {
+    
+    <fieldset>
+        <legend>数据信息</legend> 
+        @if(Model.UserType !=1){
+        <span style="font-size:25px">总票数(@Model.SumPoll)&nbsp;&nbsp;&nbsp;  总净重(@Model.SumNetWeight)&nbsp;&nbsp;&nbsp;  总毛重(@Model.SumGrossWeight) </span>
+        }
+        <div style="overflow-x:scroll; height:50%;width:100%;">
+        <table id="PodTrackResult" @Html.Raw(Model.css)>
+           
+            <tr>
+                @foreach(var columnsnames in Model.XLDTrackReport.Columns){
+                    if (columnsnames.ToString() == "ID")
+                    {
+                        continue;
+                    }
+                <td  style="height:5px; width:20px; " class="TableColumnTitle">@columnsnames.ToString()</td>
+                }
+            </tr>
+       
+           @for (int i = 0; i < Model.XLDTrackReport.Rows.Count;i++ )
+           {
+            <tr>
+               @for (int j = 0; j < Model.XLDTrackReport.Columns.Count;j++ )
+               {
+
+                   if (Model.XLDTrackReport.Columns[j].ColumnName.ToString() == "ID")
+                   {
+                       continue;
+                   }
+                   if (Model.XLDTrackReport.Columns[j].ColumnName.ToString() == "订单编号")
+                   {
+                   <td><a id="listSystemNumber" data-id="@Model.XLDTrackReport.Rows[i]["ID"].ToString()" href="/POD/POD/ViewPodAll/@Model.XLDTrackReport.Rows[i]["ID"].ToString()">@Model.XLDTrackReport.Rows[i]["订单编号"].ToString()</a></td>
+                   }
+                   else
+                   {
+                   <td style="height:5px; width:20px">@Model.XLDTrackReport.Rows[i][j].ToString()</td>
+                   }
+               }
+            </tr>
+           }
+        </table>
+        </div>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+   
+          
+        
+    
+    }
+}

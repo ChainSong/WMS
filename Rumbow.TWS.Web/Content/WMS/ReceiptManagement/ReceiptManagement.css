@@ -1,0 +1,15 @@
+﻿body {
+}
+
+.Noprint {
+    display: none;
+}
+
+.PageNext {
+    page-break-after: always;
+}
+
+.atr {
+    border-bottom: 1px #ccc solid;
+    background-color:#0d273e
+}

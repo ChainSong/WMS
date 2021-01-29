@@ -1,0 +1,174 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintBoxModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+
+
+
+<style>
+    .only_for_print
+    {
+        /*display: none;*/
+        display: block;
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+
+    .noprint
+    {
+        display: none;
+    }
+
+    .bor > td
+    {
+        border: 2px solid #000000;
+    }
+
+    .border-table
+    {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td
+        {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td
+    {
+        text-align: center;
+        font-size: 14px;
+    }
+
+    #td1
+    {
+        text-align: center;
+        font-size: 20px;
+        width: 100px;
+    }
+</style>
+
+<script>
+
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法   
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+  @*  function PackageID()
+    {
+        var OrderID=@ViewBag.OrderID;
+        if(OrderID=='0')
+        {
+            history.go(-1);
+        }
+        else
+        {
+            location.href = "/WMS/OrderManagement/YXDRPackage/?ID=" + OrderID;
+        }
+    }*@
+
+</script>
+<div class="actionButtonDiv" style="padding-top: 30px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+ @*   <input type="button" value="返回" class="btn btn-success" onclick="PackageID()">*@
+</div>
+
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+
+    <h3>总箱清单</h3>
+
+    var countQty = Model.EnumerableCustomerInfo.Select(m => m.Qty).Sum();
+    var indexpage = 0;
+    var count = Model.EnumerableCustomerInfo.Count();
+
+    var acce = 0;
+    var yu = 0;
+    var n = 0;
+    var page = "";
+    acce = count / 25;
+    yu = count % 25;//如果刚好整页
+
+    if (yu == 0)
+    {
+        n = acce;
+    }
+    else
+    {
+        n = acce + 1;
+    }
+    for (int j = 0; j < n; j++)
+    {
+        indexpage++;
+        page = "page" + indexpage;
+
+    <div id="@page" style="padding-top:10px;clear:both;width:100%">
+        <h3>&nbsp;&nbsp;&nbsp;总箱清单</h3>
+        <div id="divtwo" style="height: 90%">
+            <table style="text-align: center; font-family: 黑体; border: 0px solid">
+                <thead>
+                    <tr style="height: 20px">
+                        <td style="border: 0px solid;"><strong>货号</strong></td>
+                        <td style="border: 0px solid;"><strong>尺码</strong></td>
+                        <td style="border: 0px solid;"><strong>描述</strong></td>
+                        <td style="border: 0px solid;"><strong>金额</strong></td>
+
+                        <td style="border: 0px solid;"><strong>单号</strong></td>
+                        <td style="border: 0px solid;"><strong>SKU</strong></td>
+                        <td style="border: 0px solid;"><strong>数量</strong></td>
+                    </tr>
+                </thead>
+                @foreach (var tbitem in Model.EnumerableCustomerInfo.Skip(j * 25).Take(25))
+                {
+                    <tr style="height: 12px">
+                        <td class="td1" style="font-size: 12px; border: 0px solid">@tbitem.Atrcle</td>
+                        <td class="td1" style="font-size: 12px; border: 0px solid">@tbitem.Size</td>
+                        <td class="td1" style="font-size: 12px; border: 0px solid">@tbitem.Str20</td>
+                        <td class="td1" style="font-size: 12px; border: 0px solid"></td>
+                        <td class="td1" style="font-size: 12px; border: 0px solid">@tbitem.ShipmentNo</td>
+                        <td class="td1" style="font-size: 12px; border: 0px solid">@tbitem.SKU</td>
+                        <td class="td1" style="font-size: 12px; border: 0px solid">@tbitem.Qty</td>
+
+                    </tr>
+                }
+            </table>
+            @if (j == n - 1)
+            {
+                <p style="text-align: center; height: 15px;font-size:15px"><strong>订单总计：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@countQty</strong></p>
+            }
+           
+        </div>
+        <p style="text-align: right; height: 10px; margin-bottom: 10px"><strong>第&nbsp;&nbsp;@indexpage&nbsp;&nbsp;&nbsp;页,共&nbsp;&nbsp;@n&nbsp;&nbsp;页</strong></p>
+    </div>
+    }
+
+
+
+
+
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

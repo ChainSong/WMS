@@ -1,0 +1,362 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.QueryOrOperatePodViewModel
+@using Runbow.TWS.Common;
+
+
+@using (Html.BeginForm())
+{
+@*@Html.HiddenFor(m => m.SearchCondition.ID)
+    @Html.HiddenFor(m => m.SearchCondition.ProjectID)
+    @Html.HiddenFor(m => m.SearchCondition.PODTypeID)
+    @Html.HiddenFor(m => m.SearchCondition.ShipperTypeID)
+    @Html.HiddenFor(m => m.SearchCondition.TtlOrTplID)
+    @Html.HiddenFor(m => m.SearchCondition.StartCityID)
+    @Html.HiddenFor(m => m.SearchCondition.StartCityName)
+    @Html.HiddenFor(m => m.SearchCondition.EndCityID)
+    @Html.HiddenFor(m => m.SearchCondition.EndCityName)
+    @Html.HiddenFor(m => m.SearchCondition.StartCities)
+    @Html.HiddenFor(m => m.SearchCondition.EndCities)
+    @Html.HiddenFor(m => m.SearchCondition.BoxNumber)
+    @Html.HiddenFor(m => m.SearchCondition.GoodsNumber)
+    @Html.HiddenFor(m => m.SearchCondition.Weight)
+    @Html.HiddenFor(m => m.SearchCondition.Volume)
+    @Html.HiddenFor(m => m.SearchCondition.Creator)
+    @Html.HiddenFor(m => m.SearchCondition.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.CreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.Str1)
+    @Html.HiddenFor(m => m.SearchCondition.Str2)
+    @Html.HiddenFor(m => m.SearchCondition.Str3)
+    @Html.HiddenFor(m => m.SearchCondition.Str4)
+    @Html.HiddenFor(m => m.SearchCondition.Str5)
+    @Html.HiddenFor(m => m.SearchCondition.Str6)
+    @Html.HiddenFor(m => m.SearchCondition.Str7)
+    @Html.HiddenFor(m => m.SearchCondition.Str8)
+    @Html.HiddenFor(m => m.SearchCondition.Str9)
+    @Html.HiddenFor(m => m.SearchCondition.Str10)
+    @Html.HiddenFor(m => m.SearchCondition.Str11)
+    @Html.HiddenFor(m => m.SearchCondition.Str12)
+    @Html.HiddenFor(m => m.SearchCondition.Str13)
+    @Html.HiddenFor(m => m.SearchCondition.Str14)
+    @Html.HiddenFor(m => m.SearchCondition.Str15)
+    @Html.HiddenFor(m => m.SearchCondition.Str16)
+    @Html.HiddenFor(m => m.SearchCondition.Str17)
+    @Html.HiddenFor(m => m.SearchCondition.Str18)
+    @Html.HiddenFor(m => m.SearchCondition.Str19)
+    @Html.HiddenFor(m => m.SearchCondition.Str20)
+    @Html.HiddenFor(m => m.SearchCondition.Str21)
+    @Html.HiddenFor(m => m.SearchCondition.Str22)
+    @Html.HiddenFor(m => m.SearchCondition.Str23)
+    @Html.HiddenFor(m => m.SearchCondition.Str24)
+    @Html.HiddenFor(m => m.SearchCondition.Str25)
+    @Html.HiddenFor(m => m.SearchCondition.Str26)
+    @Html.HiddenFor(m => m.SearchCondition.Str27)
+    @Html.HiddenFor(m => m.SearchCondition.Str28)
+    @Html.HiddenFor(m => m.SearchCondition.Str29)
+    @Html.HiddenFor(m => m.SearchCondition.Str30)
+    @Html.HiddenFor(m => m.SearchCondition.Str31)
+    @Html.HiddenFor(m => m.SearchCondition.Str32)
+    @Html.HiddenFor(m => m.SearchCondition.Str33)
+    @Html.HiddenFor(m => m.SearchCondition.Str34)
+    @Html.HiddenFor(m => m.SearchCondition.Str35)
+    @Html.HiddenFor(m => m.SearchCondition.Str36)
+    @Html.HiddenFor(m => m.SearchCondition.Str37)
+    @Html.HiddenFor(m => m.SearchCondition.Str38)
+    @Html.HiddenFor(m => m.SearchCondition.Str39)
+    @Html.HiddenFor(m => m.SearchCondition.Str40)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime6)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime6)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime7)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime7)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime8)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime8)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime9)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime9)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime10)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime10)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime11)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime11)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime12)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime12)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime13)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime13)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime14)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime14)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime15)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime15)
+    @Html.HiddenFor(m => m.ShowEditRelated)
+    @Html.HiddenFor(m => m.HideActionButton)
+    @Html.HiddenFor(m => m.ShowCustomerOrShipperDrop)
+    @Html.HiddenFor(m => m.IsInnerUser)
+    @Html.HiddenFor(m => m.ProjectRoleID)
+    if (!Model.ShowCustomerOrShipperDrop)
+    {
+    @Html.HiddenFor(m => m.SearchCondition.CustomerID)
+    @Html.HiddenFor(m => m.SearchCondition.ShipperID)
+    }
+    @Html.HiddenFor(m => m.IsForExport)
+    @Html.HiddenFor(m => m.ExportType)
+    @Html.HiddenFor(m => m.SearchCondition.HasShortDial)
+    @Html.HiddenFor(m => m.SearchCondition.HasDistribution)
+    @Html.HiddenFor(m => m.SearchCondition.HasExpress)
+    *@
+    @Html.HiddenFor(m => m.IsForQuery)
+    @Html.HiddenFor(m => m.IsChaXun)
+    @Html.HiddenFor(m => m.SelectedIDs)
+    @Html.HiddenFor(m =>m.IsDaoChu)
+    @Html.HiddenFor(m => m.SearchCondition.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndActualDeliveryDate)
+    <fieldset>
+        <legend>查询条件<input type="button" id="ahidden" value="+" /></legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">发货清单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">电脑单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.Str1, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">客户订单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.Str4, new { style = "width:98%" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">车牌号
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.SearchCondition.FeeStr3)
+                </td>
+                <td class="TableColumnTitle">实际发货日期</td>
+                <td> @Html.CalendarRange("ActualDeliveryDate","calendarRange",@Model.SearchCondition.ActualDeliveryDate,@Model.SearchCondition.EndActualDeliveryDate)</td>
+                <td class="TableColumnTitle">是否分配车辆及结算</td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.IsintDistribution, Model.IsDistributionOrSettlement)</td>
+            </tr>
+            <tbody id="accordhidden">
+                <tr>
+                    <td class="TableColumnTitle">客户代码</td>
+                    <td style="">@Html.TextBoxFor(m => m.SearchCondition.Str3)</td>
+                    <td class="TableColumnTitle">客户名称</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str5)</td>
+                    <td class="TableColumnTitle">卸货地点</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str6)</td>
+
+
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">联系人</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str7)</td>
+                    <td class="TableColumnTitle">联系人电话</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str8)</td>
+                    <td class="TableColumnTitle">联系人手机</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str9)</td>
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">产品代码</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str10)</td>
+                    <td class="TableColumnTitle">桶数</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str11)</td>
+                    <td class="TableColumnTitle">升数</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str12)</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">比重</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str13)</td>
+                    <td class="TableColumnTitle">重量</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.FeeStr4)</td>
+                    <td class="TableColumnTitle">目的城市</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.EndCityName)</td>
+
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">起运地址</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str14)</td>
+                    <td class="TableColumnTitle">实际出发地</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str15)</td>
+                    <td class="TableColumnTitle">业务类型</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.Str16)</td>
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">承运商</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.FeeStr2)</td>
+                    <td class="TableColumnTitle">车型</td>
+                    <td>@Html.DropDownListFor(m => m.SearchCondition.IntCarModels, Model.CarModels)</td>
+                    <td class="TableColumnTitle">排车单号</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.FeeStr1)</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+            @if (!Model.IsForQuery)
+            {
+                <input type="button" value="车辆分配及结算" id="citysettlement" title="车辆分配及结算" />
+                <input type="button" value="取消结算" id="cancelSettlement" title="取消结算" />
+            }
+            <input type="submit" value="导出" id="ExportButton" />
+        </div>
+        <div>
+            <span>
+                @Model.ReturnClientMessage
+            </span>
+        </div>
+    </fieldset>
+    <div>
+    <fieldset>
+        <legend>运单列表
+            @if (Model.PodCollection != null && Model.PodCollection.Any())
+            {
+                @Html.Raw("(" + Model.PodCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    @if (!Model.IsForQuery)
+                    {
+                        <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    }
+                    <th>发货清单号</th>
+                    <th>电脑单号</th>
+                    <th>客户代码</th>
+                    <th>客户订单号</th>
+                    <th>客户名称</th>
+                    <th>卸货地点</th>
+                    <th>发货日期</th>
+                    <th>联系人</th>
+                    <th>联系人电话</th>
+                    <th>联系人手机</th>
+                    <th>产品代码</th>
+                    <th>桶数</th>
+                    <th>合计</th>
+                    <th>总计</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodCollection != null && Model.PodCollection.Any())
+                {
+                    foreach (var pod in Model.PodCollection)
+                    {
+                    <tr data-id="@pod.ID">
+                        @if (!Model.IsForQuery)
+                        {
+                            <td>
+                                @*@Html.CheckBox("check")  *@
+                                @Html.CheckBox("check" + pod.ID.ToString(), new { data_ID = pod.ID, @class = "checkForSelect" })
+                            </td>
+                        }
+                        <td><a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAll/@pod.ID">@pod.CustomerOrderNumber</a></td>
+                        <td>@pod.Str1</td>
+                        <td>@pod.Str3</td>
+                        <td>@pod.Str4</td>
+                        <td>@pod.Str5</td>
+                        <td>@pod.Str6</td>
+                        <td>@pod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd")</td>
+                        <td>@pod.Str7</td>
+                        <td>@pod.Str8</td>
+                        <td>@pod.Str9</td>
+                        <td>@pod.Str10</td>
+                        <td>@pod.Str11</td>
+                        <td>@pod.Decimal10</td>
+                        <td>@pod.Decimal11</td>
+                        <td><a id="editPod" class="editPod" href="/POD/POD/CreatePod/@pod.ID" data-id="@pod.ID">编辑</a>
+                            <a id="deletePod" class="deletePod" href="#" data-id="@pod.ID" >删除</a>
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @if (Model.IsForQuery && Model.PodCollection != null && Model.PodCollection.Any())
+        {
+            @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        }
+
+         
+    </fieldset>
+    </div>
+    <div id="jieshuan" style="display: none;">
+
+        <table id="distable">
+            <tr>
+                <td class="tbcolum">发车批次号</td>
+                <td class="tbwidth">@Html.TextBox("startBatchNumber", Model.SearchCondition.FeeStr1, new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">车型</td>
+                <td class="tbwidth">@Html.DropDownList("carModels", Model.CarModels, new { style = "width:95%;height:100%;"}) </td>    
+            </tr>
+            <tr>
+                <td class="tbcolum">承运商</td>
+                <td class="tbwidth">@Html.TextBox("aarriers","", new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">车牌号</td>
+                <td class="tbwidth">@Html.TextBox("carNumber","", new { style = "width:95%;height:100%;" })</td>
+               
+            </tr>
+             <tr>
+                 <td class="tbcolum">点数(个)</td>
+                <td class="tbwidth">@Html.TextBox("scores","",new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">点费(￥)</td>
+                <td class="tbwidth">@Html.TextBox("pointCharges","",new { style = "width:95%;height:100%;" })</td>
+               
+            </tr>
+             <tr>
+                <td class="tbcolum">起步费(￥)</td>
+                <td class="tbwidth">@Html.TextBox("startFee","",new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">重量</td>
+                <td class="tbwidth">@Html.TextBox("sumWeight","",new { style = "width:95%;height:100%;" })</td>
+                
+            </tr>
+            <tr>
+                 <td class="tbcolum">提货费(￥)(从工厂)</td>
+                <td class="tbwidth">@Html.TextBox("deliveryFeeFactory","",new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">提货费(￥)(从嘉托)</td>
+                <td class="tbwidth">@Html.TextBox("deliveryFeeJiatuo","",new { style = "width:95%;height:100%;" })</td>
+            </tr>
+           
+            <tr>
+                <td class="tbcolum">包车费</td>
+                <td class="tbwidth">@Html.TextBox("packagesFare","",new { style = "width:95%;height:100%;" })</td>
+                 <td class="tbcolum">油费</td>
+                <td class="tbwidth">@Html.TextBox("fuelCosts","",new { style = "width:95%;height:100%;" })</td>
+           </tr>
+            
+            <tr>
+                <td class="tbcolum">通行证费(￥)</td>
+                <td class="tbwidth">@Html.TextBox("permitFees","",new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">其他费用(￥)</td>
+                <td class="tbwidth">@Html.TextBox("otherCosts","",new { style = "width:95%;height:100%;" })</td>
+                
+            </tr> 
+            <tr>
+                <td class="tbcolum">卸货费(￥)</td>
+                <td class="tbwidth">@Html.TextBox("unloadingCosts","",new { style = "width:95%;height:100%;" })</td>
+                <td class="tbcolum">合计(￥)</td>
+                <td class="tbwidth">@Html.TextBox("total","",new { style = "width:95%;height:100%;" })</td>
+            </tr>
+            <tr>
+               <td class="tbcolum">总计(￥)</td>
+                <td class="tbwidth">@Html.TextBox("amountTo","",new { style = "width:95%;height:100%;" })</td>
+               <td class="tbcolum">备注</td>
+                <td>@Html.TextArea("remarks","",new { style = "width:95%;height:100%;" })</td>
+            </tr>
+        </table>
+    </div>
+}

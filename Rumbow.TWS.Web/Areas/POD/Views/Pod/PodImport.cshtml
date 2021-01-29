@@ -1,0 +1,29 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+<fieldset>
+    <legend>运单导入说明
+    </legend>
+    <div id="importInstructionDiv">
+        1.在给定的Excel模板中编辑运单数据，选择并导入<br />
+        2.如果Excel中运单数据在系统中不存在，则新增运单<br />
+        3.如果Excel中运单数据已经在系统中存在并且运单状态为待审核状态，则运单关键信息和其他信息都可更新<br />
+        4.如果Excel中运单数据已经在系统中存在并且运单状态为待调度状态，则运单只能更新其他信息<br />
+        5.如果Excel中运单数据已经在系统中存在并且运单状态为待发运及以后状态，则运单不做更新操作。<br />
+        6.如果Excel中运单数据已经在系统中存在并且运单被拆分成多单，由于系统中会存在多个相同的客户运单号，系统默认会对原单数据进行更新，拆分单数据不变<br />
+        7.为减轻系统压力，请不要对时间过长的运单做重复导入操作。
+    </div>
+</fieldset>
+<fieldset>
+    <legend>选择Excel导入运单
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

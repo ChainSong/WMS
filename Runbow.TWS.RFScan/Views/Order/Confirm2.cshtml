@@ -1,0 +1,1200 @@
+@{
+    ViewBag.Title = "复捡/包装";
+}
+<html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+          <meta name="viewport" content="initial-scale=1.0,width=device-width"/> 
+<script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+<title>复捡/包装</title>
+<script type="text/javascript" >
+
+            Array.prototype.indexOf = function (item) {
+                for (var i = 0 ; i < this.length; i++)
+                { if (this[i] == item) { return i; } } return -1;
+            }
+            Array.prototype.remove = function (dx) {
+                if (isNaN(dx) || dx > this.length) { return false; }
+                for (var i = 0, n = 0; i < this.length; i++) {
+                    if (this[i] != this[dx]) {
+                        this[n++] = this[i]
+                    }
+                }
+                this.length -= 1
+            }
+    
+
+    $(document).ready(function () {
+        $("#ordernum").focus();
+        $("#upc").attr("readonly", "readonly");
+        $("#sku").attr("readonly", "readonly"); 
+        $("#boxtype").attr("readonly", "readonly");
+        $("#boxnumber").attr("readonly", "readonly");
+        getboxs();
+    });
+    function tdback() {
+        history.back(-1);
+    }
+    //1.扫描快递单，获取该快递单所有订单的明细
+    //2.汇总数据 填充 objtempsum,OrderList
+    //3.扫描出库单，验证出库单是否，是否全部扫描，将扫描的单号加载到订单号下拉框中
+    //4.扫描箱
+    //5.扫描SKU或UPC
+    var OrderList = new Array();//出库单集合
+    var objtemp = new Array();
+    //objtemp[0] 快递单号
+    //objtemp[1] 订单单号
+    //objtemp[2] 箱号
+    //objtemp[3] 箱型
+    //objtemp[4] SKU号
+    //objtemp[5] UPC号
+    //objtemp[6] 数量
+    var objtempsum = new Array();
+    //objtemp[0] 快递单号
+    //objtemp[1] 订单单号
+    //objtemp[2] SKU号
+    //objtemp[3] UPC号
+    //objtemp[4] 数量
+    //objtemp[5] 已扫数量
+    var OrderID = "";
+    var receiptmodel;//出库明细
+    var boxslist;//箱型列表
+    var boxsize = "";   
+    var lastboxsize = "";
+    var ordernumber = "";
+    var expressnumber = "";
+    //var arraySKU = new Array();
+    var recidArray = new Array();
+    var objtemp = new Array();//每次sku有变更的时候往这里插数据
+    var objtotal = new Array();//每次扫描有效库位的时候，把objtemp合并后保存到这里，并清空objtemp
+    var lastSKUobj = new Array();//每次扫描后，更新这个数组，保存上次扫描数据
+    //保存扫描数据
+    function SavelastSKU() {
+        lastSKUobj[0] = $("#sku").val();
+        lastSKUobj[1] = $("#qty").val();
+        //lastSKUobj[2] = $("#lot").val();
+        //lastSKUobj[3] = $("#lot2").val();
+        lastSKUobj[2] = $("#unit").val();
+        lastSKUobj[3] = $("#uom").val();
+        //    $.each(lastSKUobj,function(index,item){
+        //        alert(item);
+        //});
+    }
+    function getboxs() {
+        $.ajax({
+            type: "Post",
+            url: '/Order/GetBox',
+            data: {  },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                boxslist = data;
+            },
+            error: function (msg) {
+                result = false;
+            }
+
+        });
+    }
+    function checkOrderNum() {
+        if (event.keyCode == 13) {
+            if ($("#ordernum").val() == "") {
+                alert("出库单不能为空！");
+                return;
+            }
+            var scannumber = $("#ordernum").val();
+            if (objtotal.length > 0) {
+                if (confirm("有未保存的数据，是否清空？")) {
+                    ClearAll();
+                    $("#ordernum").val(scannumber);
+                }
+                else {
+                    //ClearAll();
+                    $("#ordernum").val(ordernumber);
+                    return;
+                }
+            }
+            else {
+                $.ajax({
+                    type: "Post",
+                    url: '/Order/GetOrderDetail2',
+                    data: { "OrderNumber": $("#ordernum").val() },
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                            ordernumber = $("#ordernum").val();
+                            OrderID = data[0].OID;
+                            receiptmodel = data;
+                            $("#expressnum").focus();
+                            if (getboxs.length <= 0) {
+                                getboxs();
+                            }
+
+                        }
+                        else {
+                            alert("出库单不存在或已完成！");
+                            $("#ordernum").select();
+                        }
+
+                    },
+                    error: function (msg) {
+                        alert(msg.val);
+                    }
+
+                });
+
+                //获取包装信息
+                $.ajax({
+                    type: "Post",
+                    url: '/Order/GetPackageDetail',
+                    data: { "OrderID": OrderID },
+                    async: false,
+                    dataType: "json",
+                    success: function (data2) {
+                        if (data2.length > 0) {
+                            //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                            $.each(data2, function (index, item) {
+                                var totallength = objtotal.length;
+                                objtotal[totallength] = new Array();
+                                objtotal[totallength][0] = item.OrderNumber;
+                                objtotal[totallength][1] = item.ExpressNumber;
+                                var showboxtype = GetPageBoxtype(item.PackageType)
+                                objtotal[totallength][2] = showboxtype;
+                                objtotal[totallength][3] = item.PackageNumber;
+                                var boxno = item.PackageNumber.substring(item.PackageNumber.length - 3);
+                                ////根据箱号 加载下拉框数据
+                                //if (!isExistOption("boxno", boxno)) {
+                                //    $("#boxno").append("<option value='" + boxno + "'>" + boxno + "</option>");
+                                //}
+                                objtotal[totallength][4] = item.SKU;
+                                objtotal[totallength][5] = item.UPC; //item.UPC;
+                                objtotal[totallength][6] = item.Qty;
+                            });
+
+                        }
+                    },
+                    error: function (msg) {
+                        alert("网络连接失败！");
+                    }
+
+                });
+                refelshboxno();
+                ScanFouce($("#boxno"));
+                lastSKUobj[0] = $("#ordernum").val();
+                lastSKUobj[1] = $("#expressnum").val();
+                var boxtype = $("#boxtype").val();
+                lastSKUobj[2] = boxtype.substring(0, boxtype.indexOf("("));
+                lastSKUobj[3] = $("#boxnumber").val();
+            }
+            //$("#receiptnum").readOnly = "true";
+
+
+        }
+    }
+
+    function checkExpressnum() {
+        if (event.keyCode == 13) {
+            if (ordernumber == "") {
+                alert("出库单不能为空！");
+                return;
+            }
+            if (checkisexpress($("#expressnum").val())) {
+                expressnumber = $("#expressnum").val();
+                objtotal.length = 0;
+                ClearScanData();
+                $("#boxno").empty();
+             
+                $("#Scan").focus();
+            }
+            else {
+                alert("快递单号有误！");
+                $("#expressnum").focus();
+                $("#expressnum").select();
+                return;
+            }
+        }
+    }
+    function checkisexpress(obj) {
+        var result = false;
+        if (receiptmodel.length > 0) {
+            var json = eval(receiptmodel); //数组   
+            $.each(json, function (index, item) {
+                //循环获取数据    
+                if (item.ExpressNumber == obj) {
+                    result = true;
+                }
+            });
+        }
+        return result;
+    }
+    //验证数据是否是箱型
+    function checkBox(box) {
+        var result = false;
+        $.each(boxslist, function (index, item) {
+            //循环获取数据    
+            if (item.Name == box) {
+                result = true;
+                boxsize = "(" + item.Code + ")";
+            }
+        });
+        return result;
+    }
+    function GetPageBoxtype(boxsize) {
+        var result = "";
+        $.each(boxslist, function (index, item) {
+            //循环获取数据    
+            if (item.Code == boxsize) {
+                result = item.Name ;
+            }
+        });
+        return result;
+    }
+    //验证数据是否是SKU
+    function checkSKU(sku) {
+        recidArray.length = 0;
+        var result = false;
+        if (receiptmodel.length > 0) {
+            $.each(receiptmodel, function (index, item) {
+                //循环获取数据    
+
+                if (item.SKU == sku || item.UPC == sku ) {
+                    if (recidArray.length <= 0) {
+                        recidArray[0] = item.ID;
+                    }
+                    else {
+                        var index = recidArray.length;
+                        recidArray[index] = item.ID;
+                    }
+                    result = true;
+
+                }
+            });
+        }
+        return result;
+    }
+    
+    //保存扫描的SKU数据
+    function saveObjTmp(sku, qty, unit, uom) {
+
+        var index = objtemp.length;
+        objtemp[index] = new Array();
+        objtemp[index][0] = sku;
+        objtemp[index][1] = qty;
+        //objtemp[index][2] = lot;
+        //objtemp[index][3] = lot2;
+        objtemp[index][2] = unit;
+        objtemp[index][3] = uom;
+    }
+    //保存扫描的Location数据
+    function saveObjtotal(location) {
+        //遍历objtemp ,将location 赋值给遍历objtemp
+        $.each(objtemp, function (index, item) {
+            item[4] = location;
+        })
+        //合并objtemp添加到objtotal
+        //先把不同的对象添加到objtotal
+        $.each(objtemp, function (index, item) {
+
+            var needadd = true;
+            if (objtotal.length <= 0) {
+                objtotal[0] = new Array();
+                objtotal[0][0] = item[0];
+                objtotal[0][1] = 0;
+                objtotal[0][2] = item[2];
+                objtotal[0][3] = item[3];
+                objtotal[0][4] = item[4];
+                //objtotal[0][5] = item[5];
+                //objtotal[0][6] = item[6];
+                needadd = false;
+            }
+            else {
+                $.each(objtotal, function (index2, item2) {
+
+                    if (item[0] == item2[0] && item[2] == item2[2] && item[3] == item2[3] && item[4] == item2[4]) {
+                        needadd = false;
+                    }
+                })
+            }
+            if (needadd) {
+                var countindex = objtotal.length;
+                objtotal[countindex] = new Array();
+                objtotal[countindex][0] = item[0];
+                objtotal[countindex][1] = 0;
+                objtotal[countindex][2] = item[2];
+                objtotal[countindex][3] = item[3];
+                objtotal[countindex][4] = item[4];
+                //objtotal[countindex][5] = item[5];
+                //objtotal[countindex][6] = item[6];
+            }
+
+        })
+        //再给total的对象赋值数量
+        $.each(objtotal, function (index, item) {
+            $.each(objtemp, function (index2, item2) {
+                if (item[0] == item2[0] && item[2] == item2[2] && item[3] == item2[3] && item[4] == item2[4] ) {
+                    item[1] = parseInt(item[1]) + parseInt(item2[1]);
+                }
+            });
+        });
+
+        //清空objtemp objtemp=null 
+        objtemp.length = 0;
+        //$.each(objtotal, function (index, item) {
+        //    alert(item[0] + ":" + item[1]);
+        //});
+    }
+    function getboxnum() {
+        var boxnumber = "";
+        var boxcount = 1;
+        var minnumber = "000";
+        var boxaraay = new Array();
+        if (objtotal.length <= 0) {
+             
+        }
+        else {
+           
+            $.each(objtotal, function (index, item) {
+
+                if (item[3].substring(item[3].length - 3) > minnumber) {
+                    minnumber = item[3].substring(item[3].length - 3);
+                }
+
+            });
+            //$.each(objtotal, function (index, item) {
+               
+            //    if (boxaraay.indexOf(item[3]) <= -1) {
+            //        boxaraay.push(item[3]);
+            //    }
+
+            //});
+            
+        }
+        
+        //$.each(boxaraay, function (index, item) {
+        //    if (item.substring(item.length - 3) == minnumber) {
+        //        minnumber = getboxcountstring(parseInt(minnumber)+1);
+        //    }
+        //});
+        
+        boxnumber = ordernumber +  getboxcountstring(parseInt(minnumber)+1);;
+        return boxnumber;
+        //boxcount = boxaraay.length + 1;
+        //boxnumber = ordernumber + getboxcountstring(boxcount);
+        //return boxnumber;
+    }
+    function getboxcountstring(obj) {
+        var res = "";
+        if (obj.toString().length == 1) {
+            res = "00" + obj.toString();
+        }
+        else if (obj.toString().length == 2) {
+            res = "0" + obj.toString();
+        }
+        else if (obj.toString().length == 3) {
+            res = "0" + obj.toString();
+        }
+        else {
+            res = "001";
+        }
+        return res;
+    }
+    function loadLastBox() {
+        if (objtotal.length <= 0) {
+        }
+        else {
+            var boxlength = objtotal.length;
+            $("#ordernum").val(objtotal[boxlength - 1][0]);
+            $("#expressnum").val(objtotal[boxlength - 1][1]);
+            $("#boxtype").val(lastboxsize);
+            $("#boxnumber").val(objtotal[boxlength - 1][3]);
+        }
+    }
+    //验证该SKU是否完成
+    function chechskuover() {
+        var resualt = true;
+        var scancount = 0;
+        $.each(objtotal, function (index, item) {
+            if (item[4] == $("#sku").val() && item[5] == $("#upc").val() ) {
+                scancount = scancount + parseInt(item[6].toString());
+            }
+        });
+        $.each(receiptmodel, function (index, item2) {
+            if (item2.SKU == $("#sku").val() && item2.UPC == $("#upc").val()) {
+                if (scancount < item2.Qty) {
+                    resualt = false;
+                }
+            }
+        });
+       
+        return resualt;
+    }
+    function clearpagedata() {
+        //清空该sku数据
+        $("#sku").val("");
+        $("#qty").val("");
+        $("#upc").empty(); 
+    }
+    //更新捡货数量
+    function UpdateScanData() {
+        var isOk = false;
+        $.each(objtotal, function (index, item) {
+            //循环获取数据    
+            
+            if (item[4] == $("#sku").val() && item[5] == $("#upc").val() && item[3] == $("#boxnumber").val()) {
+                item[6] = $("#qty").val();
+                isOk = true;
+            }
+        });
+        $.each(objtotal, function (index, item) {
+            //循环获取数据    
+
+            if (item[0] == $("#ordernum").val() && item[1] == $("#expressnum").val() && item[3] == $("#boxnumber").val() && item[4] == "") {
+                lastSKUobj[4] = $("#sku").val();
+                lastSKUobj[5] = $("#upc").val();
+                lastSKUobj[6] = $("#qty").val();
+                item[4] = lastSKUobj[4];
+                item[5] = lastSKUobj[5];
+                item[6] = lastSKUobj[6]
+                isOk = true;
+            }
+        });
+        if (!isOk) {
+            lastSKUobj[4] = $("#sku").val();
+            lastSKUobj[5] = $("#upc").val();
+            lastSKUobj[6] = $("#qty").val();
+            var totallength = objtotal.length;
+            objtotal[totallength] = new Array();
+            objtotal[totallength][0] = lastSKUobj[0];
+            objtotal[totallength][1] = lastSKUobj[1];
+            objtotal[totallength][2] = lastSKUobj[2];
+            objtotal[totallength][3] = lastSKUobj[3];
+            objtotal[totallength][4] = lastSKUobj[4];
+            objtotal[totallength][5] = lastSKUobj[5];
+            objtotal[totallength][6] = lastSKUobj[6];
+        }
+        //清除数量为0的数据
+        $.each(objtotal, function (index, item) {
+            if (item[6] == "0") {
+                objtotal.remove(index);
+            }
+        });
+        return isOk;
+
+    }//
+    //根据sku给批次 单位等数据赋值
+    function SetvalueBySKu() { 
+        $("#upc").empty();
+        $.each(receiptmodel, function (index, item) {
+            //先给下拉框赋值
+            $.each(recidArray, function (index2, item2) {
+                if (item.ID == item2 ) {
+                    $("#sku").val(item.SKU);
+                    //$("#upc").val(item.UPC);
+                    if (!isExistOption("upc", item.UPC)) {
+                        $("#upc").append("<option value='" + item.UPC + "'>" + item.UPC + "</option>");
+                    }
+                }
+            });
+        });
+        SetDropdownListValue("upc");
+    }
+    //联动下拉框数据
+    function SetDropdownListValue(obj) {
+        if (obj == "upc") {
+            SetqtyBypage();
+        }
+        else {
+            //根据下拉框 给箱型 箱号赋值
+            var boxno = obj.val();
+            $.each(objtotal, function (index, item) {
+                if (item[3].substring(item[3].length - 3) == boxno) {
+                    $.each(boxslist, function (index, item2) {
+                        //循环获取数据    
+                        if (item2.Name == item[2]) {
+                            boxsize = "(" + item2.Code + ")";
+                            $("#boxtype").val(item[2] + boxsize);
+                        }
+                    });
+                    $("#boxnumber").val(item[3]);
+                    return;
+                }
+            });
+            lastSKUobj[0] = ordernumber;
+            lastSKUobj[1] = expressnumber;
+            lastSKUobj[2] = $("#boxtype").val().substring(0, $("#boxtype").val().indexOf("("));
+            lastSKUobj[3] = $("#boxnumber").val();
+        }
+    }
+    function isExistOption(id, value) {
+        var isExist = false;
+        var count = $('#' + id).find('option').length;
+        for (var i = 0; i < count; i++) {
+            if ($('#' + id).get(0).options[i].value == value) {
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
+    }
+    
+    //提交数据
+    function SaveRecdata(obj) {
+        if (checkover()) {
+            jsonString = "[";
+            $.each(objtotal, function (index, item) {
+                jsonString += "{";
+                var str2 = "";
+                var Length = "";
+                var Width = "";
+                var Height = "";
+                $.each(boxslist, function (index3, item3) {
+                    if (item3.Name == item[2]) {
+                        str2 = item3.Code;
+                        Length = item3.Code.toString().split(",")[0];
+                        Width = item3.Code.toString().split(",")[1];
+                        Height = item3.Code.toString().split(",")[2];
+                    }
+                });
+                //根据箱型获得code 等数据
+                jsonString += "\"str2\":\"" + str2 + "\",";
+                jsonString += "\"Length\":\"" + Length + "\",";
+                jsonString += "\"Width\":\"" + Width + "\",";
+                jsonString += "\"Height\":\"" + Height + "\",";
+                jsonString += "\"PackageType\":\"" + str2 + "\",";
+                jsonString += "\"ExpressNumber\":\"" + item[1] + "\",";
+                jsonString += "\"PackageNumber\":\"" + item[3] + "\",";
+                jsonString += "\"NetWeight\":\"\","
+                jsonString += "\"GrossWeigh\":\"\","
+                jsonString += "\"SKU\":\"" + item[4] + "\",";
+                jsonString += "\"UPC\":\"" + item[5] + "\",";
+                //根据sku和upc 得到
+                var GoodsType = "";
+                var GoodsName = "";
+                $.each(receiptmodel, function (index2, item2) {
+                    if (item2.SKU == item[4] && item2.UPC == item[5]) {
+                        GoodsType = item2.GoodsType;
+                        GoodsName = item2.GoodsName;
+                    }
+                });
+                jsonString += "\"GoodsType\":\"" + GoodsType + "\",";
+                jsonString += "\"GoodsName\":\"" + GoodsName + "\",";
+                jsonString += "\"Qty\":\"" + item[6] + "\"},";
+            });
+            jsonString = jsonString.substring(0, jsonString.length - 1);
+            jsonString += "]";
+            //
+            $.ajax({
+                type: "Post",
+                url: "/Order/Package",
+                data: {
+                    "ID": receiptmodel[0].OID,
+                    "JsonPackage": jsonString,
+                    "flag": 0
+
+                },
+                async: "false",
+                success: function (data) {
+                    if (data == "") {
+                        alert("提交包装完成！");
+                        //Clear All
+                        //objtemp.length = 0;
+                        //objtotal.length = 0;
+                        //$("#receiptnum").val("");
+                        //$("#Scan").val("");
+                        //$("#location").val("");
+                        //$("#sku").val("");
+                        //$("#qty").val("");
+                        //$("#lot").val("");
+                        ////$("#lot2").val("");
+                        //$("#unit").val("");
+                        //$("#uom").val(""); 
+                        $("#sku").val("");
+                        $("#qty").val(""); 
+                        $("#boxtype").val("");
+                        $("#boxnumber").val("");
+                        $("#Scan").empty();
+                        //$("#lot2").val("");
+                        $("#upc").empty();
+                        $("#Scan").val("");
+                        $("#ordernum").val("")
+                        $("#expressnum").val("")
+                        //$("#receiptnum").val("")
+                        ordernumber = "";
+                        receiptmodel.length = 0;//出库明细
+                        //var arrayLocation = new Array();
+                        //var arraySKU = new Array();
+                        objtotal.length = 0;
+                        recidArray.length = 0;
+                        CloseDiv();
+                        $("#ordernum").focus();
+                        return;
+                    }
+                    else {
+                        alert("提交包装失败！");
+                    }
+
+                },
+                error: function (msg) {
+                    alert("网络连接失败！");
+                }
+
+            });
+        }
+        else {
+            if (obj == "1") {
+                alert("请先完成捡货");
+            }
+        }
+    }
+    //根据界面数据 获得扫描数量
+    function SetqtyBypage() {
+        var isOk = false;
+        $.each(objtotal, function (index, item) {
+            if (item[4] == $("#sku").val() && item[5] == $("#upc").val() && item[3] == $("#boxnumber").val() ) {
+                $("#qty").val(item[6]);
+                isOk = true;
+            }
+        });
+        $.each(objtotal, function (index, item) {
+            //循环获取数据    
+
+            if (item[0] == $("#ordernum").val() && item[1] == $("#expressnum").val() && item[3] == $("#boxnumber").val() && item[4] == "") {
+                lastSKUobj[4] = $("#sku").val();
+                lastSKUobj[5] = $("#upc").val();
+                $("#qty").val("0");
+                lastSKUobj[6] = $("#qty").val();
+                item[4] = lastSKUobj[4];
+                item[5] = lastSKUobj[5];
+                item[6] = lastSKUobj[6]
+                isOk = true;
+            }
+        });
+        if (!isOk) {
+            $("#qty").val("0");
+        }
+        return isOk;
+    }
+    //验证整个订单是否完成
+    function checkover() {
+        var resualt = true;
+       
+        if (objtotal.length > 0) {
+
+            var temptotal = new Array();
+            $.each(objtotal, function (index, item) {
+                if (temptotal.length <= 0) {
+                    temptotal[0] = new Array();
+                    temptotal[0][0] = item[0];
+                    temptotal[0][1] = item[1];
+                    temptotal[0][4] = item[4];
+                    temptotal[0][5] = item[5];
+                    temptotal[0][6] = item[6];
+                }
+                else {
+                    var ishave = false;
+                    $.each(temptotal, function (index2, item2) {
+                        if (item2[0] == item[0] &&
+                        item2[1] == item[1] &&
+                        item2[4] == item[4] &&
+                        item2[5] == item[5]) {
+                            item2[6] = parseInt(item2[6].toString()) + parseInt(item[6].toString());
+                            ishave = true;
+                        }
+                    });
+                    if (!ishave) {
+                        var temptotallength = temptotal.length;
+                        temptotal[temptotallength] = new Array();
+                        temptotal[temptotallength][0] = item[0];
+                        temptotal[temptotallength][1] = item[1];
+                        temptotal[temptotallength][4] = item[4];
+                        temptotal[temptotallength][5] = item[5];
+                        temptotal[temptotallength][6] = item[6];
+                    }
+                }
+            });
+
+            $.each(receiptmodel, function (index, item) {
+                var ishave = false;
+                $.each(temptotal, function (index2, item2) {
+                    if (item2[0] == item.OrderNumber &&
+                    item2[1] == item.ExpressNumber &&
+                    item2[4] == item.SKU &&
+                    item2[5] == item.UPC) {
+                        if (item2[6] < item.Qty) {
+                            resualt = false;
+                        }
+                        ishave = true;
+                    }
+                });
+                if (!ishave) {
+                    resualt = false;
+                }
+            });
+        }
+        else {
+            resualt = false;
+        }
+        return resualt;
+    }
+    //判断箱子是否存在数据
+    function checkboxdatahave(boxnum) {
+        var resualt = false;
+        $.each(objtotal, function (index, item) {
+            if (item[3] == boxnum && item[4] != "") {
+                resualt = true;
+            }
+        });
+        return resualt;
+    }
+    function Scan() {
+        if (event.keyCode == 13) {
+            if ($("#Scan").val() == "") {
+                alert("扫描数据不能为空！");
+                return;
+            }
+            var scanval = $("#Scan").val();
+            if ($("#ordernum").val() == "") {
+                alert("请先扫描出库单！");
+                return;
+            }
+            //if ($("#expressnum").val() == "") {
+            //    alert("请先扫描快递单！");
+            //    return;
+            //}
+            if (checkBox(scanval)) {
+                if (objtotal.length <= 0) {
+                    $("#boxtype").val(scanval + boxsize);
+                    lastSKUobj[0] = $("#ordernum").val();
+                    lastSKUobj[1] = $("#expressnum").val();
+                    lastSKUobj[2] = scanval;
+                    $("#boxnumber").val(getboxnum());
+                    var boxno = $("#boxnumber").val();
+                    boxno = boxno.substring(boxno.length - 3);
+                    if (!isExistOption("boxno", boxno)) {
+                        $("#boxno").append("<option value='" + boxno + "'>" + boxno + "</option>");
+                    }
+                    $("#boxno").val($("#boxnumber").val().substring($("#boxnumber").val().length - 3));
+                    lastboxsize = $("#boxtype").val();
+                    lastSKUobj[3] = $("#boxnumber").val();
+                    var objtotallength = objtotal.length;
+                    objtotal[objtotallength] = new Array();
+                    objtotal[objtotallength][0] = lastSKUobj[0];
+                    objtotal[objtotallength][1] = lastSKUobj[1];
+                    objtotal[objtotallength][2] = lastSKUobj[2];
+                    objtotal[objtotallength][3] = lastSKUobj[3];
+                    objtotal[objtotallength][4] = "";
+                    objtotal[objtotallength][5] = "";
+                    objtotal[objtotallength][6] = "0";
+
+                    //objtotal[0] = lastSKUobj;
+                    $("#Scan").focus();
+                    $("#Scan").select();
+                }
+                else {
+                    if (checkboxdatahave($("#boxnumber").val())) {
+                        if (confirm("是否添加新箱？")) {
+                            clearpagedata();
+                            $("#boxtype").val(scanval + boxsize);
+                            var boxlength = objtotal.length;
+                            lastSKUobj = new Array();
+                            lastSKUobj[0] = $("#ordernum").val();
+                            lastSKUobj[1] = $("#expressnum").val();
+                            lastSKUobj[2] = scanval;
+                          $("#boxnumber").val(getboxnum()).val();
+                               var boxno = $("#boxnumber").val();
+                            boxno = boxno.substring(boxno.length - 3);
+                            if (!isExistOption("boxno", boxno)) {
+                                $("#boxno").append("<option value='" + boxno + "'>" + boxno + "</option>");
+                            }
+
+                            $("#boxno").val($("#boxnumber").val().substring($("#boxnumber").val().length - 3));
+
+                            lastboxsize = $("#boxtype").val();
+                            lastSKUobj[3] = $("#boxnumber").val();
+                            var objtotallength = objtotal.length;
+                            objtotal[objtotallength] = new Array();
+                            objtotal[objtotallength][0] = lastSKUobj[0];
+                            objtotal[objtotallength][1] = lastSKUobj[1];
+                            objtotal[objtotallength][2] = lastSKUobj[2];
+                            objtotal[objtotallength][3] = lastSKUobj[3];
+                            objtotal[objtotallength][4] = "";
+                            objtotal[objtotallength][5] = "";
+                            objtotal[objtotallength][6] = "0";
+                            //objtotal[0] = lastSKUobj;
+                            $("#Scan").focus();
+                            $("#Scan").select();
+                        }
+                        else {
+                            //加载上一单数据
+                            loadLastBox();
+                            $("#Scan").focus();
+                            $("#Scan").select();
+                        }
+                    }
+                }
+            }
+            else {
+                if ($("#boxtype").val() == "") {
+                    alert("请先扫描箱型！");
+                    $("#Scan").focus();
+                    $("#Scan").select();
+                    return;
+                }
+                else {
+                    if (checkSKU(scanval)) {
+                        if (!isNaN($("#qty").val())) {
+                            if (scanval == $("#sku").val() || scanval == $("#upc").val()) {
+
+                                //数量+1
+                                if (chechskuover()) {
+                                    alert("该sku已满足,请退回商品！");
+                                    clearpagedata();
+                                    $("#Scan").focus();
+                                    $("#Scan").select();
+
+                                }
+                                else {
+                                    $("#qty").val(parseInt($("#qty").val()) + 1);
+                                    UpdateScanData();
+                                    $("#Scan").focus();
+                                    $("#Scan").select();
+                                    SaveRecdata();
+                                }
+                            }
+                            else {
+                                SetvalueBySKu();
+                                if (chechskuover()) {
+                                    alert("该sku已满足,请退回商品！");
+                                    clearpagedata();
+                                    $("#Scan").focus();
+                                    $("#Scan").select();
+                                }
+                                else {
+                                    $("#qty").val(parseInt($("#qty").val()) + 1);
+                                    UpdateScanData();
+                                    $("#Scan").focus();
+                                    $("#Scan").select();
+                                    SaveRecdata();
+                                }
+                            }
+                        }
+                        else {
+                            //加载已扫描数量
+                            SetvalueBySKu();
+                            if (chechskuover()) {
+                                alert("该sku已满足,请退回商品！");
+                                clearpagedata();
+                            }
+                            else {
+                                //数量+1
+                                $("#qty").val(parseInt($("#qty").val()) + 1);
+                                UpdateScanData();
+                                SaveRecdata();
+                            }
+
+                        }
+                    }
+                    else {
+                        alert("扫描的数据有误！");
+                        $("#Scan").focus();
+                        $("#Scan").select();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    function getnewpackagenum() {
+
+    }
+    //显示扫描数据
+    function showmsg() {
+        if ($("#showdata")[0].style.display == 'none') {
+            $("#showdata")[0].style.display = 'block';
+            $("#showtable").html("");
+            $("#showtable").append("<tr><td>箱号</td><td>SKU</td><td>UPC</td><td>数量</td><td>操作</td></tr>")
+            $.each(objtotal, function (index, item) {
+                $("#showtable").append("<tr><td>" + item[3] + "</td><td>" + item[4] + "</td><td>" + item[5] + "</td><td>" + item[6] + "</td><td><input type='button' value='删除' onclick=delTotal('" + index + "') ></td></tr>")
+            });
+            //$("#showtable").append("<tr><td>sku</td><td>qty</td><td>lot</td><td>lot2</td><td>unit</td><td>uom</td><td>location</td></tr>")
+            //$.each(objtotal, function (index, item) {
+            //    $("#showtable").append("<tr><td>" + item[0] + "</td><td>" + item[1] + "</td><td>" + item[2] + "</td><td>" + item[3] + "</td><td>" + item[4] + "</td><td>" + item[5] + "</td><td>" + item[6] + "</td></tr>")
+            //});
+        }
+    }
+    function orderbytotal() {
+        for (var i = 0; i < objtotal.length - 1; i++) {
+            for (var j = 0; j < objtotal.length - i - 1; j++) {
+                if (objtotal[j][3] > objtotal[j + 1][3]) {
+                    var swap = objtotal[j];
+                    objtotal[j] = objtotal[j + 1];
+                    objtotal[j + 1] = swap;
+                }
+            }
+        }
+    }
+    //刷下拉框数据
+    function refelshboxno() {
+        $("#boxno").empty();
+        var temitem = new Array();
+      
+        orderbytotal();
+        $.each(objtotal, function (index, item) {
+            var boxno = item[3].substring(item[3].length - 3);
+            if (!isExistOption("boxno", boxno)) {
+                $("#boxno").append("<option value='" + boxno + "'>" + boxno + "</option>");
+            }
+        });
+        var maxval = $("#boxno option:last").val();
+        //$("#boxno").find("option[text='" + maxval + "']").attr("selected", true);
+        $("#boxno").val(maxval);
+        //$("#boxno ").get(0).selectedIndex = maxIndex;
+        ScanFouce($("#boxno"));
+    }
+    //隐藏扫描数据
+    function CloseDiv() {
+        $("#showdata")[0].style.display = 'none';
+        $("#showtable").html("");
+        refelshboxno();
+        $("#Scan").focus();
+    }
+    //sku回车
+    function ScanSKU() {
+        if (event.keyCode == 13) {
+            if (checkSKU($("#sku").val())) {
+                $("#qty").val(1);
+                //saveObjTmp($("#sku").val(), $("#qty").val(), $("#lot").val(), $("#lot2").val(), $("#unit").val(), $("#uom").val());
+                $("#Scan").val($("#sku").val());
+                $("#location").val("");
+                $("#Scan").select();
+            }
+            else {
+                alert("扫描的SKU有误！");
+                $("#Scan").select();
+            }
+        }
+    }
+    //数量回车
+    function ScanQTY() {
+        if (event.keyCode == 13) {
+            if ($("#qty").val() == "") {
+                alert("SKU不能为空！");
+            }
+            else {
+                if (checkSKU($("#sku").val())) {
+                    if (!isNaN($("#qty").val())) {
+                        //saveObjTmp($("#sku").val(), $("#qty").val(), $("#lot").val(), $("#lot2").val(), $("#unit").val(), $("#uom").val());
+                        $("#location").val("");
+                    }
+                    else {
+                        alert("请输入数字！");
+                    }
+                    $("#Scan").select();
+                }
+                else {
+                    alert("扫描的SKU有误！");
+                    $("#Scan").select();
+
+                }
+            }
+        }
+    }
+    //删除按钮
+    function delTotal(obj) {
+        //alert(obj);
+        //var arrdel = obj;
+        $.each(objtotal, function (index, item) {
+            if (obj == index) {
+                objtotal.splice(index, 1);
+            }
+            //if (arrdel[0] == item[0] && arrdel[1] == item[1] && arrdel[2] == item[2] && arrdel[3] == item[3] && arrdel[4] == item[4] && arrdel[5] == item[5] && arrdel[6] == item[6] && arrdel[7] == item[7]) {
+            //    objtotal.splice(index, 1);
+            return;
+            //}
+        }
+        );
+        $("#showtable").html("");
+        $("#showtable").append("<tr><td>箱号</td><td>SKU</td><td>UPC</td><td>数量</td><td>操作</td></tr>")
+        $.each(objtotal, function (index, item) {
+            $("#showtable").append("<tr><td>" + item[3] + "</td><td>" + item[4] + "</td><td>" + item[5] + "</td><td>" + item[6] + "</td><td><input type='button' value='删除' onclick=delTotal('" + index + "') ></td></tr>")
+        });
+        clearpagedata();
+    }
+    function ClearAll() {
+        ordernumber = "";
+        receiptmodel.length = 0;
+        objtotal.length = 0;
+        objtemp.length = 0;
+        ClaerPageData();
+    }
+    function ClaerPageData() {
+        $("#ordernum").val("");
+        $("#expressnum").val("");
+        ClearScanData();
+    }
+    function ClearScanData() {
+        $("#Scan").val("");
+        ClearScanValue();
+    }
+    function ClearScanValue() {
+        $("#boxtype").val("");
+        $("#boxnumber").val("");
+        $("#sku").val("");
+        $("#qty").val("");
+        $("#upc").empty();
+    }
+    //库位回车
+    function ScanLocation() {
+        if (event.keyCode == 13) {
+            if ($("#location").val() == "") {
+                alert("库位不能为空！");
+            }
+            else {
+                if (checkLocation($("#location").val())) {
+                    if ($("#sku").val() == "") {
+                        alert("SKU不能为空！");
+                    }
+                    else {
+
+                        if (checkSKU($("#sku").val())) {
+                            if (!isNaN($("#qty").val())) {
+                                saveObjTmp($("#sku").val(), $("#qty").val(), $("#unit").val(), $("#uom").val());
+
+
+                            }
+                            else {
+                                //alert("请输入数字");
+                                //$("#qty").focus();
+                            }
+
+                        }
+                        else {
+                            //alert("扫描的SKU有误！");
+                            //$("#Scan").select();
+
+                        }
+                        saveObjtotal($("#location").val());
+
+                        $("#Scan").val($("#location").val());
+                        //清空界面数据
+                        $("#location").val("");
+                        $("#sku").val("");
+                        $("#qty").val("");
+                        //$("#lot").val("");
+                        //$("#lot2").val("");
+                        $("#unit").val("");
+                        $("#uom").val("");
+                        $("#Scan").select();
+                    }
+                }
+                else {
+                    alert("请输入有效的库位");
+                    $("#Scan").select();
+                }
+            }
+        }
+    }
+    //下拉框改变事件
+    function ScanFouce(obj) {
+        SetDropdownListValue($(obj));
+        $("#Scan").select();
+        $("#Scan").focus()
+    }
+    //提交数据
+    function SaveOrderdata() {
+        var JsonData = "";
+        if (objtotal.length <= 0) {
+            alert("没有需要提交的数据！")
+            return;
+        }
+        JsonData += "[";
+        $.each(objtotal, function (index, item) {
+            JsonData += "{";
+            JsonData += "\"OrderNumber\":\"" + $("#ordernum").val() + "\",";
+            JsonData += "\"SKU\":\"" + item[0] + "\",";
+            JsonData += "\"QTY\":" + item[1] + ",";
+            //JsonData += "\"LOT\":\"" + item[2] + "\",";
+            //JsonData += "\"LOT2\":\"" + item[3] + "\",";
+            JsonData += "\"UNIT\":\"" + item[2] + "\",";
+            JsonData += "\"UOM\":\"" + item[3] + "\",";
+            JsonData += "\"LOCATION\":\"" + item[4] + "\"},";
+        });
+        JsonData = JsonData.substring(0, JsonData.length - 1);
+        JsonData += "]";
+        $.ajax({
+            type: "Post",
+            url: '/Order/SaveOrderData',
+            data: { "OrderNumber": $("#ordernum").val(), "JsonData": JsonData },
+            async: false,
+            success: function (data) {
+                if (data == "1") {
+                    //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                    alert("保存成功！");
+                    //Clear All
+                    objtemp.length = 0;
+                    objtotal.length = 0;
+                    $("#ordernum").val("");
+                    $("#Scan").val("");
+                    $("#location").val("");
+                    $("#sku").val("");
+                    $("#qty").val("");
+                    //$("#lot").val("");
+                    //$("#lot2").val("");
+                    $("#unit").val("");
+                    $("#uom").val("");
+                    CloseDiv();
+                    $("#receiptnum").focus();
+
+                }
+                else {
+                    alert("保存失败！");
+                }
+
+            },
+            error: function (msg) {
+                alert("保存失败！");
+            }
+
+        });
+    }
+    </script>
+        </head>
+    <body>
+@*<table style="text-align:center;width:100%;height:300px" >
+ <tr><td style="WIDTH:40%">出库单：</td><td><input id="receiptnum" type="text" style="width:100%" onkeydown="checkRecNum()" /></td></tr>
+    <tr><td style="WIDTH:40%">扫描：</td><td><input id="Scan" type="text" style="width:100%""  onclick="Scan()" /></td></tr>
+    <tr><td style="WIDTH:40%">库位：</td><td><input id="location" type="text" style="width:100%"" readonly="true" /></td></tr>
+    <tr><td style="WIDTH:40%">SKU：</td><td><input id="sku" type="text" style="width:100%"" readonly="true" /></td></tr>
+    <tr><td style="WIDTH:40%">数量：</td><td><input id="qty" type="text" style="width:100%"" /></td></tr>
+    <tr><td style="WIDTH:40%">批号：</td><td><input id="lot" type="text" style="width:100%"" /></td></tr>
+    <tr><td style="WIDTH:40%">LOT：</td><td><input id="lot2" type="text" style="width:100%"" /></td></tr>
+    <tr><td ><input style="width:80%" type="button" id="submit" value="提交"/></td><td ><input style="width:60%" type="button" id="show" value="取消"/></td></tr>
+</table>*@
+        <table style="text-align:left;width:100%;" >
+ <tr><td  style="width:100%">出库单</td><td style="text-align:right;font-weight:bold;font-size:24px" onclick="tdback()">← </td></tr>
+             <tr><td colspan="2" style="width:100%"><input style="width:100%" id="ordernum" type="text"  onkeydown="checkOrderNum()" /></td></tr>
+             <tr><td colspan="2" style="width:100%">快递单</td></tr>
+             <tr><td colspan="2" style="width:100%"><input style="width:100%" id="expressnum" type="text"  onkeydown="checkExpressnum()" /></td></tr>
+    <tr><td colspan="2" style="width:100%">扫描</td></tr>
+            <tr><td style="width:70%"><input style="width:100%" id="Scan" type="text"  onkeydown="Scan()" /> </td><td style="width:30%" ><input id="show" style="width:90%" onclick="showmsg()"  type="button" value="查看"></td></tr>
+ <tr><td  style="width:50%">箱型</td><td  style="width:50%">箱号</td></tr>
+             <tr><td  style="width:50%"><input style="width:100%" id="boxtype" type="text"  /></td><td  style="width:50%"><select style="width:100%" id="boxno" onchange="ScanFouce(this)"   /></td></tr>
+            <tr><td colspan="2" style="width:100%">箱流水号</td></tr>
+             <tr><td colspan="2" style="width:100%"><input style="width:100%" id="boxnumber" type="text"  /></td></tr>
+            <tr><td  style="width:50%">SKU</td><td  style="width:50%">UPC</td></tr>
+             <tr><td style="width:50%"><input style="width:100%" id="sku" type="text"  /></td><td   style="width:50%"><select onchange="ScanFouce(this)" style="width:100%" id="upc"   /></td></tr>
+           
+            <tr><td colspan="2" style="width:100%">数量</td></tr>
+             <tr><td colspan="2" style="width:100%"><input style="width:100%" id="qty" type="text" /></td></tr>
+</table>
+        <div id="showdata" style="position:absolute;top:30px;left:30px;width:120px;height:120px;display:none;background-color:white;border:solid 1px #add9c0;">
+            <table id="showtable" style="border:solid 1px #add9c0;" class=".td{border:solid 1px #add9c0;}">
+
+            </table>
+            <input type="button" id ="saveall" value="提交" onclick="SaveRecdata(1)" /> <input type="button" value="关闭" onclick="    CloseDiv()" />
+</div>
+    </body>
+    </html>

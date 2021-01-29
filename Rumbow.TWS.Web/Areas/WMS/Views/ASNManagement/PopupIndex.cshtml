@@ -1,0 +1,340 @@
+﻿<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@{
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+
+    var notKeyColumns = Model.Config.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //.Select(c =>
+    //{
+    //    if (c.InnerColumns.Count == 0)
+    //    {
+    //        return c;
+    //    }
+    //    else
+    //    {
+    //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.ASNCondition.CustomerID))
+    //        {
+    //            return c.InnerColumns.First(innerc => innerc.CustomerID == Model.ASNCondition.CustomerID);
+    //        }
+    //        return c;
+    //    }
+    //}).Distinct();
+
+    //if (Model.IsInnerUser)
+    //{
+    //    if (!Model.ASNCondition.CustomerID.HasValue || Model.ASNCondition.CustomerID == 0)
+    //    {
+    //        tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+    //    }
+    //    else
+    //    {
+    //        tmpDynamicSearchColumns = notKeyColumns.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+    //        tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+    //    }
+    //}
+    //else
+    //{
+    //    if (!Model.ASNCondition.CustomerID.HasValue || Model.ASNCondition.CustomerID == 0)
+    //    {
+    //        tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+    //    }
+    //    else
+    //    {
+    tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition).ToList();
+    //tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey)).ToList();
+    @*}*@
+    @*}*@
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+    //.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID))
+    var showColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.DbColumnName != "ASNStatusName" && c.DbColumnName != "ASNTypeName").Union(notKeyColumns.Where(c => c.IsShowInList)) : Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.DbColumnName != "ASNStatusName" && c.DbColumnName != "ASNTypeName").Union(notKeyColumns.Where(c => c.IsShowInList));
+}
+
+
+@using (Html.BeginForm())
+{@Html.HiddenFor(m => m.ASNCondition.StartDateTime1)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime1)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime2)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime2)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime3)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime3)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime4)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime4)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime5)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime5)
+@Html.HiddenFor(m => m.ASNCondition.StartExpectDate)
+@Html.HiddenFor(m => m.ASNCondition.EndExpectDate)
+@Html.HiddenFor(m => m.ASNCondition.CustomerID)
+@Html.HiddenFor(m => m.ASNCondition.CustomerName)
+@Html.HiddenFor(m => m.ASNCondition.ID)
+@Html.HiddenFor(m => m.ASNCondition.CompleteDate)
+@Html.HiddenFor(m => m.ASNCondition.Creator)
+@Html.HiddenFor(m => m.ASNCondition.Updator)
+@Html.HiddenFor(m => m.ASNCondition.UpdateTime)
+@Html.HiddenFor(m => m.ASNCondition.Remark)
+@Html.HiddenFor(m => m.ASNCondition.str1)
+@Html.HiddenFor(m => m.ASNCondition.str2)
+@Html.HiddenFor(m => m.ASNCondition.str3)
+@Html.HiddenFor(m => m.ASNCondition.str4)
+@Html.HiddenFor(m => m.ASNCondition.str5)
+@Html.HiddenFor(m => m.ASNCondition.str6)
+@Html.HiddenFor(m => m.ASNCondition.str7)
+@Html.HiddenFor(m => m.ASNCondition.str8)
+@Html.HiddenFor(m => m.ASNCondition.str9)
+@Html.HiddenFor(m => m.ASNCondition.str10)
+@Html.HiddenFor(m => m.ASNCondition.str11)
+@Html.HiddenFor(m => m.ASNCondition.str12)
+@Html.HiddenFor(m => m.ASNCondition.str13)
+@Html.HiddenFor(m => m.ASNCondition.str14)
+
+@Html.HiddenFor(m => m.ASNCondition.str16)
+@Html.HiddenFor(m => m.ASNCondition.str17)
+@Html.HiddenFor(m => m.ASNCondition.str18)
+@Html.HiddenFor(m => m.ASNCondition.str19)
+@Html.HiddenFor(m => m.ASNCondition.str20)
+@Html.HiddenFor(m => m.ASNCondition.DateTime1)
+@Html.HiddenFor(m => m.ASNCondition.DateTime2)
+@Html.HiddenFor(m => m.ASNCondition.DateTime3)
+@Html.HiddenFor(m => m.ASNCondition.DateTime4)
+@Html.HiddenFor(m => m.ASNCondition.DateTime5)
+@Html.HiddenFor(m => m.ASNCondition.Int1)
+@Html.HiddenFor(m => m.ASNCondition.Int2)
+@Html.HiddenFor(m => m.ASNCondition.Int3)
+@Html.HiddenFor(m => m.ASNCondition.Int4)
+@Html.HiddenFor(m => m.ASNCondition.Int5)
+//@Html.HiddenFor(m => m.ASNCondition.WarehouseID)
+//@Html.HiddenFor(m => m.ASNCondition.WarehouseName)
+//@Html.HiddenFor(m => m.ASNCondition.Status)
+//@Html.HiddenFor(m => m.ASNCondition.ASNType)
+@Html.HiddenFor(m => m.ASNCondition.StartCreateTime)
+@Html.HiddenFor(m => m.ASNCondition.EndCreateTime)
+<fieldset>
+    <legend>预入库单查询条件</legend>
+    @*<font color="#0000FF"><marquee direction="left" style="background:#de6e35;font-size:40px">当前有100单待处理</marquee></font>*@
+    <table>
+        <tr>
+            <td class="TableColumnTitle">
+                <label>预入库单号</label>
+            </td>
+            <td style="width: 15%;">@Html.TextAreaFor(m => m.ASNCondition.ASNNumber, new { @class = "form-control" })</td>
+            <td class="TableColumnTitle">
+                <label>外部单号</label>
+            </td>
+            <td style="width: 15%;">@Html.TextAreaFor(m => m.ASNCondition.ExternReceiptNumber, new { @class = "form-control" })</td>
+            <td class="TableColumnTitle">
+                <label>创建日期</label>
+            </td>
+            <td style="width: 15%;">@Html.CalendarRangeDateTime("CreateTime", "calendarRange form-control calendarRangeReWrite", @Model.ASNCondition.StartCreateTime, @Model.ASNCondition.EndCreateTime)</td>
+            <td class="TableColumnTitle">
+                <label>预入库日期</label>
+            </td>
+            <td style="width: 15%;">@Html.CalendarRange("ExpectDate", "calendarRange form-control calendarRangeReWrite", @Model.ASNCondition.StartExpectDate, @Model.ASNCondition.EndExpectDate)</td>
+        </tr>
+        <tr>
+            @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+            }
+            <td class="TableColumnTitle">
+                <label>客户</label>
+            </td>
+            <td>@Html.DropDownListFor(m => m.ASNCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+            <td class="TableColumnTitle">
+                <label>仓库</label>
+            </td>
+            <td>@Html.DropDownListFor(m => m.ASNCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control" })</td>
+            <td class="TableColumnTitle">
+                <label>预入库单类型</label>
+            </td>
+            <td>@Html.DropDownListFor(m => m.ASNCondition.ASNType, Model.ASNType, "==请选择==", new { @class = "form-control" })</td>
+            <td class="TableColumnTitle">
+                <label>预入库单状态</label>
+            </td>
+            <td>@Html.DropDownListFor(m => m.ASNCondition.Status, Model.Status, "==请选择==", new { @class = "form-control" })</td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                <label>其它单号</label>
+            </td>
+            <td>@Html.TextBoxFor(m => m.ASNCondition.str15, new { @class = "form-control", style = "width:100%" })</td>
+        </tr>
+        @for (int i = 0; i < dynamicSearchColumnRowCount; i++)
+        {
+            <tr>
+                @for (int j = 0; j < 3; j++)
+                {
+                    var index = i * 3 + j;
+                    if (index >= dynamicSearchColumns.Count)
+                    {
+                        <td colspan="2"></td>
+                    }
+                    else
+                    {
+                        var column = dynamicSearchColumns[i * 3 + j];
+                        var o = typeof(Runbow.TWS.Entity.ASN).GetProperty(column.DbColumnName).GetValue(Model.ASNCondition);
+
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td>
+                            @{
+                                if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                {
+                                    @Html.CalendarRange(column.DbColumnName, "calendarRange DynamicCalendarRange form-control calendarRangeReWrite")
+                                }
+                                else if (column.Type == "CheckBox")
+                                {
+                                    @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                                }
+                                else if (column.Type == "DropDownList" && column.IsKey)
+                                {
+                                    @Html.DropDownList(column.DbColumnName, (IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName.Substring(0, column.DbColumnName.Length - 4) + "s").GetValue(Model).ConvertSimpleType(typeof(IEnumerable<SelectListItem>)), "==请选择==", new { @class = "DropDownList" })
+                                }
+                                else if (column.Type == "DropDownList" && !column.IsKey)
+                                {
+                                    @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList", style = "width:100%;", });
+                                }
+                                else if (column.Type == "RegionPicker")
+                                {
+                                    if (column.DbColumnName == "StartCityName")
+                                    {
+                                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                        <a id="startCityClear" href="#">清空</a>
+                                    }
+                                    else
+                                    {
+                                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                        <a id="endCityClear" href="#">清空</a>
+                                    }
+                                }
+                                else
+                                {
+                                    @Html.TextBox(column.DbColumnName, o, new { @class = "notKeyVal form-control", style = "width:100%;", })
+                                }
+                            }
+                        </td>
+                    }
+                }
+            </tr>
+        }
+
+    </table>
+    <div class="actionButtonDiv">
+        <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        预入库单列表
+        @if (Model.ASNCollection != null && Model.ASNCollection.Any())
+        {
+            @Html.Raw("(" + Model.ASNCollection.Count() + ")");
+        }
+    </legend>
+    <div id="tables" style="overflow-X: scroll; min-height: 180px">
+        <table id="resultTable" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    @foreach (var column in showColumns)
+                    {
+                        <th style="width: 160px">
+                            @column.DisplayName
+                        </th>
+                    }
+
+                </tr>
+            </thead>
+            <tbody id="resultTbody">
+                @if (Model.ASNCollection != null && Model.ASNCollection.Any())
+                {
+                    foreach (var asn in Model.ASNCollection)
+                    {
+                        var tdd = "operateTD" + @asn.ID;
+                        <tr id="@asn.ASNNumber">
+                            @foreach (var column in showColumns)
+                            {
+                                <td style="width: auto" class="fixed">
+                                    @{
+                                        var o = typeof(Runbow.TWS.Entity.ASN).GetProperty(column.DbColumnName).GetValue(asn);
+                                        if (o != null)
+                                        {
+                                            switch (column.Type)
+                                            {
+                                                case "CheckBox":
+                                                    if (int.Parse(o.ToString()) == 1)
+                                                    {
+                                                        @Html.Raw("Y")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw("N")
+                                                    }
+                                                    break;
+                                                case "DropDownList":
+                                                    if (!column.IsKey)
+                                                    {
+                                                        @Html.ChooseString(o != null && o.ToString() == "1", "Y", "N")
+                                                    }
+                                                    else
+                                                    {
+                                                        if (column.DisplayName == "预入库单状态")
+                                                        {
+                                                            @(Model.Status.SingleOrDefault(m => m.Value == @o.ToString()).Text ?? "")
+                                                        }
+                                                        else if (column.DisplayName == "预入库类型")
+                                                        {
+                                                            @(Model.ASNType.SingleOrDefault(m => m.Value == @o.ToString()) == null ? @o.ToString() : Model.ASNType.SingleOrDefault(m => m.Value == @o.ToString()).Text)
+                                                        }
+                                                        else
+                                                        {
+                                                            @o.ToString()
+                                                        }
+
+                                                    }
+                                                    break;
+                                                case "DateTime":
+                                                    var temp = (DateTime?)o;
+                                                    if (temp.HasValue)
+                                                    {
+                                                        //  @temp.Value.DateTimeToString()
+                                                        @temp.Value
+                                                    }
+                                                    break;
+                                                case "DateTimeWithTime":
+                                                    var temp1 = (DateTime?)o;
+                                                    if (temp1.HasValue)
+                                                    {
+                                                        @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                    }
+                                                    break;
+                                                default:
+
+                                                    @o.ToString()
+
+                                                    break;
+                                            }
+                                        }
+                                    }
+
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+
+
+}
+

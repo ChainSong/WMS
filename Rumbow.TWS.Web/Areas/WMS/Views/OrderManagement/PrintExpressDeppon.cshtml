@@ -1,0 +1,249 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintExpressModel
+@{
+    ViewBag.Title = "PrintExpressDeppon";
+}
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+<script>
+    $(function () {
+
+        $.each($('.barTaget'), function (i, item) {
+            //alert($(item).parent().width());
+            $(item).css('width', $(item).parent().width() + 'px');
+            BarcodeC(item, $(item).html());
+        })
+        function BarcodeC(obj, data) {
+            $(obj).empty().barcode(data, "code128", { barWidth: 2, barHeight: 60, fontSize: 18, showHRI: false });
+        }
+
+        $.each($('.barTagetsmall'), function (i, item) {
+            //alert($(item).parent().width());
+            $(item).css('width', $(item).parent().width() + 'px');
+            Barcodesmall(item, $(item).html());
+        })
+        function Barcodesmall(obj, data) {
+            $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 30, fontSize: 9, showHRI: false });
+        }
+    })
+
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+</script>
+<!--1厘米 37.7px-->
+<style type="text/css">
+    label {
+        margin-bottom: 0;
+    }
+
+    .arrow-bottom {
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent; /* 左边框的宽 */
+        border-right: 4px solid transparent; /* 右边框的宽 */
+        border-top: 7px solid #217AFF; /* 下边框的长度|高,以及背景色 */
+        font-size: 0;
+        line-height: 0;
+    }
+
+    ._bb {
+        background-color: #000000 !important;
+        color: #fff !important;
+    }
+
+    ._div {
+        width: 100%;
+        border-bottom: 1px dashed #333;
+    }
+
+    ._transportType {
+        float: left;
+        width: 24%;
+        height: 100%;
+        text-align: center;
+        vertical-align: middle;
+    }
+    /*大头笔*/
+    ._arrivedOrgSimpleName {
+        height: 8%;
+        text-align: center;
+        line-height: 53px;
+        vertical-align: middle;
+        font-size: 32px;
+    }
+</style>
+<div class="actionButtonDiv" style="padding-top: 10px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="javascript:window.location.href = document.referrer">
+</div>
+<div style="margin:50px 0 0 50px;">
+    @if (Model.EnumerableExpressInfo != null && Model.EnumerableExpressInfo.Any())
+    {
+        int p = 0;
+
+        foreach (var item in Model.EnumerableExpressInfo)
+        {
+            p++;
+            var pages = "page" + p;
+            <div id="@pages" class='only_for_print pagestyle' style="clear: both;margin-bottom:15px;">
+                <div style="border:1px solid #333;width:380px;height:670px;">
+                    <div class="_div" style="height:6%;">
+                        <div style="float:left;width:36%;height:100%;"></div>
+                        <div style="float:left;width:40%;height:100%;" class="_bb">
+                            @*<div style="height:50%;">代收：1200</div>*@
+                            @*<div style="height:50%;">到付</div>*@
+                        </div>
+                        <div class="_transportType">
+                            <span>
+                                大件快<br />
+                                递360
+                            </span>
+                        </div>
+                    </div>
+                    <div class="_div _arrivedOrgSimpleName">
+                        <label>@item.arrivedOrgSimpleName</label>
+                    </div>
+                    <div class="_div" style="height:4%;position:relative;">
+                        <div style="font-size:18px; float:left;position:absolute;top:0px;left:6px;">
+                            <label>@Html.Raw("【")@item.District@Html.Raw("】")</label>
+                        </div>
+                        <div style="float:right;position:absolute;right:6px;top:6px;">
+                            <label>@Html.Raw(p)@Html.Raw("/")@Html.Raw(Model.EnumerableExpressInfo.Count().ToString())</label>
+                        </div>
+                    </div>
+                    <div class="_div" style="height:14%;">
+                        <div style="width:18%;height:100%;font-size:30px;float:left;text-align:center;line-height:70px;">
+                            <label>收</label>
+                        </div>
+                        @*<div style=" width: 18%; height: 100%; text-align: center; line-height: 30px; float: left;">
+
+                                <div style="border-radius: 50%; border: 1px solid rgb(51, 51, 51); border-image: none; width: 100%; height: 70%;float:left;padding: 25px 20px;">
+                                    <label>收</label>
+                                </div>
+                                <div style="float:left;width:100%;height:30%;" class="arrow-bottom">
+
+                                </div>
+                            </div>*@
+
+                        <div style="width:82%;height:100%;float:left;word-break:normal;word-wrap:break-word;font-size:12px;padding-top:5px;">
+                            @*<span>张伟</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>星空集团有限公司</span><br />*@
+                            @*<span>15605883677</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>0898-53992320</span><br />*@
+                            @*<span>新疆省</span>&nbsp;<span>乌鲁木齐市</span>&nbsp;<span>城西区</span>&nbsp;<span>西川南路48号</span>&nbsp;<span>千家福家具城5楼302号</span>*@
+                            <span>@item.Consignee</span><br />
+                            <span>@item.Contact</span><br />
+                            <span>@item.Province@Html.Raw("&nbsp;")@item.City@Html.Raw("&nbsp;")@item.District@Html.Raw("&nbsp;")@item.Address</span>
+                        </div>
+                    </div>
+                    <div class="_div" style="height:4%;">
+                        <div style="width:18%;height:100%;float:left;text-align:center;line-height:30px;">
+                            @*<label>寄</label>*@
+                        </div>
+                        <div style="width:66%;height:100%;float:left;line-height:30px;">
+                            @*<span>@item.senderContractor</span>&nbsp;&nbsp;&nbsp;<span>@item.senderMobile</span>&nbsp;&nbsp;&nbsp;*@
+                        </div>
+                        <div style="width:16%;height:100%;float:right;line-height:30px;font-weight:bolder;">
+                            <strong>实名认证</strong>
+                        </div>
+                    </div>
+                    <div class="_div" style="height:20%;">
+                        <div style="width:100%;padding:15px 8% 0 8%;text-align:center;">
+                            <div class="barTaget" style="width:100%;">@item.ExpressNumber</div>
+                        </div>
+                        <div style="width:100%;text-align:center;font-size:18px;">
+                            <label>子&nbsp;@Html.Raw(item.ExpressNumber.Substring(0, 3))@Html.Raw("&nbsp;&nbsp;&nbsp;")@Html.Raw(item.ExpressNumber.Substring(3, 4))@Html.Raw("&nbsp;&nbsp;&nbsp;")@Html.Raw(item.ExpressNumber.Substring(7, 4))@Html.Raw("&nbsp;&nbsp;&nbsp;")@Html.Raw(item.ExpressNumber.Substring(11))</label>
+                        </div>
+                        <div style="width:100%;text-align:center;font-size:12px;margin-top:-6px;">
+                            <label>母&nbsp;@Html.Raw(item.parentMailNo.Substring(0, 3))@Html.Raw("&nbsp;")@Html.Raw(item.parentMailNo.Substring(3, 4))@Html.Raw("&nbsp;")@Html.Raw(item.parentMailNo.Substring(7, 4))@Html.Raw("&nbsp;")@Html.Raw(item.parentMailNo.Substring(11))</label>
+                        </div>
+                        <div style="position:relative;">
+                            <div style="right: 10px; position: absolute;bottom:0;font-weight:bolder;">
+                                <strong>已验视</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="_div" style="height:4%;position:relative;border:0 !important;">
+                        <div style="float:left;position:absolute;left:5px;line-height:25px;">
+                            <span>签收单返单：无需返单</span>
+                        </div>
+                        <div style="float:right;position:absolute;right:5px;line-height:25px;">
+                            <span>保价金额：0.00</span>
+                        </div>
+                    </div>
+                    <div style="width:100%;height:40%;position:relative;">
+                        <div class="_div" style="height:20%;">
+                            <div style="width:100%;padding:8px 0 0 48%;text-align:center;">
+                                <div class="barTagetsmall" style="width:100%;">@item.ExpressNumber</div>
+                            </div>
+                            <div style="width:100%;padding:2px 8% 0 48%;text-align:center;font-size:9px;">
+                                <label>子&nbsp;@Html.Raw(item.ExpressNumber.Substring(0, 3))@Html.Raw("&nbsp;&nbsp;&nbsp;")@Html.Raw(item.ExpressNumber.Substring(3, 4))@Html.Raw("&nbsp;&nbsp;&nbsp;")@Html.Raw(item.ExpressNumber.Substring(7, 4))@Html.Raw("&nbsp;&nbsp;&nbsp;")@Html.Raw(item.ExpressNumber.Substring(11))</label>
+                            </div>
+                        </div>
+                        <div class="_div" style="height:25%;border-bottom:none;">
+                            <div style="width:18%;height:100%;font-size:12px;float:left;text-align:center;line-height:70px;padding:20px;">
+                                <div style="border:0px solid #000;border-radius:50%;text-align:center;line-height:25px;">
+                                    <label>收</label>
+                                </div>
+                            </div>
+                            <div style="width:59%;height:100%;font-size:12px;float:left;text-align:left;word-break:normal;word-wrap:break-word;padding-top:0px;">
+                                <span>@item.Consignee</span>&nbsp;&nbsp;&nbsp;<span>@item.Contact</span><br />
+                                <span>@item.Province@Html.Raw("&nbsp;")@item.City@Html.Raw("&nbsp;")@item.District@Html.Raw("&nbsp;")@item.Address</span>
+                            </div>
+                        </div>
+                        <div class="_div" style="height:10%;">
+                            <div style="width:18%;height:100%;font-size:12px;float:left;text-align:center;line-height:30px;">
+                                @*<label>寄</label>*@
+                            </div>
+                            <div style="width:59%;height:100%;font-size:12px;float:left;line-height:30px;">
+                                @*<span>@item.senderContractor</span>&nbsp;&nbsp;&nbsp;<span>@item.senderMobile</span>&nbsp;&nbsp;&nbsp;*@
+                            </div>
+                        </div>
+
+                        <div style="padding: 8px; top: 54px; width: 25%; height: 29%; text-align: center; right: 0px; line-height: 70px; font-size: 12px; float: left; position: absolute;">
+                            <div style="border-radius: 50%; border: 0px solid rgb(0, 0, 0); border-image: none; text-align: center; font-size: 36px;">
+                                <label>轻</label>
+                            </div>
+                        </div>
+
+                        <div style="position:absolute;bottom:30px;width:100%;left:12px;">
+                            <div style="width:18%;height:100%;font-size:12px;float:left;text-align:center;">
+                                <label>备注：</label>
+                            </div>
+                            <div style="width:82%;height:100%;font-size:12px;float:left;">
+                                <span>@item.OrderNumber</span>
+                            </div>
+                        </div>
+
+                        <div style="position:absolute;bottom:0;left:24px;">
+                            @DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

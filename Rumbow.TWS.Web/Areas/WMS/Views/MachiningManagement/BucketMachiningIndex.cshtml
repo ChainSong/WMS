@@ -1,0 +1,113 @@
+﻿<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.MachiningManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.Hidden("ShowSubmit", ViewBag.ShowSubmit == true ? "true" : "false")
+    <fieldset>
+        <legend>槽罐车查询条件 </legend>
+        <table id="BasicInfo">
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                }
+                <td class="TableColumnTitle">
+                    <label>客户名称</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.searchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>加工单号</label></td>
+                <td>
+                    @Html.TextBoxFor(m => m.searchCondition.MachiningNumber, new { style = "width:90%", @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>预计日期</label></td>
+                <td>
+                    @Html.CalendarFor(m => m.searchCondition.ExpectDate, "ExpectDate form-control")
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增加工单" id="addButton" name="Action" />
+            <input type="button" class="btn btn-success" value="批量打印加工单" id="PrintButton" name="Action" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            槽罐车加工单列表
+            @if (Model.MachiningCollection != null && Model.MachiningCollection.Any())
+            {
+                @Html.Raw("(" + Model.MachiningCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; width: 94%;min-height:180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th class="checkBoxHead">
+                            @Html.CheckBox("selectAll", "onclick=selectAll")
+                        </th>
+                        <th style="width:300px">客户</th>
+                        <th>加工单号</th>
+                        <th>加工单类型</th>
+                        <th>预计日期</th>
+                        <th>联系方式</th>
+                        <th>送货车牌号</th>
+                        <th>状态</th>
+                        <th id="OperateTh" style="position: absolute;left: 91%;width: 100px;height:34px;margin-top:-1px;  background-color:#e8eef4;text-align:center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.MachiningCollection != null && Model.MachiningCollection.Any())
+                    {
+                        foreach (var crminfo in Model.MachiningCollection)
+                        {
+                            var tdd = "operateTD" + @crminfo.ID;
+                            <tr>
+                                <td>
+                                    @Html.CheckBox("check" + crminfo.ID.ToString(), new { data_ID = @crminfo.ID, @class = "checkForSelect" })
+                                </td>
+                                <td>@crminfo.CustomerName</td>
+                                <td> <a href="/WMS/MachiningManagement/BucketMachiningAddSave/?ID=@crminfo.ID&Flag=2&CustomerID=@crminfo.CustomerID&CustomerName=@crminfo.CustomerName">@crminfo.MachiningNumber</a></td>
+                                <td>@crminfo.MachiningType</td>
+                                <td>@crminfo.ExpectDate.Value.ToShortDateString()</td>
+                                <td>@crminfo.Tel</td>
+                                <td>@crminfo.CarOrBoxNumber</td>
+                                <td>
+                                    @if (crminfo.Status == 1)
+                                    {
+                                        <label>新建</label>
+                                    }
+                                    else
+                                    {
+                                        <label>完成</label>
+                                    }
+
+                                </td>
+                                <td style="position: absolute;left: 91%;width: 100px;height:31px;margin-top:1px;border:none;">
+                                    <div id='@tdd' style="float:right;display:none;width:320px;" class="ddiv">
+                                        <div data-id="@crminfo.ID" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " class="editSettledPod" onclick="Print(@crminfo.ID)">打印</div>
+                                        <div data-id="@crminfo.ID" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " class="editSettledPod" onclick="Edit(@crminfo.ID,@crminfo.CustomerID,'@crminfo.CustomerName')">编辑</div>
+                                        <div style="text-align:center; width:75px; float:left;border:solid 1px ;background-color: #f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="deleteMachining(@crminfo.ID)">删除</div>
+                                    </div>
+                                </td>
+                                <td style="position: absolute;left: 91%;width: 100px;height:31px;margin-top:0px;">
+                                    @if (crminfo.Status == 1)
+                                    {
+                                        <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de" onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>
+                                    }
+                                    else
+                                    {
+                                        <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#808080 ">操作类型</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

@@ -1,0 +1,19 @@
+﻿@{
+    var messages = ViewData["ErrorMessage"].ToString().Split('*');
+}
+
+<fieldset>
+    <legend>信息提示</legend>
+    <div>
+        @foreach(var message in messages)
+        {
+            @message
+            <br />
+        }
+    </div>
+        
+    
+</fieldset>
+<div class="actionButtonDiv">
+        <input type="button" value="返回" id="btnReturn" onclick="window.history.back();" />
+</div>

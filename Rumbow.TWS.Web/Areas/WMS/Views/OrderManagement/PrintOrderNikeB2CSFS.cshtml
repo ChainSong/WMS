@@ -1,0 +1,251 @@
+﻿@*<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">*@
+
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+@{
+    ViewBag.Title = "PrintExpressAKC";
+}
+
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+@*@Url.jsrender()
+    @Url.Json2()*@
+@Html.Hidden("IDs", (string)ViewBag.IDs)
+
+<style>
+    .only_for_print {
+        /*display: none;*/
+        display: block;
+    }
+
+    .p_title {
+        font-size: 25px;
+        font-weight: bold;
+        font-family: 微软雅黑;
+    }
+
+    .div_txt {
+        margin-left: 40px;
+        margin-right: 80px;
+        font-size: 16px;
+        font-family: 微软雅黑;
+    }
+
+        .div_txt > p {
+            line-height: 15px;
+        }
+
+    .div_txt2 {
+        margin-left: 40px;
+        margin-right: 10px;
+        font-size: 16px;
+        font-family: 微软雅黑;
+    }
+
+        .div_txt2 > p {
+            line-height: 15px;
+        }
+
+    .goodstbl {
+        border: none;
+    }
+
+        .goodstbl thead tr td {
+            border: 1px solid white;
+        }
+
+        .goodstbl tbody tr td {
+            border: 0px solid white;
+        }
+</style>
+<script type="text/javascript">
+
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...') {
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+        }
+        else {
+            UpdatePrintStatus();
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+        }
+    }
+
+
+    function printReturn() {
+        // post('/POD/POD/QueryPod', { QueryPodViewModel: null, Action: '查询' });
+        window.location.href = '/WMS/OrderManagement/Index';
+    }
+
+    function BarcodeC2(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 35, showHRI: false });
+    }
+
+    //function BarcodeC(obj, data) {
+
+    //    $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 30, showHRI: false });
+    //}
+    $(function () {
+        $.each($(".bcTarget2"), function (a, b) {
+            BarcodeC2(b, $(b).html());
+        });
+    })
+    //更新打印次数
+    function UpdatePrintStatus() {
+        var ids = "";
+        ids = $("#IDs").val();
+        $.ajax({
+            type: "POST",
+            url: "/WMS/OrderManagement/UpdatePrintStatus",
+            data: {
+                "IDs": ids,
+            },
+            async: "false",
+            success: function (data) {
+
+            },
+            error: function (msg) {
+                alert(msg.val);
+            }
+        });
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 10px;text-align:center">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="printReturn()">
+</div>
+<h2>打印B2C线上支付拣货单  总单数：<b>@Model.OrderCollection.Count().ToString()</b></h2>
+<h4 style="color:red">警告：此类订单应使用预打印的A4纸，请勿使用普通A4纸！</h4>
+<h4 class="Noprint">
+    以下为打印区:<br>
+</h4>
+<br />
+@{
+    var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>
+    )ViewBag.ctype;
+    }
+    @if (Model.OrderCollection != null && Model.OrderCollection.Any())
+    {
+    var i = 0;
+    foreach (var item in Model.OrderCollection.OrderBy(m => m.ID))
+    {
+    i++;
+    var pages = "page" + i;
+    var orderdetail = Model.OrderDetailCollection.Where(m => m.OID == item.ID).ToList();
+
+    <div id="@pages" class="only_for_print pagestyle" style="width:100%;height:100%;clear:both">
+        <div class="headerdiv" style="width:100%;padding-bottom:15px;">
+            <div style="margin-top:160px;margin-bottom:20px;text-align:center">
+                <p class="p_title">商品送货单</p>
+            </div>
+            <div class="div_txt">
+                <p>快递公司：@item.ExpressCompany</p>
+                <p>收货人：&nbsp;&nbsp;&nbsp;@item.Consignee</p>
+                <p>联系电话：@item.Contact</p>
+                <p>邮编：&nbsp;&nbsp;&nbsp;</p>
+                <p style="height:40px; line-height:20px;">
+                    收货地址：
+                    @item.Province&nbsp;&nbsp;@item.City&nbsp;&nbsp;@item.District&nbsp;&nbsp;
+                    @item.Address
+                </p>
+                <br />
+                <p>送货时间要求：</p>
+            </div>
+        </div>
+        <hr style="border-top:1px #000 dashed;" />
+
+
+        <div class="goodsdiv" style="width:100%;margin-bottom:15px;">
+            <div style="margin-top:40px;margin-bottom:20px;text-align:center">
+                <p class="p_title">商品包裹装箱清单</p>
+            </div>
+            <div style="width:100%; text-align:center">
+                <div>
+                    <table class="goodstbl" style="text-align:center;font-size:16px;font-family:微软雅黑;border:0px;">
+                        <thead>
+                            <tr style="height:30px;">
+                                <td style="font-size:18px">序号</td>
+                                <td style="font-size:18px">商品编码</td>
+                                <td style="font-size:18px">商品名称</td>
+                                <td style="font-size:18px">库位</td>
+                                @*
+                                <td>退货</td>*@
+                                <td style="font-size:18px">数量</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                            var seq = 0;
+                            foreach (var detail in orderdetail)
+                            {
+                            seq += 1;
+                            <tr style="height:40px;">
+                                <td style="font-size:15px;">@seq.ToString()</td>
+                                <td style="font-size:16px;">@detail.Article</td>
+                                <td style="font-size:15px;">@detail.GoodsName</td>
+                                <td style="font-size:16px;">@detail.Location</td>
+                                @*
+                                <td><input type="checkbox" style="width:25px;height:25px;" disabled /></td>*@
+                                @*
+                                <td style="font-size:15px;"><p>@qty</p> </td>*@
+                                <td style="font-size:16px;">@Convert.ToInt32(detail.Qty)</td>
+                            </tr>
+                            }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr style="border-bottom:1px solid #000; ">
+
+        @*<div class="div_txt2" style="font-size:16px;">客户单号：@item.ExternOrderNumber</div>*@
+        <div class="bottomdiv" style="width:100%;margin-top:40px;">
+            <div style="width:50%; float:left;">
+                <div class="div_txt2">
+                    @*<p>客户单号：@item.ExternOrderNumber</p>*@
+                    <p>快递公司：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item.ExpressCompany</p>
+                    <p>发货仓库：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item.str13</p>
+                    <p>退货收件人：&nbsp;&nbsp;&nbsp;NIKE/JORDAN退货组</p>
+                    <p>退货寄回地址：请联系天猫旺旺客服,谢谢!</p>
+                    <p>退货联系电话：请联系天猫旺旺客服,谢谢!</p>
+                </div>
+            </div>
+            <div style="width:50%;float:left">
+                <div style="width:100%">
+                    <div style="padding-top:5px;padding-left:5px;height:50px" class="bcTarget2">@item.ExternOrderNumber</div>
+                    <div style="font-size:16px;line-height:30px;margin-left:10px;">销售订单号：@item.ExternOrderNumber</div>
+
+                    <div style="font-size:16px;margin-top:20px;margin-left:10px;">打印时间：@DateTime.Now.ToString("yyyy/MM/dd")</div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <br />
+    }
+    }
+    <object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+        <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+    </object>

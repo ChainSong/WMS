@@ -1,0 +1,277 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintPodModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@{
+    ViewBag.Title = "PrintAllPod";
+}
+<style media="print">
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .Noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 2px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td {
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+<style type="text/css">
+    .hTable {
+        border: 0;
+    }
+
+        .hTable > tbody > tr > td {
+            border: 0;
+        }
+
+    .ltd {
+        width: 10%;
+        text-align: right;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .btd {
+        width: 20%;
+    }
+
+    .dTable {
+        border: 0;
+    }
+
+        .dTable > thead > tr > th {
+            background: none;
+            color: #333;
+            border: 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .dTable > tbody > tr > td {
+            border: 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        .dTable > tfoot > tr > td {
+            border: 0;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+        }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID() {
+        window.history.go(-1);
+        //location.href = "/WMS/OrderECManagement/Index";
+    }
+</script>
+
+<div class="Noprint" style="text-align:center;height:10px;">
+    @*<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none"></object>*@
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="PackageID()">
+</div>
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+    int size1 = 3;
+    int szie2 = 5;
+    int ii = 0;
+    var printNum = 0;
+    var pi = 0;
+    var pages = "";
+    foreach (var head in Model.EnumerableCustomerInfo)
+    {
+        var dls = new List<Runbow.TWS.Entity.WMS.NikeOSRBJPrint.PrintPodInfo>();
+
+        printNum = 0;pi = 0;
+        var details = Model.PrintPodInfos.Where(p => p.OrderNumber == head.OrderNumber);
+
+        var detailsCount = details.Count();
+        if (detailsCount > size1)
+        {
+            dls = details.Skip(0).Take(size1).ToList();
+            pi = (detailsCount - size1) % szie2 == 0 ? (detailsCount - size1) / szie2 : (detailsCount - size1) / szie2 + 1;
+        }
+        else
+        {
+            dls = details.ToList();
+        }
+
+
+        printNum++;
+        ii++;
+        pages = "page" + ii;
+
+        <div id="@pages" style="width:100%;height:100%;margin-top:15px;border:0;">
+            <table style="width:100%;" class="hTable">
+                <tr>
+                    <td colspan="6" style="text-align:center;">
+                        <span style="font-size:22px;font-weight:bold;">BNX发货清单 - @printNum</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="ltd">发货日期:</td>
+                    <td class="btd">@head.datetime1</td>
+                    <td class="ltd">店铺名称:</td>
+                    <td class="btd">@head.str9</td>
+                    <td class="ltd">网店单号:</td>
+                    <td class="btd">@head.str11</td>
+                </tr>
+                <tr>
+                    <td class="ltd">快递单号:</td>
+                    <td class="btd">@head.str8</td>
+                    <td class="ltd">订单号:</td>
+                    <td class="btd">@head.ExternOrderNumber</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="ltd">收件人ID:</td>
+                    <td class="btd">@head.str10</td>
+                    <td class="ltd">收件人:</td>
+                    <td class="btd">@head.str12</td>
+                    <td class="ltd">电话号码:</td>
+                    <td class="btd">@head.str13</td>
+                </tr>
+            </table>
+            <table style="width:100%;margin-top:15px;" class="dTable">
+                <thead>
+                    <tr>
+                        <th style="width:15%;">颜色</th>
+                        <th style="width:25%;">条码</th>
+                        <th style="width:25%;">库位编号</th>
+                        <th>数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (details != null && details.Any())
+                    {
+                        foreach (var dd in dls)
+                        {
+                            <tr>
+                                <td>@dd.str10</td>
+                                <td>@dd.str9</td>
+                                <td>@dd.str10</td>
+                                <td>@dd.sumNum</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" style="text-align:right">
+                            <span style="margin-right:45px;">数量合计：@head.sumNum</span>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        for (int i = 0; i < pi; i++)
+        {
+            printNum++;
+            ii++;
+            pages = "page" + ii;
+
+            dls = details.Skip(size1 + (i * szie2)).Take(szie2).ToList();
+
+
+
+            <div id="@pages" style="width:100%;height:100%;margin-top:15px;border:0;">
+                <table style="width:100%;" class="hTable">
+                    <tr>
+                        <td style="text-align:center;">
+                            <span style="font-size:22px;font-weight:bold;">BNX发货清单 - @printNum</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span style="font-weight:bold;font-size:16px;">订单号:</span>@head.ExternOrderNumber</td>
+                    </tr>
+                </table>
+                <table style="width:100%;margin-top:15px;" class="dTable">
+                    <thead>
+                        <tr>
+                            <th style="width:15%;">颜色</th>
+                            <th style="width:25%;">条码</th>
+                            <th style="width:25%;">库位编号</th>
+                            <th>数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dd in dls)
+                        {
+                            <tr>
+                                <td>@dd.str10</td>
+                                <td>@dd.str9</td>
+                                <td>@dd.str10</td>
+                                <td>@dd.sumNum</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="text-align:right">
+                                <span style="margin-right:45px;">数量合计：@head.sumNum</span>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+
+
+
+    }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

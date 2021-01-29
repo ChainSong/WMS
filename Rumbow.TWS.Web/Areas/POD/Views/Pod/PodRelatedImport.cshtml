@@ -1,0 +1,44 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+<fieldset>
+    <legend>操作提示
+    </legend>
+    <div id="message">
+        @if (ViewBag.Type == "PodStatusTrack")
+        {
+
+            <span>1. 运单状态，跟踪状态，时间字段不能为空
+            <br />
+                2. 运单状态只能填写 提货/干线/配送 
+            <br />
+                3. 跟踪状态只能填写 订单下达/提货调车/到车情况/装车情况/离开情况/到达HUB/干线配载/干线发车/干线跟踪/到达终端/配送调车/配送跟踪/运单签收/回单上传
+            </span>
+
+        }
+        else
+        { 
+            @Html.Raw("请按项目要求的标准表格进行导入")
+        }
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        @ViewBag.DisplyMessage
+    </legend>
+    <div id="importDiv">
+        @{
+            var customers = (IEnumerable<SelectListItem>)ViewBag.Customers;
+        }
+        选择客户：
+        @Html.DropDownList("customer", customers)
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick('@ViewBag.Type    ');" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果(<label id="resultCount">0</label>)
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

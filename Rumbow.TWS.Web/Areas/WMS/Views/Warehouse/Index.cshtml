@@ -1,0 +1,192 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.IndexViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    <fieldset id="WarehouseCondition">
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle"><label>查询类型</label></td>
+                <td colspan="5">@Html.DropDownListFor(m => m.SearchCondition.SearchType, Model.SearchType, new { @class = "form-control", style = "width:31%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>仓库名称</label></td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.WarehouseName, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>状态</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.WarehouseStatus, Model.WarehouseStatus, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>类型</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.WarehouseType, Model.WarehouseType, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>描述</label></td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.Description, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>地址</label></td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.Address, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>州或省份</label></td>
+                <td>
+                    @Html.HiddenFor(m => m.SearchCondition.ProvinceCity, new { @class = "form-control", style = "width:100%" })
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey = "CityTreeKey" })
+                    <a id="EndPlaceClear" href="#">清空</a>
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" @*class="btn btn-primary"*@ class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            &nbsp;
+            <input type="button" @*class="btn btn-primary"*@ class="btn btn-success" value="新增仓库" id="addButton" name="Action" />
+            &nbsp;
+            <input type="button" @*class="btn btn-primary"*@ class="btn btn-success" value="新增库区" id="addAreaButton" name="Action" />
+            &nbsp;
+            <input type="button" @*class="btn btn-primary"*@ class="btn btn-success" value="新增库位" id="addLocationButton" name="Action" />
+            &nbsp;
+        </div>
+    </fieldset>
+
+    <fieldset id="WarehouseTable">
+        <legend>
+            仓库列表
+            @if (Model.WarehouseCollection != null && Model.WarehouseCollection.Any())
+            {
+                @Html.Raw("(" + Model.WarehouseCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll;  min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="width: 50px;">操作</th>
+                        <th>仓库</th>
+                        <th>状态</th>
+                        <th>类型</th>
+                        <th>描述</th>
+                        <th>地址</th>
+                        <th>州或省份</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.WarehouseCollection != null && Model.WarehouseCollection.Any())
+                    {
+                        foreach (var warehouse in Model.WarehouseCollection)
+                        {
+                            var tdd = "operateTD" + @warehouse.ID;
+                            <tr id="@warehouse.ID">
+                                <td style="position: relative" class="OoperationTD">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+
+                                        <label style="cursor: pointer;display:none;" class="btn btn-primary btn-xs warehouseStatus" onclick="Edit(@warehouse.ID)">编辑</label>
+                                        <label style="cursor: pointer;display:none;" class="btn btn-primary btn-xs WarehouseDelete" onclick="WarehouseDelete(@warehouse.ID,'@warehouse.WarehouseName')">删除</label>
+                                        <label style="cursor: pointer;display:none;" class="btn btn-primary btn-xs WarehouseDelete" onclick="AddMap(@warehouse.ID)">平面图</label>
+                                        @*<div  style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " >状态回退</div>*@
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    @*<div    onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                                </td>
+                                <td>
+                                    @* <a>@warehouse.WarehouseName</a>*@
+                                    <a href="/WMS/Warehouse/Create/@warehouse.ID?ViewType=0">@warehouse.WarehouseName</a>
+                                </td>
+
+                                <td>
+                                    @{if (warehouse.WarehouseStatus == "0")
+                                        {
+                                            @("不可用");
+                                        }
+                                        else
+                                        {
+                                            @("可用");
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{if (warehouse.WarehouseType == 1)
+                                        {
+                                            @("普通仓库");
+                                        }
+                                        else if (warehouse.WarehouseType == 2)
+                                        {
+                                            @("化工仓库");
+                                        }
+                                        else
+                                        {
+
+                                        }
+
+                                    }
+
+
+                                </td>
+                                <td>
+                                    @warehouse.Description
+                                </td>
+                                <td>
+                                    @warehouse.Address
+                                </td>
+                                <td>
+                                    @warehouse.ProvinceCity
+                                </td>
+
+
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    <div>
+        <div style="float:left;width:45%">
+            <fieldset style="margin-top: 100px;">
+                <legend>
+                    导入库位信息
+                </legend>
+                <div id="importDiv">
+                    @{
+                        var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                        var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                    }
+                    @Html.Label("仓库: ")@Html.DropDownListFor(m => m.SearchCondition.ID, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:15%;padding-bottom:1px" })
+                    <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
+                    <input type="submit" value="导入" @*class="btn btn-primary"*@ class="btn btn-primary" style="margin-top:-9px;" onclick="return fileImportClick();" />
+                    <input type="submit" value="下载库位模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
+                </div>
+            </fieldset>
+            <fieldset style="margin-top: 30px;width:45%">
+                <legend>
+                    导入结果
+                </legend>
+                <div id="outPutResult">
+                </div>
+            </fieldset>
+        </div>
+        <div style="float:left;width:45%">
+            <fieldset style="margin-top: 100px;">
+                <legend>
+                    导入库位跟货架关联信息
+                </legend>
+                <div id="importDiv2">
+                    @{
+                        var WarehouseList2 = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                        var AreaList2 = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                    }
+                    @Html.Label("仓库: ")@Html.DropDownListFor(m => m.SearchCondition.ID2, WarehouseList2, "==请选择==", new { @class = "form-control", style = "width:15%;padding-bottom:1px" })
+                    <input type="file" id="importExcel2" name="importExcel2" class="form-control" style="width: 30%;" />
+                    <input type="submit" value="导入" @*class="btn btn-primary"*@ class="btn btn-primary" style="margin-top:-9px;" onclick="return fileImportClick2();" />
+                    <input type="submit" value="下载库位货架关联模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
+                </div>
+            </fieldset>
+            <fieldset style="margin-top: 30px;width:45%">
+                <legend>
+                    导入结果
+                </legend>
+                <div id="outPutResult2">
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}

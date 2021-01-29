@@ -1,0 +1,489 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintBoxModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+<style>
+    .only_for_print {
+        display: none;
+    }
+
+    .bcTarget {
+        font-size: 25px;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 0px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 0px;
+        }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+     if (@ViewBag.PrintFlag == "1")
+    {
+       doPrint('打印')
+        setTimeout(function () {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        }, 1000)
+    }
+    })
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...')
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+
+        else if (how == '打印...') {
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        }
+
+        else 
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+           
+        
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        var OrderID=@ViewBag.OrderID;
+        if(OrderID=='0')
+        {
+            history.go(-1);
+        }
+        else
+        {
+            location.href = "/WMS/OrderManagement/NikePackage/?ID=" + OrderID;
+        }
+    }
+    function BarcodeC(obj, data) {
+
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 50, showHRI: false });
+
+    }
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+    })
+</script>
+
+<div class="actionButtonDiv" style="padding-top: -12px; float: left;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" id="printbtn" class="btn btn-success" onclick="doPrint('打印')">
+    @*<input type="button" value="返回" class="btn btn-success" onclick="PackageID()">*@
+</div>
+
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+
+    var packcount = Model.EnumerableCustomerInfo.Count();
+    var k = 0;
+    var packlistnumberheader = "";
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>装箱单号</th>
+                <th>POS代码</th>
+                <th>客户</th>
+                <th>客户名称</th>
+                <th>地址</th>
+            </tr>
+        </thead>
+
+        <tbody id="BodyTable">
+            @foreach (var CustomerInfo in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+            {
+                if (k == 0 || packlistnumberheader != CustomerInfo.PackageNumber)
+                {
+                    k++;
+                    <tr id="">
+                        <td>@CustomerInfo.PackageNumber.ToString()</td>
+                        <td>@CustomerInfo.CompanyCode</td>
+                        <td>@CustomerInfo.StorerKey</td>
+                        <td>@CustomerInfo.Company</td>
+                        <td>@CustomerInfo.AddressLine1</td>
+                    </tr>
+                }
+                packlistnumberheader = CustomerInfo.PackageNumber;
+            }
+        </tbody>
+    </table>
+    var i = 0;
+    var packlistnumber = "";
+    var g = 0;
+    var p = 0;
+    var PageCount = 0;
+    var CurrentPage = 0;
+    var CurrentBox = 0;
+    //总页数
+    foreach (var item in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+    {
+        if (p == 0 || packlistnumberheader != item.PackageNumber)
+        {
+            PageCount = 0;
+            p++;
+            if (Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count() <= 7)
+            {
+                PageCount = 1;
+            }
+            else
+            {
+                var page = 0;
+                if ((Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count() - 7) % 14 == 0)
+                {
+                    page = (Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count() - 7) / 14 + 1;
+                }
+                else
+                {
+                    page = (Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count() - 7) / 14 + 2;
+                }
+                PageCount += page;
+            }
+            packlistnumberheader = item.PackageNumber;
+        }
+
+    }
+
+    foreach (var item in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+    {
+        string imgurl = @"../../../../Content/Common/Phone/images/FI.png";
+        if (item.Str17 != null)
+        {
+            if (item.Str17.ToString().ToUpper() == "LI")
+            {
+                imgurl = @"../../../../Content/Common/Phone/images/LI.png";
+            }
+            else if (item.Str17.ToString().ToUpper() == "BI")
+            {
+                imgurl = @"../../../../Content/Common/Phone/images/BI.png";
+            }
+        }
+        if (g == 0 || packlistnumber != item.PackageNumber)
+        {
+            CurrentBox++;
+            var ss = 0;
+            g++;
+            var counts = Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count();
+            var Number = 0;
+            if (counts <= 7)
+            {
+                Number = 1;
+            }
+            else
+            {
+                if ((counts - 7) % 14 == 0)
+                {
+                    Number = (counts - 7) / 14 + 1;
+                }
+                else
+                {
+                    Number = (counts - 7) / 14 + 2;
+                }
+            }
+            for (var j = 0; j < Number; j++)
+            {
+                CurrentPage++;
+                ss = ss + 1;
+                var pages = "page" + CurrentPage;
+                <div id='@pages' style="padding-top:5px;text-align:center; position:relative">
+                    @if (ss == 1)
+                    {
+                        <table style="text-align: left; font-weight: bold; padding: 0px;">
+                            <tr>
+                                <td style="text-align: center; font-family: Agency FB; font-weight: bold; font-size:20px;padding:0px;"><img src="../../../../Content/Common/Phone/images/SH-CSC.png" /></td>
+                                <td style="text-align: center; font-family: Calibri; font-weight: bold; font-size:40px;border-bottom: 1px solid #000000;" rowspan="2" colspan="5">上海</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-family: Calibri; font-size:16px; font-weight: bold;border-bottom: 1px solid #000000;">&nbsp TO:</td>
+                            </tr>
+                            <tr style="">
+                                <td style="text-align: center; font-family: Calibri; font-weight: bold; font-size:18px;border-bottom: 1px solid #000000;border-top: 1px solid #000000;">@item.CompanyCode</td>
+                                <td style="text-align: center; font-family: Calibri;border-bottom: 1px solid #000000;padding:0px;"><img src="@imgurl" /></td>
+                                <td style="text-align: center; font-family: Calibri; font-weight: bold; font-size:18px;border-bottom: 1px solid #000000;border-top: 1px solid #000000;" colspan="4">@item.OrderNumber</td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: Calibri; font-weight: bold; font-size:20px;" colspan="4">@item.Company</td>
+                                <td style="font-family: Calibri; font-weight: bold; font-size:20px;" colspan="2">@item.Str9</td>
+                            </tr>
+                            <tr rolspan="2">
+                                <td style="font-family: Calibri; font-size:14px; font-weight: bold; border-bottom: 1px solid #000000;" colspan="6">@item.AddressLine1</td>
+                            </tr>
+                            <tr style="">
+                                <td style="font-family: Calibri; font-weight: bold; font-size:14px;border-bottom: 1px solid #000;border-top: 1px solid #000000;">CRD:</td>
+                                <td style="font-family: Calibri; font-weight: bold; font-size:16px;border-bottom: 1px solid #000;border-top: 1px solid #000000;border-right: 1px solid #000000;">@item.CRD</td>
+                                <td style="text-align: center;font-family: Calibri; font-weight: bold; font-size:16px;border-bottom: 1px solid #000;border-top: 1px solid #000000;border-right: 1px solid #000000;">@item.GenderAge</td>
+                                <td style="text-align: center;font-family: Calibri; font-weight: bold; font-size:16px;border-bottom: 1px solid #000;border-top: 1px solid #000000;">@item.BU</td>
+                                <td style="text-align: center;font-family: Calibri;border-bottom: 1px solid #000000;padding:0px;"><img src="../../../../Content/Common/Phone/images/Qty.png" /></td>
+                                <td style="text-align: center;font-family: Calibri; font-weight: bold; font-size:16px;border-bottom: 1px solid #000;border-top: 1px solid #000000;">@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(m => m.Qty).Sum()</td>
+                            </tr>
+                        </table>
+                        <table style="text-align: center; font-family: Calibri; font-weight: normal;">
+                            <tr style="border-bottom: 1px solid #514a4a;padding-top:0px;padding-bottom:0px;">
+                                <td style="font-family: Calibri;">Bin位</td>
+                                <td style="font-family: Calibri;">SKU</td>
+                                <td style="font-family: Calibri;">Cat.</td>
+                                <td style="font-family: Calibri;">Tag</td>
+                                <td style="font-family: Calibri;">Hanger</td>
+                                <td style="font-family: Calibri;">Qty.</td>
+                            </tr>
+                            @foreach (var itemdetail in Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Skip(j * 7).Take(7))
+                            {
+                                <tr style="padding-top:0px;padding-bottom:0px;">
+                                    <td style="font-family: Calibri; text-align:left;">@itemdetail.str5</td>
+                                    <td style="font-family: Calibri; text-align:left;">@itemdetail.Atrcle</td>
+                                    <td style="font-family: Calibri;">@itemdetail.Category</td>
+                                    <td style="font-family: Calibri;">@itemdetail.SafeLock</td>
+                                    <td style="font-family: Calibri;">@itemdetail.Hanger</td>
+                                    <td style="font-family: Calibri;">@itemdetail.Qty</td>
+                                </tr>
+                            }
+                        </table>
+                        <table style=" font-family: Calibri; font-weight: bold; position:absolute; top:470px;">
+                            <tr style="padding-top:0px;padding-bottom:0px;">
+                                <td style="text-align: left; font-family: Calibri; font-weight: bold;width:60px;">Carton ID</td>
+                                <td style="text-align: left; font-family: Calibri; font-weight: bold;width:120px;">@item.PackageNumber</td>
+                                <td style="text-align: right; font-family: Calibri; font-weight: bold;" colspan="3">Page:@ss/@Number</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:0px;" rowspan="2" colspan="2">
+                                    <div class="bcTarget">@item.PackageNumber.ToString()</div>
+                                </td>
+                                <td style="text-align:left; font-family: Agency FB; font-size:10px;">No.</td>
+                                <td></td>
+                                <td style="text-align:left; font-family: Agency FB; font-size:10px;">of</td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: Agency FB; font-size:40px; font-weight: 100;">@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(c => c.Str19.ToString()).FirstOrDefault()</td>
+                                @*<td style="font-family: Agency FB; font-size:40px; font-weight: 100;"></td>*@
+                                <td style="font-family: Agency FB; font-size:40px; font-weight:100;">/</td>
+                                @if (item.Status == 9 || item.Status == 8)
+                                {
+                                    <td style="font-family: Agency FB; font-size:40px; font-weight: 100;">@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(c => c.Str20.ToString()).FirstOrDefault()</td>
+
+                                }
+                                else
+                                {
+                                    <td style="font-family: Agency FB; font-size:40px; font-weight: 100;"></td>
+                                }
+                            </tr>
+                        </table>
+                    }
+                    else
+                    {
+                        <table style="text-align: center; font-family: Calibri; font-weight: normal;">
+                            <tr style="border-bottom: 1px solid #514a4a;padding-top:0px;padding-bottom:0px;">
+                                <td style="font-family: Calibri;">Bin位</td>
+                                <td style="font-family: Calibri;">SKU</td>
+                                <td style="font-family: Calibri;">Cat.</td>
+                                <td style="font-family: Calibri;">Tag</td>
+                                <td style="font-family: Calibri;">Hanger</td>
+                                <td style="font-family: Calibri;">Qty.</td>
+                            </tr>
+                            @foreach (var itemdetail in Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Skip((j - 1) * 14 + 7).Take(14))
+                            {
+                                <tr style="padding-top:0px;padding-bottom:0px;">
+                                    <td style="font-family: Calibri; text-align:left;">@itemdetail.str5</td>
+                                    <td style="font-family: Calibri; text-align:left;">@itemdetail.Atrcle</td>
+                                    <td style="font-family: Calibri;">@itemdetail.Category</td>
+                                    <td style="font-family: Calibri;">@itemdetail.SafeLock</td>
+                                    <td style="font-family: Calibri;">@itemdetail.Hanger</td>
+                                    <td style="font-family: Calibri;">@itemdetail.Qty</td>
+                                </tr>
+                            }
+                        </table>
+                        <table style=" font-family: Calibri; font-weight: bold; position:absolute; top:470px;">
+                            <tr style="padding-top:0px;padding-bottom:0px;">
+                                <td style="text-align: left; font-family: Calibri; font-weight: bold;width:60px;">Carton ID</td>
+                                <td style="text-align: left; font-family: Calibri; font-weight: bold;width:120px;">@item.PackageNumber</td>
+                                <td style="text-align: right; font-family: Calibri; font-weight: bold;" colspan="3">Page:@ss/@Number</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:0px;" rowspan="2" colspan="2">
+                                    <div class="bcTarget">@item.PackageNumber.ToString()</div>
+                                </td>
+                                <td style="text-align:left; font-family: Agency FB; font-size:10px;">No.</td>
+                                <td></td>
+                                <td style="text-align:left; font-family: Agency FB; font-size:10px;">of</td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: Agency FB; font-size:40px; font-weight: 100;">@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(c => c.Str19.ToString()).FirstOrDefault()</td>
+                                @*<td style="font-family: Agency FB; font-size:40px; font-weight: 100;"></td>*@
+                                <td style="font-family: Agency FB; font-size:40px; font-weight:100;">/</td>
+                                @if (item.Status == 9 || item.Status == 8)
+                                {
+                                    <td style="font-family: Agency FB; font-size:40px; font-weight: 100;">@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(c => c.Str20.ToString()).FirstOrDefault()</td>
+
+                                }
+                                else
+                                {
+                                    <td style="font-family: Agency FB; font-size:40px; font-weight: 100;"></td>
+                                }
+                            </tr>
+                        </table>
+                    }
+                </div>
+
+                @*<div id='@pages' style="padding-top:5px;text-align:center;" >
+                        @if (ss == 1)
+                        {
+                            <table style="text-align: left; font-family: 黑体; font-weight: bold; padding: 0px;">
+                                <tr>
+                                    <td colspan="1">PACKAGE#：</td>
+                                    <td colspan="7">@item.PackageNumber</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">SHIP FROM：</td>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.StorerKey).FirstOrDefault()</td>
+                                    <td rowspan="2" colspan="5">
+                                    <table>
+                                        <tr>
+                                            <td colspan="3" style="text-align:center; font-size:30px; font-weight:900;border:2px solid black;border-top-color:black;border-right-color:black;border-left-color:black;border-bottom-color:white;padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.City).FirstOrDefault() </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;font-size:20px;border:2px solid black; border-top-color:white;border-right-color:white;border-left-color:black;border-bottom-color:black;padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.BU).FirstOrDefault() </td>
+                                            <td style="text-align:center;font-size:20px;border:2px solid black; border-top-color:white;border-left-color:white;border-right-color:black;border-bottom-color:black;padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.GenderAge).FirstOrDefault()</td>
+                                        </tr>
+                                    </table>
+                                    </td>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">&nbsp</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">SHIP TO：</td>
+                                    <td colspan="6" style="padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.str4).FirstOrDefault()</td>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">&nbsp</td>
+                                </tr>
+                                <tr rowspan="2">
+                                    <td colspan="1" style="width:27%;padding-top:0px;padding-bottom:0px;">SHIP TO CITY：</td>
+                                    <td colspan="2" style="width:27%;font-size:30px;padding-top:0px;padding-bottom:0px;">成都</td>
+                                    <td colspan="6" style="text-align:center;padding-top:0px;padding-bottom:0px;">SITE：<img src="../../../../Content/Common/Phone/images/11.png" /> </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">客户名称：</td>
+                                    <td colspan="7" style="padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.Company).FirstOrDefault()</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" style="padding-top:0px;padding-bottom:0px;">客户地址：</td>
+                                    <td colspan="7" style="padding-top:0px;padding-bottom:0px;">@Model.EnumerableCustomerInfo.Select(m => m.AddressLine1).FirstOrDefault()</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="padding-top:0px;padding-bottom:0px;">CRD： @Model.EnumerableCustomerInfo.Select(m => m.CRD).FirstOrDefault()</td>
+                                    @if (ss == 1)
+                                    {
+                                    <td colspan="6" style="text-align:right;padding-top:0px;padding-bottom:0px;">总计:@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(m => m.Qty).Sum()</td>
+                                    }
+                                </tr>
+                            </table>
+                            <table style="text-align: center; font-family: 黑体; font-weight: bold;">
+                            <tr style="border-bottom: 3px solid #000;padding-top:0px;padding-bottom:0px;">
+                                <td style="width:26%;padding-left:0px;padding-right:0px;">SKU</td>
+                                <td style="padding-left:0px;padding-right:0px;">Category</td>
+                                <td style="padding-right:0px;">扣</td>
+                                <td style="padding-right:0px;">架</td>
+                                <td style="padding-left:0px;padding-right:0px;">UOM</td>
+                                <td style="padding-left:0px;padding-right:0px;">数量</td>
+                            </tr>
+
+                            @foreach (var itemdetail in Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Skip(j * 5).Take(5))
+                            {
+                                <tr style="padding-top:0px;padding-bottom:0px;">
+                                    <td style="padding-left:0px;padding-right:0px;">@itemdetail.Atrcle</td>
+                                    <td style="padding-left:0px;padding-right:0px;">@itemdetail.Category</td>
+                                    <td style="padding-right:0px;">@itemdetail.SafeLock</td>
+                                    <td style="padding-right:0px;">@itemdetail.Hanger</td>
+                                    <td style="padding-left:0px;padding-right:0px;">EA</td>
+                                    <td style="padding-left:0px;padding-right:0px;">@itemdetail.Qty</td>
+                                </tr>
+                            }
+                        </table>
+                            <table style=" font-family: 黑体; font-weight: bold;">
+                                <tr style="padding-top:0px;padding-bottom:0px;">
+                                    <td style="text-align: left;">@item.OrderNumber</td>
+                                    @if (ViewBag.Type=="0")
+                                    {
+                                        <td style="text-align: left;">Carton #:@Model.EnumerableCustomerInfo.Select(c => c.Str19.ToString()).FirstOrDefault()</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align: left;">Carton #:@CurrentBox</td>
+                                    }
+                                    <td style="text-align: right;">Page:@ss/@Number</td>
+                                </tr>
+                            </table>
+
+                        }
+
+                        else
+                        {
+
+                        <table style="text-align: center; font-family: 黑体; font-weight: bold;">
+                            <tr style="border-bottom: 3px solid #000;padding-top:0px;padding-bottom:0px;">
+                                <td style="width:26%;padding-left:0px;padding-right:0px;">SKU</td>
+                                <td style="padding-left:0px;padding-right:0px;">Category</td>
+                                <td style="padding-right:0px;">扣</td>
+                                <td style="padding-right:0px;">架</td>
+                                <td style="padding-left:0px;padding-right:0px;">UOM</td>
+                                <td style="padding-left:0px;padding-right:0px;">数量</td>
+                            </tr>
+
+                            @foreach (var itemdetail in Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Skip((j-1) * 11 + 5).Take(11))
+                            {
+                                <tr style="padding-top:0px;padding-bottom:0px;">
+                                    <td style="padding-left:0px;padding-right:0px;">@itemdetail.Atrcle</td>
+                                    <td style="padding-left:0px;padding-right:0px;">@itemdetail.Category</td>
+                                    <td style="padding-right:0px;">@itemdetail.SafeLock</td>
+                                    <td style="padding-right:0px;">@itemdetail.Hanger</td>
+                                    <td style="padding-left:0px;padding-right:0px;">EA</td>
+                                    <td style="padding-left:0px;padding-right:0px;">@itemdetail.Qty</td>
+                                </tr>
+                            }
+                        </table>
+                        <table style=" font-family: 黑体; font-weight: bold;">
+                            <tr style="padding-top:0px;padding-bottom:0px;">
+                                <td style="text-align: left;">@item.OrderNumber</td>
+                                @if (ViewBag.Type=="0")
+                                    {
+                                        <td style="text-align: left;">Carton #:@Model.EnumerableCustomerInfo.Select(c => c.Str19.ToString()).FirstOrDefault()</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="text-align: left;">Carton #:@CurrentBox</td>
+                                    }
+                                <td style="text-align: right;">Page:@ss/@Number</td>
+                            </tr>
+                        </table>
+                        }
+                    </div>*@
+            }
+            packlistnumber = item.PackageNumber;
+        }
+    }
+}
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

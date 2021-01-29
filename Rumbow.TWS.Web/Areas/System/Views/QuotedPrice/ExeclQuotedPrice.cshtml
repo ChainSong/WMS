@@ -1,0 +1,25 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+<fieldset>
+    <legend>SKU导入说明
+    </legend>
+    <div id="importInstructionDiv">
+        1.请将要导入的数据以excel表格形式进行导入<br />
+        2.Excel表格中包括（）几列<br />
+        3.导入后系统数据将以Excel表格数据为准。
+    </div>
+</fieldset>
+<fieldset>
+    <legend>选择Excel导入SKU
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

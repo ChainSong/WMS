@@ -1,0 +1,141 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.SettlementManagement.SettlementListViewModel
+@Url.jsrender()
+@Url.Json2()
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+    @Html.HiddenFor(m => m.SearchCondition.StartCompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndCompleteDate)
+    <fieldset>
+        <legend>新增结算单</legend>
+        <table id="UserTable">
+            @{
+                <tr>
+                    <td class="TableColumnTitle" style="width: 5%;">
+                        <label>客户</label>@*<label style="color:red;">***</label>*@
+                    </td>
+                    <td style="width: 12%;">
+                        @Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, new { @class = "form-control", style = "width:100%" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 5%;">
+                        <label>仓库</label>
+                    </td>
+                    <td style="width: 12%;">
+                        @Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, new { @class = "form-control", style = "width:100%" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 5%;">
+                        <label>结算单号</label>
+                    </td>
+                    <td style="width: 12%;">
+                        <input class="form-control" id="PreOrderNumber" style="width: 100%;" disabled="disabled" value="系统自动生成" />
+                    </td>
+                    <td class="TableColumnTitle" style="width: 8%;">
+                        <label>费用类型</label>
+                    </td>
+                    <td style="width: 12%;">
+                        @Html.DropDownListFor(m => m.SearchCondition.CostCategory, @Model.CostCategorylist, new { @class = "form-control", style = "width:100%" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width: 5%;">
+                        <label>结算日期</label>
+                    </td>
+                    <td style="width: 12%;">
+                        @Html.CalendarRange("Settlementdate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartSettlementdate, @Model.SearchCondition.EndSettlementdate)
+                    </td>
+                    <td class="TableColumnTitle" style="width: 5%;">
+                        <label>费用描述</label>
+                    </td>
+                    <td style="width: 12%;">
+                        @Html.TextAreaFor(m => m.SearchCondition.Remark, new { @class = "form-control", style = "width:100%" })
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增费用" id="addButton" onclick="createCost('@ProjectName')" />
+            <input type="button" class="btn btn-success" value="返回" id="BackButton" onclick="Returns()" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            订单列表
+            @if (Model.ViewType != 0)
+            {
+                if (Model.SettlementDetailCollection != null && Model.SettlementDetailCollection.Any())
+                {
+                    @;
+                }
+                else
+                {
+                    @   ;
+                }
+            }
+        </legend>
+        <div style="overflow-X: scroll; min-height: 180px">
+            <table id="RoleTable">
+                <thead>
+                    <tr>
+                        <th>仓库</th>
+                        <th>出库日期</th>
+                        <th>出库单号</th>
+                        <th>外部单号</th>
+                        <th>收货门店</th>
+                        <th>行号</th>
+                        <th>SKU</th>
+                        <th>箱数</th>
+                        <th>件数</th>
+                        <th>安全扣</th>
+                        <th>衣架</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.SettlementDetailCollection != null && Model.SettlementDetailCollection.Any())
+                    {
+                        foreach (var Settlement in Model.SettlementDetailCollection)
+                        {
+                            <tr>
+                                <td>@Settlement.Warehouse</td>
+                                <td>@Settlement.CompleteDate</td>
+                                <td>@Settlement.OrderNumber</td>
+                                <td>@Settlement.ExternOrderNumber</td>
+                                <td>@Settlement.Company</td>
+                                <td>@Settlement.LineNumber</td>
+                                <td>@Settlement.SKU</td>
+                                <td>@Settlement.TotalBox</td>
+                                <td>@Settlement.Qty</td>
+                                <td>@Settlement.Safelock</td>
+                                <td>@Settlement.Hanger</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+
+    <div id="addCost" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">费用类别</td>
+                <td>
+                    @Html.DropDownList("select_adjustmenttype", Model.CostCategorylist, "==请选择==", new { @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="提交" id="addCostOK" />
+            <input type="button" class="btn btn-success" value="返回" id="addCostReturn" style="margin-left: 50px;" />
+        </div>
+    </div>

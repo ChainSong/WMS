@@ -1,0 +1,109 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.SkuInAndOutViewModel
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.BeginCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>日期</label></td>
+                <td style="width: 25%;">@Html.CalendarRange("CreateTime", "calendarRange form-control calendarRangeReWrite", Model.SearchCondition.BeginCreateTime, Model.SearchCondition.EndCreateTime)</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>SKU</label></td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>Article</label></td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.Article, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>Size</label></td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.Size, new { @style = "width:100%", @class = "form-control" })</td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>门店代码</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.storerkey, new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            @if (Model.SearchCondition.CustomerID != null && Model.SearchCondition.CustomerID.Value.ToString() == "88")
+            { 
+                 <tr>
+                    <td class="TableColumnTitle">
+                        <label>批次</label></td>
+                    <td>@Html.TextAreaFor(m => m.SearchCondition.BatchNumber, new { @style = "width:100%", @class = "form-control" })</td>
+                </tr>
+            
+            }
+            <tr>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+    </fieldset> 
+    
+    <fieldset>
+        <legend>明细列表
+            @if (Model.ReportSkuInAndOutCollection != null && Model.ReportSkuInAndOutCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReportSkuInAndOutCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>SKU</th>
+                    <th>BU</th>
+                    <th>物品代码</th>
+                    <th>物品尺寸</th>
+                    <th>数量</th>
+                    <th>库位</th>
+                    <th>类型</th>
+                    <th>外部订单号</th>
+                    <th>门店代码</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ReportSkuInAndOutCollection != null && Model.ReportSkuInAndOutCollection.Any())
+                {
+                    foreach (var item in Model.ReportSkuInAndOutCollection)
+                    { 
+                <tr>
+                    <td>@item.CreateTime</td>
+                    <td>@item.SKU</td>
+                    <td>@item.BU</td>
+                    <td>@item.Article</td>
+                    <td>@item.Size</td>
+                    <td>@item.Qty</td>
+                    <td>@item.Location</td>
+                    <td>@item.Type</td>
+                    <td>@item.ExternReceiptNumber</td>
+                    <td>@item.storerkey</td>
+                </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

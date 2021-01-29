@@ -1,0 +1,38 @@
+﻿   
+    .yc
+    {
+        display:none;
+    }
+    .xs
+    {
+        display:block;
+    }
+	#center
+	{
+		text-align:center;
+		
+	}
+#ahidden
+{
+	/*width:10px;
+	height:10px;*/
+	/*background-image:url("../../../../Image/xia.jpg");*/
+	/*background-repeat:no-repeat;
+    background-size:10px;*/
+	border:0px;
+	cursor:pointer;
+	
+}
+
+	.tbcolum
+    {
+        width: 20%;
+        background-color: #e8eef4;
+    }
+.tbwidth
+{
+	width:20%;
+	padding:0px;
+}
+
+	

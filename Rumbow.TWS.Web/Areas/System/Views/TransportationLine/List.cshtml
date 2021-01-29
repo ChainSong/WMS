@@ -1,0 +1,134 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.TransportationLineListViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@{
+    var startCityTreeKey = Guid.NewGuid().ToString();
+    var endCityTreeKey = Guid.NewGuid().ToString();
+}
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Name)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.State)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.State, Model.States, new { @style = " height:30px;width:125px;" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.StartCityID)
+                </td>
+                <td style="width: 40%">
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = startCityTreeKey })
+                    <a id="startCityClear" href="#">清空</a>
+                    @Html.HiddenFor(model => model.StartCityID)
+                    @Html.HiddenFor(model => model.StartCityName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.EndCityID)
+                </td>
+                <td style="width: 40%">
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = endCityTreeKey })
+                    <a id="endCityClear" href="#">清空</a>
+                    @Html.HiddenFor(model => model.EndCityID)
+                    @Html.HiddenFor(model => model.EndCityName)
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit"  value="查询" class="btn btn-success" id="searchButton" />
+            <input type="button"  value="新增" onclick="window.location.href = '/System/TransportationLine/Create'" class="btn btn-success" id="btnAdd" />
+        </div>
+    </fieldset>
+
+    <fieldset style="margin-top: 10px;">
+        <legend>线路列表 &nbsp;&nbsp;@ViewBag.Message
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>起始城市</th>
+                    <th>到达城市</th>
+                    <th>实际距离</th>
+                    <th>描述</th>
+                    <th>是否可用</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.TransportationLineCollection != null && Model.TransportationLineCollection.Any())
+                {
+                    foreach (var transportationLine in Model.TransportationLineCollection)
+                    {
+                    <tr>
+                        <td>@transportationLine.Name</td>
+                        <td>@transportationLine.StartCityName</td>
+                        <td>@transportationLine.EndCityName</td>
+                        <td>@transportationLine.Distance</td>
+                        <td>@transportationLine.Remark</td>
+                        <td>@{
+                        if (transportationLine.State)
+                        {
+                            @Html.Raw("可用")
+                        }
+                        else
+                        {
+                            @Html.Raw("禁用")
+                        }
+                        }
+                        </td>
+                        <td>
+                            <a id="enableOrDisable"+@transportationLine.ID, data-id="@transportationLine.ID" href="#" state="@transportationLine.State" class="enableOrDisable">
+                                @{
+                        if (transportationLine.State)
+                        {
+                                    @Html.Raw("禁用")
+                        }
+                        else
+                        {
+                                    @Html.Raw("启用")
+                        }
+                                }
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}
+
+<script>
+    function onRegionSelected(rid, rn, treeId) {
+        if (treeId === '@startCityTreeKey') {
+            $('#StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (treeId === '@endCityTreeKey') {
+            $('#EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#EndCityName').val($('#endCityTreeName').attr('value'));
+        }
+    }
+
+    function onRegionAutoCompleteSelected(globalID) {
+        if (globalID === '@startCityTreeKey') {
+            $('#StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (globalID === '@endCityTreeKey') {
+            $('#EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#EndCityName').val($('#endCityTreeName').attr('value'));
+        }
+    }
+</script>

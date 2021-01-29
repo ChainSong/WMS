@@ -1,0 +1,312 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.QueryPodViewModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<style>
+    .only_for_print
+    {
+        display: none;
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+
+    .noprint
+    {
+        display: none;
+    }
+
+    .bor > td
+    {
+        border: 2px solid #000000;
+    }
+  .border-table {   
+        border-collapse: collapse;   
+        border: none;   
+    }   
+    .border-table>td {   
+        border: solid #000 1px;   
+    }   
+</style>
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...')
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: -12px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印..." class="btn btn-success" onclick="doPrint('打印...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+</div>
+@if (Model.PodCollection != null && Model.PodCollection.Any())
+{
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>系统运单号</th>
+                <th>客户运单号</th>
+                <th>客户</th>
+                <th>承运商</th>
+                <th>运单状态</th>
+                <th>运输类型</th>
+                <th>起运城市</th>
+                <th>目的城市</th>
+                <th>发货日期</th>
+            </tr>
+        </thead>
+        <tbody id="BodyTable">
+            @foreach (var crminfo in Model.PodCollection)
+            {
+                <tr id="@crminfo.ID.ToString()">
+                    <td><a href="/POD/POD/ViewPodAll/@crminfo.ID?showEditRelated=false">@crminfo.SystemNumber</a></td>
+                    <td>@crminfo.CustomerOrderNumber</td>
+                    <td>@crminfo.CustomerName</td>
+                    <td>@crminfo.ShipperName</td>
+                    <td>@crminfo.PODStateName</td>
+                    <td>@crminfo.ShipperTypeName</td>
+                    <td>@crminfo.StartCityName</td>
+                    <td>@crminfo.EndCityName</td>
+                    <td>@crminfo.ActualDeliveryDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+            var i = 0;
+            foreach (var item in Model.PodCollection)
+            {
+                i++;
+                var ids = "page" + i;
+    <div id='@ids' class='only_for_print pagestyle'>
+        <table class="Htab" style="width: 700px; margin-top: 50px;border: 0px">
+            <tr style="border: 0px">
+                <td style="border: 0px">
+                    <img width="180px" heigh="100px" src="../../../../Image/BSReport.png" />
+                </td>
+                <td style="border: 0px">
+                    <h3>上海物流科技有限公司</h3>
+                </td>
+                <td style="border: 0px">
+                    <img width="100px" heigh="100px" src="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=@item.Url" /></td>
+            </tr>
+            <tr style="border: 0px">
+                <td style="border: 0px"></td>
+                <td style="border: 0px">
+                    @*<h5>单号:{{:CustomerOrderNumber}}</h5>*@
+                    <h5>单号:@item.CustomerOrderNumber</h5>
+                </td>
+                <td style="border: 0px"></td>
+            </tr>
+        </table>
+        <hr />
+        <div style="width: auto; border: 1px solid #000">
+            <table style="margin-bottom: 0; width: 700px;" border="1" cellpadding="0" cellspacing="0">
+                <tbody class="bor">
+                    <tr style="height: 30px;">
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>发<br>
+                                货<br>
+                                方</h5>
+                        </td>
+                        <td style="width: 80px;">
+                            <h5>发货代码：</h5>
+                        </td>
+                        <td style="width: 21%;"></td>
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>承<br>
+                                运<br>
+                                商</h5>
+                        </td>
+                        <td style="width: 18%">
+                            <h5>上海物流</h5>
+                        </td>
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>收<br>
+                                货<br>
+                                方</h5>
+                        </td>
+                        <td style="width: 80px;">
+                            <h5>收货代码</h5>
+                        </td>
+                        <td style="width: 24%">@item.Str1</td>
+                    </tr>
+                    <tr style="height: 30px; border: 1px solid #000">
+                        <td>
+                            <h5>单位名称：</h5>
+                        </td>
+                        <td>@item.Str3</td>
+                        <td>
+                            <h5>项目团队:耐克项目</h5>
+                        </td>
+                        <td>
+                            <h5>单位名称：</h5>
+                        </td>
+                        <td>@item.Str20</td>
+                    </tr>
+                    <tr style="height: 30px; border: 1px solid #000">
+                        <td>
+                            <h5>单位地址：</h5>
+                        </td>
+                        <td width="21%" style="word-break: break-all">@item.Str7</td>
+                        <td></td>
+                        <td>
+                            <h5>单位地址：</h5>
+                        </td>
+                        <td width="21%" style="word-break: break-all">@item.Str21</td>
+                    </tr>
+                    <tr style="height: 30px;">
+                        <td>
+                            <h5>联系方式：</h5>
+                        </td>
+                        <td>@item.Str6</td>
+                        <td></td>
+                        <td>
+                            <h5>联系方式：</h5>
+                        </td>
+                        <td>@item.Str22</td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td rowspan="2" colspan="2">
+                            <h5>货物属性：</h5>
+                        </td>
+                        <td rowspan="2" colspan="3">@item.Str23</td>
+                        <td colspan="3">
+                            <h5>备注</h5>
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="4">
+                            <h5>货物箱数： @item.BoxNumber</h5>
+                        </td>
+                        <td colspan="4">
+                            <h5>货物总件数：@item.GoodsNumber</h5>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <table border="1" border="1" cellpadding="0" cellspacing="0" style="margin-top: 0; width: 700px;">
+                        <tr>
+                            <td rowspan="2" style="width: 25px;">
+                                <h5>运<br>
+                                    输<br>
+                                    要<br>
+                                    求</h5>
+                            </td>
+                            <td>
+                                <h5>预计发货日期：@item.DateTime1</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>预计到货日期：@item.DateTime6</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>运输方式： √汽运  □铁路  □空运</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>包装方式：□纸箱 □编织袋</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>支付方式：□预付 □货到付款</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>特殊要求：□紧急运输 □整车运输</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>发<br>
+                                    货<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td></td>
+                            <td style="width: 25px;">
+                                <h5>承<br>
+                                    运<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td></td>
+                            <td style="width: 25px;">
+                                <h5>收<br>
+                                    货<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td>
+                                <br>
+                                <br>
+                                <br>
+                                <h5>收货人姓名：
+                    <br>
+                                    收货人身份证号：
+                    <br>
+                                    签收日期：&nbsp;&nbsp;   年 &nbsp;&nbsp;  月 &nbsp;&nbsp;   日</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>发<br>
+                                    货<br>
+                                    方<br>
+                                    记<br>
+                                    事</h5>
+                            </td>
+                            <td></td>
+                            <td>
+                                <h5>承<br>
+                                    运<br>
+                                    方<br>
+                                    记<br>
+                                    事</h5>
+                            </td>
+                            <td></td>
+                            <td>
+                                <h5>收<br>
+                                    货<br>
+                                    方<br>
+                                    情<br>
+                                    况</h5>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </tfoot>
+            </table>
+
+
+        </div>
+
+    </div>
+           
+            }
+}
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

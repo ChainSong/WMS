@@ -1,0 +1,287 @@
+﻿
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintBoxModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@{
+    ViewBag.Title = "PrintBoxListSAKC";
+}
+
+
+<style>
+    .only_for_print {
+        /*display: none;*/
+        display: block;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 2px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td {
+        text-align: center;
+        font-size: 14px;
+    }
+
+    #td1 {
+        text-align: center;
+        font-size: 20px;
+        width: 100px;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 30px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+
+</div>
+
+
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+    var k = 0;
+    var PackageNumberHeader = "";
+    <table>
+        @*显示所有箱的主信息这里不打印*@
+        <thead>
+            <tr>
+                <th style="background-color: #C0C0C0">装箱单号</th>
+                <th style="background-color: #C0C0C0">客户</th>
+                <th style="background-color: #C0C0C0">客户名称</th>
+                <th style="background-color: #C0C0C0">地址</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var packheader in Model.EnumerableCustomerInfo.OrderBy(m => m.PackageNumber))
+            {
+                if (k == 0 || PackageNumberHeader != packheader.PackageNumber)
+                {
+                    k++;
+                    <tr>
+                        <td>@packheader.PackageNumber.ToString()</td>
+                        <td>@packheader.str4</td>
+                        <td>@packheader.Company</td>
+                        <td>@packheader.AddressLine1</td>
+                    </tr>
+                }
+                PackageNumberHeader = packheader.PackageNumber;
+            }
+        </tbody>
+    </table>
+    <h4>箱清单</h4>
+
+    //计算总页数
+    var sumpage = 0;
+    var sinpage = 0;
+    var acount = 0;
+    var bcount = 0;
+    var ccount = 0;
+    var package = "";//以上计算总页数变量只用于汇总页数
+
+    foreach (var x in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+    {
+        if (x.PackageNumber == package)
+        {
+            continue;
+        }
+        package = x.PackageNumber.ToString();
+        acount = Model.EnumerableCustomerInfo.Where(m => m.PackageNumber == x.PackageNumber).Count();
+
+        bcount = acount / 18;
+        ccount = acount % 20;
+        if (ccount == 0)
+        {
+            sinpage = bcount;
+        }
+        else
+        {
+            sinpage = bcount + 1;
+        }
+        sumpage += sinpage;
+    }
+
+    var indexpage = 0;//页索引
+    var i = 0;//打印的时候的箱号，如果单箱打印就从1开始，打印一个订单的话就从包装的第一箱开始算
+    var packlist = "";
+    var packlistcount = "";//箱号
+
+
+    foreach (var item in Model.EnumerableCustomerInfo.OrderBy(m => m.PackageNumber))
+    {
+
+        if (item.PackageNumber == packlist)
+        {
+            continue;
+        }
+        packlist = item.PackageNumber.ToString();
+
+        if (packlistcount != item.PackageNumber)
+        {
+            i++;
+            packlistcount = item.PackageNumber;
+        }
+        var ss = 0;
+
+        var count = Model.EnumerableCustomerInfo.Where(m => m.PackageNumber == packlistcount).Count();//查出单箱数量
+        var shang = count / 20;//定义一页显示15行明细
+        var yu = count % 20;//获取余数
+        var n = 0;//总页数
+        if (yu == 0)
+        {
+            n = shang;
+        }
+        else
+        {
+            n = shang + 1;
+        }
+        for (int j = 0; j < n; j++)
+        {
+
+            indexpage++;
+            var page2 = "page" + indexpage;
+            <div id='@page2' class='only_for_print pagesty' style="clear: both; width: 100%;">
+                @*le这个div是打印区，定义为一箱一箱的打印*@
+                <h4 style="font-weight: bold">&nbsp;&nbsp;&nbsp;&nbsp;箱清单</h4>
+                <div id="divtwo" style="height: 940px">
+                    @if (j == 0)
+                    {
+                        <table style="border: 0px">
+                            <tr>
+                                <td style="text-align: center; border: 0px solid"><strong>&nbsp;订单号:</strong></td>
+                                <td style="text-align: center; border: 0px solid"><strong>@Model.EnumerableCustomerInfo.FirstOrDefault().ShipmentNo</strong></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; border: 0px solid"><strong>&nbsp;&nbsp;订单序号:</strong></td>
+                                <td style="text-align: center; border: 0px solid"><strong>@Model.EnumerableCustomerInfo.FirstOrDefault().Str18</strong></td>
+                            </tr>
+                            @*<tr>
+                                    <td style="text-align: center; border: 0px solid"><strong>门店代码：</strong></td>
+                                    <td style="text-align: center; border: 0px solid"><strong>@Model.EnumerableCustomerInfo.FirstOrDefault().StorerKey </strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; border: 0px solid"><strong>门店名称：</strong> </td>
+                                    <td style="text-align: center; border: 0px solid"><strong>@Model.EnumerableCustomerInfo.FirstOrDefault().Company</strong> </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; border: 0px solid"><strong>门店地址： </strong></td>
+                                    <td style="text-align: center; border: 0px solid"><strong>@Model.EnumerableCustomerInfo.FirstOrDefault().AddressLine1 </strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; border: 0px solid"><strong>送货日期：</strong></td>
+                                    <td style="text-align: center; border: 0px solid"><strong>@ViewBag.Time</strong></td>
+                                </tr>*@
+                        </table>
+                    }
+                    <table style="text-align: center; font-family: 黑体; border: 0px solid">
+                        <thead>
+                            @*<tr style="height: 15px">
+                                    <td style="border: 0px solid;"><strong>箱唛号</strong></td>
+                                    <td style="border: 0px solid;"><strong>箱号</strong></td>
+                                    <td style="border: 0px solid;"><strong>款号</strong></td>
+                                    <td style="border: 0px solid;"><strong>描述</strong></td>
+                                    <td style="border: 0px solid;"><strong>尺码</strong></td>
+                                    <td style="border: 0px solid;"><strong>数量</strong></td>
+                                    <td style="border: 0px solid;"><strong>订单号</strong></td>
+                                    <td style="border: 0px solid;"><strong>条形码</strong></td>
+                                </tr>*@
+                            <tr style="height: 15px">
+                                <td style="border: 0px solid;"><strong>商品</strong></td>
+                                <td style="border: 0px solid;"><strong>款号</strong></td>
+                                <td style="border: 0px solid;"><strong>尺码</strong></td>
+                                <td style="border: 0px solid;"><strong>颜色</strong></td>
+                                <td style="border: 0px solid;"><strong>条码</strong></td>
+                                <td style="border: 0px solid;"><strong>数量</strong></td>
+
+                            </tr>
+                        </thead>
+                        @foreach (var tbitem in Model.EnumerableCustomerInfo.Where(m => m.PackageNumber == packlistcount).Skip(j * 20).Take(20))
+                        {
+                            @*<tr>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Str17.ToString()</td>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@i</td>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Atrcle</td>
+                                    <td class="td1" style="height: 10px; border: 0px solid"></td>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Size</td>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Qty</td>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@tbitem.ShipmentNo</td>
+                                    <td class="td1" style="height: 10px; border: 0px solid">@tbitem.SKU</td>
+                                </tr>*@
+                            <tr>
+                                <td class="td1" style="height: 10px; border: 0px solid">@tbitem.MaterialDesc</td>
+                                <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Atrcle</td>
+                                @*<td class="td1" style="height: 10px; border: 0px solid">@tbitem.Size</td>*@
+                                <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Str20</td>
+                                <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Str19</td>
+                                <td class="td1" style="height: 10px; border: 0px solid">@tbitem.SKU</td>
+                                <td class="td1" style="height: 10px; border: 0px solid">@tbitem.Qty</td>
+
+                            </tr>
+                        }
+                    </table>
+                    @if (j == n - 1)
+                    {
+                        <h6 style="text-align: center">箱总数：&nbsp;&nbsp;&nbsp;&nbsp;@Model.EnumerableCustomerInfo.Where(m => m.PackageNumber == packlistcount).Select(a => a.Qty).Sum().ToString()</h6>
+                    }
+
+                </div>
+                <div id="divbuttom">
+                    <table>
+                        <tr>
+                            <td>
+                                <p style="text-align: right; height: 10px">第&nbsp;&nbsp;@indexpage&nbsp;&nbsp;,共&nbsp;&nbsp;@sumpage&nbsp;&nbsp;页</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>@*打印结束*@
+
+        }
+    }
+}
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

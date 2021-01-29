@@ -1,0 +1,359 @@
+﻿<!--引入vue本地文件-->
+<script src="~/Assets/Vue/lrgvue.js"></script>
+<!-- 引入饿了么样式 -->
+@*<link href="~/Assets/Vue/elementui.css" rel="stylesheet" />*@
+<!-- 引入饿了么组件库 -->
+@*<script src="~/Assets/Vue/elementui.js"></script>*@
+
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+
+
+
+<div id="app">
+    <div class="headerdiv">
+        <el-card>
+            <strong slot="header">Cord取消出库单查询条件</strong>
+            <el-form id="headerform" :inline="true" :model="Model" label-width="100px" label-position="left" size="medium">
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <el-form-item label="客户：">
+                            <el-select v-model="Model.CustomerID" placeholder="请选择" id="CustomerID">
+                                <el-option v-for="item in CustomerList" :label="item.Text" :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="仓库：">
+                            <el-select v-model="Model.Warehouse" placeholder="请选择" clearable>
+                                <el-option v-for="item in WarehouseList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="订单日期：">
+                            <el-date-picker v-model="Model.StartCreateTime" width="40%"
+                                            type="date" :editable="false"
+                                            placeholder="开始日期">
+                            </el-date-picker>
+                            至
+                            <el-date-picker v-model="Model.EndCreateTime"
+                                            type="date" :editable="false"
+                                            placeholder="结束日期">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    @*<el-col :span="6">
+                        <el-form-item label="预出库单号：">
+                            <el-input type="textarea" v-model="Model.PreOrderNumber" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>*@
+                    <el-col :span="6">
+                        <el-form-item label="外部单号：">
+                            <el-input type="textarea" v-model="Model.ExternOrderNumber" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        @*<el-form-item label="箱号：">
+                                <el-input v-model="Model.BoxNumber" placeholder="" clearable></el-input>
+                            </el-form-item>*@
+                    </el-col>
+                    <el-col :span="6">
+                        @*<el-form-item label="SKU：">
+                                <el-input v-model="Model.SKU" placeholder="" clearable></el-input>
+                            </el-form-item>*@
+                    </el-col>
+                    @*<el-col :span="6">
+                            <el-form-item label="异常类型：">
+                                <el-select v-model="Model.ReasonCode" placeholder="请选择" clearable>
+                                    <el-option v-for="item in ASNAbnormalTypeList"
+                                               :key="item.Value"
+                                               :label="item.Text"
+                                               :value="item.Value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>*@
+                </el-row>
+                <div style="text-align:center">
+                    <el-form-item>
+                        @*<el-button type="primary" v-on:click="ToAdd" icon="el-icon-circle-plus-outline">新增</el-button>*@
+                        <el-button type="primary" v-on:click="ToSearch" icon="el-icon-search">查询</el-button>
+                        @*<el-button type="primary" v-on:click="ToExport" icon="el-icon-s-promotion">导出</el-button>*@
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-card>
+    </div>
+    <div style="height:10px;"></div>
+    <div class="detaildiv">
+        <el-card>
+            <strong slot="header">取消单列表</strong>
+            <el-table stripe :data="CancelOrderList"
+                      style="width: 100%" size="medium" border>
+                @*<el-table-column label="收货日期"
+                                     width="120">
+                        <template slot-scope="scope">
+                            <span>{{ChangeDateYMD(scope.row.ReceiptTime)}}</span>
+                        </template>
+                    </el-table-column>*@
+                <el-table-column label="客户"
+                                 prop="CustomerName">
+                </el-table-column>
+
+                <el-table-column label="仓库"
+                                 prop="Warehouse">
+                </el-table-column>
+                <el-table-column label="系统单号"
+                                 prop="PreOrderNumber" width="200">
+                </el-table-column>
+
+                <el-table-column label="外部单号"
+                                 prop="ExternOrderNumber" width="250">
+                </el-table-column>
+                <el-table-column label="门店代码"
+                                 prop="str4" width="150">
+                </el-table-column>
+                <el-table-column label="订单创建时间"
+                                 width="200">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.CreateTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="客户取消时间"
+                                 width="200">
+                    <template slot-scope="scope">
+                        <i class="el-icon-time"></i>
+                        <span>{{ChangeDateStr(scope.row.DateTime1)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" fixed="right" width="200">
+                    <template slot-scope="scope">
+                        <div style="text-align:center">
+                            @*<el-button size="mini" v-on:click="ToUpdate(scope.row)" type="primary" icon="el-icon-edit">修改</el-button>
+                                <el-button size="mini" v-on:click="ToDelete(scope.row)" type="danger" icon="el-icon-delete">删除</el-button>*@
+                            @*<el-button  size="mini" v-on:click="" type="primary"></el-button>*@
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br />
+            <div>
+                <el-pagination v-on:size-change="handleSizeChange"
+                               v-on:current-change="handleCurrentChange"
+                               :current-page.sync="page"
+                               :page-size="20"
+                               layout="total, prev, pager, next"
+                               :total="TotalCount">
+                </el-pagination>
+            </div>
+        </el-card>
+    </div>
+
+
+</div>
+
+
+<script>
+    var vue1 = new Vue({
+        el: '#app',
+        data: {
+            CustomerList: [],//客户下拉
+            WarehouseList: [],//仓库下拉
+            ASNAbnormalTypeList: [],//异常类型下拉
+            //查询条件model
+            Model: {
+                PreOrderNumber: '',
+                ExternOrderNumber: '',
+                CustomerID: '',
+                Warehouse: '',
+                StartCreateTime: '',
+                EndCreateTime:''
+            },
+
+            CancelOrderList: [],//取消单列表
+            limit: 20,
+            page: 1,
+            TotalCount: 0,
+            addisshow: false,
+            title: '',
+            titletype: 1,//1新增2修改
+
+        },
+        created: function () {
+            let customerID = this.GetQueryString('customerID');
+            this.ToGetCancelOrderWhere(customerID);
+        },
+        methods: {
+            //页面记载获去下拉框的值
+            ToGetCancelOrderWhere: function (customerID) {
+                $.ajax({
+                    type: "POST",
+                    url: "/WMS/PreOrder/GetCancelOrderWhere",
+                    data: {
+                        customerID: customerID
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            vue1.CustomerList = data.data.CustomerList;
+                            vue1.WarehouseList = data.data.WarehouseList;
+                            vue1.Model.CustomerID = data.data.CancelOrderSearch.CustomerID + '';
+                            vue1.Model.StartCreateTime = data.data.CancelOrderSearch.StartCreateTime;
+                            vue1.Model.EndCreateTime = data.data.CancelOrderSearch.EndCreateTime;
+                            vue1.ToSearch();
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                });
+            },
+
+            ToSearch: function () {
+                if (vue1.Model.CustomerID) {
+                    //vue1.loading = true;
+                    $.ajax({
+                        type: "POST",
+                        url: "/WMS/PreOrder/GetCancelOrderList",
+                        data: {
+                            requestData: JSON.stringify(vue1.Model),
+                            page: vue1.page,
+                            limit: vue1.limit
+                        },
+                        success: function (res) {
+                            //console.log('异常数据列表')
+                            //let res = JSON.parse(data)
+                            //console.log(res.res)
+                            if (res.res.code == 0) {
+                                vue1.CancelOrderList = res.res.data;
+                                vue1.TotalCount = res.res.count;
+                            }
+                            else {
+                                vue1.CancelOrderList = [];
+                                vue1.TotalCount = 0;
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err)
+                        }
+                    });
+                }
+                else {
+                    console.log(vue1.Model)
+                    layer.tips('请先选择客户', '#CustomerID');
+                }
+            },
+
+            //导出
+            ToExport: function () {
+                //window.location.href = "/WMS/ASNManagement/ExportASNAbnormal?request=" + JSON.stringify(vue1.Model);
+            },
+
+            handleSizeChange: function (val) {
+                this.limit = val;
+                this.ToSearch();
+            },
+            handleCurrentChange: function (val) {
+                this.page = val;
+                this.ToSearch();
+            },
+
+            GetQueryString: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            },
+            //直接传字符串进来
+            ChangeDateStr: function (str) {
+                if (str == '' || str == null) {
+                    return '';
+                }
+                let jsondate = str.replace("/Date(", "").replace(")/", "");
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                } else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hour + ":" + minutes + ":" + second;
+            },
+            //只要年月日的
+            ChangeDateYMD: function (str) {
+                if (str == '' || str == null) {
+                    return '';
+                }
+                let jsondate = str.replace("/Date(", "").replace(")/", "");
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                } else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                return date.getFullYear() + "-" + month + "-" + currentDate;
+            },
+        },
+
+
+    });
+</script>
+<style scoped>
+
+    .el-select {
+        width: 100%;
+    }
+
+    /*.el-form-item {
+        margin-bottom: 2px;
+    }*/
+
+    #Adddiv .el-date-editor.el-input,
+    .el-date-editor.el-input__inner {
+        width: 100%;
+    }
+
+    #Adddiv input[type="text"], input[type="password"] {
+        width: 100%;
+    }
+
+    .el-dialog__title {
+        font-weight: bold;
+    }
+
+    /*表头样式*/
+    .el-table__header tr,
+    .el-table__header th {
+        padding: 0;
+        height: 40px;
+        color: #333333;
+        font-family: 微软雅黑;
+    }
+    /*表体样式*/
+    .el-table__body tr td {
+        padding: 0;
+        height: 35px;
+        font-family: 微软雅黑
+    }
+
+    .el-card {
+        /*background-color:#e8eef4;*/
+    }
+
+    .el-card__body {
+        padding: 10px 20px;
+    }
+</style>

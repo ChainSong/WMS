@@ -1,0 +1,179 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderECManagement.PrintHeaderModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    int Isopen = (int)ViewBag.Isopen;
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <input type="hidden" id="details" value="@Model.PrintDetailCollection.ToJsonString()" />
+    <fieldset>
+        <legend>打印关联主信息</legend>
+        <table id="table_body">
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>打印单号</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        <input type="hidden" id="hdHeaderID" value="@Model.PrintHeaderCollection.First().ID" />
+                        <input type="hidden" id="hdHeaderKey" value="@Model.PrintHeaderCollection.First().PrintKey" />
+                        @Model.PrintHeaderCollection.First().PrintKey
+                        <input type="hidden" id="Isopen" value="@Isopen" /><!--是否连续关联标识-->
+                    }
+                    else
+                    {
+                        <input type="hidden" id="hdHeaderID" value="0" />
+                        <input type="hidden" id="hdHeaderKey" value="" />
+                        <input type="hidden" id="Isopen" value="0" /><!--是否连续关联标识-->
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().CustomerName
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().WarehouseName
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>创建人</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().Creator
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>创建时间</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().CreateTime
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>订单</label>
+                </td>
+                <td style="width: 20%; font-weight:bold">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintDetailCollection.Count();
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>最后操作人</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().Updator
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>最后操作时间</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().UpdateTime
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>已关联数量</label>
+                </td>
+                <td style="width: 20%; font-weight:bold;color:green">
+                    @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+                    {
+                        @Model.PrintHeaderCollection.First().RelateCount;
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            明细信息
+        </legend>
+        <table id="Newtable">
+            <thead>
+                <tr>
+                    <th>行号</th>
+                    <th>订单号</th>
+                    <th>快递公司</th>
+                    <th>快递单号</th>
+                    <th>订单类型</th>
+                </tr>
+            </thead>
+            <tbody id="Newtbody">
+                @if (Model.PrintDetailCollection != null && Model.PrintDetailCollection.Any())
+                {
+                    foreach (var detail in Model.PrintDetailCollection)
+                    {
+                        <tr>
+                            <td>@detail.PrintLineKey</td>
+                            <td>@detail.OrderKey</td>
+                            <td>@detail.ExpressCompany</td>
+                            <td>@detail.ExpressKey</td>
+                            <td>@detail.Str1</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="新增订单" id="btnAddOrder" />
+        @if (Model.PrintHeaderCollection != null && Model.PrintHeaderCollection.Any())
+        {
+            <input type="button" class="btn btn-success" value="关联" id="btnRelate" />}
+        <input type="button" class="btn btn-success" value="返回" id="returnButton" onclick="window.location.href='/WMS/OrderECManagement/PrintHeader'" />
+    </div>
+
+    <div id="relateDiv" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">订单号</td>
+                <td><input type="text" id="RelateOrderKey" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">快递公司</td>
+                <td><input type="text" id="RelateExpressCompany" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">快递单号</td>
+                <td><input type="text" id="RelateExpressKey" /></td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="DivOK" />
+            <input type="button" class="btn btn-success" value="取消" id="DivReturn" />
+        </div>
+    </div>
+}

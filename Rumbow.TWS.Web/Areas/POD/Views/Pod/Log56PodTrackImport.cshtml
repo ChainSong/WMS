@@ -1,0 +1,25 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+<fieldset>
+    <legend>路歌管车宝跟踪信息导入说明
+    </legend>
+    <div id="importInstructionDiv">
+        1.由于路歌管车宝提供的跟踪信息只有随车手机号关键信息，所以在导入路歌跟踪信息前，先补全运单的车辆信息，以便系统根据手机号匹配。<br />
+        2.请确认运单号状态是否处于已发运待签收状态，只有在这个状态的运单才能接受路歌跟踪信息。<br />
+        3.运单在签收后请及时更新运单状态为已签收待结算状态，以防运单接受不必要的跟踪信息。
+    </div>
+</fieldset>
+<fieldset>
+    <legend>选择Excel导入路歌管车宝跟踪信息
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

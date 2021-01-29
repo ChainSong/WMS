@@ -1,0 +1,36 @@
+﻿@*<fieldset>
+    <legend>请将运单回单图片以运单号命名，并用ZIP格式打包上传</legend>
+    @Html.MultipleFileUpload("Multiple", "Hidden_Multiple_GroupID")
+</fieldset>*@
+
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+<fieldset>
+    <legend>
+        请将运单回单图片以运单号命名，并用ZIP格式打包上传
+    </legend>
+    <div id="message">
+        请将回单图片以运单号命名，并用ZIP格式打包上传。重复上传为覆盖操作
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        @ViewBag.DisplyMessage
+    </legend>
+    <div id="importDiv">
+        @{
+            var customers = (IEnumerable<SelectListItem>)ViewBag.Customers;
+        }
+        选择客户：
+        @Html.DropDownList("customer",customers)
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果<label id="resultCount" style="display:none"></label>
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

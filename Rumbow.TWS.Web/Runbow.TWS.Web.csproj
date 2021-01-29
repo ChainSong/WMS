@@ -1,0 +1,2451 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9B602918-8A8A-4375-9A7D-6B7BB7239DDE}</ProjectGuid>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Runbow.TWS.Web</RootNamespace>
+    <AssemblyName>Runbow.TWS.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AppLibrary">
+      <HintPath>..\Runbow.TWS.Common\Library\AppLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="EasyNetQ, Version=0.63.5.454, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EasyNetQ.0.63.5.454\lib\net45\EasyNetQ.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3.1\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\Runbow.TWS.Common\Library\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=e44a2bc38ed2c13c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=4.1.0.0, Culture=neutral, PublicKeyToken=e44a2bc38ed2c13c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.SQLServer.DTSRuntimeWrap, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Library\Microsoft.SQLServer.DTSRuntimeWrap.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SQLServer.ManagedDTS, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Library\Microsoft.SQLServer.ManagedDTS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvcCheckBoxList">
+      <HintPath>..\Runbow.TWS.Common\Library\MvcCheckBoxList.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\Runbow.TWS.Common\Library\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>..\Runbow.TWS.Common\Library\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>..\Runbow.TWS.Common\Library\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>..\Runbow.TWS.Common\Library\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="RabbitMQ.Client, Version=3.6.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.3.6.0\lib\net45\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Http.WebHost">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.1.0.20105.408\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="ThoughtWorks.QRCode, Version=1.0.4885.25431, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\ThoughtWorks.QRCode.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllocateInstances\BaseAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaltHiltiAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaltTotalAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultAKCAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultAKZOJSAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultHABAAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultYXDRBJAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultAllocateForSystem.cs" />
+    <Compile Include="AllocateInstances\DefaultNikeAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultNikeTestAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultYXDRAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultAKZOAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultYFKAllocate.cs" />
+    <Compile Include="AllocateInstances\DefaultYXDRSHHAllocate.cs" />
+    <Compile Include="AllocateInstances\NikeNFSCDAllocate.cs" />
+    <Compile Include="AllocateInstances\NikeReturnAllocate.cs" />
+    <Compile Include="Areas\AMS\AMSAreaRegistration.cs" />
+    <Compile Include="Areas\AMS\Controllers\AMSController.cs" />
+    <Compile Include="Areas\AMS\Models\GenBoxNumberViewModel.cs" />
+    <Compile Include="Areas\AMS\Models\QueryReplyDocumentViewModel.cs" />
+    <Compile Include="Areas\BaiduMap\Models\PODTrackingMap.cs" />
+    <Compile Include="Areas\ContractManagement\ContractManagementAreaRegistration.cs" />
+    <Compile Include="Areas\ContractManagement\Controllers\ContractController.cs" />
+    <Compile Include="Areas\ContractManagement\Models\ContractExpiresViewModel.cs" />
+    <Compile Include="Areas\ContractManagement\Models\ContractOperationViewModel.cs" />
+    <Compile Include="Areas\ContractManagement\Models\QueryContractViewModel.cs" />
+    <Compile Include="Areas\CRM\Controllers\CrmController.cs" />
+    <Compile Include="Areas\CRM\CRMAreaRegistration.cs" />
+    <Compile Include="Areas\CRM\Models\CrmBaseViewModel.cs" />
+    <Compile Include="Areas\CRM\Models\CrmManageViewModel.cs" />
+    <Compile Include="Areas\CRM\Models\CrmTrackViewModel.cs" />
+    <Compile Include="Areas\CRM\Models\CrmViewInfoViewModel.cs" />
+    <Compile Include="Areas\Finance\Controllers\InvoiceController.cs" />
+    <Compile Include="Areas\Finance\Controllers\ReceiveOrPayOrdersController.cs" />
+    <Compile Include="Areas\Finance\Controllers\SettlementController.cs" />
+    <Compile Include="Areas\Finance\FinanceAreaRegistration.cs" />
+    <Compile Include="Areas\Finance\Models\InvoiceManageViewModel.cs" />
+    <Compile Include="Areas\Finance\Models\ReceiveOrPayViewModel.cs" />
+    <Compile Include="Areas\Finance\Models\SettledCompareViewModel.cs" />
+    <Compile Include="Areas\Finance\Models\SettledPodManageViewModel.cs" />
+    <Compile Include="Areas\Finance\Models\InvoiceViewModel.cs" />
+    <Compile Include="Areas\ForecastWarehouse\Controllers\ForecastWarehouseController.cs" />
+    <Compile Include="Areas\ForecastWarehouse\Controllers\GapPickingNoteController.cs" />
+    <Compile Include="Areas\ForecastWarehouse\ForecastWarehouseAreaRegistration.cs" />
+    <Compile Include="Areas\ForecastWarehouse\Models\ForecastOrdersModel.cs" />
+    <Compile Include="Areas\ForecastWarehouse\Models\GapPickingNoteModel.cs" />
+    <Compile Include="Areas\Front\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Front\FrontAreaRegistration.cs" />
+    <Compile Include="Areas\Front\Models\QueryWXCustomerViewModel.cs" />
+    <Compile Include="Areas\BaiduMap\Controllers\PODTrackingMapController.cs" />
+    <Compile Include="Areas\BaiduMap\MapAreaRegistration.cs" />
+    <Compile Include="Areas\Phone\Controllers\PodController.cs" />
+    <Compile Include="Areas\Phone\Models\WeiChartUserConfigMode.cs" />
+    <Compile Include="Areas\Phone\PhoneAreaRegistration.cs" />
+    <Compile Include="Areas\POD\Controllers\AdidasController.cs" />
+    <Compile Include="Areas\POD\Controllers\AKZOController.cs" />
+    <Compile Include="Areas\POD\Controllers\BaiXingController.cs" />
+    <Compile Include="Areas\POD\Controllers\DistributionController.cs" />
+    <Compile Include="Areas\POD\Controllers\HiltiController.cs" />
+    <Compile Include="Areas\POD\Controllers\MaryKayController.cs" />
+    <Compile Include="Areas\POD\Controllers\NikeController.cs" />
+    <Compile Include="Areas\POD\Controllers\PrintPODController.cs" />
+    <Compile Include="Areas\POD\Controllers\TianjinController.cs" />
+    <Compile Include="Areas\POD\Controllers\TotalController.cs" />
+    <Compile Include="Areas\POD\Models\AbnormalPODSearchModel.cs" />
+    <Compile Include="Areas\POD\Models\AddOrUpdateServicePeriodModel.cs" />
+    <Compile Include="Areas\POD\Models\AdidasScanDataViewModel.cs" />
+    <Compile Include="Areas\POD\Models\BaiXingViewModel.cs" />
+    <Compile Include="Areas\POD\Models\BatchEditPodsViewModel.cs" />
+    <Compile Include="Areas\POD\Models\GetBAFMobile.cs" />
+    <Compile Include="Areas\POD\Models\MaryKayLoginsticsTrackInfoModel.cs" />
+    <Compile Include="Areas\POD\Models\NikePODForBSModel.cs" />
+    <Compile Include="Areas\POD\Models\PodStatusTrackManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\CreditUpdate.cs" />
+    <Compile Include="Areas\POD\Models\ImageAuditDetailViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodFeeManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\MaryKayOrderNoIssuedModel.cs" />
+    <Compile Include="Areas\POD\Models\MaryKayTrackInfoModel.cs" />
+    <Compile Include="Areas\POD\Models\NikeReportExportViewModel.cs" />
+    <Compile Include="Areas\POD\Models\OrderNoInfoUpdate.cs" />
+    <Compile Include="Areas\POD\Models\PodDetailManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodExceptionManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodFeadBackManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodAllViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodInfoUpdateViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodReleatedInforBaseViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodReplyDocumentAuditViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodStatusLogManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodTrackAndReplyDocumentManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodTrackManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodTrackReportExportViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PodViewModel.cs" />
+    <Compile Include="Areas\Login\Controllers\AccountController.cs" />
+    <Compile Include="Areas\Login\Models\LoginModel.cs" />
+    <Compile Include="Areas\Login\LoginAreaRegistration.cs" />
+    <Compile Include="Areas\POD\Controllers\PodController.cs" />
+    <Compile Include="Areas\POD\Models\PodReplyDocumentManageViewModel.cs" />
+    <Compile Include="Areas\POD\Models\PrintHandoverDetailedListDetailModel.cs" />
+    <Compile Include="Areas\POD\Models\PrintHandoverDetailedListModel.cs" />
+    <Compile Include="Areas\POD\Models\DistributionModel\QueryOrOperatePodViewModel.cs" />
+    <Compile Include="Areas\POD\Models\QueryPodViewModel.cs" />
+    <Compile Include="Areas\POD\Models\QueryTYscanViewModel.cs" />
+    <Compile Include="Areas\POD\Models\ScanDataViewModel.cs" />
+    <Compile Include="Areas\POD\Models\SettledPodViewModel.cs" />
+    <Compile Include="Areas\POD\Models\TianjinModel\QueryTianjinPodViewModel.cs" />
+    <Compile Include="Areas\POD\Models\TotalModel\MessageHistoryQueryModel.cs" />
+    <Compile Include="Areas\POD\Models\TotalModel\TotalPODModel.cs" />
+    <Compile Include="Areas\POD\Models\ViewPodUseListViewModel.cs" />
+    <Compile Include="Areas\POD\PODAreaRegistration.cs" />
+    <Compile Include="Areas\Reports\Controllers\PodBaiduReportController.cs" />
+    <Compile Include="Areas\Reports\Controllers\PodReportController.cs" />
+    <Compile Include="Areas\Reports\Models\ShowCaseHotMapModel.cs" />
+    <Compile Include="Areas\Reports\Models\ShowPodAllViewModel.cs" />
+    <Compile Include="Areas\Reports\Models\TransOrderModel.cs" />
+    <Compile Include="Areas\Reports\ReportsAreaRegistration.cs" />
+    <Compile Include="Areas\ShipperManagement\Controllers\DriverManagementController.cs" />
+    <Compile Include="Areas\ShipperManagement\Controllers\ShipperManagementController.cs" />
+    <Compile Include="Areas\ShipperManagement\Controllers\VehicleManagementController.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\CRMShipperCooperationManageViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\CRMShipperOperationViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\CRMShipperTerminalInfoManageViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\CRMShipperTransportationLineManageViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\DriverManagement\QueryCRMDriverViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\QueryCRMShipperViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\ShipperToVehicleViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\VehicleManagement\QueryCRMVehicleViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\Models\VehicleManagement\VehicleToDriverViewModel.cs" />
+    <Compile Include="Areas\ShipperManagement\ShipperManagementAreaRegistration.cs" />
+    <Compile Include="Areas\System\Controllers\CustomerController.cs" />
+    <Compile Include="Areas\System\Controllers\DemoController.cs" />
+    <Compile Include="Areas\System\Controllers\ProjectController.cs" />
+    <Compile Include="Areas\System\Controllers\ProjectRoleMenuController.cs" />
+    <Compile Include="Areas\System\Controllers\QuotedPriceController.cs" />
+    <Compile Include="Areas\System\Controllers\RegionController.cs" />
+    <Compile Include="Areas\System\Controllers\RoleController.cs" />
+    <Compile Include="Areas\System\Controllers\SegmentController.cs" />
+    <Compile Include="Areas\System\Controllers\ShipperController.cs" />
+    <Compile Include="Areas\System\Controllers\TransportationLineController.cs" />
+    <Compile Include="Areas\System\Controllers\UserController.cs" />
+    <Compile Include="Areas\System\Controllers\WMS_CustomerController.cs" />
+    <Compile Include="Areas\System\Models\CreateSegmentDetailViewModel.cs" />
+    <Compile Include="Areas\System\Models\CreateSegmentViewModel.cs" />
+    <Compile Include="Areas\System\Models\CreateTransportationLineViewModel.cs" />
+    <Compile Include="Areas\System\Models\CustomerListViewModel.cs" />
+    <Compile Include="Areas\System\Models\CustomerModel.cs" />
+    <Compile Include="Areas\System\Models\CustomerOrShipperSegmentViewModel.cs" />
+    <Compile Include="Areas\System\Models\DemoPagerViewModel.cs" />
+    <Compile Include="Areas\System\Models\ProjectCustomersOrShippersAllocateViewModel.cs" />
+    <Compile Include="Areas\System\Models\ProjectModel.cs" />
+    <Compile Include="Areas\System\Models\ProjectRoleAllocateViewModel.cs" />
+    <Compile Include="Areas\System\Models\ProjectUserAllocateViewModel.cs" />
+    <Compile Include="Areas\System\Models\ProjectUserCustomerAllocateViewModel.cs" />
+    <Compile Include="Areas\System\Models\QuotedPriceViewModel.cs" />
+    <Compile Include="Areas\System\Models\RoleManageListViewModel.cs" />
+    <Compile Include="Areas\System\Models\RoleModel.cs" />
+    <Compile Include="Areas\System\Models\SegmentListViewModel.cs" />
+    <Compile Include="Areas\System\Models\Shipper.cs" />
+    <Compile Include="Areas\System\Models\ShipperListViewModel.cs" />
+    <Compile Include="Areas\System\Models\ShipperRelatedInfoViewModel.cs" />
+    <Compile Include="Areas\System\Models\TransportationLineListViewModel.cs" />
+    <Compile Include="Areas\System\Models\TreeItem.cs" />
+    <Compile Include="Areas\System\Models\User.cs" />
+    <Compile Include="Areas\System\Models\UserListViewModel.cs" />
+    <Compile Include="Areas\System\Models\UserWarehouse.cs" />
+    <Compile Include="Areas\System\Models\VehicleManagementViewModel.cs" />
+    <Compile Include="Areas\System\Models\VehicleModel.cs" />
+    <Compile Include="Areas\System\Models\WMS_CustomerListViewModel.cs" />
+    <Compile Include="Areas\System\Models\WMS_CustomerModel.cs" />
+    <Compile Include="Areas\System\SystemAreaRegistration.cs" />
+    <Compile Include="Areas\WMS\Controllers\ASNManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\BarCodeController.cs" />
+    <Compile Include="Areas\WMS\Controllers\IntelligentOperationController.cs" />
+    <Compile Include="Areas\WMS\Controllers\LogOperationManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\NikeNFSPrintController.cs" />
+    <Compile Include="Areas\WMS\Controllers\NikeOSRBJPrintController.cs" />
+    <Compile Include="Areas\WMS\Controllers\NikeOSRBJ\PrintBoxDemoController.cs" />
+    <Compile Include="Areas\WMS\Controllers\NikeOSRBJ\PrintBoxmDemoController.cs" />
+    <Compile Include="Areas\WMS\Controllers\NikeOSRBJ\PrintPickDemoController.cs" />
+    <Compile Include="Areas\WMS\Controllers\NikeOSRBJ\PrintPodDemoController.cs" />
+    <Compile Include="Areas\WMS\Controllers\OrderECManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\PreOrderController.cs" />
+    <Compile Include="Areas\WMS\Controllers\OrderManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\InventoryManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\ProductController.cs" />
+    <Compile Include="Areas\WMS\Controllers\ReportManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\SettlementManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\ShelvesManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\ReceiptManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\StorerController.cs" />
+    <Compile Include="Areas\WMS\Controllers\TemplateManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\TestController.cs" />
+    <Compile Include="Areas\WMS\Controllers\WarehouseController.cs" />
+    <Compile Include="Areas\WMS\Controllers\MachiningManagementController.cs" />
+    <Compile Include="Areas\WMS\Controllers\WorkOrderController.cs" />
+    <Compile Include="Areas\WMS\Controllers\YXDRPackagePrintController.cs" />
+    <Compile Include="Areas\WMS\Models\ASNManagement\ASNAbnormalTrackingModel.cs" />
+    <Compile Include="Areas\WMS\Models\ASNManagement\ASNDetailViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ASNManagement\ASNNewBoxLabelViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ASNManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\BarCode\BarCodeModel.cs" />
+    <Compile Include="Areas\WMS\Models\IntelligentOperation\IntelligentOperation.cs" />
+    <Compile Include="Areas\WMS\Models\InventoryManagement\AdjustmentDetailsViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\InventoryManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\InventoryManagement\ReplenishmentViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\LogOperationManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderECManagement\DeliveryConfirmModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderECManagement\ExpressPackgeModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderECManagement\PrintHeaderModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\OrderShipmentModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\PrintExpressModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\PrintExpressYtoModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\WaveModel.cs" />
+    <Compile Include="Areas\WMS\Models\MachiningManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\NFSPrintBox.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\OrderViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\PrintBoxmModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\PrintBoxModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\PrintPickModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\PrintPodModel.cs" />
+    <Compile Include="Areas\WMS\Models\OrderManagement\YXDRBJPrintPodModel.cs" />
+    <Compile Include="Areas\WMS\Models\PreOrders\PreOrderViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Product\Import.cs" />
+    <Compile Include="Areas\WMS\Models\Product\ProductModel.cs" />
+    <Compile Include="Areas\WMS\Models\Product\QueryProductModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReceiptManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReceiptManagement\ReceiptDetailViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\InspectionReportViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\InventoryChangeViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\InventoryViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\ProcessReportModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\ReceiptReportModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\ReportExpressInfoViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\ReportTableViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\SKUChangeViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\SkuInAndOutViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\StaffViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\SkuViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\WarehouseStorageDensityViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ReportManagement\WorkingViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\SettlementManagement\HabaModel.cs" />
+    <Compile Include="Areas\WMS\Models\SettlementManagement\HiltiModel.cs" />
+    <Compile Include="Areas\WMS\Models\SettlementManagement\SettlementListViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\ShelvesManagement\ShelvesModel.cs" />
+    <Compile Include="Areas\WMS\Models\Storer\CreateViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Storer\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\TemplateManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\IndexWLocationViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\WarehouseAllocateModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\WarehouseCheckModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\WarehouseOperationViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\GoodsShelfsViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\QRCodeViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\Warehouse\ProductWarningViewModel.cs" />
+    <Compile Include="Areas\WMS\Models\WorkOrderManagement\IndexViewModel.cs" />
+    <Compile Include="Areas\WMS\Test\Controllers\TestController.cs" />
+    <Compile Include="Areas\WMS\Test\TestAreaRegistration.cs" />
+    <Compile Include="Areas\WMS\WMSAreaRegistration.cs" />
+    <Compile Include="Common\ActionResultExtension.cs" />
+    <Compile Include="Common\ApplicationConfigHelper.cs" />
+    <Compile Include="Common\BaseController.cs" />
+    <Compile Include="Common\CalendarExtension.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\CordHelper.cs" />
+    <Compile Include="Common\DateTimeConverter.cs" />
+    <Compile Include="Common\EmailHelper.cs" />
+    <Compile Include="Common\ExportDataToExcelHelper.cs" />
+    <Compile Include="Common\FtpWeb.cs" />
+    <Compile Include="Common\HtmlHelperExtension.cs" />
+    <Compile Include="Common\LogAttributeFilter.cs" />
+    <Compile Include="Common\MultiButtonAttribute.cs" />
+    <Compile Include="Common\NopiExcelHelper.cs" />
+    <Compile Include="Common\ProvincesAndCity.cs" />
+    <Compile Include="Common\RequestModel.cs" />
+    <Compile Include="Common\ResponseModel.cs" />
+    <Compile Include="Common\SqlHelper.cs" />
+    <Compile Include="Common\UrlHelperExtension.cs" />
+    <Compile Include="Common\XMLHelper.cs" />
+    <Compile Include="Controllers\DemoApiController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Handler\UploadImgCode.ashx.cs">
+      <DependentUpon>UploadImgCode.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Implement\AdidasCreatePodSystemNumber.cs" />
+    <Compile Include="Implement\BaseSettled.cs" />
+    <Compile Include="Implement\SettledForAdidasPurchaseInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForCLWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForCLWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForCNWLWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForCYSWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForHEWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForHWWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForJSHNWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHrgfgylInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForchangxingWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForCYWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForDBWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForDFWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHFWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForhongfengWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHQWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForhuaqiWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJingChuanWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJMWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJSLWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJTYWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForJXWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForJYTIWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForLJWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForLQInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForMDWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForMTWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForQianYuWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForshangshengWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForshanxiaoWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForSXWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForTKWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForYHWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForXCSWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJCWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForNHWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHDWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForGSWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForXBFWLInRunbowProject.cs" />
+    <Compile Include="Implement\DefaultCreatePodSystemNumber.cs" />
+    <Compile Include="Implement\SettledDefault.cs" />
+    <Compile Include="Implement\SettledForAddidasInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForAkzoInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForAkzotbInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForCaInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForCDWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForCXWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForEmsInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHaddadInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHiltiInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHNWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForHSWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJQWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForJSYWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForMaryKayInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForNikeInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForOriflameInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForQFKDInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForRBInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForSFInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForSFWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForSHKXInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForSTOInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForTotalInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForTYWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForWJWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForXKWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForYHWLWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForYMWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForYSWLInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForYSXFInRunbowProject.cs" />
+    <Compile Include="Implement\SettledForZGWLInRunbowProject_New.cs" />
+    <Compile Include="Implement\SettledForZZWLWLInRunbowProject_New.cs" />
+    <Compile Include="Interface\IAllocate.cs" />
+    <Compile Include="Interface\ICreatePodSystemNumber.cs" />
+    <Compile Include="Interface\ISettledForPod.cs" />
+    <Compile Include="Interface\ITransData.cs" />
+    <Compile Include="Models\FileUploadViewModel.cs" />
+    <Compile Include="Models\PagerViewModel.cs" />
+    <Compile Include="Models\Region.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Rpts\DataSetBS.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSetBS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ESPService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="MaryKay Web References\MaryKayHDtoLIPS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="SettledMethod\ApplicationPaySettlement.cs" />
+    <Compile Include="SettledMethod\ApplicationReceiveSettlement.cs" />
+    <Compile Include="SettledMethod\SettledForAddidasInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForAkzoInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForAkzoPayInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForDFWLInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForJQWLInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForNikeInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForNikePayInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForYKPayInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForYCWLInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForYHWLInRunbowProject.cs" />
+    <Compile Include="SettledMethod\SettledForYKInRunbowProject.cs" />
+    <Compile Include="TransDataInstances\BaseTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultAKCTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultBridgeTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultHABATransData.cs" />
+    <Compile Include="TransDataInstances\DefaultNikeNFSTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultNikeOSRTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultNikeReturnTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultYXDRBJTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultYXDRSHHTransData.cs" />
+    <Compile Include="TransDataInstances\DefaultYXDRTransData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\ApplicationConfig.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\ApplicationFile.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\System\Views\Demo\ReportDemo.ascx" />
+    <Content Include="Areas\WMS\1.mp3" />
+    <Content Include="Areas\WMS\success.mp3" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxm.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintExpressDeppon.cshtml" />
+    <Content Include="Assets\bootstrap-3.3.4-dist\bootstrap-theme.css" />
+    <Content Include="Assets\bootstrap-3.3.4-dist\bootstrap-theme.min.css" />
+    <Content Include="Assets\bootstrap-3.3.4-dist\bootstrap.css" />
+    <Content Include="Assets\bootstrap-3.3.4-dist\bootstrap.min - 原版备份.css" />
+    <Content Include="Assets\bootstrap-3.3.4-dist\bootstrap.min.css" />
+    <Content Include="Assets\CSS\awwwards.css" />
+    <Content Include="Assets\CSS\bootstrap.css" />
+    <Content Include="Assets\CSS\dripicon.css" />
+    <Content Include="Assets\CSS\entypo-icon.css" />
+    <Content Include="Assets\CSS\extra-pages.css" />
+    <Content Include="Assets\CSS\font-awesome.css" />
+    <Content Include="Assets\CSS\icons-style.css" />
+    <Content Include="Assets\CSS\loader-style.css" />
+    <Content Include="Assets\CSS\mail.css" />
+    <Content Include="Assets\CSS\maki-icons.css" />
+    <Content Include="Assets\CSS\media.css" />
+    <Content Include="Assets\CSS\open-sans.css" />
+    <Content Include="Assets\CSS\profile.css" />
+    <Content Include="Assets\CSS\ribbons\awwwards_honorable_black_left.png" />
+    <Content Include="Assets\CSS\ribbons\awwwards_honorable_black_right.png" />
+    <Content Include="Assets\CSS\ribbons\awwwards_honorable_green_left.png" />
+    <Content Include="Assets\CSS\ribbons\awwwards_honorable_green_right.png" />
+    <Content Include="Assets\CSS\ribbons\awwwards_honorable_white_left.png" />
+    <Content Include="Assets\CSS\ribbons\awwwards_honorable_white_right.png" />
+    <Content Include="Assets\CSS\signin.css" />
+    <Content Include="Assets\CSS\social.css" />
+    <Content Include="Assets\CSS\style.css" />
+    <Content Include="Assets\CSS\style_Common.css" />
+    <Content Include="Assets\CSS\weather-icons.min.css" />
+    <Content Include="Assets\Fonts\fontawesome-webfont.svg" />
+    <Content Include="Assets\Fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Assets\Font\BebasNeue-webfont.svg" />
+    <Content Include="Assets\Font\dripicons.svg" />
+    <Content Include="Assets\Font\weathericons-regular-webfont.svg" />
+    <Content Include="Assets\Front\Home\Index.js" />
+    <Content Include="Assets\Front\Home\layout.js" />
+    <Content Include="Assets\Ico\minus.png" />
+    <Content Include="Assets\Img\10.jpg" />
+    <Content Include="Assets\Img\aden.png" />
+    <Content Include="Assets\Img\bg.jpg" />
+    <Content Include="Assets\Img\bg10.jpg" />
+    <Content Include="Assets\Img\bg11.jpg" />
+    <Content Include="Assets\Img\bg12.jpg" />
+    <Content Include="Assets\Img\bg13.jpg" />
+    <Content Include="Assets\Img\bg2.jpg" />
+    <Content Include="Assets\Img\bg3.jpg" />
+    <Content Include="Assets\Img\bg3.png" />
+    <Content Include="Assets\Img\bg4.jpg" />
+    <Content Include="Assets\Img\bg5.jpg" />
+    <Content Include="Assets\Img\bg8.jpg" />
+    <Content Include="Assets\Img\bg9.jpg" />
+    <Content Include="Assets\Img\credit\american-express.png" />
+    <Content Include="Assets\Img\credit\mastercard.png" />
+    <Content Include="Assets\Img\credit\paypal2.png" />
+    <Content Include="Assets\Img\credit\visa.png" />
+    <Content Include="Assets\Img\giftly.png" />
+    <Content Include="Assets\Img\insta-pic.jpg" />
+    <Content Include="Assets\Img\insta-pic2.jpg" />
+    <Content Include="Assets\Img\Log-bg2.jpg" />
+    <Content Include="Assets\Img\minus.png" />
+    <Content Include="Assets\Img\people-q-c-350-250-5.jpg" />
+    <Content Include="Assets\Img\people-q-c-350-250-7.jpg" />
+    <Content Include="Assets\Img\people-q-c-350-250-8.jpg" />
+    <Content Include="Assets\Img\plus.png" />
+    <Content Include="Assets\Img\search-dark.png" />
+    <Content Include="Assets\Img\search-white.png" />
+    <Content Include="Assets\Img\small-bg.jpg" />
+    <Content Include="Assets\Img\small-bg10.jpg" />
+    <Content Include="Assets\Img\small-bg11.jpg" />
+    <Content Include="Assets\Img\small-bg12.jpg" />
+    <Content Include="Assets\Img\small-bg13.jpg" />
+    <Content Include="Assets\Img\small-bg2.jpg" />
+    <Content Include="Assets\Img\small-bg5.jpg" />
+    <Content Include="Assets\Img\small-bg8.jpg" />
+    <Content Include="Assets\Img\small-bg9.jpg" />
+    <Content Include="Assets\JS\app.js" />
+    <Content Include="Assets\JS\bootstrap-3.3.4-dist\bootstrap.js" />
+    <Content Include="Assets\JS\bootstrap-3.3.4-dist\bootstrap.min.js" />
+    <Content Include="Assets\JS\bootstrap-3.3.4-dist\bootstrap3.0.3.min.js" />
+    <Content Include="Assets\JS\bootstrap-datepicker.js" />
+    <Content Include="Assets\JS\bootstrap3.3.0.min.js" />
+    <Content Include="Assets\JS\draggabilly.pkgd.min.js" />
+    <Content Include="Assets\JS\jquery-1.11.3.min.js" />
+    <Content Include="Assets\JS\bootstrap-3.3.4-dist\npm.js" />
+    <Content Include="Assets\JS\bootstrap.js" />
+    <Content Include="Assets\JS\button\ladda\ladda.min.css" />
+    <Content Include="Assets\JS\button\ladda\ladda.min.js" />
+    <Content Include="Assets\JS\button\ladda\spin.min.js" />
+    <Content Include="Assets\JS\button\progressbutton.jquery.js" />
+    <Content Include="Assets\JS\calendar\app.js" />
+    <Content Include="Assets\JS\calendar\calendar.js" />
+    <Content Include="Assets\JS\calendar\css\calendar.css" />
+    <Content Include="Assets\JS\calendar\img\tick.png" />
+    <Content Include="Assets\JS\calendar\jstimezonedetect\jstz.min.js" />
+    <Content Include="Assets\JS\calendar\language\de-DE.js" />
+    <Content Include="Assets\JS\calendar\language\el-GR.js" />
+    <Content Include="Assets\JS\calendar\language\es-ES.js" />
+    <Content Include="Assets\JS\calendar\language\es-MX.js" />
+    <Content Include="Assets\JS\calendar\language\fr-FR.js" />
+    <Content Include="Assets\JS\calendar\language\it-IT.js" />
+    <Content Include="Assets\JS\calendar\language\pl-PL.js" />
+    <Content Include="Assets\JS\calendar\language\pt-BR.js" />
+    <Content Include="Assets\JS\calendar\language\ru-RU.js" />
+    <Content Include="Assets\JS\calendar\language\sv-SE.js" />
+    <Content Include="Assets\JS\calendar\underscore\underscore-min.js" />
+    <Content Include="Assets\JS\chart\barChart.js" />
+    <Content Include="Assets\JS\chart\chart-float-stacking.js" />
+    <Content Include="Assets\JS\chart\chart.js" />
+    <Content Include="Assets\JS\chart\jquery.flot.js" />
+    <Content Include="Assets\JS\chart\jquery.flot.resize.js" />
+    <Content Include="Assets\JS\chart\jquery.flot2.js" />
+    <Content Include="Assets\JS\chart\jquery.sparkline.js" />
+    <Content Include="Assets\JS\chart\lineChart.js" />
+    <Content Include="Assets\JS\chart\polarChart.js" />
+    <Content Include="Assets\JS\chart\radarChart.js" />
+    <Content Include="Assets\JS\chart\realTime.js" />
+    <Content Include="Assets\JS\clock\date.js" />
+    <Content Include="Assets\JS\clock\jquery.clock.js" />
+    <Content Include="Assets\JS\colorPicker\bootstrap-colorpicker.css" />
+    <Content Include="Assets\JS\colorPicker\bootstrap-colorpicker.min.js" />
+    <Content Include="Assets\JS\colorPicker\img\bootstrap-colorpicker\alpha.png" />
+    <Content Include="Assets\JS\colorPicker\img\bootstrap-colorpicker\hue.png" />
+    <Content Include="Assets\JS\colorPicker\img\bootstrap-colorpicker\saturation.png" />
+    <Content Include="Assets\JS\countdown\jquery.countdown.js" />
+    <Content Include="Assets\JS\custom\scriptbreaker-multiple-accordion-1.js" />
+    <Content Include="Assets\JS\dataTable\css\datatables.responsive.css" />
+    <Content Include="Assets\JS\dataTable\img\minus.png" />
+    <Content Include="Assets\JS\dataTable\img\plus.png" />
+    <Content Include="Assets\JS\dataTable\lib\jquery.dataTables\css\DT_bootstrap.css" />
+    <Content Include="Assets\JS\dataTable\lib\jquery.dataTables\images\sort_asc.png" />
+    <Content Include="Assets\JS\dataTable\lib\jquery.dataTables\images\sort_asc_disabled.png" />
+    <Content Include="Assets\JS\dataTable\lib\jquery.dataTables\images\sort_both.png" />
+    <Content Include="Assets\JS\dataTable\lib\jquery.dataTables\images\sort_desc.png" />
+    <Content Include="Assets\JS\dataTable\lib\jquery.dataTables\images\sort_desc_disabled.png" />
+    <Content Include="Assets\JS\datepicker\bootstrap-datepicker.js" />
+    <Content Include="Assets\JS\datepicker\bootstrap-datetimepicker.js" />
+    <Content Include="Assets\JS\datepicker\clockface.css" />
+    <Content Include="Assets\JS\datepicker\clockface.js" />
+    <Content Include="Assets\JS\datepicker\datepicker.css" />
+    <Content Include="Assets\JS\dropZone\downloads\css\dropzone.css" />
+    <Content Include="Assets\JS\dropZone\downloads\images\spritemap%402x.png" />
+    <Content Include="Assets\JS\dropZone\downloads\images\spritemap.png" />
+    <Content Include="Assets\JS\dropZone\lib\dropzone.js" />
+    <Content Include="Assets\JS\flatvideo\jquery.fitvids.js" />
+    <Content Include="Assets\JS\footable\css\fonts\footable.svg" />
+    <Content Include="Assets\JS\footable\css\footable-demos.css" />
+    <Content Include="Assets\JS\footable\css\footable.core.css" />
+    <Content Include="Assets\JS\footable\css\footable.standalone.css" />
+    <Content Include="Assets\JS\footable\js\footable.filter.js" />
+    <Content Include="Assets\JS\footable\js\footable.js" />
+    <Content Include="Assets\JS\footable\js\footable.paginate.js" />
+    <Content Include="Assets\JS\footable\js\footable.sort.js" />
+    <Content Include="Assets\JS\gage\jquery.easy-pie-chart.css" />
+    <Content Include="Assets\JS\gage\jquery.easypiechart.min.js" />
+    <Content Include="Assets\JS\gage\justgage.js" />
+    <Content Include="Assets\JS\gage\raphael.2.1.0.min.js" />
+    <Content Include="Assets\JS\iCheck\flat\aero%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\aero.png" />
+    <Content Include="Assets\JS\iCheck\flat\all.css" />
+    <Content Include="Assets\JS\iCheck\flat\blue%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\blue.png" />
+    <Content Include="Assets\JS\iCheck\flat\flat%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\flat.png" />
+    <Content Include="Assets\JS\iCheck\flat\green%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\green.png" />
+    <Content Include="Assets\JS\iCheck\flat\grey%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\grey.png" />
+    <Content Include="Assets\JS\iCheck\flat\orange%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\orange.png" />
+    <Content Include="Assets\JS\iCheck\flat\pink%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\pink.png" />
+    <Content Include="Assets\JS\iCheck\flat\purple%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\purple.png" />
+    <Content Include="Assets\JS\iCheck\flat\red%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\red.png" />
+    <Content Include="Assets\JS\iCheck\flat\yellow%402x.png" />
+    <Content Include="Assets\JS\iCheck\flat\yellow.png" />
+    <Content Include="Assets\JS\iCheck\jquery.icheck.js" />
+    <Content Include="Assets\JS\iCheck\line\all.css" />
+    <Content Include="Assets\JS\iCheck\line\line%402x.png" />
+    <Content Include="Assets\JS\iCheck\line\line.png" />
+    <Content Include="Assets\JS\idealform\css\jquery.idealforms.css" />
+    <Content Include="Assets\JS\idealform\img\datepicker.png" />
+    <Content Include="Assets\JS\idealform\img\loading.gif" />
+    <Content Include="Assets\JS\idealform\img\radiocheck.png" />
+    <Content Include="Assets\JS\idealform\img\validation.png" />
+    <Content Include="Assets\JS\idealform\jquery.idealforms.js" />
+    <Content Include="Assets\JS\inputMask\jquery.maskedinput.js" />
+    <Content Include="Assets\JS\jhere-custom.js" />
+    <Content Include="Assets\JS\jquery.js" />
+    <Content Include="Assets\JS\jquery.min.js" />
+    <Content Include="Assets\JS\load.js" />
+    <Content Include="Assets\JS\main.js" />
+    <Content Include="Assets\JS\map\gmap3.js" />
+    <Content Include="Assets\JS\nano\jquery.nanoscroller.js" />
+    <Content Include="Assets\JS\newsticker\jquery.newsTicker.js" />
+    <Content Include="Assets\JS\pace\pace.js" />
+    <Content Include="Assets\JS\pace\themes\pace-theme-center-simple.css" />
+    <Content Include="Assets\JS\pnotify\jquery.pnotify.default.css" />
+    <Content Include="Assets\JS\pnotify\jquery.pnotify.min.js" />
+    <Content Include="Assets\JS\preloader.js" />
+    <Content Include="Assets\JS\progress-bar\number-pb.css" />
+    <Content Include="Assets\JS\progress-bar\number-pb.js" />
+    <Content Include="Assets\JS\progress-bar\progress-app.js" />
+    <Content Include="Assets\JS\progress-bar\src\jquery.velocity.min.js" />
+    <Content Include="Assets\JS\search\jquery.quicksearch.js" />
+    <Content Include="Assets\JS\skin-select\jquery.cookie.js" />
+    <Content Include="Assets\JS\skin-select\skin-select.css" />
+    <Content Include="Assets\JS\skin-select\skin-select.js" />
+    <Content Include="Assets\JS\slidebars\slidebars.css" />
+    <Content Include="Assets\JS\slidebars\slidebars.min.js" />
+    <Content Include="Assets\JS\speed\canvasgauge-coustom.js" />
+    <Content Include="Assets\JS\stackable\responsive-table.css" />
+    <Content Include="Assets\JS\stackable\stacktable.css" />
+    <Content Include="Assets\JS\stackable\stacktable.js" />
+    <Content Include="Assets\JS\switch\bootstrap-switch.css" />
+    <Content Include="Assets\JS\switch\bootstrap-switch.js" />
+    <Content Include="Assets\JS\tabs\acc-wizard.min.css" />
+    <Content Include="Assets\JS\tag\jquery.tagsinput.css" />
+    <Content Include="Assets\JS\tag\jquery.tagsinput.js" />
+    <Content Include="Assets\JS\textEditor\dist\wysihtml5-0.4.0pre.js" />
+    <Content Include="Assets\JS\textEditor\editor.css" />
+    <Content Include="Assets\JS\textEditor\lib\js\wysihtml5-0.3.0.js" />
+    <Content Include="Assets\JS\textEditor\parser_rules\advanced.js" />
+    <Content Include="Assets\JS\textEditor\sceditor\minified\jquery.sceditor.bbcode.min.js" />
+    <Content Include="Assets\JS\textEditor\sceditor\minified\themes\famfamfam.png" />
+    <Content Include="Assets\JS\textEditor\sceditor\minified\themes\square.min.css" />
+    <Content Include="Assets\JS\textEditor\src\bootstrap-wysihtml5.css" />
+    <Content Include="Assets\JS\textEditor\src\bootstrap3-wysihtml5.js" />
+    <Content Include="Assets\JS\timepicker\bootstrap-timepicker.css" />
+    <Content Include="Assets\JS\timepicker\bootstrap-timepicker.js" />
+    <Content Include="Assets\JS\tip\jquery.tooltipster.js" />
+    <Content Include="Assets\JS\tip\tooltipster.css" />
+    <Content Include="Assets\JS\toggle_close.js" />
+    <Content Include="Assets\JS\tree\images\ajax-loader.gif" />
+    <Content Include="Assets\JS\tree\images\file.gif" />
+    <Content Include="Assets\JS\tree\images\folder-closed.gif" />
+    <Content Include="Assets\JS\tree\images\folder.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-black-line.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-black.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-default-line.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-default.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-famfamfam-line.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-famfamfam.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-gray-line.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-gray.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-red-line.gif" />
+    <Content Include="Assets\JS\tree\images\treeview-red.gif" />
+    <Content Include="Assets\JS\tree\jquery.treeview.css" />
+    <Content Include="Assets\JS\tree\jquery.treeview.js" />
+    <Content Include="Assets\JS\tree\lib\jquery.cookie.js" />
+    <Content Include="Assets\JS\tree\tabelizer\jquery-ui-1.10.4.custom.min.js" />
+    <Content Include="Assets\JS\tree\tabelizer\jquery.tabelizer.js" />
+    <Content Include="Assets\JS\tree\tabelizer\tabelizer.min.css" />
+    <Content Include="Assets\JS\tree\treetable\javascripts\src\jquery.treetable.js" />
+    <Content Include="Assets\JS\tree\treetable\stylesheets\jquery.treetable.css" />
+    <Content Include="Assets\JS\tree\treetable\stylesheets\jquery.treetable.theme.default.css" />
+    <Content Include="Assets\JS\tree\treetable\vendor\jquery-ui.js" />
+    <Content Include="Assets\JS\upload\demos\css\demo.css" />
+    <Content Include="Assets\JS\upload\demos\css\images\dark-bg.png" />
+    <Content Include="Assets\JS\upload\demos\css\uploader.css" />
+    <Content Include="Assets\JS\upload\demos\js\demo.min.js" />
+    <Content Include="Assets\JS\upload\src\dmuploader.min.js" />
+    <Content Include="Assets\JS\validate\img\valid.png" />
+    <Content Include="Assets\JS\validate\jquery.validate.min.js" />
+    <Content Include="Assets\JS\validate\validate.css" />
+    <Content Include="Assets\JS\wizard\build\jquery.steps.js" />
+    <Content Include="Assets\JS\wizard\css\jquery.steps.css" />
+    <Content Include="Assets\JS\wizard\jquery.stepy.css" />
+    <Content Include="Assets\JS\wizard\jquery.stepy.js" />
+    <Content Include="Assets\JS\wizard\lib\jquery.cookie-1.3.1.js" />
+    <Content Include="Assets\JS\wizard\lib\modernizr-2.6.2.min.js" />
+    <Content Include="Assets\Layui\layui\css\layui.css" />
+    <Content Include="Assets\Layui\layui\css\layui.mobile.css" />
+    <Content Include="Assets\Layui\layui\css\modules\code.css" />
+    <Content Include="Assets\Layui\layui\css\modules\laydate\default\laydate.css" />
+    <Content Include="Assets\Layui\layui\css\modules\layer\default\icon-ext.png" />
+    <Content Include="Assets\Layui\layui\css\modules\layer\default\icon.png" />
+    <Content Include="Assets\Layui\layui\css\modules\layer\default\layer.css" />
+    <Content Include="Assets\Layui\layui\css\modules\layer\default\loading-0.gif" />
+    <Content Include="Assets\Layui\layui\css\modules\layer\default\loading-1.gif" />
+    <Content Include="Assets\Layui\layui\css\modules\layer\default\loading-2.gif" />
+    <Content Include="Assets\Layui\layui\font\iconfont.svg" />
+    <Content Include="Assets\Layui\layui\images\face\0.gif" />
+    <Content Include="Assets\Layui\layui\images\face\1.gif" />
+    <Content Include="Assets\Layui\layui\images\face\10.gif" />
+    <Content Include="Assets\Layui\layui\images\face\11.gif" />
+    <Content Include="Assets\Layui\layui\images\face\12.gif" />
+    <Content Include="Assets\Layui\layui\images\face\13.gif" />
+    <Content Include="Assets\Layui\layui\images\face\14.gif" />
+    <Content Include="Assets\Layui\layui\images\face\15.gif" />
+    <Content Include="Assets\Layui\layui\images\face\16.gif" />
+    <Content Include="Assets\Layui\layui\images\face\17.gif" />
+    <Content Include="Assets\Layui\layui\images\face\18.gif" />
+    <Content Include="Assets\Layui\layui\images\face\19.gif" />
+    <Content Include="Assets\Layui\layui\images\face\2.gif" />
+    <Content Include="Assets\Layui\layui\images\face\20.gif" />
+    <Content Include="Assets\Layui\layui\images\face\21.gif" />
+    <Content Include="Assets\Layui\layui\images\face\22.gif" />
+    <Content Include="Assets\Layui\layui\images\face\23.gif" />
+    <Content Include="Assets\Layui\layui\images\face\24.gif" />
+    <Content Include="Assets\Layui\layui\images\face\25.gif" />
+    <Content Include="Assets\Layui\layui\images\face\26.gif" />
+    <Content Include="Assets\Layui\layui\images\face\27.gif" />
+    <Content Include="Assets\Layui\layui\images\face\28.gif" />
+    <Content Include="Assets\Layui\layui\images\face\29.gif" />
+    <Content Include="Assets\Layui\layui\images\face\3.gif" />
+    <Content Include="Assets\Layui\layui\images\face\30.gif" />
+    <Content Include="Assets\Layui\layui\images\face\31.gif" />
+    <Content Include="Assets\Layui\layui\images\face\32.gif" />
+    <Content Include="Assets\Layui\layui\images\face\33.gif" />
+    <Content Include="Assets\Layui\layui\images\face\34.gif" />
+    <Content Include="Assets\Layui\layui\images\face\35.gif" />
+    <Content Include="Assets\Layui\layui\images\face\36.gif" />
+    <Content Include="Assets\Layui\layui\images\face\37.gif" />
+    <Content Include="Assets\Layui\layui\images\face\38.gif" />
+    <Content Include="Assets\Layui\layui\images\face\39.gif" />
+    <Content Include="Assets\Layui\layui\images\face\4.gif" />
+    <Content Include="Assets\Layui\layui\images\face\40.gif" />
+    <Content Include="Assets\Layui\layui\images\face\41.gif" />
+    <Content Include="Assets\Layui\layui\images\face\42.gif" />
+    <Content Include="Assets\Layui\layui\images\face\43.gif" />
+    <Content Include="Assets\Layui\layui\images\face\44.gif" />
+    <Content Include="Assets\Layui\layui\images\face\45.gif" />
+    <Content Include="Assets\Layui\layui\images\face\46.gif" />
+    <Content Include="Assets\Layui\layui\images\face\47.gif" />
+    <Content Include="Assets\Layui\layui\images\face\48.gif" />
+    <Content Include="Assets\Layui\layui\images\face\49.gif" />
+    <Content Include="Assets\Layui\layui\images\face\5.gif" />
+    <Content Include="Assets\Layui\layui\images\face\50.gif" />
+    <Content Include="Assets\Layui\layui\images\face\51.gif" />
+    <Content Include="Assets\Layui\layui\images\face\52.gif" />
+    <Content Include="Assets\Layui\layui\images\face\53.gif" />
+    <Content Include="Assets\Layui\layui\images\face\54.gif" />
+    <Content Include="Assets\Layui\layui\images\face\55.gif" />
+    <Content Include="Assets\Layui\layui\images\face\56.gif" />
+    <Content Include="Assets\Layui\layui\images\face\57.gif" />
+    <Content Include="Assets\Layui\layui\images\face\58.gif" />
+    <Content Include="Assets\Layui\layui\images\face\59.gif" />
+    <Content Include="Assets\Layui\layui\images\face\6.gif" />
+    <Content Include="Assets\Layui\layui\images\face\60.gif" />
+    <Content Include="Assets\Layui\layui\images\face\61.gif" />
+    <Content Include="Assets\Layui\layui\images\face\62.gif" />
+    <Content Include="Assets\Layui\layui\images\face\63.gif" />
+    <Content Include="Assets\Layui\layui\images\face\64.gif" />
+    <Content Include="Assets\Layui\layui\images\face\65.gif" />
+    <Content Include="Assets\Layui\layui\images\face\66.gif" />
+    <Content Include="Assets\Layui\layui\images\face\67.gif" />
+    <Content Include="Assets\Layui\layui\images\face\68.gif" />
+    <Content Include="Assets\Layui\layui\images\face\69.gif" />
+    <Content Include="Assets\Layui\layui\images\face\7.gif" />
+    <Content Include="Assets\Layui\layui\images\face\70.gif" />
+    <Content Include="Assets\Layui\layui\images\face\71.gif" />
+    <Content Include="Assets\Layui\layui\images\face\8.gif" />
+    <Content Include="Assets\Layui\layui\images\face\9.gif" />
+    <Content Include="Assets\Layui\layui\jquery.js" />
+    <Content Include="Assets\Layui\layui\layui.all.js" />
+    <Content Include="Assets\Layui\layui\layui.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\carousel.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\code.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\colorpicker.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\element.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\flow.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\form.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\jquery.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\laydate.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\layedit.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\layer.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\laypage.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\laytpl.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\mobile.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\rate.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\slider.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\table.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\tree.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\upload.js" />
+    <Content Include="Assets\Layui\layui\lay\modules\util.js" />
+    <Content Include="Assets\Layui\layui_exts\excel.js" />
+    <Content Include="Assets\Layui\layui_exts\excel.min.js" />
+    <Content Include="Assets\Vue\elementui.css" />
+    <Content Include="Assets\Vue\elementui.js" />
+    <Content Include="Assets\Vue\lrgvue.js" />
+    <Content Include="bin\System.Web.Http.dll" />
+    <Content Include="Content\Common\Common.css" />
+    <Content Include="Content\Common\FileUpload.css" />
+    <Content Include="Content\Common\Framework\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\Common\Framework\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\Common\Framework\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\Common\Framework\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\Common\Framework\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\Common\Framework\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\Common\Framework\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\Common\Framework\jquery-ui.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.accordion.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.all.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.autocomplete.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.base.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.button.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.core.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.datepicker.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.dialog.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.progressbar.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.resizable.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.selectable.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.slider.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.tabs.css" />
+    <Content Include="Content\Common\Framework\jquery.ui.theme.css" />
+    <Content Include="Content\Common\Framework\xcConfirm.css" />
+    <Content Include="Content\Common\jquery.datetimepicker.css" />
+    <Content Include="Content\Common\Pager.css" />
+    <Content Include="Content\Common\Phone\css\bootstrap-responsive.css" />
+    <Content Include="Content\Common\Phone\css\bootstrap-responsive.min.css" />
+    <Content Include="Content\Common\Phone\css\bootstrap.css" />
+    <Content Include="Content\Common\Phone\css\bootstrap.min.css" />
+    <Content Include="Content\Common\Phone\images\11.png" />
+    <Content Include="Content\Common\Phone\images\action-black.png" />
+    <Content Include="Content\Common\Phone\images\action-white.png" />
+    <Content Include="Content\Common\Phone\images\ajax-loader.gif" />
+    <Content Include="Content\Common\Phone\images\ajax-loader.png" />
+    <Content Include="Content\Common\Phone\images\alert-black.png" />
+    <Content Include="Content\Common\Phone\images\alert-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-d-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-d-l-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-d-l-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-d-r-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-d-r-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-d-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-l-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-l-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-r-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-r-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-u-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-u-l-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-u-l-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-u-r-black.png" />
+    <Content Include="Content\Common\Phone\images\arrow-u-r-white.png" />
+    <Content Include="Content\Common\Phone\images\arrow-u-white.png" />
+    <Content Include="Content\Common\Phone\images\audio-black.png" />
+    <Content Include="Content\Common\Phone\images\audio-white.png" />
+    <Content Include="Content\Common\Phone\images\back-black.png" />
+    <Content Include="Content\Common\Phone\images\back-white.png" />
+    <Content Include="Content\Common\Phone\images\Back.png" />
+    <Content Include="Content\Common\Phone\images\bars-black.png" />
+    <Content Include="Content\Common\Phone\images\bars-white.png" />
+    <Content Include="Content\Common\Phone\images\BI.png" />
+    <Content Include="Content\Common\Phone\images\bullets-black.png" />
+    <Content Include="Content\Common\Phone\images\bullets-white.png" />
+    <Content Include="Content\Common\Phone\images\calendar-black.png" />
+    <Content Include="Content\Common\Phone\images\calendar-white.png" />
+    <Content Include="Content\Common\Phone\images\camera-black.png" />
+    <Content Include="Content\Common\Phone\images\camera-white.png" />
+    <Content Include="Content\Common\Phone\images\carat-d-black.png" />
+    <Content Include="Content\Common\Phone\images\carat-d-white.png" />
+    <Content Include="Content\Common\Phone\images\carat-l-black.png" />
+    <Content Include="Content\Common\Phone\images\carat-l-white.png" />
+    <Content Include="Content\Common\Phone\images\carat-r-black.png" />
+    <Content Include="Content\Common\Phone\images\carat-r-white.png" />
+    <Content Include="Content\Common\Phone\images\carat-u-black.png" />
+    <Content Include="Content\Common\Phone\images\carat-u-white.png" />
+    <Content Include="Content\Common\Phone\images\CD-CSC.png" />
+    <Content Include="Content\Common\Phone\images\CD-CTR.png" />
+    <Content Include="Content\Common\Phone\images\check-black.png" />
+    <Content Include="Content\Common\Phone\images\check-white.png" />
+    <Content Include="Content\Common\Phone\images\clock-black.png" />
+    <Content Include="Content\Common\Phone\images\clock-white.png" />
+    <Content Include="Content\Common\Phone\images\cloud-black.png" />
+    <Content Include="Content\Common\Phone\images\cloud-white.png" />
+    <Content Include="Content\Common\Phone\images\CO.png" />
+    <Content Include="Content\Common\Phone\images\comment-black.png" />
+    <Content Include="Content\Common\Phone\images\comment-white.png" />
+    <Content Include="Content\Common\Phone\images\delete-black.png" />
+    <Content Include="Content\Common\Phone\images\delete-white.png" />
+    <Content Include="Content\Common\Phone\images\edit-black.png" />
+    <Content Include="Content\Common\Phone\images\edit-white.png" />
+    <Content Include="Content\Common\Phone\images\eye-black.png" />
+    <Content Include="Content\Common\Phone\images\eye-white.png" />
+    <Content Include="Content\Common\Phone\images\FI.png" />
+    <Content Include="Content\Common\Phone\images\forbidden-black.png" />
+    <Content Include="Content\Common\Phone\images\forbidden-white.png" />
+    <Content Include="Content\Common\Phone\images\forward-black.png" />
+    <Content Include="Content\Common\Phone\images\forward-white.png" />
+    <Content Include="Content\Common\Phone\images\gear-black.png" />
+    <Content Include="Content\Common\Phone\images\gear-white.png" />
+    <Content Include="Content\Common\Phone\images\grid-black.png" />
+    <Content Include="Content\Common\Phone\images\grid-white.png" />
+    <Content Include="Content\Common\Phone\images\heart-black.png" />
+    <Content Include="Content\Common\Phone\images\heart-white.png" />
+    <Content Include="Content\Common\Phone\images\home-black.png" />
+    <Content Include="Content\Common\Phone\images\home-white.png" />
+    <Content Include="Content\Common\Phone\images\icons-18-black.png" />
+    <Content Include="Content\Common\Phone\images\icons-18-white.png" />
+    <Content Include="Content\Common\Phone\images\icons-36-black.png" />
+    <Content Include="Content\Common\Phone\images\icons-36-white.png" />
+    <Content Include="Content\Common\Phone\images\info-black.png" />
+    <Content Include="Content\Common\Phone\images\info-white.png" />
+    <Content Include="Content\Common\Phone\images\LI.png" />
+    <Content Include="Content\Common\Phone\images\location-black.png" />
+    <Content Include="Content\Common\Phone\images\location-white.png" />
+    <Content Include="Content\Common\Phone\images\lock-black.png" />
+    <Content Include="Content\Common\Phone\images\lock-white.png" />
+    <Content Include="Content\Common\Phone\images\mail-black.png" />
+    <Content Include="Content\Common\Phone\images\mail-white.png" />
+    <Content Include="Content\Common\Phone\images\minus-black.png" />
+    <Content Include="Content\Common\Phone\images\minus-white.png" />
+    <Content Include="Content\Common\Phone\images\navigation-black.png" />
+    <Content Include="Content\Common\Phone\images\navigation-white.png" />
+    <Content Include="Content\Common\Phone\images\phone-black.png" />
+    <Content Include="Content\Common\Phone\images\phone-white.png" />
+    <Content Include="Content\Common\Phone\images\plus-black.png" />
+    <Content Include="Content\Common\Phone\images\plus-white.png" />
+    <Content Include="Content\Common\Phone\images\power-black.png" />
+    <Content Include="Content\Common\Phone\images\power-white.png" />
+    <Content Include="Content\Common\Phone\images\Qty.png" />
+    <Content Include="Content\Common\Phone\images\recycle-black.png" />
+    <Content Include="Content\Common\Phone\images\recycle-white.png" />
+    <Content Include="Content\Common\Phone\images\refresh-black.png" />
+    <Content Include="Content\Common\Phone\images\refresh-white.png" />
+    <Content Include="Content\Common\Phone\images\RTW.png" />
+    <Content Include="Content\Common\Phone\images\search-black.png" />
+    <Content Include="Content\Common\Phone\images\search-white.png" />
+    <Content Include="Content\Common\Phone\images\SH-CSC.png" />
+    <Content Include="Content\Common\Phone\images\shop-black.png" />
+    <Content Include="Content\Common\Phone\images\shop-white.png" />
+    <Content Include="Content\Common\Phone\images\star-black.png" />
+    <Content Include="Content\Common\Phone\images\star-white.png" />
+    <Content Include="Content\Common\Phone\images\tag-black.png" />
+    <Content Include="Content\Common\Phone\images\tag-white.png" />
+    <Content Include="Content\Common\Phone\images\user-black.png" />
+    <Content Include="Content\Common\Phone\images\user-white.png" />
+    <Content Include="Content\Common\Phone\images\video-black.png" />
+    <Content Include="Content\Common\Phone\images\video-white.png" />
+    <Content Include="Content\Common\Phone\images\WH-CSC.png" />
+    <Content Include="Content\Common\Phone\images\WH-CTR.png" />
+    <Content Include="Content\Common\Phone\images\WSDC.png" />
+    <Content Include="Content\Common\Phone\images\XA-CSC.png" />
+    <Content Include="Content\Common\Phone\images\XA-CTR.png" />
+    <Content Include="Content\Common\Phone\img\glyphicons-halflings-white.png" />
+    <Content Include="Content\Common\Phone\img\glyphicons-halflings.png" />
+    <Content Include="Content\Common\Phone\jquery.mobile-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile-1.4.5.min.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.external-png-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.external-png-1.4.5.min.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.icons-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.icons-1.4.5.min.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.inline-png-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.inline-png-1.4.5.min.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.inline-svg-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.inline-svg-1.4.5.min.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.structure-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.structure-1.4.5.min.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.theme-1.4.5.css" />
+    <Content Include="Content\Common\Phone\jquery.mobile.theme-1.4.5.min.css" />
+    <Content Include="Content\extensions\jquery.mmenu.effects.css" />
+    <Content Include="Content\extensions\jquery.mmenu.fullscreen.css" />
+    <Content Include="Content\extensions\jquery.mmenu.ie8.css" />
+    <Content Include="Content\extensions\jquery.mmenu.positioning.css" />
+    <Content Include="Content\extensions\jquery.mmenu.themes.css" />
+    <Content Include="Content\extensions\jquery.mmenu.widescreen.css" />
+    <Content Include="Content\Front\Home\layout-media.css" />
+    <Content Include="Content\Front\Home\layout-style.css" />
+    <Content Include="Content\BaiduMap\PODTrackingMap\Index.css" />
+    <Content Include="Content\BaiduMap\PODTrackingMap\PODtrajectory.css" />
+    <Content Include="Content\Other\DarkUnica.css" />
+    <Content Include="Content\Phone\Pod\images\star-matrix.gif" />
+    <Content Include="Content\Phone\Pod\QueryPod.css" />
+    <Content Include="Content\Common\RateStar\rater-star.css" />
+    <Content Include="Content\Common\RegionSelector.css" />
+    <Content Include="Content\Common\TreeView\img\diy\1_close.png" />
+    <Content Include="Content\Common\TreeView\img\diy\1_open.png" />
+    <Content Include="Content\Common\TreeView\img\diy\2.png" />
+    <Content Include="Content\Common\TreeView\img\diy\3.png" />
+    <Content Include="Content\Common\TreeView\img\diy\4.png" />
+    <Content Include="Content\Common\TreeView\img\diy\5.png" />
+    <Content Include="Content\Common\TreeView\img\diy\6.png" />
+    <Content Include="Content\Common\TreeView\img\diy\7.png" />
+    <Content Include="Content\Common\TreeView\img\diy\8.png" />
+    <Content Include="Content\Common\TreeView\img\diy\9.png" />
+    <Content Include="Content\Common\TreeView\img\line_conn.gif" />
+    <Content Include="Content\Common\TreeView\img\loading.gif" />
+    <Content Include="Content\Common\TreeView\img\zTreeStandard.gif" />
+    <Content Include="Content\Common\TreeView\img\zTreeStandard.png" />
+    <Content Include="Content\Common\TreeView\zTreeStyle.css" />
+    <Content Include="Content\Login\Account\Login.css" />
+    <Content Include="Content\Front\Home\Content.css" />
+    <Content Include="Content\Front\Home\Index.css" />
+    <Content Include="Content\POD\Distribution\QueryOrOperatePod.css" />
+    <Content Include="Content\POD\Hilti\PodTrackAndReplyDocumentManage.css" />
+    <Content Include="Content\POD\Hilti\PodTrackReportExport.css" />
+    <Content Include="Content\POD\Hilti\PrintHandoverDetailedListDetail.css" />
+    <Content Include="Content\POD\MaryKay\bootstrap.min.css" />
+    <Content Include="Content\POD\MaryKay\clndr.css" />
+    <Content Include="Content\POD\MaryKay\custom.css" />
+    <Content Include="Content\POD\MaryKay\font-awesome.css" />
+    <Content Include="Content\POD\MaryKay\jqvmap.css" />
+    <Content Include="Content\POD\MaryKay\lines.css" />
+    <Content Include="Content\POD\MaryKay\LocastisDetail.css" />
+    <Content Include="Content\POD\MaryKay\MaryKayLoginsticsTrackInfo.css" />
+    <Content Include="Content\POD\MaryKay\style.css" />
+    <Content Include="Content\POD\POD\BatchEditPods.css" />
+    <Content Include="Content\POD\POD\BSPrinPOD.css" />
+    <Content Include="Content\POD\POD\ImageAuditDetail.css" />
+    <Content Include="Content\POD\POD\ViewPodAll.css" />
+    <Content Include="Content\Reports\PodBaiduReport\ShowCaseHotMap.css" />
+    <Content Include="Content\Reports\PodReport\MonitoringReport.css" />
+    <Content Include="Content\Reports\PodReport\NotificationCenter.css" />
+    <Content Include="Content\System\Demo\Demo.css" />
+    <Content Include="Content\System\Demo\ShowMap.css" />
+    <Content Include="Content\System\Project\Create.css" />
+    <Content Include="Content\System\Project\ProjectRoleAllocate.css" />
+    <Content Include="Content\System\QuotedPrice\Create.css" />
+    <Content Include="Content\System\QuotedPrice\List.css" />
+    <Content Include="Content\System\Segment\CreateDetail.css" />
+    <Content Include="Content\WMS\IntelligentOperation\Index.css" />
+    <Content Include="Content\WMS\PreOrder\Index.css" />
+    <Content Include="Content\WMS\ReceiptManagement\PrintShelves.css" />
+    <Content Include="Content\WMS\ReceiptManagement\ReceiptManagement.css" />
+    <Content Include="Content\WMS\ShelvesManagement\Index.css" />
+    <Content Include="Content\WMS\ShelvesManagement\ReceiptReceivingDetail.css" />
+    <Content Include="demoexcel\nfs\demo.txt" />
+    <Content Include="FTP_WMS\wms_mapdetail.txt" />
+    <Content Include="Global.asax" />
+    <Content Include="Areas\System\Views\Web.config" />
+    <Content Include="Areas\System\Views\User\Create.cshtml" />
+    <Content Include="Areas\System\Views\User\List.cshtml" />
+    <Content Include="Areas\System\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Login\Views\Web.config" />
+    <Content Include="Areas\Login\Views\Account\Login.cshtml" />
+    <Content Include="Areas\System\Views\Project\Create.cshtml" />
+    <Content Include="Areas\System\Views\Project\List.cshtml" />
+    <Content Include="Areas\System\Views\Project\Edit.cshtml" />
+    <Content Include="Areas\System\Views\Project\Delete.cshtml" />
+    <Content Include="Areas\System\Views\ProjectRoleMenu\Index.cshtml" />
+    <Content Include="Areas\System\Views\Project\ProjectRoleAllocate.cshtml" />
+    <Content Include="Areas\System\Views\Demo\Demo.cshtml" />
+    <Content Include="Areas\System\Views\Role\RoleManage.cshtml" />
+    <Content Include="Areas\System\Views\Role\RoleAdd.cshtml" />
+    <Content Include="Areas\System\Views\User\Edit.cshtml" />
+    <Content Include="Areas\System\Views\Customer\Create.cshtml" />
+    <Content Include="Areas\System\Views\Customer\List.cshtml" />
+    <Content Include="Areas\System\Views\Customer\Edit.cshtml" />
+    <Content Include="Areas\System\Views\Shipper\Create.cshtml" />
+    <Content Include="Areas\System\Views\Shipper\List.cshtml" />
+    <Content Include="Areas\POD\Views\Web.config" />
+    <Content Include="Areas\POD\Views\Pod\CreatePod.cshtml" />
+    <Content Include="Areas\POD\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\ViewPodAll.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodFeadBackManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodDetailManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodTrackManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodReplyDocumentManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodExceptionManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodStatusLogManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\QueryPod.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodImport.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodAttachmentImport.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodRelatedImport.cshtml" />
+    <Content Include="Areas\System\Views\Segment\Create.cshtml" />
+    <Content Include="Areas\System\Views\Segment\CreateDetail.cshtml" />
+    <Content Include="Areas\System\Views\Segment\List.cshtml" />
+    <Content Include="Areas\System\Views\TransportationLine\Create.cshtml" />
+    <Content Include="Areas\System\Views\TransportationLine\List.cshtml" />
+    <Content Include="Areas\System\Views\Project\ProjectCustomerOrShipperAllocate.cshtml" />
+    <Content Include="Areas\System\Views\Project\CustomerOrShipperSegmentAllocate.cshtml" />
+    <Content Include="Areas\System\Views\QuotedPrice\Create.cshtml" />
+    <Content Include="Areas\System\Views\QuotedPrice\List.cshtml" />
+    <Content Include="Areas\System\Views\QuotedPrice\Edit.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\BatchEditPods.cshtml" />
+    <Content Include="Areas\System\Views\Project\ProjectUserAllocate.cshtml" />
+    <Content Include="Areas\System\Views\Demo\ShowMap.cshtml" />
+    <Content Include="Areas\System\Views\Project\ProjectUserCustomerAllocate.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\ViewPodAllForOuterUser.cshtml" />
+    <Content Include="Areas\System\Views\Shipper\VehicleManagement.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\SettledPod.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\ViewPodUseList.cshtml" />
+    <Content Include="Areas\Finance\Views\Web.config" />
+    <Content Include="Areas\POD\Views\Pod\ViewSettledPod.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\ViewSettledErrorMessage.cshtml" />
+    <Content Include="Areas\Finance\Views\Settlement\SettledPodManage.cshtml" />
+    <Content Include="Areas\Finance\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Finance\Views\Settlement\EditSettledPod.cshtml" />
+    <Content Include="Areas\Finance\Views\Invoice\Invoice.cshtml" />
+    <Content Include="Areas\Finance\Views\Invoice\InvoiceManage.cshtml" />
+    <Content Include="Areas\Finance\Views\ReceiveOrPayOrders\ReceiveOrPay.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PODReplyDocumentAudit.cshtml" />
+    <Content Include="Areas\CRM\Views\Web.config" />
+    <Content Include="Areas\CRM\Views\Crm\CrmBase.cshtml" />
+    <Content Include="Areas\CRM\Views\Crm\CrmTrack.cshtml" />
+    <Content Include="Areas\CRM\Views\Crm\CrmManage.cshtml" />
+    <Content Include="Areas\CRM\Views\Crm\CrmViewInfo.cshtml" />
+    <Content Include="Areas\System\Views\Region\Index.cshtml" />
+    <Content Include="Areas\CRM\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\CRM\Views\Crm\CrmImport.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\PodTrackAndReplyDocumentManage.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\PodTrackReportExport.cshtml" />
+    <Content Include="Areas\POD\Views\Nike\NikeReportExport.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\POD\Views\Hilti\PodInfoUpdate.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\ShowPodAll.cshtml" />
+    <Content Include="Areas\Reports\Views\Web.config" />
+    <Content Include="Areas\Reports\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\OrderNOInfoUpdate.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\PrintHandoverDetailedList.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\PrintHandoverDetailedListDetail.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\ShowEveryCustomerYearPodCount.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\ShowCustomerPodCountByRegion.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\ShowShipperPodCount.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\IncomAndExpenses.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\ShipperCost.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\ForecastWarehouse\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\Index.cshtml" />
+    <Content Include="Areas\System\Views\Shipper\ShipperRelatedInfo.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\carriers.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\carrierslist.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\SpecifiedDeliveryDate.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\SpecifiedDeliveryDate2.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\waveList.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\xiangxi.cshtml" />
+    <Content Include="Areas\ForecastWarehouse\Views\ForecastWarehouse\export.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AKZO\AbnormalPODSearch.cshtml" />
+    <Content Include="Areas\Finance\Views\Settlement\ImportForBatchEditSettledPod.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKayOrderNoIssued.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKayTrackInfo.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\ShipperManagement\Views\ShipperManagement\Index.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\AddOrUpdateServicePeriod.cshtml" />
+    <Content Include="Areas\POD\Views\Total\MessageHistoryQuery.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\ShipperManagement\CRMShipperTransportationLineManage.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\ShipperManagement\CRMShipperCooperationManage.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\Log56PodTrackImport.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\ShipperManagement\CRMShipperTerminalInfoManage.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\ShipperManagement\Create.cshtml" />
+    <Content Include="Areas\Finance\Views\Settlement\SettledCompare.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AKZO\UpdateAKZOPodSettledInfo.cshtml" />
+    <Content Include="Areas\POD\Views\Tianjin\QueryPod.cshtml" />
+    <Content Include="Areas\AMS\Views\Web.config" />
+    <Content Include="Areas\AMS\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\ReplyDocument_Upload.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\QueryReplyDocument.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\ExcelCheck.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\ManualImportReplyDocument.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\GenBoxNumber.cshtml" />
+    <Content Include="Areas\POD\Views\Total\QueryDocument.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AKZO\UpdateAKZOModelsPodSettledInfo.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\AdidasImportBill.cshtml" />
+    <Content Include="Areas\POD\Views\Nike\UpdateNikePodSettledInfo.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodFeeManage.cshtml" />
+    <Content Include="Areas\POD\Views\Distribution\QueryOrOperatePod.cshtml" />
+    <Content Include="Areas\POD\Views\Nike\UpdateNikePod.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\ImportScanData.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\ImageAuditDetail.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\QueryScanData.cshtml" />
+    <Content Include="Areas\Phone\Views\Web.config" />
+    <Content Include="Areas\Phone\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Phone\Views\Pod\QueryPod.cshtml" />
+    <Content Include="Handler\UploadImgCode.ashx" />
+    <Content Include="Areas\ContractManagement\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\ContractManagement\Views\Contract\Index.cshtml" />
+    <Content Include="Areas\ContractManagement\Views\Contract\ContractExpires.cshtml" />
+    <Content Include="Areas\ContractManagement\Views\Contract\Create.cshtml" />
+    <Content Include="Image\BaiduMap\1601282529.png" />
+    <Content Include="Image\BaiduMap\1601364332.png" />
+    <Content Include="Image\BaiduMap\1601364349.png" />
+    <Content Include="Image\BaiduMap\1601364356.png" />
+    <Content Include="Image\BaiduMap\blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\BaiduMap\green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\BaiduMap\red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\BaiduMap\WD.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\BSReport.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\datatable-row-openclose.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\iWorker.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\logo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\nikeTHlog.jpg" />
+    <Content Include="Image\nikeTHlog.png" />
+    <Content Include="Image\rookie-china.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\rookie_log.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\sf.jpg" />
+    <Content Include="Image\sfphone.jpg" />
+    <Content Include="Image\sfphone.png" />
+    <Content Include="Image\sfphonelog.jpg" />
+    <Content Include="Image\shang.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\star.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\waiting.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\w_1.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\w_2.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\w_3.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\w_4.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\xia.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\信息流.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\商贸流.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\德邦图片.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\德邦图片2.jpg" />
+    <Content Include="Image\收件人图标.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\物流.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\资金流.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\零星Login.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\风火轮_零星.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\风火轮.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\风火轮_bak.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JatoolsPrinter\jatoolsPrinter.cab" />
+    <Content Include="JatoolsPrinter\setup.exe" />
+    <Content Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="Areas\POD\Views\Nike\TYscan.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\POD\Views\Nike\TYscanDetail.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\WMS\Views\Product\AddProduct.cshtml" />
+    <Content Include="Areas\WMS\Views\Product\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\Storer\Edit.cshtml" />
+    <Content Include="Areas\WMS\Views\Storer\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\AreaCreate.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\Create.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\LocationCreate.cshtml" />
+    <Content Include="Areas\WMS\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\WMS\Views\Web.config" />
+    <Content Include="Areas\WMS\Views\Storer\Create.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\IndexLocation.cshtml" />
+    <Content Include="Areas\POD\Views\Hilti\CreditUpdate.cshtml" />
+    <Content Include="Areas\WMS\Views\Product\GetProduct.cshtml" />
+    <Content Include="Areas\System\Views\QuotedPrice\ExeclQuotedPrice.cshtml" />
+    <Content Include="Areas\WMS\Views\Product\ExeclProduct.cshtml" />
+    <Content Include="Areas\System\Views\Customer\Index.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\AdidasPurchaseImportBill.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PodStatusTrackManage.cshtml" />
+    <Content Include="Areas\ContractManagement\Views\Web.config" />
+    <Content Include="Areas\ShipperManagement\Views\DriverManagement\Index.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\DriverManagement\Create.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\VehicleManagement\Index.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\VehicleManagement\Create.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\WmsWebApi.cshtml" />
+    <Content Include="Areas\Reports\Views\PodReport\TransOrderStatus.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\UpdateBAF.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AddBAF.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\WarehouseAllocate.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\ShelvesManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\ReceiptDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\ReceiptCreate.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\ASNCreateOrEdit.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\ASNDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\ShelvesManagement\ReceiptReceivingDetail.cshtml" />
+    <Content Include="Areas\POD\Views\Nike\NikePodForBS.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\ShipperManagement\ShipperToVehicle.cshtml" />
+    <Content Include="Areas\ShipperManagement\Views\VehicleManagement\VehicleToDriver.cshtml" />
+    <Content Include="Areas\Front\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Front\Views\Web.config" />
+    <Content Include="Areas\Front\Views\Home\Content.cshtml" />
+    <Content Include="Areas\Front\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Front\Views\Home\LeftMenu.cshtml" />
+    <Content Include="Areas\Front\Views\Home\TopMenu.cshtml" />
+    <Content Include="Areas\Front\Views\Home\Welcome.cshtml" />
+    <Content Include="Areas\Front\Views\Home\WelcomePage.cshtml" />
+    <Content Include="Areas\Front\Views\Home\wxcustomer.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\BSPrinPOD.cshtml" />
+    <Content Include="Areas\Reports\Views\PodBaiduReport\ShowCaseHotMap.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\PayPriceImportController.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\SearchScanData.cshtml" />
+    <Content Include="Areas\POD\Views\PrintPOD\PrintPod.cshtml" />
+    <Content Include="Areas\POD\Views\PrintPOD\PrintDemo.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\ASNQuery.cshtml" />
+    <Content Include="Areas\System\Views\Project\UserWarehouse.cshtml" />
+    <Content Include="Areas\WMS\Views\ShelvesManagement\ReceiptReceivingInfo.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\PreOrderCreateOrEdit.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\OrderDetailView.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\AddorEditorViewAdjust.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\ManualAllocation.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\Package.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PreOrderQuery.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintShelves.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrder.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventorySearch.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\GetInventoryView.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\WareHouseCheck.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\WMS\Views\Warehouse\WareHouseCheckDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\WareHouseCheckEdit.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\PrintWareHouseCheck.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\WarehouseAllocates.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\PODDistributionVehicle.cshtml" />
+    <Content Include="Areas\BaiduMap\Views\Web.config" />
+    <Content Include="Areas\BaiduMap\Views\PODTrackingMap\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\InventoryOfOutbound.cshtml" />
+    <Content Include="Areas\BaiduMap\Views\PODTrackingMap\PODtrajectory.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AKZO\AbnormalPODSearch.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AKZO\UpdateAKZOModelsPodSettledInfo.cshtml" />
+    <Content Include="Areas\POD\Views\Adidas\AKZO\UpdateAKZOPodSettledInfo.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKayLoginsticsTrackDetail.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKayLoginsticsTrackInfo.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKayLogisticImport.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKayLogisticTrancUpdate.cshtml" />
+    <Content Include="Areas\POD\Views\MaryKay\MaryKaySynchroLogisticInfo.cshtml" />
+    <Content Include="Areas\POD\Views\Pod\GetPODDistributionVehicle.cshtml" />
+    <Content Include="Areas\POD\Views\PrintPOD\PrintDemo.cshtml" />
+    <Content Include="Areas\POD\Views\PrintPOD\PrintPod.cshtml" />
+    <Content Include="Areas\POD\Views\BaiXing\Index.cshtml" />
+    <Content Include="Areas\POD\Views\BaiXing\PodImport.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintDemo.cshtml" />
+    <Content Include="Assets\Fonts\fontawesome-webfont.eot" />
+    <Content Include="Assets\Fonts\fontawesome-webfont.ttf" />
+    <Content Include="Assets\Fonts\fontawesome-webfont.woff" />
+    <Content Include="Assets\Fonts\glyphicons-halflings-regular %281%29.eot" />
+    <Content Include="Assets\Fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Assets\Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Assets\Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Assets\Fonts\open-sans-light.woff" />
+    <Content Include="Assets\Font\BebasNeue-webfont.eot" />
+    <Content Include="Assets\Font\BebasNeue-webfont.ttf" />
+    <Content Include="Assets\Font\BebasNeue-webfont.woff" />
+    <Content Include="Assets\Font\dripicons.eot" />
+    <Content Include="Assets\Font\dripicons.ttf" />
+    <Content Include="Assets\Font\dripicons.woff" />
+    <Content Include="Assets\Font\entypo.eot" />
+    <Content Include="Assets\Font\entypo.ttf" />
+    <Content Include="Assets\Font\entypo.woff" />
+    <Content Include="Assets\Font\maki.eot" />
+    <Content Include="Assets\Font\maki.ttf" />
+    <Content Include="Assets\Font\maki.woff" />
+    <Content Include="Assets\Font\weathericons-regular-webfont.eot" />
+    <Content Include="Assets\Font\weathericons-regular-webfont.ttf" />
+    <Content Include="Assets\Font\weathericons-regular-webfont.woff" />
+    <Content Include="Assets\JS\footable\css\fonts\footable %281%29.eot" />
+    <Content Include="Assets\JS\footable\css\fonts\footable.eot" />
+    <Content Include="Assets\JS\footable\css\fonts\footable.ttf" />
+    <Content Include="Assets\JS\footable\css\fonts\footable.woff" />
+    <Content Include="Areas\WMS\Views\ReportManagement\Inventory.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\Staff.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\GetInventoryRecord.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventoryRemaining.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventorydDtails.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventoryCompare.cshtml" />
+    <Content Include="Areas\WMS\Views\TemplateManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\TemplateManagement\TemplateCreate.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\GoodsShelves.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\QRCode.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\GoodsShelvesCreate.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\ProductWarning.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\ProductWarningCreate.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintPreOrder.cshtml" />
+    <Content Include="Areas\WMS\Views\MachiningManagement\WarhouseMachiningIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\MachiningManagement\BucketMachiningIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\MachiningManagement\WarhouseMachiningAddView.cshtml" />
+    <Content Include="Areas\WMS\Views\MachiningManagement\WarhouseMachiningAddSave.cshtml" />
+    <Content Include="Areas\WMS\Views\MachiningManagement\BucketMachiningAddSave.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\NikeOSRBJ\PrintPickDemo.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\NikeOSRBJ\PrintBoxDemo.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\NikeOSRBJ\PrintBoxmDemo.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\NikeOSRBJ\PrintPodDemo.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBox.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintPick.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintPod.cshtml" />
+    <Content Include="Areas\WMS\Views\Product\ProductDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\MachiningManagement\PrintMachining.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\WaveIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrder_Wave.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrder_EWE.cshtml" />
+    <Content Include="Areas\System\Views\Role\RoleDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\Sku.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderNike.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintShelvesNike.cshtml" />
+    <Content Include="Areas\WMS\Views\IntelligentOperation\Index.cshtml" />
+    <Content Include="Areas\System\Views\WMS_Customer\Create.cshtml" />
+    <Content Include="Areas\System\Views\WMS_Customer\Edit.cshtml" />
+    <Content Include="Areas\System\Views\WMS_Customer\Index.cshtml" />
+    <Content Include="Areas\System\Views\WMS_Customer\List.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeNFSPrint\PrintBox.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\InventoryChange.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\WMS\Views\ReportManagement\ReceiptReport.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\ReportTable.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\SkuInAndOut.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\WarehouseStorageDensity.cshtml" />
+    <Content Include="Areas\WMS\Views\IntelligentOperation\GoodsManagement.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\NikePackage.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintShelvesYXDR.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintCustomsCarton.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintCarton.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintBoxList.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\PrintWareHouseCheckNike.cshtml" />
+    <Content Include="Areas\WMS\Template\包装信息导入模板.xlsx" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\AddorEditorViewAdjust_akzo.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\Unboxing_akzo.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintShelvesYFBLD.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintPreOrderYFBLD.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderYFBLD.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderAkzo.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\Replenishment.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\AddorEditorViewReplenishment.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\ImportReturnNo.cshtml" />
+    <Content Include="Areas\WMS\Template\回单流水号导入模板.xls" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintAllPod.cshtml" />
+    <Content Include="Areas\WMS\Views\Test\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\BatchPrintOrderYFBLD.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\PrintReplenishmentYFBLD.cshtml" />
+    <Content Include="Areas\Front\Views\Home\WelcomeChart.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\GenerateBarCode.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderYXDR.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxCD.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintBarCode.cshtml" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\ScanBarCode.cshtml" />
+    <Content Include="Areas\WMS\Views\BarCode\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintAllPod.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintPod.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\BarCodePackage.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\ReportExpressInfo.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\ReportTableDifference.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\ReportReceiptDifference.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\AdjustAddorEditorView.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\FrozenAddorEditorView.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\MoveAddorEditorView.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\Wave.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\YXDRPackage.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintTotalBoxList.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\WaveDetailView.cshtml" />
+    <Content Include="Areas\WMS\Test\Views\Test\Index.cshtml" />
+    <Content Include="Areas\WMS\Test\Views\Web.config" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventorySnapshoot.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintHeader.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\OrderSelect.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintHeaderAndDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintHeaderAndDetailYXDR.cshtml" />
+    <Content Include="Areas\WMS\Template\快递转换导入模板.xls" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\Expresspackage.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\Picking.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\AdjustGoodsTypeAddorEditorView.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\StatusStatis.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\DeliveryConfirm.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\DeliverDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\LogOperationManagement\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventorySearchGroup.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintDeliveryYXDR.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintDelivery.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventorySearchGroup2.cshtml" />
+    <Content Include="Areas\WMS\Views\WorkOrder\Index.cshtml" />
+    <Content Include="Areas\WMS\Views\WorkOrder\WorkOrderCreateOrEdit.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxWH.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\ReceiptStatusStatis.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderSumAkzo.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintSumAllPod.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\AssignedAllocation.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\CustomAllocation.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderAkzo_TJ.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventorySumSearch.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\SKUChangeReport.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxXA.cshtml" />
+    <Content Include="Areas\WMS\Views\InventoryManagement\InventoryBatchChange.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintBoxListSAKC.cshtml" />
+    <Content Include="Areas\WMS\Views\YXDRPackagePrint\PrintBoxListAKC.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintExpressAKC.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\InventorySummary.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintWaveOrderAKC.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\SettlementDetail.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\Settlement.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\SettlementEdit.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\PrintSettlement.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\PrintSettlementNike.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\SettlementLook.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\SettlementDetailPreview.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\PayableSettlement.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\PaySettlementDetail.cshtml" />
+    <Content Include="demoexcel\071产品信息导入模板.xlsx" />
+    <Content Include="demoexcel\071库位信息导入模板.xlsx" />
+    <Content Include="demoexcel\071店铺信息导入模板.xlsx" />
+    <Content Include="demoexcel\072上架信息导入模板.xlsx" />
+    <Content Include="demoexcel\072预入库单导入模板.xlsx" />
+    <Content Include="demoexcel\073包装信息导入模板.xlsx" />
+    <Content Include="demoexcel\073预出库单导入模板.xlsx" />
+    <Content Include="demoexcel\1产品信息导入模板.xls" />
+    <Content Include="demoexcel\1库位信息导入模板.xls" />
+    <Content Include="demoexcel\1店铺信息导入模板.xls" />
+    <Content Include="demoexcel\2上架信息导入模板.xls" />
+    <Content Include="demoexcel\2预入库单导入模板.xls" />
+    <Content Include="demoexcel\3包装信息导入模板.xls" />
+    <Content Include="demoexcel\3预出库单导入模板.xls" />
+    <Content Include="demoexcel\nfs\demo.xlsx" />
+    <Content Include="Areas\WMS\Views\ReportManagement\InventoryStorer.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderHABA.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\IndexLocale.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\HiltiAddSettlement.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\SelHilti.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\Settlementpage.cshtml" />
+    <Content Include="Areas\WMS\Views\SettlementManagement\SelHaba.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\WorkingStatis.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\AsnScanIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\PopupIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\ShowDiff.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\NikeReportSendEmail.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\OrderShipment.cshtml" />
+    <Content Include="Assets\Layui\layui\font\iconfont.eot" />
+    <Content Include="Assets\Layui\layui\font\iconfont.ttf" />
+    <Content Include="Assets\Layui\layui\font\iconfont.woff" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxSH.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\DiffReportTable.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\ProcessReport.cshtml" />
+    <Content Include="Areas\WMS\Views\LogOperationManagement\RFIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\ASNAbnormalTrackingIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxSHCORTW.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\AsnScanDiffReport.cshtml" />
+    <Content Include="Areas\WMS\Views\Warehouse\AlterationLocation.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderNikeB2C.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintExpressNike.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderNikeB2CSFS.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderNikeB2CSTH.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\ASNNewBoxLabel.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\PrintASNNewBoxLabel.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrder_JT.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintOrderSum_TH.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBox_TH.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintBoxm_TH.cshtml" />
+    <Content Include="Areas\WMS\Views\NikeOSRBJPrint\PrintPod_TH.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintSumAllPod_TH.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintAllPod_TH.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\BatchUpdateLoadKey.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\NikeTHPackage.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\InspectionReport.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\PrintBoxLabel.cshtml" />
+    <Content Include="Areas\WMS\Views\ASNManagement\AsnScanLocationPrint.cshtml" />
+    <Content Include="Areas\WMS\Views\PreOrder\CancelOrderIndex.cshtml" />
+    <Content Include="Areas\WMS\Views\ReportManagement\OrderConsumable.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderECManagement\PrintAllPod.cshtml" />
+    <Content Include="Areas\WMS\Template\快递信息导入模板.xlsx" />
+    <Content Include="Areas\WMS\Views\ReceiptManagement\PrintShelves_JT.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\JitePackage.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintExpressYto.cshtml" />
+    <Content Include="Areas\WMS\Views\OrderManagement\PrintExpressYd.cshtml" />
+    <None Include="Properties\PublishProfiles\bob.pubxml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
+    <None Include="Properties\PublishProfiles\HuBaPublish.pubxml" />
+    <None Include="Properties\PublishProfiles\lrg.pubxml" />
+    <None Include="Properties\PublishProfiles\lrg2.pubxml" />
+    <None Include="Properties\PublishProfiles\OSR.pubxml" />
+    <None Include="Properties\PublishProfiles\qjw.pubxml" />
+    <None Include="Properties\PublishProfiles\rg.li.pubxml" />
+    <None Include="Properties\PublishProfiles\TWS.pubxml">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Rpts\DataSetBS.xsc">
+      <DependentUpon>DataSetBS.xsd</DependentUpon>
+    </Content>
+    <None Include="Properties\PublishProfiles\wms.pubxml" />
+    <None Include="Properties\PublishProfiles\WMSUp.pubxml" />
+    <None Include="Properties\PublishProfiles\wms_test.pubxml" />
+    <None Include="Properties\PublishProfiles\yahui.zhang.pubxml" />
+    <None Include="Rpts\DataSetBS.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSetBS.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Rpts\DataSetBS.xss">
+      <DependentUpon>DataSetBS.xsd</DependentUpon>
+    </Content>
+    <None Include="Scripts\Common\Framework\jquery-1.7.1.intellisense.js" />
+    <Content Include="Image\homeBack.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\loading.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\Login.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\AMS\AMS\ExcelCheck.js" />
+    <Content Include="Scripts\AMS\AMS\GenBoxNumber.js" />
+    <Content Include="Scripts\AMS\AMS\ManualImportReplyDocument.js" />
+    <Content Include="Scripts\AMS\AMS\QueryReplyDocument.js" />
+    <Content Include="Scripts\AMS\AMS\ReplyDocument_Upload.js" />
+    <Content Include="Scripts\BaiduMap\app.js" />
+    <Content Include="Scripts\BaiduMap\PODTrackingMap\Index.js" />
+    <Content Include="Scripts\BaiduMap\PODTrackingMap\PODtrajectory.js" />
+    <Content Include="Scripts\Common\accounting.min.js" />
+    <Content Include="Scripts\Common\FileUpload.js" />
+    <Content Include="Scripts\Common\Framework\ajaxfileupload.js" />
+    <Content Include="Scripts\Common\Common.js" />
+    <Content Include="Scripts\Common\Framework\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\Common\Framework\jquery-1.9.1.js" />
+    <Content Include="Scripts\Common\Framework\jquery-1.9.1.min.js" />
+    <Content Include="Scripts\Common\Framework\jquery.jmpopups-0.5.1.js" />
+    <Content Include="Scripts\Common\Framework\jsrender.js" />
+    <Content Include="Scripts\Common\Framework\OpenPopup.js" />
+    <Content Include="Scripts\Common\Framework\xcConfirm.js" />
+    <Content Include="Scripts\Common\Highcharts\highcharts-3d.js" />
+    <Content Include="Scripts\Common\JartoolsPrint.css" />
+    <Content Include="Scripts\Common\jatoolsPrinter.js" />
+    <Content Include="Scripts\Common\jquery-barcode.js" />
+    <Content Include="Scripts\Common\jquery.qrcode.min.js" />
+    <Content Include="Scripts\Common\JsBarcode.all.js" />
+    <Content Include="Scripts\Common\LodopFuncs.js" />
+    <Content Include="Scripts\Common\Phone\bootstrap.js" />
+    <Content Include="Scripts\Common\Phone\bootstrap.min.js" />
+    <Content Include="Scripts\Common\Framework\jquery-1.7.1.js" />
+    <Content Include="Scripts\Common\Framework\jquery-1.7.1.min.js" />
+    <None Include="Scripts\Common\Framework\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\Common\Framework\jquery-ui-1.8.20.js" />
+    <Content Include="Scripts\Common\Framework\jquery-ui-1.8.20.min.js" />
+    <Content Include="Scripts\Common\Framework\jquery.datetimepicker.js" />
+    <Content Include="Scripts\Common\Framework\jquery.ui.datepicker-zh-CN.js" />
+    <Content Include="Scripts\Common\Framework\jquery.validate.js" />
+    <Content Include="Scripts\Common\Framework\jquery.validate.min.js" />
+    <Content Include="Scripts\Common\Framework\json2.js" />
+    <Content Include="Scripts\Common\Framework\modernizr-2.5.3.js" />
+    <Content Include="Scripts\Common\Highcharts\drilldown.js" />
+    <Content Include="Scripts\Common\Highcharts\exporting.js" />
+    <Content Include="Scripts\Common\Highcharts\gray.js" />
+    <Content Include="Scripts\Common\Highcharts\highcharts.js" />
+    <Content Include="Scripts\Common\Pager.js" />
+    <Content Include="Scripts\Common\Phone\iscroll.js" />
+    <Content Include="Scripts\Common\Phone\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\Common\Phone\jquery.mobile-1.4.5.js" />
+    <Content Include="Scripts\Common\Phone\jquery.mobile-1.4.5.min.js" />
+    <Content Include="Scripts\Common\Phone\jquery.PrintArea.js" />
+    <Content Include="Scripts\Common\RateStar\rater-star.js" />
+    <Content Include="Scripts\Common\RegionSelector.js" />
+    <Content Include="Scripts\Common\TreeView\jquery.ztree.core-3.0.js" />
+    <Content Include="Scripts\Common\TreeView\jquery.ztree.core-3.0.min.js" />
+    <Content Include="Scripts\Common\TreeView\jquery.ztree.excheck-3.0.js" />
+    <Content Include="Scripts\Common\TreeView\jquery.ztree.excheck-3.0.min.js" />
+    <Content Include="Scripts\Common\TreeView\jquery.ztree.exedit-3.0.js" />
+    <Content Include="Scripts\Common\TreeView\jquery.ztree.exedit-3.0.min.js" />
+    <Content Include="Scripts\ContractManagement\Contract\ContractExpires.js" />
+    <Content Include="Scripts\ContractManagement\Contract\Create.js" />
+    <Content Include="Scripts\ContractManagement\Contract\Index.js" />
+    <Content Include="Scripts\CRM\Crm\CrmImport.js" />
+    <Content Include="Scripts\CRM\Crm\CrmBase.js" />
+    <Content Include="Scripts\CRM\Crm\CrmManage.js" />
+    <Content Include="Scripts\CRM\Crm\CrmTrack.js" />
+    <Content Include="Scripts\CRM\Crm\CrmViewInfo.js" />
+    <Content Include="Scripts\Finance\Invoice\Invoice.js" />
+    <Content Include="Scripts\Finance\Invoice\InvoiceManage.js" />
+    <Content Include="Scripts\Finance\ReceiveOrPayOrders\ReceiveOrPay.js" />
+    <Content Include="Scripts\Finance\Settlement\EditSettledPod.js" />
+    <Content Include="Scripts\Finance\Settlement\ImportForBatchEditSettledPod.js" />
+    <Content Include="Scripts\Finance\Settlement\SettledCompare.js" />
+    <Content Include="Scripts\Finance\Settlement\SettledPodManage.js" />
+    <Content Include="Scripts\ForecastWarehouse\ForecastWarehouse\Index.js" />
+    <Content Include="Scripts\ForecastWarehouse\GapPickingNote\PickingNote.js" />
+    <Content Include="Scripts\ForecastWarehouse\Index.js" />
+    <Content Include="Scripts\Front\Home\layout.js" />
+    <Content Include="Scripts\Front\Home\WelcomePage.js" />
+    <Content Include="Scripts\Front\Home\wxcustomer.js" />
+    <Content Include="Scripts\Login\Account\Login.js" />
+    <Content Include="Scripts\Front\Home\Content.js" />
+    <Content Include="Scripts\Front\Home\Index.js" />
+    <Content Include="Scripts\Front\Home\Welcome.js" />
+    <Content Include="Scripts\Other\dark-unica.js" />
+    <Content Include="Scripts\Phone\Pod\AddAttachment.js" />
+    <Content Include="Scripts\Phone\Pod\QueryPod.js" />
+    <Content Include="Scripts\POD\Adidas\AddBAF.js" />
+    <Content Include="Scripts\POD\Adidas\ImportScanData.js" />
+    <Content Include="Scripts\POD\Adidas\QueryScanData.js" />
+    <Content Include="Scripts\POD\Adidas\UpdateBAF.js" />
+    <Content Include="Scripts\POD\AKZO\AbnormalPODSearch.js" />
+    <Content Include="Scripts\POD\AKZO\UpdateAKZOPodSettledInfo.js" />
+    <Content Include="Scripts\POD\AKZO\UpdateAKZOModelsPodSettledInfo.js" />
+    <Content Include="Scripts\POD\BaiXing\Index.js" />
+    <Content Include="Scripts\POD\BaiXing\PodImport.js" />
+    <Content Include="Scripts\POD\Distribution\QueryOrOperatePod.js" />
+    <Content Include="Scripts\POD\Hilti\AddOrUpdateServicePeriod.js" />
+    <Content Include="Scripts\POD\Hilti\CreditUpdate.js" />
+    <Content Include="Scripts\POD\Hilti\OrderNoInfoUpdate.js" />
+    <Content Include="Scripts\POD\Hilti\PodInfoUpdate.js" />
+    <Content Include="Scripts\POD\Hilti\PodTrackReportExport.js" />
+    <Content Include="Scripts\POD\Hilti\PodTrackAndReplyDocumentManage.js" />
+    <Content Include="Scripts\POD\Hilti\PrintHandoverDetailedList.js" />
+    <Content Include="Scripts\POD\Hilti\PrintHandoverDetailedListDetail.js" />
+    <Content Include="Scripts\POD\MaryKay\MaryKayLoginsticsTrackInfo.js" />
+    <Content Include="Scripts\POD\MaryKay\MaryKayOrderNoIssued.js" />
+    <Content Include="Scripts\POD\MaryKay\MaryKaySynchroLogisticInfo.js" />
+    <Content Include="Scripts\POD\MaryKay\MaryKayTrackInfo.js" />
+    <Content Include="Scripts\POD\Nike\NikePodForBS.js" />
+    <Content Include="Scripts\POD\Nike\NikeReportExport.js" />
+    <Content Include="Scripts\POD\Nike\TYscan.js" />
+    <Content Include="Scripts\POD\Nike\UpdateNikePod.js" />
+    <Content Include="Scripts\POD\Nike\UpdateNikePodSettledInfo.js" />
+    <Content Include="Scripts\POD\POD\AdidasImportBill.js" />
+    <Content Include="Scripts\POD\POD\AdidasPurchaseImportBill.js" />
+    <Content Include="Scripts\POD\POD\BatchEditPods.js" />
+    <Content Include="Scripts\POD\POD\GetPODDistributionVehicle.js" />
+    <Content Include="Scripts\POD\POD\NikePodForBS.js" />
+    <Content Include="Scripts\POD\POD\BSPrinPOD.js" />
+    <Content Include="Scripts\POD\POD\PodAttachmentImport.js" />
+    <Content Include="Scripts\POD\POD\PodStatusTrackManage.js" />
+    <Content Include="Scripts\POD\POD\ImageAuditDetail.js" />
+    <Content Include="Scripts\POD\POD\PodFeeManage.js" />
+    <Content Include="Scripts\POD\POD\CreatePod.js" />
+    <Content Include="Scripts\POD\POD\Log56PodTrackImport.js" />
+    <Content Include="Scripts\POD\POD\PodDetailManage.js" />
+    <Content Include="Scripts\POD\POD\PodExceptionManage.js" />
+    <Content Include="Scripts\POD\POD\PodFeadBackManage.js" />
+    <Content Include="Scripts\POD\POD\PodImport.js" />
+    <Content Include="Scripts\POD\POD\PodRelatedImport.js" />
+    <Content Include="Scripts\POD\POD\PODReplyDocumentAudit.js" />
+    <Content Include="Scripts\POD\POD\PodReplyDocumentManage.js" />
+    <Content Include="Scripts\POD\POD\PodStatusLogManage.js" />
+    <Content Include="Scripts\POD\POD\PodTrackImport.js" />
+    <Content Include="Scripts\POD\POD\PodTrackManage.js" />
+    <Content Include="Scripts\POD\POD\QueryPod.js" />
+    <Content Include="Scripts\POD\POD\SettledPod.js" />
+    <Content Include="Scripts\POD\POD\ViewPodAll.js" />
+    <Content Include="Scripts\POD\POD\ViewPodUseList.js" />
+    <Content Include="Scripts\POD\PrintPOD\PrintPod.js" />
+    <Content Include="Scripts\POD\Tianjin\QueryPod.js" />
+    <Content Include="Scripts\POD\Total\MessageHistoryQuery.js" />
+    <Content Include="Scripts\POD\Total\QueryDocument.js" />
+    <Content Include="Scripts\Print\jquery.jqprint-0.3.js" />
+    <Content Include="Scripts\Print\print.min.js" />
+    <Content Include="Scripts\Reports\PodBaiduReport\ShowCaseHotMaps.js" />
+    <Content Include="Scripts\Reports\PodReport\IncomAndExpenses.js" />
+    <Content Include="Scripts\Reports\PodReport\ShipperCost.js" />
+    <Content Include="Scripts\Reports\PodReport\ShowCustomerPodCountByRegion.js" />
+    <Content Include="Scripts\Reports\PodReport\ShowEveryCustomerYearPodCount.js" />
+    <Content Include="Scripts\Reports\PodReport\ShowPodAll.js" />
+    <Content Include="Scripts\Reports\PodReport\ShowShipperPodCount.js" />
+    <Content Include="Scripts\Reports\PodReport\TransOrderStatus.js" />
+    <Content Include="Scripts\Role\RoleAdd.js" />
+    <Content Include="Scripts\Role\RoleManage.js" />
+    <Content Include="Scripts\ShipperManagement\DriverManagement\Create.js" />
+    <Content Include="Scripts\ShipperManagement\DriverManagement\Index.js" />
+    <Content Include="Scripts\ShipperManagement\ShipperManagement\Create.js" />
+    <Content Include="Scripts\ShipperManagement\ShipperManagement\CRMShipperCooperationManage.js" />
+    <Content Include="Scripts\ShipperManagement\ShipperManagement\CRMShipperTerminalInfoManage.js" />
+    <Content Include="Scripts\ShipperManagement\ShipperManagement\CRMShipperTransportationLineManage.js" />
+    <Content Include="Scripts\ShipperManagement\ShipperManagement\Index.js" />
+    <Content Include="Scripts\ShipperManagement\ShipperManagement\ShipperToVehicle.js" />
+    <Content Include="Scripts\ShipperManagement\VehicleManagement\Create.js" />
+    <Content Include="Scripts\ShipperManagement\VehicleManagement\Index.js" />
+    <Content Include="Scripts\ShipperManagement\VehicleManagement\VehicleToDriver.js" />
+    <Content Include="Scripts\System\Customer\Create.js" />
+    <Content Include="Scripts\System\Customer\Index.js" />
+    <Content Include="Scripts\System\Demo\Demo.js" />
+    <Content Include="Scripts\System\Demo\ShowMap.js" />
+    <Content Include="Scripts\System\Layer\extend\layer.ext.js" />
+    <Content Include="Scripts\System\Layer\laydate.js" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\layer-v3.1.1.js" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\mobile\layer.js" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\mobile\need\layer.css" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\theme\default\icon-ext.png" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\theme\default\icon.png" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\theme\default\layer.css" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\theme\default\loading-0.gif" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\theme\default\loading-1.gif" />
+    <Content Include="Scripts\System\Layer\layer-v3.1.1\theme\default\loading-2.gif" />
+    <Content Include="Scripts\System\Layer\layer.js" />
+    <Content Include="Scripts\System\Layer\layui.all.js" />
+    <Content Include="Assets\CSS\layui.css" />
+    <Content Include="Scripts\System\Layer\skin\default\icon-ext.png" />
+    <Content Include="Scripts\System\Layer\skin\default\icon.png" />
+    <Content Include="Scripts\System\Layer\skin\default\loading-0.gif" />
+    <Content Include="Scripts\System\Layer\skin\default\loading-1.gif" />
+    <Content Include="Scripts\System\Layer\skin\default\loading-2.gif" />
+    <Content Include="Scripts\System\Layer\skin\layer.css" />
+    <Content Include="Scripts\System\Layer\skin\layer.ext.css" />
+    <Content Include="Scripts\System\ProjectRoleMenu\Index.js" />
+    <Content Include="Scripts\System\Project\Create.js" />
+    <Content Include="Scripts\System\Project\CustomerOrShipperSegmentAllocate.js" />
+    <Content Include="Scripts\System\Project\Delete.js" />
+    <Content Include="Scripts\System\Project\Edit.js" />
+    <Content Include="Scripts\System\Project\List.js" />
+    <Content Include="Scripts\System\Project\ProjectCustomerOrShipperAllocate.js" />
+    <Content Include="Scripts\System\Project\ProjectRoleAllocate.js" />
+    <Content Include="Scripts\System\Project\ProjectUserAllocate.js" />
+    <Content Include="Scripts\System\Project\ProjectUserCustomerAllocate.js" />
+    <Content Include="Scripts\System\QuotedPrice\Create.js" />
+    <Content Include="Scripts\System\QuotedPrice\Edit.js" />
+    <Content Include="Scripts\System\QuotedPrice\ExeclQuotedPrice.js" />
+    <Content Include="Scripts\System\QuotedPrice\ExeclQuotedPrices.js" />
+    <Content Include="Scripts\System\QuotedPrice\List.js" />
+    <Content Include="Scripts\System\Region\Index.js" />
+    <Content Include="Scripts\System\Segment\CreateDetail.js" />
+    <Content Include="Scripts\System\Segment\List.js" />
+    <Content Include="Scripts\System\Shipper\Create.js" />
+    <Content Include="Scripts\System\Shipper\Edit.js" />
+    <Content Include="Scripts\System\Shipper\List.js" />
+    <Content Include="Scripts\System\Shipper\ShipperRelatedInfo.js" />
+    <Content Include="Scripts\System\Shipper\VehicleManagement.js" />
+    <Content Include="Scripts\System\TransportationLine\Create.js" />
+    <Content Include="Scripts\System\TransportationLine\List.js" />
+    <Content Include="Scripts\System\User\Create.js" />
+    <Content Include="Scripts\System\User\Edit.js" />
+    <Content Include="Scripts\System\User\List.js" />
+    <Content Include="Scripts\System\WMS_Customer\Create.js" />
+    <Content Include="Scripts\System\WMS_Customer\Index.js" />
+    <Content Include="Scripts\WMS\1.mp3" />
+    <Content Include="Scripts\WMS\ASNManagement\ASNCreateOrEdit.js" />
+    <Content Include="Scripts\WMS\ASNManagement\ASNDetail.js" />
+    <Content Include="Scripts\WMS\ASNManagement\ASNNewBoxLabel.js" />
+    <Content Include="Scripts\WMS\ASNManagement\AsnScanLocationPrint.js" />
+    <Content Include="Scripts\WMS\ASNManagement\AsnScanIndex.js" />
+    <Content Include="Scripts\WMS\ASNManagement\CLodop_Setup_for_Win32NT.exe" />
+    <Content Include="Scripts\WMS\ASNManagement\Index.js" />
+    <Content Include="Scripts\WMS\ASNManagement\LodopFuncs.js" />
+    <Content Include="Scripts\WMS\ASNManagement\PopupIndex.js" />
+    <Content Include="Scripts\WMS\ASNManagement\ReceiptStatusStatis.js" />
+    <Content Include="Scripts\WMS\BarCode\Index.js" />
+    <Content Include="Scripts\WMS\IntelligentOperation\Index.js" />
+    <Content Include="Scripts\WMS\IntelligentOperation\ReceiptIndex.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\AddorEditorViewAdjust.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\AddorEditorViewReplenishment.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\AdjustAddorEditorView.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\AdjustGoodsTypeAddorEditorView.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\FrozenAddorEditorView.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\GetInventoryView.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\Index.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventoryBatchChange.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventorydDtails.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventoryRemaining.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventorySearch.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\AddorEditorViewAdjust_akzo.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventorySearchGroup.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventorySearchGroup2.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventorySnapshoot.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\MoveAddorEditorView.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\Replenishment.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\Unboxing_akzo.js" />
+    <Content Include="Scripts\WMS\InventoryManagement\InventoryCompare.js" />
+    <Content Include="Scripts\WMS\LogOperationManagement\RFIndex.js" />
+    <Content Include="Scripts\WMS\LogOperationManagement\Index.js" />
+    <Content Include="Scripts\WMS\MachiningManagement\BucketMachiningAddSave.js" />
+    <Content Include="Scripts\WMS\MachiningManagement\BucketMachiningIndex.js" />
+    <Content Include="Scripts\WMS\MachiningManagement\WarhouseMachiningAddSave.js" />
+    <Content Include="Scripts\WMS\MachiningManagement\WarhouseMachiningAddView.js" />
+    <Content Include="Scripts\WMS\MachiningManagement\WarhouseMachiningIndex.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\DeliverDetail.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\DeliveryConfirm.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\ExpressPackage.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\OrderSelect.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\PrintDetail.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\PrintHeader.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\PrintHeaderAndDetail.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\PrintHeaderAndDetailYXDR.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\StatusStatis.js" />
+    <Content Include="Scripts\WMS\OrderManagement\BarCodePackage.js" />
+    <Content Include="Scripts\WMS\OrderECManagement\Index.js" />
+    <Content Include="Scripts\WMS\OrderManagement\IndexLocale.js" />
+    <Content Include="Scripts\WMS\OrderManagement\JitePackage.js" />
+    <Content Include="Scripts\WMS\OrderManagement\NikeTHPackage.js" />
+    <Content Include="Scripts\WMS\OrderManagement\PrintOrder_JT.js" />
+    <Content Include="Scripts\WMS\PreOrder\BatchUpdateLoadKey.js" />
+    <Content Include="Scripts\WMS\PreOrder\CustomAllocation.js" />
+    <Content Include="Scripts\WMS\OrderManagement\InventoryOfOutbound.js" />
+    <Content Include="Scripts\WMS\OrderManagement\Package.js" />
+    <Content Include="Scripts\WMS\OrderManagement\PreOrderQuery.js" />
+    <Content Include="Scripts\WMS\OrderManagement\PrintOrder.js" />
+    <Content Include="Scripts\WMS\OrderManagement\Wave.js" />
+    <Content Include="Scripts\WMS\OrderManagement\WaveIndex.js" />
+    <Content Include="Scripts\WMS\OrderManagement\PrintOrderNike.js" />
+    <Content Include="Scripts\WMS\OrderManagement\NikePackage.js" />
+    <Content Include="Scripts\WMS\OrderManagement\YXDRPackage.js" />
+    <Content Include="Scripts\WMS\PreOrder\AddPreOrder.js" />
+    <Content Include="Scripts\WMS\PreOrder\AssignedAllocation.js" />
+    <Content Include="Scripts\WMS\PreOrder\Index.js" />
+    <Content Include="Scripts\WMS\OrderManagement\Index.js" />
+    <Content Include="Scripts\WMS\OrderManagement\OrderDetailView.js" />
+    <Content Include="Scripts\WMS\PreOrder\ManualAllocation.js" />
+    <Content Include="Scripts\WMS\PreOrder\PreOrderCreateOrEdit.js" />
+    <Content Include="Scripts\WMS\Product\AddProduct.js" />
+    <Content Include="Scripts\WMS\Product\ExeclProduct.js" />
+    <Content Include="Scripts\WMS\Product\GetProduct.js" />
+    <Content Include="Scripts\WMS\Product\Index.js" />
+    <Content Include="Scripts\WMS\Product\ProductDetail.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\PrintShelves.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\PrintShelvesNike.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\PrintShelvesYXDR.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\PrintShelves_JT.js" />
+    <Content Include="Scripts\WMS\ReportManagement\NikeReportSendEmail.js" />
+    <Content Include="Scripts\WMS\ReportManagement\Inventory.js" />
+    <Content Include="Scripts\WMS\ReportManagement\InventoryChange.js" />
+    <Content Include="Scripts\WMS\ReportManagement\AsnScanDiffReport.js" />
+    <Content Include="Scripts\WMS\ReportManagement\OrderConsumable.js" />
+    <Content Include="Scripts\WMS\ReportManagement\ReceiptReport.js" />
+    <Content Include="Scripts\WMS\ReportManagement\ReportExpressInfo.js" />
+    <Content Include="Scripts\WMS\ReportManagement\ReportReceiptDifference.js" />
+    <Content Include="Scripts\WMS\ReportManagement\DiffReportTable.js" />
+    <Content Include="Scripts\WMS\ReportManagement\SKUChangeReport.js" />
+    <Content Include="Scripts\WMS\ReportManagement\ReportTable.js" />
+    <Content Include="Scripts\WMS\ReportManagement\ReportTableDifference.js" />
+    <Content Include="Scripts\WMS\ReportManagement\Sku.js" />
+    <Content Include="Scripts\WMS\ReportManagement\SkuInAndOut.js" />
+    <Content Include="Scripts\WMS\ReportManagement\WorkingStatis.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\HiltiAddSettlement.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\PrintSettlement.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\PrintSettlementNike.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\PayableSettlement.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\PaySettlementDetail.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\SelHaba.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\SelHilti.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\SettlementLook.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\SettlementDetail.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\Settlement.js" />
+    <Content Include="Scripts\WMS\SettlementManagement\SettlementEdit.js" />
+    <Content Include="Scripts\WMS\ShelvesManagement\Index.js" />
+    <Content Include="Scripts\WMS\ShelvesManagement\ReceiptReceivingDetail.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\ASNQuery.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\Index.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\ReceiptCreate.js" />
+    <Content Include="Scripts\WMS\ReceiptManagement\ReceiptDetail.js" />
+    <Content Include="Scripts\WMS\Storer\Index.js" />
+    <Content Include="Scripts\WMS\TemplateManagement\Index.js" />
+    <Content Include="Scripts\WMS\TemplateManagement\TemplateCreate.js" />
+    <Content Include="Scripts\WMS\Warehouse\AlterationLocation.js" />
+    <Content Include="Scripts\WMS\Warehouse\AreaCreate.js" />
+    <Content Include="Scripts\WMS\Warehouse\Create.js" />
+    <Content Include="Scripts\WMS\Warehouse\Index.js" />
+    <Content Include="Scripts\WMS\Warehouse\IndexLocation.js" />
+    <Content Include="Scripts\WMS\Warehouse\LocationCreate.js" />
+    <Content Include="Scripts\WMS\Warehouse\PrintWareHouseCheck.js" />
+    <Content Include="Scripts\WMS\Warehouse\ProductWarning.js" />
+    <Content Include="Scripts\WMS\Warehouse\ProductWarningCreate.js" />
+    <Content Include="Scripts\WMS\Warehouse\WarehouseAllocate.js" />
+    <Content Include="Scripts\WMS\Warehouse\WarehouseAllocates.js" />
+    <Content Include="Scripts\WMS\Warehouse\WarehouseCheck.js" />
+    <Content Include="Scripts\WMS\Warehouse\WarehouseCheckDetail.js" />
+    <Content Include="Scripts\WMS\Warehouse\WarehouseCheckEdit.js" />
+    <Content Include="Scripts\WMS\Warehouse\QRCode.js" />
+    <Content Include="Scripts\WMS\Warehouse\GoodsShelves.js" />
+    <Content Include="Scripts\WMS\Warehouse\GoodsShelvesCreate.js" />
+    <Content Include="Scripts\WMS\Warehouse\PrintWareHouseCheckNike.js" />
+    <Content Include="Scripts\WMS\WorkOrder\Index.js" />
+    <Content Include="Service References\ESPService\ESPService.disco" />
+    <Content Include="Service References\ESPService\configuration91.svcinfo" />
+    <Content Include="Service References\ESPService\configuration.svcinfo" />
+    <Content Include="Service References\ESPService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="MaryKay Web References\MaryKayHDtoLIPS\hdtolips.disco" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Scripts\Common\Framework\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\Common\Framework\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\Common\Framework\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\Common\Framework\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\Common\Framework\MicrosoftAjax.js" />
+    <Content Include="Scripts\Common\Framework\MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\Common\Framework\MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\Common\Framework\MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\Common\Framework\MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\Common\Framework\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\Popup.cshtml" />
+    <Content Include="Views\Shared\Date.cshtml" />
+    <Content Include="Views\Shared\Pager.cshtml" />
+    <Content Include="Views\Shared\FileUpload.cshtml" />
+    <Content Include="Views\Shared\MsgMask.cshtml" />
+    <Content Include="Views\Shared\RegionSelector.cshtml" />
+    <Content Include="Service References\ESPService\ESPService.wsdl" />
+    <Content Include="Service References\ESPService\Runbow.TWS.Web.ESPService.AddEmailSendingResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="MaryKay Web References\MaryKayHDtoLIPS\hdtolips.wsdl" />
+    <Content Include="MaryKay Web References\MaryKayHDtoLIPS\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Views\Shared\DateTime.cshtml" />
+    <Content Include="Views\Shared\ImageUpload.cshtml" />
+    <Content Include="Views\Shared\_Layout.Mobile.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Shared\_Layout.Phone.cshtml" />
+    <Content Include="Views\Shared\PagerNew.cshtml" />
+    <Content Include="Views\Shared\DateHHmmss.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\AMS\Views\Shared\" />
+    <Folder Include="Areas\BaiduMap\Views\Shared\" />
+    <Folder Include="Areas\ContractManagement\Views\Shared\" />
+    <Folder Include="Areas\CRM\Views\Shared\" />
+    <Folder Include="Areas\Finance\Views\Shared\" />
+    <Folder Include="Areas\ForecastWarehouse\Views\Shared\" />
+    <Folder Include="Areas\Login\Views\Shared\" />
+    <Folder Include="Areas\Phone\Views\Shared\" />
+    <Folder Include="Areas\POD\Models\HiltiModel\" />
+    <Folder Include="Areas\POD\Views\Shared\" />
+    <Folder Include="Areas\Reports\Views\Shared\" />
+    <Folder Include="Areas\ShipperManagement\Views\Shared\" />
+    <Folder Include="Areas\System\Views\Shared\" />
+    <Folder Include="Areas\WMS\Test\Models\" />
+    <Folder Include="Areas\WMS\Test\Views\Shared\" />
+    <Folder Include="Areas\WMS\Views\Shared\" />
+    <Folder Include="Content\WMS\OrderManagement\" />
+    <Folder Include="TotalImage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSRedis\CSRedis.csproj">
+      <Project>{d35e185e-a7e1-41e1-846c-21944f56074f}</Project>
+      <Name>CSRedis</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TMS.MessageContracts\Runbow.TWS.MessageContracts.csproj">
+      <Project>{16f15667-9682-4d12-8780-db1173e5a678}</Project>
+      <Name>Runbow.TWS.MessageContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Biz\Runbow.TWS.Biz.csproj">
+      <Project>{dd71de39-7b30-49c6-858b-1806f9e64dd5}</Project>
+      <Name>Runbow.TWS.Biz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Common\Runbow.TWS.Common.csproj">
+      <Project>{a8de5d57-c805-44c0-955a-79995e3b2466}</Project>
+      <Name>Runbow.TWS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Dao\Runbow.TWS.Dao.csproj">
+      <Project>{082b9765-9b82-4316-9252-9a921d29efa8}</Project>
+      <Name>Runbow.TWS.Dao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Entity\Runbow.TWS.Entity.csproj">
+      <Project>{99059584-b657-4baf-8d7a-1160879646da}</Project>
+      <Name>Runbow.TWS.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Exceptions\Runbow.TWS.Exceptions.csproj">
+      <Project>{5631bad9-3ff0-443d-b92a-54f7c6ad7e39}</Project>
+      <Name>Runbow.TWS.Exceptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Logger\Runbow.TWS.Logger.csproj">
+      <Project>{37efda4c-1121-44d6-bb19-475f26b0ae1b}</Project>
+      <Name>Runbow.TWS.Logger</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Report\Report.rdlc" />
+    <EmbeddedResource Include="Rpts\BSReport.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ESPService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="MaryKay Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://www.mk-lips.com/lipswebservice/hdtolips.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>MaryKay Web References\MaryKayHDtoLIPS\</RelPath>
+      <UpdateFromURL>http://www.mk-lips.com/lipswebservice/hdtolips.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Runbow_TWS_Web_MaryKayHDtoLIPS_HDToLIPS</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{082B9765-9B82-4316-9252-9A921D29EFA8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Runbow.TWS.Dao</RootNamespace>
+    <AssemblyName>Runbow.TWS.Dao</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="D.Net.EmailClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\D.Net.EmailClient.dll</HintPath>
+    </Reference>
+    <Reference Include="D.Net.EmailInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\D.Net.EmailInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="EasyNetQ, Version=0.63.5.454, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EasyNetQ.0.63.5.454\lib\net45\EasyNetQ.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LumiSoft.Net, Version=2.0.5007.31685, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\LumiSoft.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=e44a2bc38ed2c13c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\Runbow.TWS.Common\Library\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RabbitMQ.Client, Version=3.6.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+      <HintPath>..\packages\RabbitMQ.Client.3.6.0\lib\net45\RabbitMQ.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AMS\AMSUploadAccessor.cs" />
+    <Compile Include="BaiduMap\PODTrackingMapAccessor.cs" />
+    <Compile Include="BaseAccessor.cs" />
+    <Compile Include="ContractManagement\ContractAccessor.cs" />
+    <Compile Include="CRM\CRMInfoAccessor.cs" />
+    <Compile Include="CRM\CRMTrackInfoAccessor.cs" />
+    <Compile Include="Finance\InvoiceAccessor.cs" />
+    <Compile Include="Finance\ReceiveOrPayOrdersAccessor.cs" />
+    <Compile Include="Finance\SettledAccessor.cs" />
+    <Compile Include="ForecastWarehouse\ForecastWarehouseAccessor.cs" />
+    <Compile Include="ForecastWarehouse\GapPickingNoteAccessor.cs" />
+    <Compile Include="ForecastWarehouse\getMail.cs" />
+    <Compile Include="Front\WXCustomerAccessor.cs" />
+    <Compile Include="Inventory\DaoOSRStorage.cs" />
+    <Compile Include="Inventory\DaoSampleStorage.cs" />
+    <Compile Include="MobileWeb\GetOrderInformationAccessor.cs" />
+    <Compile Include="MonitoringReport\MonitoringReportAccessor.cs" />
+    <Compile Include="Phone\WeiQueryPodAccessor.cs" />
+    <Compile Include="POD\AdidasAccessor.cs" />
+    <Compile Include="POD\AKZOAccessor.cs" />
+    <Compile Include="POD\BaiXingAccessor.cs" />
+    <Compile Include="POD\DistributionAccessor.cs" />
+    <Compile Include="POD\HiltiAccessor.cs" />
+    <Compile Include="POD\MaryKayAccessor.cs" />
+    <Compile Include="POD\MaryKayBakAccessor.cs" />
+    <Compile Include="POD\NikeAccessor.cs" />
+    <Compile Include="POD\PodAccessor.cs" />
+    <Compile Include="POD\TotalAccessor.cs" />
+    <Compile Include="POD\TYscanAccessor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RabbitMQ\AssemblySerializeBinder.cs" />
+    <Compile Include="RabbitMQ\RabbitConfig.cs" />
+    <Compile Include="RabbitMQ\RabbitJsonHelper.cs" />
+    <Compile Include="RabbitMQ\RabbitReceiver.cs" />
+    <Compile Include="RabbitMQ\RabbitSender.cs" />
+    <Compile Include="Reports\PodReportAccessor.cs" />
+    <Compile Include="Reports\WMSOrderStatusAccessor.cs" />
+    <Compile Include="RFWeb\BestLocationManagementAccessor.cs" />
+    <Compile Include="RFWeb\InventoryManagementAccessor.cs" />
+    <Compile Include="RFWeb\ReceiptManagementAccessor.cs" />
+    <Compile Include="RFWeb\OrderManagementAccessor.cs" />
+    <Compile Include="SettlementManagement\SettlementAccessor.cs" />
+    <Compile Include="ShipperManagement\DriverManagementAccessor.cs" />
+    <Compile Include="ShipperManagement\VehicleManagementAccessor.cs" />
+    <Compile Include="System\WMS_CustomerAccessor.cs" />
+    <Compile Include="WebApi\ExpressAccessor.cs" />
+    <Compile Include="WebApi\HaddadServiceAccessor.cs" />
+    <Compile Include="WebApi\UpdateStatusServiceAccessor.cs" />
+    <Compile Include="WebApi\VehicleLocationAccessor.cs" />
+    <Compile Include="WebApi\WXPODServiceAccessor.cs" />
+    <Compile Include="WebApi\OrderServiceAccessor.cs" />
+    <Compile Include="WMS.WXApp\WXAppAccessor.cs" />
+    <Compile Include="WMS\AdjustmentManagementAccessor.cs" />
+    <Compile Include="WMS\ASNManagementAccessor.cs" />
+    <Compile Include="WMS\BarCodeAccessor.cs" />
+    <Compile Include="WMS\CordOperationAccessor.cs" />
+    <Compile Include="WMS\DeliverConfirmAccessor.cs" />
+    <Compile Include="WMS\DeliveryOrderAccessor.cs" />
+    <Compile Include="WMS\IntelligentOperationAccessor.cs" />
+    <Compile Include="WMS\InventoryManagementAccessor.cs" />
+    <Compile Include="WMS\LogOperationAccessor.cs" />
+    <Compile Include="WMS\PickingAccessor.cs" />
+    <Compile Include="WMS\PreOrderAccessor.cs" />
+    <Compile Include="WMS\PrintHeaderAccessor.cs" />
+    <Compile Include="WMS\ProductAccessor.cs" />
+    <Compile Include="ShipperManagement\ShipperManagementAccessor.cs" />
+    <Compile Include="System\AttachmentAccessor.cs" />
+    <Compile Include="System\ConfigAccessor.cs" />
+    <Compile Include="System\CustomerAccessor.cs" />
+    <Compile Include="System\LogAccessor.cs" />
+    <Compile Include="System\MenuAccessor.cs" />
+    <Compile Include="System\ProjectAccessor.cs" />
+    <Compile Include="System\QuotedPriceAccessor.cs" />
+    <Compile Include="System\RegionAccessor.cs" />
+    <Compile Include="System\RoleAccessor.cs" />
+    <Compile Include="System\SegmentAccessor.cs" />
+    <Compile Include="System\ShipperAccessor.cs" />
+    <Compile Include="System\TransportationLineAccessor.cs" />
+    <Compile Include="System\UserAccessor.cs" />
+    <Compile Include="WMS\ReplenishmentManagementAccessor.cs" />
+    <Compile Include="WMS\ShelvesManagementAccessor.cs" />
+    <Compile Include="WMS\ReceiptManagementAccessor.cs" />
+    <Compile Include="WMS\StorerAccessor.cs" />
+    <Compile Include="WarehouseAccessor.cs" />
+    <Compile Include="WMS\OrderManagementAccessor.cs" />
+    <Compile Include="WMS\ReportManagementAccessor.cs" />
+    <Compile Include="WMS\TemplateManagementAccessor.cs" />
+    <Compile Include="WMS\MachiningManagementAccessor.cs" />
+    <Compile Include="WMS\WaveAccessor.cs" />
+    <Compile Include="WMS\OrderECManagementAccessor.cs" />
+    <Compile Include="WMS\WorkOrderAccessor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Runbow.TMS.MessageContracts\Runbow.TWS.MessageContracts.csproj">
+      <Project>{16f15667-9682-4d12-8780-db1173e5a678}</Project>
+      <Name>Runbow.TWS.MessageContracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Common\Runbow.TWS.Common.csproj">
+      <Project>{a8de5d57-c805-44c0-955a-79995e3b2466}</Project>
+      <Name>Runbow.TWS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Entity\Runbow.TWS.Entity.csproj">
+      <Project>{99059584-b657-4baf-8d7a-1160879646da}</Project>
+      <Name>Runbow.TWS.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Exceptions\Runbow.TWS.Exceptions.csproj">
+      <Project>{5631bad9-3ff0-443d-b92a-54f7c6ad7e39}</Project>
+      <Name>Runbow.TWS.Exceptions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Logger\Runbow.TWS.Logger.csproj">
+      <Project>{37EFDA4C-1121-44D6-BB19-475F26B0AE1B}</Project>
+      <Name>Runbow.TWS.Logger</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

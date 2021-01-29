@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <title>CSC用户登录</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#cancel').click(function () {
+                document.getElementById("txtuser").value == "";
+                document.getElementById("txtpwd").value == "";
+                //var WshShell = new ActiveXObject('WScript.Shell')
+                //alert(WshShell);
+                //WshShell.SendKeys('{F11}');
+            });
+
+            document.getElementById("txtuser").focus();
+        });
+        var projectID;
+        function tabpwd(event) {
+            if (event.keyCode == 13) {
+                GetProject();
+            }
+        }
+        function GetProject() {
+            var user = document.getElementById("txtuser").value;
+            document.getElementById("txtuser").select();
+            if (user == "") {
+                alert("请输入用户名！");
+
+                return;
+            }
+            $.ajax({
+                type: 'get',
+                url: '/Login/GetUserProjects',
+                data: { userName: user },
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    var isArray = $.isArray(data);
+                    if (!isArray) {
+                        document.getElementById("projectId").value = "";
+                        alert(data);
+                    }
+                    else {
+                        //alert(data[0].ProjectID);
+                        
+                       
+                        if (data[0].ProjectID != 11) {
+                            alert("用户名不正确！");
+                            //$("#txtuser").val('');
+                            return;
+                        }
+                        document.getElementById("projectId").value = data[0].ProjectID;
+                        //projectID = data[0].ProjectID;
+                        document.getElementById("txtpwd").select();
+                        return;
+                    }
+                },
+                error: function () {
+                    document.getElementById("projectId").value = "";
+                    alert("请求出错！");
+                }
+            });
+        }
+        function tabsub(event) {
+            if (event.keyCode == 13) {
+                checkuser();
+            }
+        }
+        function DirMain() {
+            checkuser();
+        }
+        function checkuser() {
+            if (document.getElementById("txtuser").value == "") {
+                alert("用户名不能为空！");
+                return;
+            }
+            if (document.getElementById("txtpwd").value == "") {
+                alert("密码不能为空！");
+                return;
+            }
+            var user = document.getElementById("txtuser").value;
+            var pwd = document.getElementById("txtpwd").value;
+            projectID = parseInt($('#projectId').val());
+            if (isNaN(projectID) || projectID < 1) {
+                //$('#txtUser').trigger('change');
+                GetProject();
+            }
+            //if (isNaN(projectID) || projectID < 1) {
+
+            //}
+            //window.location.href = "/login/Main/";
+            if (isNaN(parseInt($('#projectId').val())) || parseInt($('#projectId').val()) < 1) {
+                //alert($('#projectId').val());
+            }
+            else {
+                $.ajax({
+                    type: 'post',
+                    url: '/Login/CheckUser',
+                    data: { "UserName": user, "Password": pwd, "ProjectID": document.getElementById("projectId").value },
+                    cache: false,
+                    //dataType: 'json',
+                    success: function (data) {
+                        if (data == "1") {
+                            window.location.href = "/login/SelectProject/";
+                        }
+                        else {
+                            alert(data);
+                        }
+                    },
+                    error: function () {
+                        //document.getElementById("projectId").value = "";
+                        alert("请求出错！");
+                    }
+                });
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+            width: 90%;
+            margin: 0 auto;
+            margin-top: 120px;
+        }
+
+            table tr:first-child {
+                font-size: 18px;
+            }
+
+        input {
+            border: none;
+            outline: none;
+            width: 60%;
+            margin-left: 15%;
+            background: none;
+        }
+
+        table tr:nth-child(n+2) td {
+            /*width: 80%;*/
+            border-bottom: 1px solid #428BCA;
+            height: 50px;
+            line-height: 45px;
+        }
+
+        table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        table tr:last-child td,
+        table tr:nth-child(2) td {
+            padding-top: 20px;
+        }
+
+            table tr:last-child td input {
+                padding: 10px 0;
+                border-radius: 10px;
+                background: #428BCA;
+                color: white;
+            }
+    </style>
+</head>
+<body  onload="JavaScript:window.resizeTo(screen.availWidth,screen.availHeight);window.moveTo(0,0)"  >
+@*    <table style="text-align:center;height:200px;width:300px" >
+    <tr><td colspan="2">用户登录</td></tr>
+    <tr><td colspan="2">用户:<input id="txtuser" type="text" style="width:200px" onkeydown="tabpwd()" /></td></tr>
+    <tr><td colspan="2">密码:<input id="txtpwd" type="text" style="width:200px" onkeydown="tabsub()" /></td></tr>
+     <tr><td><input id="sumbit" type="button" value="登录" style="width:100px" onclick="return DirMain();" /></td><td><input id="cancel" type="button" value="重置" style="width:1200\px" /></td></tr>
+</table>*@
+<table style="text-align:center;height:200px;width:100%" >
+    <tr><td colspan="2">CSC用户登录</td></tr>
+    <tr><td colspan="2">用户:<input id="txtuser" type="text" value="" style="width:80%" onkeydown="tabpwd(event)" /></td></tr>
+    <tr><td colspan="2">密码:<input id="txtpwd" type="password"  value="" style="width:80%" onkeydown="tabsub(event)" /></td></tr>
+
+     <tr><td> <input type="hidden" id="projectId" name="ProjectID" value="" /><input id="sumbit" type="button" value="登录" style="width:80%" onclick="return DirMain();" /></td><td><input id="cancel" type="button" value="重置" style="width:80%" /></td></tr>
+</table>
+</body>
+</html>
+

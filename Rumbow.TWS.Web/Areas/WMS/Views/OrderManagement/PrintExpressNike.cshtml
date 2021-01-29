@@ -1,0 +1,508 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintExpressModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+@{
+    ViewBag.Title = "PrintExpressAKC";
+}
+
+@using System.Text.RegularExpressions;
+@using Runbow.TWS.Common;
+<style>
+    .only_for_print {
+        /*display: none;*/
+        display: block;
+    }
+
+
+    .shuli {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 11px;
+        line-height: 15px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+
+    .shuli2 {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 11px;
+        line-height: 15px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+
+    .shuli3 {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 10px;
+        line-height: 12px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+
+    .shuli4 {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 11px;
+        line-height: 36px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID() {
+        //window.history.go(-1)
+        window.location.href = document.referrer  //返回并刷新
+        //window.location.href = "/WMS/OrderECManagement/Index";
+    }
+    //code128条码
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+        $.each($(".bcTarget2"), function (a, b) {
+            BarcodeC2(b, $(b).html());
+        });
+        $.each($(".bcTarget3"), function (a, b) {
+            BarcodeC3(b, $(b).html());
+        });
+        $.each($(".bcTarget4"), function (a, b) {
+            BarcodeC4(b, $(b).html());
+        });
+        $.each($(".bcTarget5"), function (a, b) {
+            BarcodeC5(b, $(b).html());
+        });
+    })
+    function BarcodeC(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 55, showHRI: false });
+    }
+    function BarcodeC2(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 33, showHRI: false });
+    }
+    function BarcodeC3(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 30, showHRI: false });
+    }
+    function BarcodeC4(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 20, showHRI: false });
+    }
+    function BarcodeC5(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 15, showHRI: false });
+    }
+</script>
+<!--1厘米约等于37.7px-->
+<div class="actionButtonDiv" style="padding-top: 10px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="PackageID()">
+</div>
+<h2>批量打印面单  总单数：<b>@Model.OrderInfos.Count().ToString()</b></h2>
+<h4>以下为打印区：</h4>
+<br />
+<div style="height:70px;"></div>
+@if (Model.OrderInfos != null && Model.OrderInfos.Any())
+{
+    var i = 0;
+    foreach (var item in Model.OrderInfos.OrderBy(m => m.ID))
+    {        
+        var phone = Regex.Replace(item.Contact, "(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+        i++;
+        var pages = "page" + i;
+        if (item.OrderType == "CSC-customer顾客线上支付")
+        {
+            <div id="@pages" class='only_for_print pagestyle' style="clear: both;">
+                <div style="border: 1px solid #151515;font-family:微软雅黑;width:365px;height:680px">
+                    <!--logo-->
+                    <div style="width:100%;height:49px;line-height:49px;">
+                        <div style="float:left;width:30%"><img style="width:100px;height:40px;padding-left:5px;" src="~/Image/sf.jpg" /></div>
+                        <div style="float:left;width:40%;font-size:30px;text-align:center;font-weight:bold;"></div>
+                        <div style="float:left;width:30%;text-align:right">@*<img style="width:70px;height:30px;padding-right:5px;" src="~/Image/sfphone.jpg" />*@</div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--条码-->
+                    <div style="width:100%;height:96px;">
+                        <div style="float:left;width:75%;height:100%;border-right:1px solid #151515;">
+                            <div style="width:100%;padding-top:1mm;padding-left:55px;">
+                                <div class="bcTarget">@item.ExpressNumber.ToString()</div>
+                            </div>
+                            <div style="width:100%;text-align:center; font-size:18px;padding-top:3px;">运单号：@item.ExpressNumber.ToString()</div>
+                        </div>
+                        <div style="float:left;width:25%;text-align:center">
+                            <div style="font-size:18px;height:28px;line-height:28px;">标准快递</div>
+                            <hr style="border-bottom:1px solid #000;margin:0 ">
+                            <div style="font-size:14px;">代收货款</div>
+                            <br />
+                            <div style="font-size:14px;">￥0元</div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--目的地代码-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli">目<br />的<br />地</div>
+                        <div style="float:left;width:90%;font-size:40px;padding-left:5px;line-height:45px;padding-top:2px;">@item.str11</div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--收件人-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli">收<br />件<br />人</div>
+                        <div style="float:left;width:90%;font-size:13px;padding-left:5px;padding-right:5px;line-height:15px;padding-top:2px;">
+                            <div>@item.Consignee.GetHidexxxString()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@phone</div>
+                            <div>
+                                @item.Province&nbsp;&nbsp;@item.City&nbsp;&nbsp;@item.District&nbsp;&nbsp;
+                                @item.Address
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--寄件人-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli">寄<br />件<br />人</div>
+                        <div style="float:left;width:90%;padding-left:5px;">
+                            <div style="float:left;width:70%;border-right:1px solid #151515;height:49px;">
+                                <div style="float:left;font-size:11px;line-height:16px;width:100%;padding-right:5px;">
+                                    <span>3721&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60956000</span>
+                                    <br />
+                                    <span>@item.str13</span>
+                                </div>
+                                @*<div style="float:left;font-size:13px;width:29%">
+                                        原寄地 512
+                                    </div>*@
+                            </div>
+                            <div style="float:left;width:30%;text-align:center">
+                                <div style="font-size:12px;text-align:center">集团转寄协议客户</div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                    <!--付款-->
+                    <div style="width:100%;height:37px;font-size:11px;">
+                        <div style="float:left;width:40%;padding-left:10px;padding-top:2px;">
+                            <div>付款方式:转第三方付</div>
+                            <div>月结账号:021*******</div>
+                        </div>
+                        <div style="float:left;width:60%;padding-top:2px;">
+                            <div>声明价值:</div>
+                            @*<div>保费价值:</div>*@
+                        </div>
+                        @*<div style="float:left;width:42%;padding-top:4px;">
+                                <div style="width:100%">
+                                    <div style="float:left; width:50%">计费重量:</div>
+                                    <div style="float:left;width:50%">费用合计:</div>
+                                </div>
+                                <div>付款地区:</div>
+                            </div>*@
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--托寄物-->
+                    <div style="width:100%;height:37px;">
+                        <div class="shuli3">托<br />寄<br />物</div>
+                        <div style="float:left;width:90%;font-size:14px;padding-left:15px;">
+
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--备注-->
+                    <div style="width:100%;height:37px;">
+                        <div class="shuli3" style="padding-top:5px;">备<br />注</div>
+                        <div style="float:left;width:90%;font-size:10px;padding-left:15px;">
+                            <div style="float:left;width:35%;border-right:1px solid #151515;height:37px;">
+                            </div>
+                            <div style="float:left;width:35%;border-right:1px solid #151515;height:37px;padding-left:5px;font-size:9px;">
+                                <div>收件员：</div>
+                                <div>寄件日期：</div>
+                                <div>派件员：</div>
+                            </div>
+                            <div style="float:left;width:30%;height:37px;">
+                                <div style="padding-left:5px;margin-bottom:10px;">签收：</div>
+
+                                <div style="text-align:right;padding-right:5px;">月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<hr style="border-bottom:2px solid #151515;margin:0 ">*@
+                    <div style="height:10px;width:100%;border-top:1px solid #151515;border-bottom:1px solid #151515"></div>
+                    <!--下半部分-->
+                    <div style="width:100%;height:50px">
+                        <div style="float:left;width:30%;height:50px;">
+                            <div style="line-height:45px"><img style="width:110px;height:45px;padding-left:5px;padding-top:0px" src="~/Image/sf.jpg" /></div>
+                            @*<div><img style="width:70px;height:33px;padding-left:10px;" src="~/Image/sfphone.jpg" /></div>*@
+                        </div>
+                        <div style="float:left;width:70%">
+                            <div style="width:100%;padding-top:5px;padding-left:50px;">
+                                <div class="bcTarget4">@item.ExpressNumber.ToString()</div>
+                            </div>
+                            <div style="font-size:15px;padding-left:60px;padding-top:0px;">@item.ExpressNumber.ToString()</div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                    <!--收件人-->
+                    <div style="width:100%;height:40px;">
+                        <div class="shuli4">收</div>
+                        <div style="float:left;width:90%;font-size:11px;padding-left:5px;padding-right:5px;line-height:12px;padding-top:2px;">
+                            <div>@item.Consignee.GetHidexxxString()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@phone</div>
+                            <div>
+                                @item.Province&nbsp;&nbsp;@item.City&nbsp;&nbsp;@item.District&nbsp;&nbsp;
+                                @item.Address
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--寄件人-->
+                    <div style="width:100%;height:37px;">
+                        <div class="shuli4">寄</div>
+                        <div style="float:left;width:90%;padding-left:5px;">
+                            <div style="float:left;width:100%;height:37px;">
+                                <div style="float:left;font-size:11px;line-height:16px;width:100%;padding-right:5px;">
+                                    <span>3721&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60956000</span>
+                                    <br />
+                                    <span>@item.str13</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+
+                    <!--最下面条码-->
+                    <div style="width:100%;height:101px;font-size:12px;position:relative">
+                        <div style="height:20px;">
+                            <div style="float:left;width:13%;font-size:11px">&nbsp;&nbsp;订单号:</div>
+                            <div style="float:left;width:63%;">
+                                <div class="bcTarget5" style="margin-top:2px;">@item.ExternOrderNumber</div>
+                                <div style="width:100%;text-align:center">@item.ExternOrderNumber</div>
+                            </div>
+                            <div style="float:left;width:24%">
+                                <div style="font-size:12px;">件数：商品<span>@item.Int1</span>件</div>
+                            </div>
+                        </div>
+                        <div style="clear:both; width:100%;height:20px;">&nbsp;&nbsp;配货信息:</div>
+                        <div style="width:100%;height:30px;line-height:30px;">&nbsp;&nbsp;备注:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;节假日正常派件</div>
+
+                        <div style="font-size:11px;position:absolute;bottom:0px;width:100%;text-align:center">
+                            www.sf-express.com&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span style="font-size:12px;">客服电话：95338</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+        else if (item.OrderType == "CSC-customer顾客门店支付")
+        {
+            <div id="@pages" class='only_for_print pagestyle' style="clear: both;">
+                <div style="border: 1px solid #151515;font-family:华文宋体;width:365px;height:680px">
+                    <!--logo-->
+                    <div style="width:100%;height:49px;line-height:49px;">
+                        <div style="float:left;width:30%"><img style="width:70px;height:30px;padding-left:5px;" src="~/Image/sf.jpg" /></div>
+                        <div style="float:left;width:40%;font-size:30px;text-align:center;font-weight:bold;">普通</div>
+                        <div style="float:left;width:30%;text-align:right"><img style="width:70px;height:30px;padding-right:5px;" src="~/Image/sfphone.jpg" /></div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--条码-->
+                    <div style="width:100%;height:96px;">
+                        <div style="float:left;width:75%;height:100%;border-right:1px solid #151515;">
+                            <div style="width:100%;padding-top:1mm;padding-left:55px;">
+                                <div class="bcTarget">@item.ExpressNumber.ToString()</div>
+                            </div>
+                            <div style="width:100%;text-align:center; font-size:18px;padding-top:5px;">运单号：@item.ExpressNumber.ToString()</div>
+                        </div>
+                        <div style="float:left;width:25%;text-align:center">
+                            <div style="font-size:18px;height:28px;line-height:28px;">标准快递</div>
+                            <hr style="border-bottom:1px solid #000;margin:0 ">
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--目的地代码-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli">目<br />的<br />地</div>
+                        <div style="float:left;width:90%;font-size:40px;padding-left:5px;line-height:45px;padding-top:2px;">@item.str11</div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--收件人-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli">收<br />件<br />人</div>
+                        <div style="float:left;width:90%;font-size:14px;padding-left:5px;padding-right:5px;line-height:18px;padding-top:2px;">
+                            @item.Consignee&nbsp;&nbsp;@item.Contact&nbsp;&nbsp;
+                            @item.Province&nbsp;&nbsp;@item.City&nbsp;&nbsp;@item.District&nbsp;&nbsp;
+                            @item.Address
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--寄件人-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli">寄<br />件<br />人</div>
+                        <div style="float:left;width:90%;padding-left:5px;">
+                            <div style="float:left;width:75%;border-right:1px solid #151515;height:49px;">
+                                <div style="float:left;font-size:11px;line-height:16px;width:71%;padding-right:5px;">
+                                    @item.str4<span>发货仓</span>
+                                    <br />
+                                    @item.str16&nbsp;@item.str17&nbsp;@item.str18&nbsp;@item.str19
+                                </div>
+                                <div style="float:left;font-size:13px;width:29%">
+                                    原寄地 @item.str12
+                                </div>
+                            </div>
+                            <div style="float:left;width:25%;text-align:center">
+                                <div style="font-size:18px;font-weight:bold">定时派送</div>
+                                <div style="font-size:14px;">自寄&nbsp;&nbsp;自取</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                    <!--付款-->
+                    <div style="width:100%;height:37px;font-size:11px;">
+                        <div style="float:left;width:38%;padding-left:10px;padding-top:2px;">
+                            <div>付款方式:寄方付</div>
+                            <div>月结账号:021*******</div>
+                        </div>
+                        <div style="float:left;width:20%;padding-top:2px;">
+                            <div>声明价值:</div>
+                            <div>保费价值:</div>
+                        </div>
+                        <div style="float:left;width:42%;padding-top:2px;">
+                            <div style="width:100%">
+                                <div style="float:left; width:50%">计费重量:</div>
+                                <div style="float:left;width:50%">费用合计:</div>
+                            </div>
+                            <div>付款地区:</div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--托寄物-->
+                    <div style="width:100%;height:37px;">
+                        <div class="shuli3">托<br />寄<br />物</div>
+                        <div style="float:left;width:90%;font-size:14px;padding-left:15px;">
+
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--备注-->
+                    <div style="width:100%;height:37px;">
+                        <div class="shuli3" style="padding-top:5px;">备<br />注</div>
+                        <div style="float:left;width:90%;font-size:10px;padding-left:15px;">
+                            <div style="float:left;width:35%;border-right:1px solid #151515;height:37px;">
+                            </div>
+                            <div style="float:left;width:35%;border-right:1px solid #151515;height:37px;padding-left:5px;font-size:9px;">
+                                <div>收件员：</div>
+                                <div>寄件日期：</div>
+                                <div>派件员：</div>
+                            </div>
+                            <div style="float:left;width:30%;height:37px;">
+                                <div style="padding-left:5px;margin-bottom:10px;">签收：</div>
+
+                                <div style="text-align:right;padding-right:5px;">月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:2px solid #151515;margin:0 ">
+
+                    <!--下半部分-->
+                    <div style="width:100%;height:66px">
+                        <div style="float:left;width:27%;border-right:1px solid #151515;height:66px;">
+                            <div><img style="width:70px;height:33px;padding-left:10px;padding-top:5px" src="~/Image/sf.jpg" /></div>
+                            <div><img style="width:70px;height:33px;padding-left:10px;" src="~/Image/sfphone.jpg" /></div>
+                        </div>
+                        <div style="float:left;width:73%">
+                            <div style="width:100%;padding-top:8px;padding-left:50px;">
+                                <div class="bcTarget2">@item.ExpressNumber.ToString()</div>
+                            </div>
+                            <div style="font-size:16px;padding-left:45px;padding-top:1px;">运单号：@item.ExpressNumber.ToString()</div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                    <!--寄件人-->
+                    <div style="width:100%;height:49px;">
+                        <div class="shuli3">寄<br />件<br />人</div>
+                        <div style="float:left;width:90%;padding-left:5px;">
+                            <div style="float:left;font-size:11px;line-height:15px;width:75%;padding-right:15px;padding-top:2px;">
+                                @item.str4<span>发货仓</span>
+                                <br />
+                                @item.str16&nbsp;@item.str17&nbsp;@item.str18&nbsp;@item.str19
+                            </div>
+                            <div style="float:left;font-size:13px;width:25%">
+                                原寄地：512
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+                    <!--收件人-->
+                    <div style="width:100%;height:37px;">
+                        <div class="shuli3">收<br />件<br />人</div>
+                        <div style="float:left;width:90%;font-size:12px;padding-left:5px;padding-right:15px;line-height:15px;padding-top:2px;">
+                            @item.Consignee&nbsp;&nbsp;@item.Contact&nbsp;&nbsp;
+                            @item.Province&nbsp;&nbsp;@item.City&nbsp;&nbsp;@item.District&nbsp;&nbsp;
+                            @item.Address
+                        </div>
+                    </div>
+                    <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                    <!--最下面条码-->
+                    <div style="width:100%;height:101px;">
+                        <div style="float:left;width:100%;height:101px;padding-top:30px;">
+                            <div style="font-size:16px;padding-left:20px;margin-bottom:-12px;">@item.ExternOrderNumber</div>
+                            <div style="width:100%;padding-top:10px;padding-left:10px;">
+                                <div class="bcTarget3">@item.ExternOrderNumber</div>
+                            </div>
+                        </div>
+                        @*<div style="float:left;width:27%;text-align:center">
+                                <div>门店编码：@item.str4.ToString()</div>
+                            </div>*@
+                    </div>
+
+                </div>
+            </div>
+        }
+        <div style="height:700px;"></div>
+        <br />
+
+    }
+}
+
+
+
+
+
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>
+

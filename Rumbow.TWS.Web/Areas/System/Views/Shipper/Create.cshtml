@@ -1,0 +1,349 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.Shipper
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/Framework/jquery-1.9.1.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+    $(document).ready(function ()
+    {
+        //判断客户名称唯一性
+        $("#Name").blur(function () {
+            var tempvalue = $(this).val();
+            var id = $("#ID").val();
+
+            $.ajax({
+                type: 'POST',
+                url: "/System/Shipper/CheckName",
+                data: { Name: tempvalue, Id: id, IsEdit: false },
+                success: function (data) {
+                    if (data != "") {
+                        layer.msg(data, function () { });
+                        $("#Name").focus();
+                        $('#btnCreate').prop('disabled', true);
+                    } else {
+                        $('#btnCreate').prop('disabled', false);
+                    }
+                },
+                error: function () {
+
+                }
+            })
+        });
+
+        var objtemp = '@ViewBag.Message';
+        if (objtemp != undefined && objtemp != "") {
+            if (objtemp != "操作成功!") {
+                layer.msg(objtemp, function () { });
+            } else {
+                layer.msg(objtemp, { icon: 1, time: 1000 }, function () {
+                    window.location.href = '/System/Shipper/List';
+                });     
+            }
+
+        }
+
+    });
+</script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.Comment)
+    @Html.HiddenFor(m => m.Str1)
+    @Html.HiddenFor(m => m.Str2)
+    @Html.HiddenFor(m => m.Str3)
+    @Html.HiddenFor(m => m.Creater)
+    @Html.HiddenFor(m => m.CreateTime)
+    @Html.HiddenFor(m => m.Updater)
+    @Html.HiddenFor(m => m.UpdateTime)
+    <fieldset>
+        <legend>
+            @if (Model.IsEdit)
+            {
+                @Html.Raw("编辑承运商")
+            }
+            else
+            {
+                @Html.Raw("新增承运商")
+            }
+        </legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Code)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Code, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Code)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Name)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.EnglishName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.EnglishName, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Email)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.LawPerson)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.LawPerson, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.IsDangerous)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(model => model.IsDangerous)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.IsCustoms)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(model => model.IsCustoms)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.IsSupplier)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(model => model.IsSupplier)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.IsBalance)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(model => model.IsBalance)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.PostCode)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.PostCode, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Address1)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Address1, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Address2)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Address2, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Bank)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Bank, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Account)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Account, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.TaxID)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.TaxID, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InvoiceTitle)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InvoiceTitle, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Contactor1)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contactor1, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Title1)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Title1, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Phone1)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Phone1, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Fax1)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Fax1, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Contactor2)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Contactor2, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Title2)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Title2, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Phone2)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Phone2, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Fax2)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Fax2, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.WebSite)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.WebSite, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.RegistAdd)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.RegistAdd, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceCompany)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InsuranceCompany, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceType)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InsuranceType, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceOrderNo)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InsuranceOrderNo, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceType)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InsuranceType, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceCompany)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InsuranceCompany, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceCost)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.InsuranceCost, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceStartTime)
+                </td>
+                <td>
+                    @Html.CalendarFor(model => model.InsuranceStartTime)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.InsuranceEndTime)
+                </td>
+                <td>
+                    @Html.CalendarFor(model => model.InsuranceEndTime)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Str1)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.CheckBoxListFor(
+                    model => model.PostedShipperIdentifyIDs,
+                    model => model.AvailableShipperIdentifies,
+                    model => model.ID,
+                    model => model.Name,
+                    model => model.SelectedShipperIdentifies)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.State)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.CheckBoxFor(model => model.State)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Remark)
+                </td>
+                <td colspan="3">
+                    @Html.TextAreaFor(model => model.Remark, new { style = "width:95%", @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="保存" id="btnCreate" />
+            <input type="button" class="btn btn-success" value="返回" onclick="window.location.href = '/System/Shipper/List'" id="btnReturn" />
+        </div>
+    </fieldset>
+}

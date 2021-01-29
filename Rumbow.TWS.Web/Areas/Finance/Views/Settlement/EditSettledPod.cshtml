@@ -1,0 +1,136 @@
+﻿@model Runbow.TWS.Entity.SettledPod
+
+@Html.HiddenFor(m => m.SettledType)
+
+<fieldset>
+    <legend>基本信息</legend>
+    <table id="basicInformationTable">
+        <tr>
+            <td class="TableColumnTitle">系统运单号
+            </td>
+            <td>
+                @Model.SystemNumber
+            </td>
+            <td class="TableColumnTitle">客户运单号
+            </td>
+            <td>
+                @Model.CustomerOrderNumber
+            </td>
+            <td class="TableColumnTitle">
+                @Html.ChooseString(Model.SettledType == 0, "客户", "承运商")
+            </td>
+            <td>
+                @Model.CustomerOrShipperName
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">运单类型
+            </td>
+            <td>
+                @Model.PODTypeName
+            </td>
+            <td class="TableColumnTitle">运输类型
+            </td>
+            <td>
+                @Model.ShipperTypeName
+            </td>
+            <td class="TableColumnTitle">整车/零担
+            </td>
+            <td>
+                @Model.TtlOrTplName
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">起运城市
+            </td>
+            <td>
+                @Model.StartCityName
+            </td>
+            <td class="TableColumnTitle">目的城市
+            </td>
+            <td>
+                @Model.EndCityName
+            </td>
+            <td class="TableColumnTitle">发货日期
+            </td>
+            <td>
+                @Html.ChooseString(Model.ActualDeliveryDate.HasValue, Model.ActualDeliveryDate.Value.ToString("yyyy-MM-dd"), "")
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">箱数
+            </td>
+            <td>
+                @Model.BoxNumber
+            </td>
+            <td class="TableColumnTitle">重量(公斤)
+            </td>
+            <td>
+                @Model.Weight
+            </td>
+            <td class="TableColumnTitle">件数
+            </td>
+            <td>
+                @Model.GoodsNumber
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">体积(立方)
+            </td>
+            <td>
+                @Model.Weight
+            </td>
+            <td class="TableColumnTitle">结算人
+            </td>
+            <td>
+                @Model.Creator
+            </td>
+            <td class="TableColumnTitle">结算时间
+            </td>
+            <td>
+                @Html.ChooseString(Model.CreateTime.HasValue, Model.CreateTime.Value.ToString("yyyy-MM-dd"), "")
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>结算信息</legend>
+    @Html.HiddenFor(m => m.ID)
+    <table id="settledInformationTable">
+        <tr>
+            <td class="TableColumnTitle">运费
+            </td>
+            <td>
+                ￥@Html.TextBox("ShipAmt", Model.ShipAmt)
+            </td>
+            <td class="TableColumnTitle">燃油附加费
+            </td>
+            <td>
+                ￥@Html.TextBox("BafAmt", Model.BAFAmt)
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">点费
+            </td>
+            <td>
+                ￥@Html.TextBox("PointAmt", Model.PointAmt)
+            </td>
+            <td class="TableColumnTitle">其他费用
+            </td>
+            <td>
+                ￥@Html.TextBox("OtherAmt", Model.OtherAmt)
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">备注</td>
+            <td colspan="3">
+                @Html.TextArea("remark", Model.Remark, new { style = "width:90%" })
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="button" value="修改" id="editButton" />
+        &nbsp;&nbsp;
+        <input type="button" value="返回" onclick="window.history.back();" />
+    </div>
+</fieldset>

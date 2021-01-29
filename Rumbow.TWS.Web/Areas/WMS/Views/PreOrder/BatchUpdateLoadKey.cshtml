@@ -1,0 +1,60 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@model Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+
+@using (Html.BeginForm())
+{
+
+    <fieldset>
+        <legend style="height:40px;">导入需要进行批量更新的LoadKey</legend>
+        <div id="importDiv">
+            @{
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+            }
+            @*客户列表与仓库列表*@
+            <label>客户：</label>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, new { @id = "StorerID", @class = "form-control", @style = "width:120px;padding-bottom:1px" })
+            <label>仓库：</label>@Html.DropDownListFor(m => m.SearchCondition.WarehouseId, (IEnumerable<SelectListItem>)ViewBag.WarehouseList, new { @id = "warehouseID", @class = "form-control", @style = "width:200px;padding-bottom:1px" })
+
+            @*按钮*@
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
+            <input type="submit" value="批量更新LoadKey" @*class="btn btn-primary"*@ class="btn btn-primary" style="margin-top:-9px;" onclick="return fileImportClick();" name="Action" />
+            <input type="submit" value="下载批量更新LoadKey模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
+
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend style="margin-top:50px;height:40px;">导入结果：</legend>
+        <div id="outPutResult" style="height:40px;">
+
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend style="height:40px;">导入需要进行批量更新品级的订单</legend>
+        <div id="importDiv">
+            @*@{
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                }*@
+            @*客户列表与仓库列表*@
+            <label>客户：</label>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, new { @id = "StorerID", @class = "form-control", @style = "width:120px;padding-bottom:1px" })
+            <label>仓库：</label>@Html.DropDownListFor(m => m.SearchCondition.WarehouseId, (IEnumerable<SelectListItem>)ViewBag.WarehouseList, new { @id = "warehouseID", @class = "form-control", @style = "width:200px;padding-bottom:1px" })
+
+            @*按钮*@
+            <input type="file" id="importExcel1" name="importExcel1" class="form-control" style="width: 30%;" />
+            <input type="submit" value="批量更新订单品级" @*class="btn btn-primary"*@ class="btn btn-primary" style="margin-top:-9px;" onclick="return fileImportClick1();" name="Action" />
+            <input type="submit" value="下载批量更新订单品级模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
+
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend style="margin-top:50px;height:40px;">导入结果：</legend>
+        <div id="outPutResult1" style="height:40px;">
+
+        </div>
+    </fieldset>
+
+}

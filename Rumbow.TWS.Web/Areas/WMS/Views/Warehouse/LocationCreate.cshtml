@@ -1,0 +1,574 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.WarehouseOperationViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using(Html.BeginForm()){
+@Html.HiddenFor(m => m.ViewType)  @*存放视图类型*@    
+@Html.Hidden("ViewDataAreaID", ViewData["ViewDataAreaID"])
+@Html.Hidden("ViewDataLocationID",ViewData["ViewDataLocationID"]) 
+@Html.Hidden("WLSearchCondition_SearchType",ViewData["WLSearchCondition_SearchType"])
+@*0 查看 1 新增  2 编辑*@
+    
+<div>
+     <fieldset>
+        <legend>基础信息
+        </legend>
+        <table id="BasicInfo">
+            <tr>
+                <td class="TableColumnTitle" style="width:13%"><label>所属仓库</label></td>
+                <td style="width:21%">
+                    @*@if (Convert.ToInt64(ViewData["ViewDataAreaID"]) > 0 || Convert.ToInt64(ViewData["ViewDataLocationID"]) > 0 ||Model.ViewType==0)*@
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Warehouse.ID)
+                        @Model.Warehouse.WarehouseName
+                    }
+                    else if (Model.ViewType == 1)
+                    {
+                        @Html.DropDownListFor(o => o.Warehouse.ID, Model.WarehouseList, "---请选择---", new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.Warehouse.ID)
+                        @Html.TextBoxFor(o => o.Warehouse.WarehouseName, new { @class = "form-control", style = "width:100%", @readonly = "true" })
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width:13%"><label>所属库区</label></td>
+                <td style="width:20%">
+                    @*@if (Convert.ToInt64(ViewData["ViewDataAreaID"]) > 0 || Convert.ToInt64(ViewData["ViewDataLocationID"]) > 0 ||Model.ViewType==0)*@
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Area.ID)
+                        @Model.Area.AreaName
+                    }
+                    else if (Model.ViewType == 1)
+                    {
+                        @Html.DropDownListFor(o => o.Area.ID, Model.WarehouseAreaList, "---请选择---", new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.Area.ID)
+                        @Html.TextBoxFor(o => o.Area.AreaName, new { @class = "form-control", style = "width:100%", @readonly = "true" })
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库位类型</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(o => o.Location.LocationType, Model.ParaLocationTypeList, new { @class = "form-control" }) //下拉
+                    }
+                    else
+                    {
+                        @(Model.ParaLocationTypeList.SingleOrDefault(o => o.Value == Model.Location.LocationType.ToString()).Text)
+                    }
+                </td>
+            </tr>
+            @if (Model.ViewType == 1)
+            {
+                <tr class="GoodsShelf">
+                    <td class="TableColumnTitle" style="width:13%"><label>所属货架</label></td>
+                    <td style="width:21%">
+                        @Html.DropDownListFor(o => o.GoodsShelf.ID, Model.GoodsShelfList, "---请选择---", new { @class = "form-control" })
+                    </td>
+                    <td class="TableColumnTitle" style="width:13%"><label>第几层</label></td>
+                    <td style="width:20%">
+                        @Html.DropDownListFor(o => o.Location.LevelsNumber, Model.LevelsList, "---请选择---", new { @class = "form-control" })
+                    </td>
+                    <td class="TableColumnTitle" style="width:13%"><label>所处层序号</label></td>
+                    <td style="width:20%">
+                        @Html.DropDownListFor(o => o.Location.SerialNumber, Model.SerialNumberList, "---请选择---", new { @class = "form-control" })
+                    </td>
+                </tr>
+            }
+            else
+            {
+                if (Model.Location.LocationType == 1)
+                {
+                    <tr class="GoodsShelf">
+                        <td class="TableColumnTitle" style="width:13%"><label>所属货架</label></td>
+                        <td style="width:21%">
+                            @if (Model.ViewType == 0)
+                            {
+                                @Html.HiddenFor(m => m.GoodsShelf.ID)
+                                if (@Model.GoodsShelf != null)
+                                {
+                                    @Model.GoodsShelf.GoodsShelvesName;
+                                }
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(o => o.GoodsShelf.ID, Model.GoodsShelfList, "---请选择---", new { @class = "form-control" })
+                            }
+                        </td>
+                        <td class="TableColumnTitle" style="width:13%"><label>第几层</label></td>
+                        <td style="width:20%">
+                            @if (Model.ViewType == 0)
+                            {
+                                @Html.HiddenFor(m => m.GoodsShelf.ID)
+                                if (Model.GoodsShelf != null)
+                                {
+                                    @(Model.LevelsList.SingleOrDefault(o => o.Value == Model.GoodsShelf.LevelsNumber.ToString()) == null ? "" : Model.LevelsList.SingleOrDefault(o => o.Value == Model.GoodsShelf.LevelsNumber.ToString()).Text )
+                                }
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(o => o.Location.LevelsNumber, Model.LevelsList, "---请选择---", new { @class = "form-control" })
+                            }
+                        </td>
+                        <td class="TableColumnTitle" style="width:13%"><label>所处层序号</label></td>
+                        <td style="width:20%">
+                            @if (Model.ViewType == 0)
+                            {
+                                @Html.HiddenFor(m => m.GoodsShelf.SerialNumber)
+                                if (Model.GoodsShelf != null)
+                                {
+                                    @(Model.SerialNumberList.SingleOrDefault(o => o.Value == Model.GoodsShelf.SerialNumber.ToString()) == null ? "" : Model.SerialNumberList.SingleOrDefault(o => o.Value == Model.GoodsShelf.SerialNumber.ToString()).Text)
+                                }
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(o => o.Location.SerialNumber, Model.SerialNumberList, "---请选择---", new { @class = "form-control" })
+                            }
+                        </td>
+                    </tr>
+                }
+                else
+                { }
+            }
+
+            <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库位名称</label></td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Location)
+                        @Model.Location.Location
+                    }
+                    else if (Model.ViewType == 1)
+                    {
+                        @Html.TextBoxFor(o => o.Location.Location, new { @class = "form-control", style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.Location, new { @class = "form-control", style = "width:100%", @readonly = "true" })
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库位最大数量</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.MaxNumber)
+                        @Model.Location.MaxNumber
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.MaxNumber, new { @class = "form-control", style = "width:100%" })
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库位状态</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.LocationStatus)
+                        @(Model.WarehouseStatusList.SingleOrDefault(o => o.Value == Model.Location.LocationStatus.ToString()).Text ?? "")
+                    }
+                    else if (Model.ViewType == 1)
+                    {
+                        @Html.DropDownListFor(o => o.Location.LocationStatus, Model.WarehouseStatusList, new { @class = "form-control" }) //是否停用
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(o => o.Location.LocationStatus, Model.WarehouseStatusList, new { @class = "form-control" })//是否停用
+
+                    }
+                    @*@if (Model.ViewType!=0)
+                {
+                   @Html.DropDownListFor(o=>o.Location.LocationStatus,Model.WarehouseStatusList ,new { @class ="form-control"})   //是否停用
+                }
+                else
+                {
+                   @(Model.WarehouseStatusList.SingleOrDefault(o=>o.Value==Model.Location.LocationStatus.ToString()).Text ?? "")
+                }*@
+                </td>
+                @*<td class="TableColumnTitle" style="width: 13%;"><label>库位分类</label></td>
+            <td style="width: 21%;">
+                @if (Model.ViewType!=0)
+                {
+                   @Html.DropDownListFor(o=>o.Location.Classification,Model.ParaLocationClassifyList, new { @class ="form-control"})   //下拉
+                }
+                else
+                {
+                  @(Model.ParaLocationClassifyList.SingleOrDefault(o=>o.Value==Model.Location.Classification.ToString()).Text ?? "");
+                }
+            </td>*@
+            </tr>
+            @*<tr>
+        <td class="TableColumnTitle" style="width: 13%;"><label>ABC类型</label></td>
+        <td style="width: 21%;">
+            @if (Model.ViewType!=0)
+            {
+               @Html.DropDownListFor(o=>o.Location.ABCClassification,Model.ABCClassificationList, new { @class ="form-control"})   //下拉
+            }
+            else
+            {
+               @(Model.ABCClassificationList.SingleOrDefault(o=>o.Value==Model.Location.ABCClassification.ToString()).Text)
+            }
+        </td>*@
+            @*  <td class="TableColumnTitle" style="width: 13%;"><label>货位Handing</label></td>
+            <td style="width: 21%;">
+                @if (Model.ViewType!=0)
+                {
+                   @Html.DropDownListFor(o=>o.Location.Handling,Model.HandlingList, new { @class ="form-control"})   //下拉
+                }
+                else
+                {
+                   @(Model.HandlingList.SingleOrDefault(o=>o.Value==Model.Location.Handling.ToString()).Text ?? "")
+                }
+            </td>
+        </tr> *@
+            @*<tr>
+           <td class="TableColumnTitle" ><label>MultiLot</label></td>
+            <td style="width: 21%;">
+              @if (Model.ViewType!=0)
+              {
+              @Html.CheckBoxFor(o => o.Location.IsMultiLot)
+              }
+              else
+              {
+                @Model.Location.IsMultiLot
+              }
+            </td>
+             <td class="TableColumnTitle" ><label>MultiSKU</label></td>
+            <td style="width: 21%;">
+              @if (Model.ViewType!=0)
+              {
+                @Html.CheckBoxFor(o => o.Location.IsMultiSKU)
+              }
+              else
+              {
+                @Model.Location.IsMultiSKU
+              }
+            </td>
+        </tr>*@
+            <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库位级别</label></td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.LocationLevel)
+                        @Model.Location.LocationLevel
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.LocationLevel, new { @class = "form-control", style = "width:100%" })
+                    }
+                    @*@if(Model.ViewType!=0)
+                {
+                  @Html.TextBoxFor(o => o.Location.LocationLevel, new { @class="form-control",style="width:100%"})
+                }
+                else
+                {
+                  @Html.TextBoxFor(o => o.Location.LocationLevel, new { @class="form-control",style="width:100%" , @readonly="true"})
+                }*@
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>拣货次序</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.GoodsPickOrder)
+                        @Model.Location.GoodsPickOrder
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.GoodsPickOrder, new { @class = "form-control", style = "width:100%" })
+                    }
+                    @*@if(Model.ViewType!=0)
+                {
+                  @Html.TextBoxFor(o => o.Location.GoodsPickOrder, new { @class="form-control",style="width:100%"})
+                }
+                else
+                {
+                  @Html.TextBoxFor(o => o.Location.GoodsPickOrder, new { @class="form-control",style="width:100%" , @readonly="true"})
+                }*@
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>体积</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Volume)
+                        @Model.Location.Volume
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.Volume, new { @class = "form-control", style = "width:100%" })
+                    }
+                    @*@if(Model.ViewType!=0)
+                {
+                   @Html.TextBoxFor(o => o.Location.Volume, new { @class="form-control",style="width:100%"})
+                }
+                else
+                {
+                   @Html.TextBoxFor(o => o.Location.Volume, new { @class="form-control",style="width:100%" , @readonly="true"})
+                }*@
+                </td>
+                @* <td class="TableColumnTitle" ><label>放货次序</label></td>
+            <td style="width: 21%;">
+              @if(Model.ViewType!=0)
+              {
+                @Html.TextBoxFor(o => o.Location.GoodsPutOrder, new { @class="form-control"})
+              }
+              else
+              {
+                @Model.Location.GoodsPutOrder
+              }
+            </td>*@
+            </tr>
+            @* <tr>
+         <td class="TableColumnTitle" ><label>重量</label></td>
+        <td style="width: 21%;">
+          @if(Model.ViewType!=0)
+          {
+             @Html.TextBoxFor(o => o.Location.Weight, new { @class="form-control"})
+          }
+          else
+          {
+             @Model.Location.Weight
+          }
+        </td>*@
+            @*<td class="TableColumnTitle" ><label>货物最大ID</label></td>
+              <td style="width: 21%;">
+               @if(Model.ViewType!=0)
+                {
+                   @Html.TextBoxFor(o => o.Location.MaxID, new { @class="form-control"})
+                }
+               else
+               {
+                   @Model.Location.MaxID
+               }
+              </td>
+        </tr>*@
+
+            <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库位容积率</label></td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Str1)
+                        @Model.Location.Str1
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.Str1, new { @class = "form-control", style = "width:100%" })
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>项目所属</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Str2)
+                        @Model.Location.Str2
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.Str2, new { @class = "form-control", style = "width:100%" })
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>楼层</label></td>
+                <td style="width: 20%;">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Str3)
+                        @Model.Location.Str3
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.Str3, new { @class = "form-control", style = "width:100%" })
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>是否整箱</label></td>
+                <td colspan="5">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Int1)
+                        @(Model.IsWholeCase.SingleOrDefault(o => o.Value == Model.Location.Int1.ToString()).Text ?? "")
+                    }
+                    else if (Model.ViewType == 1)
+                    {
+                        @Html.DropDownListFor(o => o.Location.Int1, Model.IsWholeCase, new { @class = "form-control" }) 
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(o => o.Location.Int1, Model.IsWholeCase, new { @class = "form-control" })
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>备注</label></td>
+                <td colspan="5">
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.HiddenFor(m => m.Location.Remark)
+                        @Model.Location.Remark
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(o => o.Location.Remark, new { @class = "form-control", style = "width:100%" })
+                    }
+                    @*@if (Model.ViewType!=0)
+                {
+                    @Html.TextAreaFor(o=>o.Location.Remark, new {@class="form-control", style="width:100%" })
+                }
+                else
+                 {
+                     @Html.TextAreaFor(o=>o.Location.Remark, new {@class="form-control", style="width:100%" , @readonly="true"})
+                 }*@
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+      <fieldset>
+        <legend>体积与坐标
+        </legend>
+          <table id="VolumeInfo">
+              <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>长度</label></td>
+                <td style="width: 21%;" >
+                    @if (Model.ViewType == 0)
+                        {
+                            @Html.HiddenFor(m=>m.Location.Length)
+                            @Model.Location.Length
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(o => o.Location.Length, new { @class="form-control",style="width:100%"})
+                        }
+                    @*@if (Model.ViewType!=0)
+                    {
+                       @Html.TextBoxFor(o=>o.Location.Length, new { @class="form-control"})
+                    }
+                    else
+                     { 
+                         @Html.TextBoxFor(o=>o.Location.Length, new { @class="form-control" , @readonly="true"})
+                     }*@
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>宽度</label></td>
+                <td style="width: 20%;" >
+                    @if (Model.ViewType == 0)
+                        {
+                            @Html.HiddenFor(m=>m.Location.Width)
+                            @Model.Location.Width
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(o => o.Location.Width, new { @class="form-control",style="width:100%"})
+                        }
+                    @*@if (Model.ViewType!=0)
+                    {
+                       @Html.TextBoxFor(o=>o.Location.Width, new { @class="form-control"})
+                    }
+                    else
+                     { 
+                         @Html.TextBoxFor(o=>o.Location.Width, new { @class="form-control" , @readonly="true"})
+                     }*@
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>高度</label></td>
+                <td style="width: 20%;" >
+                    @if (Model.ViewType == 0)
+                        {
+                            @Html.HiddenFor(m=>m.Location.Height)
+                            @Model.Location.Height
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(o => o.Location.Height, new { @class="form-control",style="width:100%"})
+                        }
+                    @*@if (Model.ViewType!=0)
+                    {
+                       @Html.TextBoxFor(o=>o.Location.Height, new { @class="form-control"})
+                    }
+                    else
+                     { 
+                         @Html.TextBoxFor(o=>o.Location.Height, new { @class="form-control" , @readonly="true"})
+                     }*@
+                </td>
+              </tr>
+              <tr>
+                <td class="TableColumnTitle" style="width: 13%;"><label>X坐标</label></td>
+                <td style="width: 21%;" >
+                    @if (Model.ViewType == 0)
+                        {
+                            @Html.HiddenFor(m=>m.Location.X_Coordinate)
+                            @Model.Location.X_Coordinate
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(o => o.Location.X_Coordinate, new { @class="form-control",style="width:100%"})
+                        }
+                    @*@if (Model.ViewType!=0)
+                    {
+                       @Html.TextBoxFor(o=>o.Location.X_Coordinate, new { @class="form-control"})
+                    }
+                    else
+                     { 
+                         @Html.TextBoxFor(o=>o.Location.X_Coordinate, new { @class="form-control" , @readonly="true"})
+                     }*@
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>Y坐标</label></td>
+                <td style="width: 20%;" >
+                    @if (Model.ViewType == 0)
+                        {
+                            @Html.HiddenFor(m=>m.Location.Y_Coordinate)
+                            @Model.Location.Y_Coordinate
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(o => o.Location.Y_Coordinate, new { @class="form-control",style="width:100%"})
+                        }
+                    @*@if (Model.ViewType!=0)
+                    {
+                       @Html.TextBoxFor(o=>o.Location.Y_Coordinate, new { @class="form-control"})
+                    }
+                    else
+                     { 
+                         @Html.TextBoxFor(o=>o.Location.Y_Coordinate, new { @class="form-control" , @readonly="true"})
+                     }*@
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>Z坐标</label></td>
+                <td style="width: 20%;" >
+                    @if (Model.ViewType == 0)
+                        {
+                            @Html.HiddenFor(m=>m.Location.Z_coordinate)
+                            @Model.Location.Z_coordinate
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(o => o.Location.Z_coordinate, new { @class="form-control",style="width:100%"})
+                        }
+                    @*@if (Model.ViewType!=0)
+                    {
+                       @Html.TextBoxFor(o=>o.Location.Z_coordinate, new { @class="form-control"})
+                    }
+                    else
+                     { 
+                         @Html.TextBoxFor(o=>o.Location.Z_coordinate, new { @class="form-control" , @readonly="true"})
+                     }*@
+                </td>
+              </tr>
+          </table>
+    </fieldset>
+        <div class="actionButtonDiv">
+        @{
+            if (Model.ViewType == 2 || Model.ViewType == 1)
+                {
+                     <input type="submit" class="btn btn-success" value="提交" id="submitButton" />
+                     <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+                }
+            if (Model.ViewType == 0)
+                {
+                    <input type="button" class="btn btn-success" value="继续新增库位" id="AddLocation" /> 
+                    <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+                }
+        }
+     </div>
+    </div>
+}

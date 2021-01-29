@@ -1,0 +1,63 @@
+﻿body, html, #allmap
+{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0;
+	font-family: "微软雅黑";
+}
+
+#l-map
+{
+	height: 100%;
+	width: 78%;
+	float: left;
+	border-right: 2px solid #bcbcbc;
+}
+
+#r-result
+{
+	height: 100%;
+	width: 20%;
+	float: left;
+}
+#frameContent{ 
+    width:500px;                                      /*调整显示区的宽*/ 
+    height:200px;                                     /*调整显示区的高*/ 
+    font-size:14px; 
+    line-height:20px; 
+    border:1px solid #000000; 
+    
+    overflow-y:hidden; 
+    word-break:break-all; 
+} 
+a{ 
+    font-size:12px; 
+    color:#000000; 
+    text-decoration:underline; 
+} 
+a:hover{ 
+    font-size:12px; 
+    color:#CC0000; 
+    text-decoration:underline; 
+} 
+#frameContent{ 
+    width:500px;                                      /*调整显示区的宽*/ 
+    height:200px;                                     /*调整显示区的高*/ 
+    font-size:14px; 
+    line-height:20px; 
+    border:1px solid #000000; 
+ 
+    overflow-y:hidden; 
+    word-break:break-all; 
+} 
+a{ 
+    font-size:12px; 
+    color:#000000; 
+    text-decoration:underline; 
+} 
+a:hover{ 
+    font-size:12px; 
+    color:#CC0000; 
+    text-decoration:underline; 
+} 

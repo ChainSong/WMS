@@ -1,0 +1,90 @@
+﻿@model Runbow.TWS.Entity.User
+@{
+    ViewBag.Title = "Welcome";
+    Layout = null;
+}
+
+
+
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/Framework/jquery-1.9.1.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<script src="../../../../Scripts/Front/Home/Welcome.js"></script>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        var objtemp='@ViewBag.Message';
+        if (objtemp != null && objtemp!="") {
+            layer.msg('@ViewBag.Message');
+    }
+});
+
+</script>
+@using (Html.BeginForm("Welcome", "Home", FormMethod.Post, new { onsubmit = "return Check();" }))
+{
+    <div class="container-fluid" style="margin-top: 10px;">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="height: 60px;">
+                        <h3 class="panel-title">欢迎使用WMS系统
+                        </h3>
+                    </div>
+                    <div class="panel-body" style="height: 79%;">
+                        <fieldset>
+                            <legend style="color: gray; font-family: 'Times New Roman', Times, serif;">基本信息</legend>
+                            <table style="line-height: 3;">
+                                <tr>
+                                    <td class="firstCol">员工编号：</td>
+                                    <td>
+                                        @Html.TextBoxFor(u => u.ID, new { @class = "form-control", @style = "color:red;", disabled = "disabled" })
+                                        @Html.HiddenFor(u => u.ID)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>登录名：</td>
+                                    <td>@Html.TextBoxFor(u => u.Name, new { @class = "form-control", @style = "color:red;", disabled = "disabled" })</td>
+                                </tr>
+                                <tr>
+                                    <td>员工姓名：</td>
+                                    <td>@Html.TextBoxFor(u => u.DisplayName, new { @class = "form-control", @style = "color:red;", disabled = "disabled" })</td>
+                                </tr>
+                            </table>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend style="color: gray; font-family: 'Times New Roman', Times, serif;">密码修改</legend>
+                            <table style="line-height: 3;">
+                                <tr>
+                                    <td class="firstCol">新密码：</td>
+                                    <td>
+                                        @Html.Password("Psw1", "", new { @class = "form-control" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>再输一次：</td>
+                                    <td>@Html.Password("Psw2", "", new { @class = "form-control" })</td>
+                                </tr>
+                            </table>
+                        </fieldset>
+
+
+                        <table>
+                            <tr>
+                                <td class="firstCol">
+                                    <input type="submit" class="btn btn-success" value='保存' />
+                                    <input type="button" class="btn btn-success" value="返回" onclick="window.location.href = '/Front/Home/WelcomePage'" id="btnReturn" />
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                    <div class="panel-footer">
+                        上海尼望软件有限公司
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

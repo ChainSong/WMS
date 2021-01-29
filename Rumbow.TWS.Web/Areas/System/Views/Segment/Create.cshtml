@@ -1,0 +1,47 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.CreateSegmentViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.Str1)
+    @Html.HiddenFor(m => m.Str2)
+    @Html.HiddenFor(m => m.Str3)
+
+    <fieldset>
+        <legend>新增段位
+            &nbsp;&nbsp;@ViewBag.Message</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Name)
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 40%">
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.State)
+                </td>
+                <td style="width: 40%">
+                    @Html.CheckBoxFor(model => model.State)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Description)
+                </td>
+                <td colspan="3">
+                    @Html.TextAreaFor(model => model.Description, new { style = "width:95%",@class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="保存" class="btn btn-success" id="btnCreate" />
+            <input type="button" class="btn btn-success" value="返回" onclick="window.location.href = '/System/Segment/List'" id="btnReturn" />
+        </div>
+    </fieldset>
+}

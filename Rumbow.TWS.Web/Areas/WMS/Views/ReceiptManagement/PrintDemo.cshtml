@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "PrintDemo";
+}
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<style>
+    .only_for_print
+    {
+        /*display: none;*/
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+
+    .noprint
+    {
+        display: none;
+    }
+
+    .bor > td
+    {
+        border: 2px solid #000000;
+    }
+  .border-table {   
+        border-collapse: collapse;   
+        border: none;   
+    }   
+    .border-table>td {   
+        border: solid #000 1px;   
+    }   
+</style>
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...')
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: -12px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印..." class="btn btn-success" onclick="doPrint('打印...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+</div>
+
+@{
+ var i = 0;
+            foreach (var item in Model.PodCollection)
+            {
+                i++;
+                var ids = "page" + i;
+  <div id="page1"  class='only_for_print pagestyle'>
+    <div style="float: left"><img src="http://qr.liantu.com/api.php?text=156156"/></div>
+    <div style="float: left">
+        <table>
+            <tr>
+                <td>名称</td>
+                <td>dasdasd</td>
+            </tr>
+              <tr>
+                <td>产品编码</td>
+                <td>dasdasd</td>
+            </tr>
+              <tr>
+                <td>产品编码</td>
+                <td>dasdasdasd</td>
+            </tr>
+              <tr>
+                <td>产品编码</td>
+                <td>dasdasd</td>
+            </tr>
+              <tr>
+                <td>产品编码</td>
+                <td>dasdasd</td>
+            </tr>
+              <tr>
+                <td>产品编码</td>
+                <td>dasdasdasd</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>
+
+
+@*    LODOP.SET_PRINT_STYLE("FontColor", 16711680);
+    LODOP.ADD_PRINT_RECT(62, 16, 459, 217, 0, 1);
+    //		LODOP.ADD_PRINT_TEXT(15,137,157,25,"交通银行（      ）");
+    //		LODOP.SET_PRINT_STYLEA(2,"FontName","隶书");
+    //		LODOP.SET_PRINT_STYLEA(2,"FontSize",11);
+    //		LODOP.SET_PRINT_STYLEA(2,"FontColor",0);
+    //		LODOP.ADD_PRINT_TEXT(41,213,100,20,"2008年11月9日");
+    //		LODOP.ADD_PRINT_TEXT(17,281,100,20,"个人业务受理书");
+    LODOP.SET_PRINT_STYLEA(4, "FontColor", 0);
+    LODOP.ADD_PRINT_TEXT(70, 237, 431, 20, "名称:" + strCode.GoodsName);
+    LODOP.ADD_PRINT_TEXT(90, 237, 431, 20, "产品编码：" + strCode.SKU);
+    LODOP.ADD_PRINT_TEXT(110, 237, 431, 20, "生产日期：");
+    LODOP.ADD_PRINT_TEXT(130, 237, 431, 20, "过期日期：");
+    LODOP.ADD_PRINT_TEXT(150, 237, 431, 20, "生产批次：" + strCode.BatchNumber);
+    LODOP.ADD_PRINT_TEXT(170, 237, 431, 20, "供应商：" + strCode.Manufacturer);
+    LODOP.ADD_PRINT_TEXT(190, 237, 431, 20, "流水号：" + strCode.BoxNumber);
+    LODOP.ADD_PRINT_TEXT(210, 237, 431, 20, "数量：" + strCode.QtyExpected);
+    LODOP.ADD_PRINT_TEXT(230, 237, 431, 20, "净重：");
+    LODOP.ADD_PRINT_TEXT(250, 237, 431, 20, "毛重：");
+    LODOP.ADD_PRINT_BARCODE(75, 37, 200, 200, "QRCode", QRClode);*@

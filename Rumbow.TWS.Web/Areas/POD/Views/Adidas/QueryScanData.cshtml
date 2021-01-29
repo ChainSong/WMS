@@ -1,0 +1,98 @@
+﻿@model  Runbow.TWS.Web.Areas.POD.Models.AdidasScanDataViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.PageIndex)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">运单号</ td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.CustomerOrderNumber)</td>
+
+                <td class="TableColumnTitle">车牌号<td>
+                      @Html.TextBoxFor(m => m.SearchCondition.PlateNumber)
+                </td>
+                <td class="TableColumnTitle">拖号<td>
+                      @Html.TextBoxFor(m => m.SearchCondition.TrailerNo)
+                </td>
+                <td class="TableColumnTitle">完成状态 </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CompleteFlag, Model.CompleteFlag)</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">承运商</td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.Shipper)</td>
+
+                <td class="TableColumnTitle">创建日期</td>
+                <td>@Html.CalendarFor(m => m.SearchCondition.CreateTime_Start)</td>
+
+                           <td class="TableColumnTitle"> 到 </td>
+                <td>@Html.CalendarFor(m => m.SearchCondition.CreateTime_End)</td>
+
+                <td class="TableColumnTitle">关闭状态</td>
+                <td> @Html.DropDownListFor(m => m.SearchCondition.CloseFlag, Model.CloseFlag)</td>
+              
+             </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" name="Action" id="btnSave" />
+            <input type="submit" value="导出" name="Action" id="btnExport" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>运单列表
+         @if (Model.ScanInfoCollection != null && Model.ScanInfoCollection.Any())
+         {
+             @Html.Raw("(" + Model.ScanInfoCollection.Count() + ")");
+         }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th class="TableColumnTitle">运单号</th>
+                <th class="TableColumnTitle">车牌号</th>
+                <th class="TableColumnTitle">拖号</th>
+                <th class="TableColumnTitle">箱数</th>
+                <th class="TableColumnTitle">已扫描箱数</th>
+                 <th class="TableColumnTitle">承运商</th>
+                 <th class="TableColumnTitle">创建日期</th>
+                     <th class="TableColumnTitle">完成确认次数</th>
+                 <th class="TableColumnTitle">关闭状态</th>
+                  <th class="TableColumnTitle">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ScanInfoCollection != null && Model.ScanInfoCollection.Any())
+            {
+                foreach (var ams in Model.ScanInfoCollection)
+                {
+                <tr>
+                    <td>  @ams.CustomerOrderNumber                      
+                       @*<a class="attachmentClass" href="../GetAttachment/@ams.ID" data-id="@ams.ID">@ams.FileName</a>*@
+                    </td>
+                    <td>@ams.PlateNumber</td>
+                    <td> @ams.TrailerNo</td>
+                    <td>@ams.BoxNumber</td>         
+                     <td>@ams.ScanBoxNumber</td> 
+                      <td>@ams.Shipper</td>   
+                     <td>@ams.CreateTime</td>     
+                     <td>@ams.CompleteFlag</td>    
+                    @if (ams.CloseFlag.ToString().ToLower() == "0")
+                    {
+                        <td>未关闭</td>
+                        <td><a id="ClosePOD" class="ClosePOD" href="#" data-id="@ams.CustomerOrderNumber" >关闭</a></td>
+                    }
+                    else
+                    {
+                       <td>关闭</td>
+                       <td></td>
+                    }
+                    
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+

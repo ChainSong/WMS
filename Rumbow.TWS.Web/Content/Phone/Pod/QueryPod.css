@@ -1,0 +1,295 @@
+﻿
+body
+{}
+
+#footer {
+	position:absolute;
+	bottom:0; left:0;
+	width:100%;
+	height:48px;
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #999), color-stop(0.02, #666), color-stop(1, #222));
+	background-image:-moz-linear-gradient(top, #999, #666 2%, #222);
+	background-image:-o-linear-gradient(top, #999, #666 2%, #222);
+	padding:0;
+	border-top:1px solid #444;
+}
+
+#wrapper {
+	position:absolute; z-index:1;
+	top:45px; bottom:48px; left:0;
+	width:100%;
+	overflow:auto;
+	margin-top:-40px;
+}
+
+#scroller {
+	position:relative;
+/*	-webkit-touch-callout:none;*/
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
+
+	float:left;
+	width:100%;
+	padding:0;
+}
+
+#scroller ul {
+	position:relative;
+	list-style:none;
+	padding:0;
+	margin:0;
+	width:100%;
+	text-align:left;
+}
+
+#scroller li {
+	 
+	height:40px;
+	line-height:20px;
+	border-bottom:1px solid #ccc;
+	border-top:1px solid #fff;
+
+	font-size:14px;
+}
+
+#scroller li > a {
+	display:block;
+}
+
+/**
+ *
+ * 下拉样式 Pull down styles
+ *
+ */
+#pullDown, #pullUp {
+	background:#fff;
+	height:40px;
+	line-height:40px;
+	padding:5px 10px;
+	border-bottom:1px solid #ccc;
+	font-weight:bold;
+	font-size:14px;
+	color:#888;
+}
+#pullDown .pullDownIcon, #pullUp .pullUpIcon  {
+	display:block; float:left;
+	width:40px; height:40px;
+	background:url(pull-icon@2x.png) 0 0 no-repeat;
+	-webkit-background-size:40px 80px; background-size:40px 80px;
+	-webkit-transition-property:-webkit-transform;
+	-webkit-transition-duration:250ms;	
+}
+#pullDown .pullDownIcon {
+	-webkit-transform:rotate(0deg) translateZ(0);
+}
+#pullUp .pullUpIcon  {
+	-webkit-transform:rotate(-180deg) translateZ(0);
+}
+
+#pullDown.flip .pullDownIcon {
+	-webkit-transform:rotate(-180deg) translateZ(0);
+}
+
+#pullUp.flip .pullUpIcon {
+	-webkit-transform:rotate(0deg) translateZ(0);
+}
+
+#pullDown.loading .pullDownIcon, #pullUp.loading .pullUpIcon {
+	background-position:0 100%;
+	-webkit-transform:rotate(0deg) translateZ(0);
+	-webkit-transition-duration:0ms;
+
+	-webkit-animation-name:loading;
+	-webkit-animation-duration:2s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-timing-function:linear;
+}
+
+@-webkit-keyframes loading {
+	from { -webkit-transform:rotate(0deg) translateZ(0); }
+	to { -webkit-transform:rotate(360deg) translateZ(0); }
+}
+
+
+/* star rating code - use lists because its more semantic */
+/* No javascript required */
+/* all the stars are contained in one matrix to solve rollover problems with delay */
+/* the background position is just shifted to reveal the correct image. */
+/* the images are 16px by 16px and the background position will be shifted in negative 16px increments */
+/*  key:  B=Blank : O=Orange : G = Green * /
+/*..... The Matrix ....... */
+/* colours ....Background position */
+/* B B B B B - (0 0)*/
+/* G B B B B - (0 -16px)*/
+/* G G B B B - (0 -32px)*/
+/* G G G B B - (0 -48px)*/
+/* G G G G B - (0 -64px)*/
+/* G G G G G - (0 -80px)*/
+/* O B B B B - (0 -96px)*/
+/* O O B B B - (0 -112px)*/
+/* O O O B B - (0 -128px)*/
+/* O O O O B - (0 -144px)*/
+/* O O O O O - (0 -160px)*/
+
+
+/* the default rating is placed as a background image in the ul 
+ use the background position according to the table above to display the required images
+.rating{
+	width:80px;
+	height:16px;
+	margin:0 0 20px 0;
+	padding:0;
+	list-style:none;
+	clear:both;
+	position:relative;
+	background: url(images/star-matrix.gif) no-repeat 0 0;
+}
+ add these classes to the ul to effect the change to the correct number of stars 
+.nostar {background-position:0 0}
+.onestar {background-position:0 -16px}
+.twostar {background-position:0 -32px}
+.threestar {background-position:0 -48px}
+.fourstar {background-position:0 -64px}
+.fivestar {background-position:0 -80px}
+ul.rating li {
+	cursor: pointer;
+ ie5 mac doesn't like it if the list is floated\
+	float:left;
+	 end hide
+	text-indent:-999em;
+}
+ul.rating li a {
+	position:absolute;
+	left:0;
+	top:0;
+	width:16px;
+	height:16px;
+	text-decoration:none;
+	z-index: 200;
+}
+ul.rating li.one a {left:0}
+ul.rating li.two a {left:16px;}
+ul.rating li.three a {left:32px;}
+ul.rating li.four a {left:48px;}
+ul.rating li.five a {left:64px;}
+ul.rating li a:hover {
+	z-index:2;
+	width:80px;
+	height:16px;
+	overflow:hidden;
+	left:0;	
+	background: url(images/star-matrix.gif) no-repeat 0 0
+}
+ul.rating li.one a:hover {background-position:0 -96px;}
+ul.rating li.two a:hover {background-position:0 -112px;}
+ul.rating li.three a:hover {background-position:0 -128px}
+ul.rating li.four a:hover {background-position:0 -144px}
+ul.rating li.five a:hover {background-position:0 -160px}
+ end rating code 
+h3{margin:0 0 2px 0;font-size:110%}*/
+
+body {background:#fff;text-align:center;margin:0 auto;padding: 0;font:12px Arial;color:#000;line-height:1.2em}
+div,form,img,ul,ol,li,dl,dt,dd {margin: 0; padding: 0; border: 0;}
+h1,h2,h3,h4,h5,h6 { margin:0; padding:0;}
+table,td,tr,th{font-size:12px;}
+
+
+/* 星级评分 */
+.shop-rating {
+    height: 25px;
+    overflow: hidden;
+    zoom: 1;
+    padding: 2px 0px;
+    position: relative;
+    z-index: 999;
+}
+
+.shop-rating span {
+    height: 23px;
+    display: block;
+    line-height: 23px;
+    float: left;
+}
+
+.shop-rating span.title {
+    width: 125px;
+    text-align: right;
+    margin-right: 5px;
+}
+
+.shop-rating ul {
+    float: left;
+	margin:0;padding:0
+}
+
+.shop-rating .result {
+    margin-left: 20px;
+    padding-top: 2px;
+}
+
+.shop-rating .result span {
+	color: #ff6d02;
+}
+.shop-rating .result em {
+    color: #f60;
+    font-family: arial;
+    font-weight: bold;
+}
+.shop-rating .result strong {
+	color: #666666;
+	font-weight: normal;
+}
+.rating-level,
+.rating-level a {
+    background: url(http://a.tbcdn.cn/app/rc/img/star_v2.png) no-repeat scroll 1000px 1000px;
+}
+.rating-level {
+    background-position: 0px 0px;
+    width: 120px;
+    height: 23px;
+    position: relative;
+    z-index: 1000;
+}
+.rating-level li {
+    display: inline;
+}
+
+.rating-level a {
+    line-height: 23px;
+    height: 23px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    text-indent: -999em;
+    *zoom: 1;
+    outline: none;
+}
+
+
+.rating-level a.one-star {
+    width: 20%;
+    z-index: 6;
+}
+
+.rating-level a.two-stars {
+width: 40%;
+z-index: 5;
+}
+
+.rating-level a.three-stars {
+    width: 60%;
+    z-index: 4;
+}
+
+.rating-level a.four-stars {
+    width: 80%;
+    z-index: 3;
+}
+
+.rating-level a.five-stars {
+    width: 100%;
+    z-index: 2;
+}
+
+.rating-level .current-rating,.rating-level a:hover{background-position:0 -28px;}
+.rating-level a.one-star:hover,.rating-level a.two-stars:hover,.rating-level a.one-star.current-rating,.rating-level a.two-stars.current-rating{background-position:0 -116px;}
+.rating-level .three-stars .current-rating,.rating-level .four-stars .current-rating,.rating-level .five-stars .current-rating{background-position:0 -28px;}

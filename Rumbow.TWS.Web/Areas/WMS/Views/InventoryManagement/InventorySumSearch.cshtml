@@ -1,0 +1,64 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.jsrender()
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.DropDownList("AreaLists", (IEnumerable<SelectListItem>)ViewBag.Areas, new { style = "display:none" })
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName); var PorjectName = ViewBag.ProjectName;
+    <fieldset>
+        <legend>查询条件</legend>
+
+        <table>
+            <tr>
+                @{
+                                                            var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                                                            var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                                                            var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                }
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>客户</label></td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>仓库</label></td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>库区</label></td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Area, (IEnumerable<SelectListItem>)ViewBag.AreaLists, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>库位</label></td>
+                <td style="width: 11%;">@Html.TextBoxFor(m => m.InventorySearchCondition.Location, new { @style = "width:100%", @class = "form-control" })</td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>库存类型</label></td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.InventoryType, Model.InventoryTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>产品过期</label></td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.Int1, Model.SKUListEndTime, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>SKU</label></td>
+                <td>@Html.TextBoxFor(m => m.InventorySearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>批次号</label></td>
+                <td>@Html.TextBoxFor(m => m.InventorySearchCondition.BatchNumber, new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>排序规则</label></td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.OrderByType, Model.OrderByType, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>货品等级</label></td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.GoodsType, Model.GoodsTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="生成出库单" id="OutboundOrder" />
+
+        </div>
+    </fieldset>                                                
+                                                            
+                                                            
+}
+

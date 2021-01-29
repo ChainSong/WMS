@@ -1,0 +1,575 @@
+﻿@model Runbow.TWS.Web.Areas.Reports.Models.ShowPodAllViewModel
+@using Runbow.TWS.Common
+@{
+    var notKeyColumns = Model.Config.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.SearchCondition.CustomerID)))
+               .Select(c =>
+               {
+                   if (c.InnerColumns.Count == 0)
+                   {
+                       return c;
+                   }
+                   else
+                   {
+                       if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.SearchCondition.CustomerID))
+                       {
+                           return c.InnerColumns.First(innerc => innerc.CustomerID == Model.SearchCondition.CustomerID);
+                       }
+
+                       return c;
+                   }
+               });
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+    if (Model.IsInnerUser)
+    {
+        if (!Model.SearchCondition.CustomerID.HasValue || Model.SearchCondition.CustomerID == 0)
+        {
+            tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+        }
+        else
+        {
+            tmpDynamicSearchColumns = notKeyColumns.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+            tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+        }
+    }
+    else
+    {
+        if (!Model.SearchCondition.CustomerID.HasValue || Model.SearchCondition.CustomerID == 0)
+        {
+            tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+        }
+        else
+        {  
+            tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition && c.ShowRoleIDs.Contains(Model.ProjectRoleID)).ToList();
+            tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).ToList();
+        }
+    }
+    //dynamicSearchColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey)).OrderBy(c => c.SearchConditionOrder).ToList() : Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).OrderBy(c => c.SearchConditionOrder).ToList();
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+
+    var notkeyTextAreaColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumns = notKeyColumns.Where(c => !string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.ID)
+    @Html.HiddenFor(m => m.SearchCondition.ProjectID)
+    @Html.HiddenFor(m => m.SearchCondition.PODTypeID)
+    @Html.HiddenFor(m => m.SearchCondition.ShipperTypeID)
+    @Html.HiddenFor(m => m.SearchCondition.TtlOrTplID)
+    @Html.HiddenFor(m => m.SearchCondition.StartCityID)
+    @Html.HiddenFor(m => m.SearchCondition.StartCityName)
+    @Html.HiddenFor(m => m.SearchCondition.EndCityID)
+    @Html.HiddenFor(m => m.SearchCondition.EndCityName)
+    @Html.HiddenFor(m => m.SearchCondition.BoxNumber)
+    @Html.HiddenFor(m => m.SearchCondition.GoodsNumber)
+    @Html.HiddenFor(m => m.SearchCondition.Weight)
+    @Html.HiddenFor(m => m.SearchCondition.Volume)
+    @Html.HiddenFor(m => m.SearchCondition.Creator)
+    @Html.HiddenFor(m => m.SearchCondition.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.CreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.Str1)
+    @Html.HiddenFor(m => m.SearchCondition.Str2)
+    @Html.HiddenFor(m => m.SearchCondition.Str3)
+    @Html.HiddenFor(m => m.SearchCondition.Str4)
+    @Html.HiddenFor(m => m.SearchCondition.Str5)
+    @Html.HiddenFor(m => m.SearchCondition.Str6)
+    @Html.HiddenFor(m => m.SearchCondition.Str7)
+    @Html.HiddenFor(m => m.SearchCondition.Str8)
+    @Html.HiddenFor(m => m.SearchCondition.Str9)
+    @Html.HiddenFor(m => m.SearchCondition.Str10)
+    @Html.HiddenFor(m => m.SearchCondition.Str11)
+    @Html.HiddenFor(m => m.SearchCondition.Str12)
+    @Html.HiddenFor(m => m.SearchCondition.Str13)
+    @Html.HiddenFor(m => m.SearchCondition.Str14)
+    @Html.HiddenFor(m => m.SearchCondition.Str15)
+    @Html.HiddenFor(m => m.SearchCondition.Str16)
+    @Html.HiddenFor(m => m.SearchCondition.Str17)
+    @Html.HiddenFor(m => m.SearchCondition.Str18)
+    @Html.HiddenFor(m => m.SearchCondition.Str19)
+    @Html.HiddenFor(m => m.SearchCondition.Str20)
+    @Html.HiddenFor(m => m.SearchCondition.Str21)
+    @Html.HiddenFor(m => m.SearchCondition.Str22)
+    @Html.HiddenFor(m => m.SearchCondition.Str23)
+    @Html.HiddenFor(m => m.SearchCondition.Str24)
+    @Html.HiddenFor(m => m.SearchCondition.Str25)
+    @Html.HiddenFor(m => m.SearchCondition.Str26)
+    @Html.HiddenFor(m => m.SearchCondition.Str27)
+    @Html.HiddenFor(m => m.SearchCondition.Str28)
+    @Html.HiddenFor(m => m.SearchCondition.Str29)
+    @Html.HiddenFor(m => m.SearchCondition.Str30)
+    @Html.HiddenFor(m => m.SearchCondition.Str31)
+    @Html.HiddenFor(m => m.SearchCondition.Str32)
+    @Html.HiddenFor(m => m.SearchCondition.Str33)
+    @Html.HiddenFor(m => m.SearchCondition.Str34)
+    @Html.HiddenFor(m => m.SearchCondition.Str35)
+    @Html.HiddenFor(m => m.SearchCondition.Str36)
+    @Html.HiddenFor(m => m.SearchCondition.Str37)
+    @Html.HiddenFor(m => m.SearchCondition.Str38)
+    @Html.HiddenFor(m => m.SearchCondition.Str39)
+    @Html.HiddenFor(m => m.SearchCondition.Str40)
+    @Html.HiddenFor(m => m.SearchCondition.Str41)
+    @Html.HiddenFor(m => m.SearchCondition.Str42)
+    @Html.HiddenFor(m => m.SearchCondition.Str43)
+    @Html.HiddenFor(m => m.SearchCondition.Str44)
+    @Html.HiddenFor(m => m.SearchCondition.Str45)
+    @Html.HiddenFor(m => m.SearchCondition.Str46)
+    @Html.HiddenFor(m => m.SearchCondition.Str47)
+    @Html.HiddenFor(m => m.SearchCondition.Str48)
+    @Html.HiddenFor(m => m.SearchCondition.Str49)
+    @Html.HiddenFor(m => m.SearchCondition.Str50)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime6)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime6)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime7)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime7)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime8)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime8)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime9)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime9)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime10)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime10)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime11)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime11)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime12)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime12)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime13)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime13)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime14)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime14)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime15)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime15)
+    @Html.HiddenFor(m => m.ShowEditRelated)
+    @Html.HiddenFor(m => m.IsInnerUser)
+    @Html.HiddenFor(m => m.ProjectRoleID)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblSystemNumber", Model.Config.ColumnCollection.First(c => c.DbColumnName == "SystemNumber").DisplayName)
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.SystemNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblCustomerOrderNumber", Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerOrderNumber").DisplayName)
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblPODState", Model.Config.ColumnCollection.First(c => c.DbColumnName == "PODStateID").DisplayName)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.PODStateID, Model.PodStates, "==请选择==")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblCustomerID", Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerID").DisplayName)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblShipperID", Model.Config.ColumnCollection.First(c => c.DbColumnName == "ShipperID").DisplayName)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.SearchCondition.ShipperName)
+                    @Html.HiddenFor(m =>m.SearchCondition.ShipperID)
+                </td>
+                <td class="TableColumnTitle"></td>
+                <td></td>
+            </tr>
+            @for (int i = 0; i < dynamicSearchColumnRowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= dynamicSearchColumns.Count)
+                        {
+                        <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = dynamicSearchColumns[i * 3 + j];
+                            var o = typeof(Runbow.TWS.Entity.Pod).GetProperty(column.DbColumnName).GetValue(Model.SearchCondition);
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td>
+                            @{
+                            if (column.Type == "DateTime")
+                            {
+                                @Html.CalendarRange(column.DbColumnName, "calendarRange")
+                            }
+                            else if (column.Type == "CheckBox")
+                            {
+                                @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                            }
+                            else if (column.Type == "DropDownList" && column.IsKey)
+                            {
+                                @Html.DropDownList(column.DbColumnName, (IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.Reports.Models.ShowPodAllViewModel).GetProperty(column.DbColumnName.Substring(0, column.DbColumnName.Length - 4) + "s").GetValue(Model).ConvertSimpleType(typeof(IEnumerable<SelectListItem>)), "==请选择==", new { @class = "DropDownList" })
+                            }
+                            else if(column.Type == "DropDownList" && !column.IsKey)
+                            {
+                                @Html.DropDownList(column.DbColumnName,Model.TrueOrFalse,new {@class = "notKeyVal", type="DropDownList"});
+                            }
+                            else if (column.Type == "RegionPicker")
+                            {
+                                if (column.DbColumnName == "StartCityName")
+                                {
+                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                <a id="startCityClear" href="#">清空</a>
+                                }
+                                else
+                                {
+                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                <a id="endCityClear" href="#">清空</a>
+                                }
+                            }
+                            else
+                            {
+                                @Html.TextBox(column.DbColumnName, o, new { @class = "notKeyVal" })
+                            }
+                            }
+                        </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>运单列表
+            @if (Model.PodInvoiceReceiveOrPayOrders != null && Model.PodInvoiceReceiveOrPayOrders.PodCollection != null && Model.PodInvoiceReceiveOrPayOrders.PodCollection.Any())
+            {
+                @Html.Raw("(" + Model.PodInvoiceReceiveOrPayOrders.PodCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th style="width:20%">
+                        运单信息
+                    </th>
+                    <th>
+                        应收结算
+                    </th>
+                    <th>
+                        应付结算
+                    </th>
+                    <th>
+                        应收发票信息
+                    <th>
+                        应收款信息
+                    </th>
+                    <th>
+                        应付发票信息
+                    </th>
+                    <th>
+                        应付款信息
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+               @if (Model.PodInvoiceReceiveOrPayOrders != null && Model.PodInvoiceReceiveOrPayOrders.PodCollection != null && Model.PodInvoiceReceiveOrPayOrders.PodCollection.Count() > 0)
+               {
+                   foreach (var pod in Model.PodInvoiceReceiveOrPayOrders.PodCollection)
+                   {
+                       <tr>
+                           <td>
+                                @if (Model.IsInnerUser)
+                                {
+                                    <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "SystemNumber").DisplayName:</strong><a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAll/@pod.ID?showEditRelated=false">@pod.SystemNumber</a>
+                                    <br />
+                                    <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerOrderNumber").DisplayName:</strong><a id="listCUstomerOrderNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAll/@pod.ID?showEditRelated=false">@pod.CustomerOrderNumber</a>
+                                    <br />
+                                }
+                                else
+                                {
+                                     <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "SystemNumber").DisplayName:</strong><a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAllForOuterUser/@pod.ID">@pod.SystemNumber</a>
+                                    <br />
+                                    <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerOrderNumber").DisplayName:</strong><a id="listCUstomerOrderNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAllForOuterUser/@pod.ID">@pod.CustomerOrderNumber</a>
+                                    <br />
+                                }
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "PODStateID").DisplayName:</strong>@pod.PODStateName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerID").DisplayName:</strong>@pod.CustomerName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "ShipperID").DisplayName:</strong>@pod.ShipperName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "StartCityID").DisplayName:</strong>@pod.StartCityName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "EndCityID").DisplayName:</strong>@pod.EndCityName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "PODTypeID").DisplayName:</strong>@pod.PODTypeName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "TtlOrTplID").DisplayName:</strong>@pod.TtlOrTplName<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "ActualDeliveryDate").DisplayName:</strong>
+                               @if (pod.ActualDeliveryDate.HasValue)
+                               {
+                                    @pod.ActualDeliveryDate.Value.DateTimeToString()
+                               }
+                               <br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "BoxNumber").DisplayName:</strong>@pod.BoxNumber<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "GoodsNumber").DisplayName:</strong>@pod.GoodsNumber<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "Weight").DisplayName:</strong>@pod.Weight<br />
+                               <strong>@Model.Config.ColumnCollection.First(c => c.DbColumnName == "Volume").DisplayName:</strong>@pod.Volume<br />
+                               @foreach(var notKeyTextBoxColumn in notKeyTextBoxColumns)
+                               {
+                                   <strong>@notKeyTextBoxColumn.DisplayName:</strong>
+                                   object val = typeof(Runbow.TWS.Entity.Pod).GetProperty(notKeyTextBoxColumn.DbColumnName).GetValue(pod);
+                                   if(val != null)
+                                   {
+                                       switch(notKeyTextBoxColumn.Type)
+                                       {
+                                            case "TextBox":
+                                            case "RegionPicker":
+                                            case null:
+                                                @val.ToString()
+                                                break;
+                                            case "DropDownList":                                               
+                                                @Html.ChooseString(val.ToString() == "1", "Y","N")
+                                                break;
+                                            case "DateTime":
+                                                var time = (DateTime?)val;
+                                                if (time != null && time.HasValue)
+                                                {
+                                                    @time.Value.DateTimeToString()
+                                                }
+                                                break;
+                                            case "DateTimeWithTime":
+                                                var time1 = (DateTime?)val;
+                                                if (time1 != null && time1.HasValue)
+                                                {
+                                                    @time1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                }
+                                                break;
+                                            case "CheckBox":
+                                                var temp = val.ConvertSimpleType(typeof(int));
+                                                if (temp != null && (int)temp == 1)
+                                                {
+                                                    @Html.Raw("Y")
+                                                }
+                                                else if (temp != null && (int)temp == 0)
+                                                {
+                                                    @Html.Raw("N")
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                       }
+                                   }
+                                   <br />
+                               }
+                               @foreach(var notkeyTextAreaColumn in notkeyTextAreaColumns)
+                               {
+                                   <strong>@notkeyTextAreaColumn.DisplayName:</strong>
+                                   object val = typeof(Runbow.TWS.Entity.Pod).GetProperty(notkeyTextAreaColumn.DbColumnName).GetValue(pod);
+                                   if(val != null)
+                                   {
+                                       @val.ToString()
+                                   }
+                                   <br />
+                               }
+                           </td>
+                           <td style="vertical-align:top;">
+                               @{
+                                   Runbow.TWS.Entity.SettledPod receiveSettled = null;
+                                   Runbow.TWS.Entity.SettledPod paySettled = null;
+                                }
+                               @if(Model.PodInvoiceReceiveOrPayOrders.SettledPodCollection != null)
+                               {
+                                   receiveSettled = Model.PodInvoiceReceiveOrPayOrders.SettledPodCollection.FirstOrDefault(s => s.PodID == pod.ID && s.SettledType == 0);
+                                   if(receiveSettled != null)
+                                   {
+                                       <strong>运费:</strong>@receiveSettled.ShipAmt<br />
+                                       <strong>燃油附加费:</strong>@receiveSettled.BAFAmt<br />
+                                       <strong>点费:</strong>@receiveSettled.PointAmt<br />
+                                       <strong>其他费用:</strong>@receiveSettled.OtherAmt<br />
+                                       <strong>费用合计:</strong>@receiveSettled.TotalAmt<br />
+                                       <strong>备注:</strong>@receiveSettled.Remark<br />
+                                       <strong>实收金额:</strong>@receiveSettled.Amt5<br />
+                                       <strong>差异原因:</strong>@receiveSettled.Str5
+                                   }
+                                   else
+                                   {
+                                       @Html.Raw("暂未做应收结算");
+                                   }
+                               }
+                               else   
+                               {
+                                   @Html.Raw("暂未做应收结算");
+                               }
+                           </td>
+                           <td style="vertical-align:top;">
+                               @if(Model.PodInvoiceReceiveOrPayOrders.SettledPodCollection != null)
+                               {
+                                   paySettled = Model.PodInvoiceReceiveOrPayOrders.SettledPodCollection.FirstOrDefault(s => s.PodID == pod.ID && s.SettledType == 1);
+                                   if (paySettled != null)
+                                   {
+                                       <strong>运费:</strong>@paySettled.ShipAmt<br />
+                                       <strong>燃油附加费:</strong>@paySettled.BAFAmt<br />
+                                       <strong>点费:</strong>@paySettled.PointAmt<br />
+                                       <strong>其他费用:</strong>@paySettled.OtherAmt<br />
+                                       <strong>费用合计:</strong>@paySettled.TotalAmt<br />
+                                       <strong>备注:</strong>@paySettled.Remark<br />
+                                       <strong>实付金额:</strong>@paySettled.Amt5<br />
+                                       <strong>差异原因:</strong>@paySettled.Str5
+                                   }
+                                   else
+                                   {
+                                       @Html.Raw("暂未做应付算");
+                                   }
+                               }
+                               else   
+                               {
+                                   @Html.Raw("暂未做应付结算");
+                               }
+                           </td>
+                           <td style="vertical-align:top;">
+                               @{
+                                    Runbow.TWS.Entity.Invoice receiveInvoice = null;
+                                    Runbow.TWS.Entity.Invoice payInvoice = null;
+                               }
+                               @if(receiveSettled != null && receiveSettled.InvoiceID.HasValue && Model.PodInvoiceReceiveOrPayOrders.InvoiceCollection != null)
+                               {
+                                   receiveInvoice = Model.PodInvoiceReceiveOrPayOrders.InvoiceCollection.FirstOrDefault(i => i.ID == receiveSettled.InvoiceID.Value && i.Target == 0);
+                                   if(receiveInvoice != null)
+                                   {
+                                       <strong>发票号:</strong>@receiveInvoice.InvoiceNumber<br />
+                                       <strong>发票类型:</strong>@receiveInvoice.InvoiceTypeName<br />
+                                       <strong>开票金额:</strong>@receiveInvoice.Sum<br />
+                                       <strong>剩余收款金额:</strong>@receiveInvoice.Remain<br />
+                                       <strong>预计收款日期:</strong>
+                                        if(receiveInvoice.EstimateDate.HasValue)
+                                        {
+                                            @receiveInvoice.EstimateDate.Value.DateTimeToString()
+                                        }
+                                        <br />
+                                       <strong>收款单位:</strong>@receiveInvoice.CustomerOrShipperName<br />
+                                       <strong>税号:</strong>@receiveInvoice.TaxID<br />
+                                       <strong>地址:</strong>@receiveInvoice.Address<br />
+                                       <strong>电话:</strong>@receiveInvoice.Address<br />
+                                       <strong>开户行:</strong>@receiveInvoice.Address<br />
+                                       <strong>银行帐号:</strong>@receiveInvoice.Address<br />
+                                       <strong>备注:</strong>@receiveInvoice.Remark
+                                   }
+                                   else
+                                   {
+                                       @Html.Raw("暂未开应收发票");
+                                   }
+                               }
+                               else
+                               {
+                                   @Html.Raw("暂未开应收发票");
+                               }
+                           </td>
+                           <td style="vertical-align:top;">
+                                @if(paySettled != null && paySettled.InvoiceID.HasValue && Model.PodInvoiceReceiveOrPayOrders.InvoiceCollection != null)
+                               {
+                                   payInvoice = Model.PodInvoiceReceiveOrPayOrders.InvoiceCollection.FirstOrDefault(i => i.ID == paySettled.InvoiceID.Value && i.Target == 1);
+                                   if(payInvoice != null)
+                                   {
+                                       <strong>发票号:</strong>@payInvoice.InvoiceNumber<br />
+                                       <strong>发票类型:</strong>@payInvoice.InvoiceTypeName<br />
+                                       <strong>开票金额:</strong>@payInvoice.Sum<br />
+                                       <strong>剩余付款金额:</strong>@payInvoice.Remain<br />
+                                       <strong>预计付款日期:</strong>
+                                        if (payInvoice.EstimateDate.HasValue)
+                                        {
+                                            @payInvoice.EstimateDate.Value.DateTimeToString()
+                                        }
+                                       <br />
+                                       <strong>收款单位:</strong>@payInvoice.CustomerOrShipperName<br />
+                                       <strong>税号:</strong>@payInvoice.TaxID<br />
+                                       <strong>地址:</strong>@payInvoice.Address<br />
+                                       <strong>电话:</strong>@payInvoice.Address<br />
+                                       <strong>开户行:</strong>@payInvoice.Address<br />
+                                       <strong>银行帐号:</strong>@payInvoice.Address<br />
+                                       <strong>备注:</strong>@payInvoice.Remark
+                                   }
+                                   else
+                                   {
+                                       @Html.Raw("暂未开付收发票");
+                                   }
+                               }
+                               else
+                               {
+                                   @Html.Raw("暂未开应付发票");
+                               }
+                           </td>
+                           <td style="vertical-align:top;">
+                               @if(receiveInvoice != null && Model.PodInvoiceReceiveOrPayOrders.ReceiveOrPayOrderCollection != null)
+                               {
+                                   var receiveOrders = Model.PodInvoiceReceiveOrPayOrders.ReceiveOrPayOrderCollection.Where(r => r.InvoiceID == receiveInvoice.ID && r.Target == 0);
+                                   if(receiveOrders != null && receiveOrders.Any())
+                                   {
+                                       int i = 0;
+                                       foreach(var receiveOrder in receiveOrders)
+                                       {
+                                           i++;
+                                           <strong>第</strong><strong>@i</strong><strong>次收款</strong><br />
+                                           <strong>收款客户:</strong>@receiveOrder.CustomerOrShipperName<br />
+                                            <strong>收款金额:</strong>@receiveOrder.AMT<br />
+                                            <strong>收款日期:</strong>@receiveOrder.Date.DateTimeToString()<br />
+                                            <strong>备注:</strong>@receiveOrder.Remark<br />
+                                       }
+                                   }
+                                   else
+                                   {
+                                       @Html.Raw("暂无收款记录");
+                                   }
+                               }
+                               else
+                               {
+                                   @Html.Raw("暂无收款记录");
+                               }
+                           </td>
+                           <td style="vertical-align:top;">
+                                @if(payInvoice != null && Model.PodInvoiceReceiveOrPayOrders.ReceiveOrPayOrderCollection != null)
+                               {
+                                   var payOrders = Model.PodInvoiceReceiveOrPayOrders.ReceiveOrPayOrderCollection.Where(r => r.InvoiceID == payInvoice.ID && r.Target == 1);
+                                   if (payOrders != null && payOrders.Any())
+                                   {
+                                       int i = 0;
+                                       foreach (var payOrder in payOrders)
+                                       {
+                                           i++;
+                                           <strong>第</strong><strong>@i</strong><strong>次付款</strong><br />
+                                           <strong>付款承运商:</strong>@payOrder.CustomerOrShipperName<br />
+                                            <strong>付款金额:</strong>@payOrder.AMT<br />
+                                            <strong>付款日期:</strong>@payOrder.Date.DateTimeToString()<br />
+                                            <strong>备注:</strong>@payOrder.Remark<br />
+                                       }
+                                   }
+                                   else
+                                   {
+                                       @Html.Raw("暂无付款记录");
+                                   }
+                               }
+                               else
+                               {
+                                   @Html.Raw("暂无付款记录");
+                               }
+                           </td>
+                       </tr>
+                   }
+               }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

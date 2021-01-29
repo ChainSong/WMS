@@ -1,0 +1,74 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.WarehouseAllocateModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+<fieldset>
+    <legend>设置客户操作仓库权限</legend>
+    <table id="UserTable">
+        <tr>
+            <td class="TableColumnTitle">
+                <label>客户</label>
+            </td>
+            <td>
+                @Html.Label("CustomerName", Model.Customers.Where(c => c.ID == Model.CustomerID).FirstOrDefault().Name)
+                @Html.Hidden("CustomerID", Model.CustomerID)
+                &nbsp;&nbsp;&nbsp;
+                <input id="submitWarehouseUser" type="button" value="提交" class="btn btn-success" />
+                <a title="返回客户列表" href="/System/Customer/Index" style="color:white;" class="btn btn-success">返回</a>
+               
+            </td>
+    </table>
+</fieldset>
+
+
+
+<fieldset>
+    <legend>仓库列表</legend>
+    <table id="RoleTable">
+        <thead>
+            <tr>
+                <th class="checkBoxHead"></th>
+                <th>仓库名称</th>
+                <th>仓库描述</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var warehouse in Model.Warehouse)
+            {
+                int i = 0;
+                int j = 0;
+                int c = 0;
+               
+                <tr>
+                    <td>
+
+                        @foreach (var objId in Model.WarehouseAllocate)
+                        {
+                            c++;
+                            if (warehouse.ID == objId.WarehouseID)
+                            {
+                                i++;
+                            <input type="checkbox" id="select"+@warehouse.ID data-id="@warehouse.ID" checked="checked" class="checkForSelect" />
+                            }
+                            else
+                            {
+                                j++;
+                            }
+                        }
+                        @if (i == 0 && j > 0 || c == 0)
+                        {
+                            <input type="checkbox" id="select"+@warehouse.ID data-id="@warehouse.ID" class="checkForSelect" />
+                        }
+
+
+
+                    </td>
+                    <td>@warehouse.WarehouseName</td>
+                    <td>@warehouse.Description</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</fieldset>

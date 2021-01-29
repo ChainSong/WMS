@@ -1,0 +1,110 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.BaiXingViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    @Html.HiddenFor(m => m.IsForExport)
+    <fieldset>
+        <legend>查询条件</legend>
+        <form>
+            <table id="conditionTable">
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">系统运单号</td>
+                    <td style="width: 21%;">
+                        @Html.TextAreaFor(m => m.SearchCondition.SystemNumber, new { style = "width:98%" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">客户运单号</td>
+                    <td style="width: 21%;">
+                        @Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber, new { style = "width:98%" })
+                    </td>
+                    <td class="TableColumnTitle">快递单号</td>
+                    <td>
+                        @Html.TextAreaFor(m => m.SearchCondition.Str1, new { style = "width:98%" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">商品品名</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.SearchCondition.Str2, new { @class = "form-control" })
+                    </td>
+
+                    <td class="TableColumnTitle" style="width: 11%;">快递公司</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.SearchCondition.Str17, new { @class = "form-control" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">下单日期</td>
+                    <td style="width: 21%;">
+                        @* @Html.CalendarRange("CreateTime", "calendarRange form-control")*@
+
+                        @Html.CalendarRange("CreateTime", "calendarRange")
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">发件城市</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.SearchCondition.Str7, new { @class = "form-control" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">收件城市</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.SearchCondition.Str13, new { @class = "form-control" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;"></td>
+                    <td></td>
+                </tr>
+            </table>
+        </form>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出全部运单" id="exportAllButton" title="导出符合查询条件的运单" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        @if (Model.PodCollection != null)
+        {
+            <legend>运单列表(@Model.PodCollection.Count())</legend>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>系统运单号</th>
+                        <th>客户运单号</th>
+                        <th>客户</th>
+                        @* <th>快递单号</th>*@
+                        <th>快递公司</th>
+                        <th>商品品名</th>
+                        <th>发件城市</th>
+                        <th>收件城市</th>
+                        <th>下单日期</th>
+                    </tr>
+                </thead>
+                <tbody id="BodyTable">
+                    @if (Model.PodCollection != null && Model.PodCollection.Any())
+                    {
+                        foreach (var crminfo in Model.PodCollection)
+                        {
+                            <tr id="@crminfo.ID.ToString()">
+                                <td><a href="/POD/POD/ViewPodAll/@crminfo.ID?showEditRelated=false">@crminfo.SystemNumber</a></td>
+                                <td>@crminfo.CustomerOrderNumber</td>
+                                <td>@crminfo.CustomerName</td>
+                                @*<td>@crminfo.Str1</td>*@
+                                <td>@crminfo.Str17</td>
+                                <td>@crminfo.Str2</td>
+                                <td>@crminfo.Str7</td>
+                                <td>@crminfo.Str13</td>
+                                <td>@crminfo.CreateTime</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        }
+    </fieldset>
+}

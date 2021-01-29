@@ -1,0 +1,307 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.InventoryViewModel
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>
+            门店列表
+            @if (Model.WMS_CustomerCollection != null && Model.WMS_CustomerCollection.Any())
+            {
+                @Html.Raw("(" + Model.WMS_CustomerCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>门店名称</th>
+                    <th>门店代码</th>
+                    <th>日期</th>
+                    <th>今日报表发送状态</th>
+                    <th>报表发送时间</th>
+                    <th>今日EpackList发送次数</th>
+                    <th>EpackList最后发送时间</th>
+                    <th style="text-align:center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.WMS_CustomerCollection != null && Model.WMS_CustomerCollection.Any())
+                {
+                    var dates = DateTime.Now.ToString("yyyy-MM-dd");
+                    foreach (var item in Model.WMS_CustomerCollection)
+                    {
+                        <tr>
+                            <td>@item.Company</td>
+                            <td>@item.StorerKey</td>
+                            <td>@dates</td>
+                            @if (item.ReportSendStatus == 0)
+                            {
+                                <td style="color:#ff0000">未发送</td>
+                            }
+                            else
+                            {
+                                <td style="color:#0026ff">已发送</td>;
+                            }
+                            <td>@item.ReportSendTime</td>
+                            <td>@item.EpackListSendCount</td>
+                            <td>@item.EpackListLastSendTime</td>
+                            <td style="text-align:center">
+                                <label style="cursor: pointer;" class="btn btn-primary" onclick="sendEpackListEmail('@item.StorerKey','@item.CustomerID')">发送EpackList</label>
+                                <label style="cursor: pointer;" class="btn btn-danger" onclick="sendEmail('@item.StorerKey','@item.CustomerID')">发送每日报表</label>
+                            </td>
+
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div id="DayReport" style="display:none">
+            <div>
+                Dear all,<br /><br />
+                &nbsp;&nbsp;<div id="attachmentcontent">附件为-CSC,库存报表及明细，库存报表请以“可用数量”为准，请知悉，谢谢!</div><br /><br />
+                <div style="width:400px">
+                    <table style="border:1px solid; text-align:center;width:400px">
+                        <tr style="background-color:#1f497d;border:1px solid;">
+                            <td colspan="4" style="color:#ffffff;font-weight:bold;border:1px solid;">库存统计</td>
+                        </tr>
+                        <tr style="background-color:#1f497d;color:#ffffff;font-weight:bold;border:1px solid;">
+                            <td style="border:1px solid;">日期</td>
+                            <td style="border:1px solid;">PE</td>
+                            <td style="border:1px solid;">库存总数（件）</td>
+                            @*<td style="border:1px solid;">冻结数量（件数）</td>*@
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td rowspan="4" style="border:1px solid;">@DateTime.Now.ToString("yyyy/MM/dd")</td>
+                            <td style="border:1px solid;">APP</td>
+                            <td id="inventoryAPP" style="border:1px solid;">0</td>
+                            @*<td id="frezzAPP" style="border:1px solid;">0</td>*@
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">EQP</td>
+                            <td id="inventoryEQP" style="border:1px solid;">0</td>
+                            @*<td id="frezzEQP" style="border:1px solid;">0</td>*@
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">FTW</td>
+                            <td id="inventoryFTW" style="border:1px solid;">0</td>
+                            @*<td id="frezzFTW" style="border:1px solid;">0</td>*@
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">总计</td>
+                            <td id="inventoryTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            @*<td id="frezzTotal" style="border:1px solid;background-color:#f79646">0</td>*@
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div style="width:800px">
+                    <table style="border:1px solid; text-align:center;width:800px">
+                        <tr style="background-color:#1f497d;border:1px solid;">
+                            <td colspan="10" style="color:#ffffff;font-weight:bold;border:1px solid;">进出库统计</td>
+                        </tr>
+                        <tr style="background-color:#1f497d;color:#ffffff;font-weight:bold;border:1px solid;">
+                            <td rowspan="2" style="border:1px solid;">PE</td>
+                            <td rowspan="2" style="border:1px solid;">收货数量</td>
+                            <td rowspan="2" style="border:1px solid;">退货入库数量</td>
+                            <td style="border:1px solid;">门店</td>
+                            <td style="border:1px solid;">门店</td>
+                            <td style="border:1px solid;">门店</td>
+                            <td style="border:1px solid;">门店调拨</td>
+                            <td style="border:1px solid;">门店调拨</td>
+                            <td colspan="2" style="border:1px solid;">索赔调整</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">补货数量</td>
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">直发数量</td>
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">O2O数量</td>
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">调入数量</td>
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">调出数量</td>
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">索赔调增</td>
+                            <td style="border:1px solid;background-color:#1f497d;color:#ffffff">索赔调减</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">APP</td>
+                            <td id="ShouHuoAPP" style="border:1px solid;">0</td>
+                            <td id="TuiHuoAPP" style="border:1px solid;">0</td>
+                            <td id="BuHuoAPP" style="border:1px solid;">0</td>
+                            <td id="ZhiFAAPP" style="border:1px solid;">0</td>
+                            <td id="O2OAPP" style="border:1px solid;">0</td>
+                            <td id="DiaoRuAPP" style="border:1px solid;">0</td>
+                            <td id="DiaoChuAPP" style="border:1px solid;">0</td>
+                            <td id="AdjustmentAddAPP" style="border:1px solid;">0</td>
+                            <td id="AdjustmentAPP" style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">EQP</td>
+                            <td id="ShouHuoEQP" style="border:1px solid;">0</td>
+                            <td id="TuiHuoEQP" style="border:1px solid;">0</td>
+                            <td id="BuHuoEQP" style="border:1px solid;">0</td>
+                            <td id="ZhiFAEQP" style="border:1px solid;">0</td>
+                            <td id="O2OEQP" style="border:1px solid;">0</td>
+                            <td id="DiaoRuEQP" style="border:1px solid;">0</td>
+                            <td id="DiaoChuEQP" style="border:1px solid;">0</td>
+                            <td id="AdjustmentAddEQP" style="border:1px solid;">0</td>
+                            <td id="AdjustmentEQP" style="border:1px solid;">0</td>
+
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">FTW</td>
+                            <td id="ShouHuoFTW" style="border:1px solid;">0</td>
+                            <td id="TuiHuoFTW" style="border:1px solid;">0</td>
+                            <td id="BuHuoFTW" style="border:1px solid;">0</td>
+                            <td id="ZhiFAFTW" style="border:1px solid;">0</td>
+                            <td id="O2OFTW" style="border:1px solid;">0</td>
+                            <td id="DiaoRuFTW" style="border:1px solid;">0</td>
+                            <td id="DiaoChuFTW" style="border:1px solid;">0</td>
+                            <td id="AdjustmentAddFTW" style="border:1px solid;">0</td>
+                            <td id="AdjustmentFTW" style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">合计</td>
+                            <td id="ShouHuoTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="TuiHuoTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="BuHuoTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="ZhiFaTotals" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="O2OTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="DiaoRuTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="DiaoChuTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="AdjustmentAddTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="AdjustmentTotal" style="border:1px solid;background-color:#f79646">0</td>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div style="width:600px">
+                    <table style="border:1px solid; text-align:center;width:600px">
+                        <tr style="background-color:#1f497d;border:1px solid;">
+                            <td colspan="4" style="color:#ffffff;font-weight:bold;border:1px solid;">货品暂存统计CICO</td>
+                        </tr>
+                        <tr style="background-color:#1f497d;color:#ffffff;font-weight:bold;border:1px solid;">
+                            <td style="border:1px solid;">暂存类型</td>
+                            <td style="border:1px solid;">入库</td>
+                            <td style="border:1px solid;">出库</td>
+                            <td style="border:1px solid;">库存</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">临时暂存</td>
+                            <td style="border:1px solid;">0</td>
+                            <td style="border:1px solid;">0</td>
+                            <td style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">退货CRW</td>
+                            <td style="border:1px solid;">0</td>
+                            <td style="border:1px solid;">0</td>
+                            <td style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">总计</td>
+                            <td style="border:1px solid;background-color:#f79646">0</td>
+                            <td style="border:1px solid;background-color:#f79646">0</td>
+                            <td style="border:1px solid;background-color:#f79646">0</td>
+                        </tr>
+                    </table>
+                </div>
+                <br /><br /><br />
+
+                <div id="DayReportBottom">
+
+                </div>
+            </div>
+        </div>
+
+        <div id="EpackList" style="display:none">
+            <div>
+                Dear all,<br /><br />
+                &nbsp;&nbsp;<div id="EpAttachmentContent">附件为补货明细清单及统计表：</div><br /><br />
+                <div style="width:400px">
+                    <table style="border:1px solid; text-align:center;width:400px">
+                        <tr style="background-color:#1f497d;color:#ffffff;font-weight:bold;border:1px solid;">
+                            <td style="border:1px solid;">BU</td>
+                            <td style="border:1px solid;">箱数</td>
+                            <td style="border:1px solid;">件数</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">APP</td>
+                            <td id="EpackListBoxAPP" style="border:1px solid;">0</td>
+                            <td id="EpackListSKUAPP" style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">EQP</td>
+                            <td id="EpackListBoxEQP" style="border:1px solid;">0</td>
+                            <td id="EpackListSKUEQP" style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">FTW</td>
+                            <td id="EpackListBoxFTW" style="border:1px solid;">0</td>
+                            <td id="EpackListSKUFTW" style="border:1px solid;">0</td>
+                        </tr>
+                        <tr style="border:1px solid;">
+                            <td style="border:1px solid;">总计</td>
+                            <td id="EpackListBoxTotal" style="border:1px solid;background-color:#f79646">0</td>
+                            <td id="EpackListSKUTotal" style="border:1px solid;background-color:#f79646">0</td>
+                        </tr>
+                    </table>
+                </div>
+                <br /><br /><br />
+                <div id="EpackListBottom">
+
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    //填写运输信息
+    <div id="UpdateVolumeDiv" style="display:none">
+        <table>
+            <tr style="display:none">
+                <td><input style="display:none" id="StorerKeyEpacklist" /></td>
+                <td><input style="display:none" id="CustomerIDSEpacklist" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">司机姓名:</td>
+                <td><input class="form-control" id="DriverName" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">联系方式:</td>
+                <td><input class="form-control" id="DriverTel" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">车牌号:</td>
+                <td><input class="form-control" id="CarNo" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">预计到达时间:</td>
+                <td> @Html.CalendarDateTime("ExpectTime", "form-control")</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">完成时间:</td>
+                <td>@Html.CalendarRangeDateTime("CompleteDate2", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteDate2, @Model.SearchCondition.EndCompleteDate2)</td>
+            </tr>
+        </table>
+        <div style="text-align:center">
+            <input type="button" class="btn btn-success" value="确定" id="UpdateVolumeOK" />
+            <input type="button" class="btn btn-success" value="返回" id="UpdateVolumeOKCancel" />
+        </div>
+    </div>
+
+    <div id="CompleteDateDiv" style="display:none">
+        <table>
+            <tr style="display:none">
+                <td><input style="display:none" id="CompleteStorerKey" /></td>
+                <td><input style="display:none" id="CompleteCustomerIDS" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">完成时间:</td>
+                <td>@Html.CalendarRangeDateTime("CompleteDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteDate, @Model.SearchCondition.EndCompleteDate)</td>
+            </tr>
+        </table>
+        <div style="text-align:center">
+            <input type="button" class="btn btn-success" value="确定" id="CompleteDateOK" />
+            <input type="button" class="btn btn-success" value="返回" id="CompleteDateCancel" />
+        </div>
+    </div>
+}

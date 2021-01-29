@@ -1,0 +1,134 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<style type="text/css">
+    table thead th {
+        background-color: white;
+    }
+
+    .nest {
+        border: 1px solid #EBEEF5;
+        border-radius:4px;
+        background-color: #FFF;
+        box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    }
+
+    .body-nest {
+        padding: 15px;
+        background: none repeat scroll 0 0 #ffffff;
+        border-radius: 0 0 4px 4px;
+    }
+
+    .title-alt {
+        padding: 18px 20px;
+        border-bottom: 1px solid #EBEEF5;
+        box-sizing: border-box;
+    }
+</style>
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.InspectionReportViewModel
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="nest">
+                <div class="title-alt">
+                    <strong>查询条件</strong>
+                </div>
+                <div class="body-nest">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <label for="">ASN单号</label>
+                                @Html.TextAreaFor(m => m.SearchCondition.ASNNumber, new { @class = "form-control", @cols = 20, @rows = 4 })
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <label for="">外部单号</label>
+                                @Html.TextAreaFor(m => m.SearchCondition.ExternReceiptNumber, new { @class = "form-control", @cols = 20, @rows = 4 })
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <label for="">SKU</label>
+                                @Html.TextAreaFor(m => m.SearchCondition.SKU, new { @class="form-control",@cols=20,@rows=4})
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <label for="">客户</label>
+                                @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.CustomerList, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div class="form-group">
+                                <label for="">仓库</label>
+                                @Html.DropDownListFor(m => m.SearchCondition.WareHouseID, Model.WarehouseList, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions actionButtonDiv">
+                        <input type="submit" name="Action" class="btn btn-success" id="SearchButton" value="查询" />
+                        &nbsp;
+                        <input type="submit" name="Action" class="btn btn-success" id="ExportButton" value="导出" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:5px;">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="nest">
+                <div class="title-alt">
+                    <strong>
+                        列表
+                        @if (Model.InspectionReportCollection != null && Model.InspectionReportCollection.Any())
+                        {
+                            @Html.Raw("(" + Model.InspectionReportCollection.Count() + ")")
+                        }
+                        else
+                        {
+                            @Html.Raw("(0)")
+                        }
+                    </strong>
+                </div>
+                <div class="body-nest">
+                    <div class="row">
+                        <div class="col-sm-12 col-xs-12">
+                            <table class="table table-bordered table-hover" id="resultTable">
+                                <thead>
+                                    <tr>
+                                        <th>外部入库单号</th>
+                                        <th>质检品级结果</th>
+                                        <th>SKU</th>
+                                        <th>预计件数</th>
+                                        <th>实际收货数据</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultTbody">
+                                    @if (Model.InspectionReportCollection != null && Model.InspectionReportCollection.Any())
+                                    {
+                                        foreach (var item in Model.InspectionReportCollection)
+                                        {
+                                            <tr>
+                                                <td>@item.ExternReceiptNumber</td>
+                                                <td>@item.GoodsType</td>
+                                                <td>@item.SKU</td>
+                                                <td>@item.QtyExpected</td>
+                                                <td>@item.QtyReceived</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+

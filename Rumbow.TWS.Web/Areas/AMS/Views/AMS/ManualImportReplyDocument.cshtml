@@ -1,0 +1,25 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+<fieldset>
+    <legend>操作提示
+    </legend>
+    <div id="message">
+        手动导入现有回单 
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        @ViewBag.DisplyMessage
+    </legend>
+    <div id="importDiv">
+        <input type="submit" value="手动导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>系统提示:<label id="resultCount" style="display: none"></label>
+    </legend>
+    <div id="outPutResult">
+        @Html.Raw(ViewBag.PODInfo)
+    </div>
+</fieldset>

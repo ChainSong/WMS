@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "RoleAdd";
+}
+@model Runbow.TWS.Web.Areas.System.Models.RoleModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+<script src="../../../../Scripts/Common/Framework/jquery-1.9.1.js"></script>
+<script src="/Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        //判断客户名称唯一性
+        $("#txtName").blur(function () {
+            var tempvalue = $(this).val();
+            var id = $("#ID").val();
+
+            $.ajax({
+                type: 'POST',
+                url: "/System/Role/CheckName",
+                data: { Name: tempvalue, Id: id, IsEdit: false },
+                success: function (data) {
+                    if (data != "") {
+                        layer.msg(data, function () { });
+                        $("#txtName").focus();
+                        $('#btnSave').prop('disabled', true);
+                    } else {
+                        $('#btnSave').prop('disabled', false);
+                    }
+                },
+                error: function () {
+
+                }
+            })
+        });
+
+
+        var objtemp = '@ViewBag.Message';
+        if (objtemp != undefined && objtemp != "" && objtemp != "新增角色" && objtemp != "修改角色") {
+            if (objtemp == "该角色已存在！")
+                layer.msg('该角色已存在！', function () { });
+            else
+                layer.msg('操作成功！', function () { window.location.href = '/System/Role/RoleManage'; });
+        }
+
+
+
+    });
+
+
+    //输入判断
+    function CheckInput() {
+        var name = $("#txtName").val();
+        var des = $("#txtD").val();
+
+
+        if (name.trim().length == 0) {
+            $("#txtName").focus();
+            return false;
+        }
+
+        if (des.trim().length == 0) {
+            $("#txtD").focus();
+            return false;
+        }
+
+        return true;
+    }
+
+</script>
+
+@using (Html.BeginForm("RoleAdd", "Role"))
+{
+    @Html.HiddenFor(m => m.ID)
+    <fieldset>
+        <legend>@ViewBag.Message</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Name)</td>
+                <td>@Html.TextBoxFor(model => model.Name, new { @class = "form-control", id = "txtName" }) </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Description)</td>
+                <td>@Html.TextBoxFor(model => model.Description, new { @class = "form-control", id = "txtD" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Satate)</td>
+                <td>可用 @Html.RadioButtonFor(model => model.Satate, true, new { @checked = true })
+
+                    禁用 @Html.RadioButtonFor(model => model.Satate, false)
+                </td>
+                <td class="TableColumnTitle"></td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input id="btnSave" type="submit" class="btn btn-success" value="保存" onclick='return CheckInput();' />
+            <a class="btn btn-success" onclick="window.location.href = '/System/Role/RoleManage'">返回</a>
+        </div>
+    </fieldset>
+
+
+}

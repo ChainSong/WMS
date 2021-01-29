@@ -1,0 +1,350 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.ShelvesManagement.ShelvesModel
+@using Runbow.TWS.Common;
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@{
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+    var notKeyColumns = Model.Config.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == Model.SearchCondition.CustomerID));
+    if (Model.IsInnerUser)
+    {
+        if (Model.Condition.CustomerID == 0)
+        {
+            tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+        }
+        else
+        {
+            tmpDynamicSearchColumns = notKeyColumns.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+            tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+        }
+    }
+    else
+    {
+        if (Model.Condition.CustomerID == 0)
+        {
+            tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+        }
+        else
+        {
+            tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition).ToList();
+            tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey)).ToList();
+        }
+    }
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+    var showColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns.Where(c => c.IsShowInList)) : Model.Config.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns.Where(c => c.IsShowInList));
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.CustomerID)
+    @Html.HiddenFor(m => m.Condition.StartShelvesTime)
+    @Html.HiddenFor(m => m.Condition.EndShelvesTime)
+    @Html.HiddenFor(m => m.Condition.StartStorageTime)
+    @Html.HiddenFor(m => m.Condition.EndStorageTime)
+    @Html.HiddenFor(m => m.Condition.StartCreateTime)
+    @Html.HiddenFor(m => m.Condition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    @Html.HiddenFor(m => m.Condition.ASNID)
+    @Html.HiddenFor(m => m.ShowEditRelated)
+    @Html.HiddenFor(m => m.HideActionButton)
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>上架信息查询条件</legend>
+        <table id="conditionTable">
+            @{
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                var WorkStation = (IEnumerable<SelectListItem>)ViewBag.WorkStation;
+            }
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>入库单号</label>
+                </td>
+                <td style="width: 21%;">
+                    @Html.TextAreaFor(m => m.Condition.ReceiptNumber, new { @class = "form-control", style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>外部单号</label>
+                </td>
+                <td style="width: 21%;">
+                    @Html.TextAreaFor(m => m.Condition.ExternReceiptNumber, new Dictionary<string, object>()
+                   {
+                           {"class","form-control"},
+                           {"style","width:100%"},
+                           {"ng-model",Model.Condition.ExternReceiptNumber},
+                   })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>入库日期</label>
+                </td>
+                <td style="width: 21%;">
+                    @Html.CalendarRange("StorageTime", "calendarRange form-control calendarRangeReWrite", Model.Condition.StartStorageTime, Model.Condition.EndStorageTime)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.Condition.CustomerID, Model.Customers, "==请选择==", new { @class = "form-control", @style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.Condition.WarehouseID, Model.WarehouseList, "==请选择==", new { @class = "form-control", @style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>上架状态</label>
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.Condition.ShelvesState, Model.ReceiptStatus, "==请选择==", new { @class = "form-control", @style = "width:100%" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>创建日期</label>
+                </td>
+                <td style="width: 21%;">
+                    @Html.CalendarRange("CreateTime", "calendarRange form-control calendarRangeReWrite", Model.Condition.StartCreateTime, Model.Condition.EndCreateTime)
+                </td>
+                <td class="TableColumnTitle">
+                    <label>门店代码</label>
+                </td>
+                <td style="width: 21%;">
+                    @Html.TextBoxFor(m => m.Condition.str3, new { @class = "form-control", style = "width:100%" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="打印" id="printButton" />
+            <input type="button" class="btn btn-success" value="批量加入库存" id="multiAddInvButton" /><!--新增-->
+            @*<input type="submit" class="btn btn-success" value="导出已上架明细" id="ExeclShelvesSingle" name="Action" />*@
+            @*<input type="submit" class="btn btn-success" value="导出ABC上架差异" id="ExportABCShelves" name="Action" />*@
+            <input type="button" class="btn btn-success" value="状态回退" id="OpenStatusBack" style="display:none;" />
+            @*<input type="button" class="btn btn-success" value="智能入库" id="intelligentDispatch" />*@
+            @*<input type="button" class="btn btn-success" value="导出差异" id="Abnormal" />*@
+            @*<input type="button" class="btn btn-success" value="提交" id="SubmitOK" />*@
+            @*<input type="button" class="btn btn-success" value="加入库存" id="AddInventory" />*@
+            @*<input type="submit" class="btn btn-success" value="导出" id="exportButton" name="Action" />&nbsp;&nbsp;&nbsp;*@
+            @*<button type="button" class="btn btn-success" onclick="javascript:window.location.href='ShipperManagementVehicleManagement/Create?ViewType=1'">新增</button>*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            上架信息列表
+            @if (Model.receipt != null && Model.receipt.Any())
+            {
+                @Html.Raw("(" + Model.receipt.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>操作</th>
+                        <th>@Html.CheckBox("selectAll", "onclick=selectAll")</th>
+                        <th style="width: 150px">收货单号</th>
+                        <th style="width: 150px">外部单号</th>
+                        <th>入库日期</th>
+                        <th>客户</th>
+                        <th>仓库名称</th>
+                        <th>上架日期</th>
+                        <th>入库单状态</th>
+                        <th>门店代码</th>
+                        <th>创建人</th>
+                        <th>创建时间</th>
+                        <th>总件数</th>
+                    </tr>
+                </thead>
+                <tbody id="editTable">
+                    @if (Model.receipt != null && Model.receipt.Any())
+                    {
+                        foreach (var item in Model.receipt)
+                        {
+                            var tdd = "operateTD" + @item.ID;
+                            <tr>
+                                <td style="position: relative" class="OoperationTD">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        @if (@item.Status == 9)
+                                        {
+                                        }
+                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="printPick('@item.ID')">打印</label>*@
+                                        @if (item.Status != 9 && item.Status != -1)
+                                        {
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs ShelvesLink" onclick="ShelvesLink('@item.ID','@item.Status')">继续上架</label>
+                                            if (item.Status != 0)
+                                            {
+                                                if (item.Status == 3)
+                                                {
+                                                    <label style="cursor: pointer;" class="btn btn-danger btn-xs AddInventory" onclick="CheckNoReceiving(@item.ID,this)">查看未上架</label>
+                                                }
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs AddInventory" onclick="ExportDiffrent(@item.ID,this)">导出差异</label>
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs AddInventory" onclick="CheckReceiving(@item.ID,this)">检查差异</label>
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs AddInventory" onclick="AddInventory(@item.ID,'@item.ReceiptNumber',this)">加入库存</label>
+                                                @*<div  style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  >加入库存</div>*@
+                                            }
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs statusBack" onclick="statusBack(@item.ID,@item.Status)">状态回退</label>
+                                        }
+                                        @*<div style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " >状态回退</div>*@
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    @*<div onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                                </td>
+                                <td>@Html.CheckBox(item.ID.ToString(), new { data_Status = item.Status, data_ID = item.ID, id = item.ID, @class = "checkForSelect" })</td>
+                                <td clsaa="ReceiptNumber">
+                                    <a href="/WMS/ShelvesManagement/ReceiptReceivingInfo/?RID=@item.ID">@item.ReceiptNumber</a>
+                                </td>
+                                <td class="ExternReceiptNumber">@item.ExternReceiptNumber</td>
+                                <td class="ReceiptDate">@item.ReceiptDate</td>
+                                <td class="CustomerName">@item.CustomerName</td>
+                                <td class="WarehouseName">@item.WarehouseName</td>
+                                <td class="CreateTime">@item.CreateTime</td>
+                                @switch (item.Status)
+                                {
+                                    case 1:
+                                        <td class="Status">待上架</td>
+                                        break;
+                                    case 3:
+                                        <td class="Status">上架中</td>
+                                        break;
+                                    case 5:
+                                        <td class="Status">已上架</td>
+                                        break;
+                                    case 9:
+                                        <td class="Status">已入库</td>
+                                        break;
+                                    case -1:
+                                        <td class="Status">取消</td>
+                                        break;
+                                    default:
+                                        <td class="Status"></td>
+                                        break;
+                                }
+                                <td class="str3">@item.str3</td>
+                                <td class="Creator">@item.Creator</td>
+                                <td class="CreateTime">@item.CreateTime</td>
+                                <td class="">@item.str13</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <div id="divSetting" style="display: none;">
+        <h1>divSettingdasdasd</h1>
+    </div>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    <div id="showdata" style="position: absolute; top: 100px; left: 100px; width: 300px; height: 400px; display: none; background-color: white; border: solid 1px #add9c0;">
+        <table id="showtable"></table>
+        <input type="button" value="关闭" onclick="    CloseDiv()" />
+    </div>
+    <fieldset style="margin-top: 100px;">
+        <legend>上架信息导入说明</legend>
+        <div id="importInstructionDiv">
+            1.模板中有模拟数据，请按照demo填写
+            <br />
+            2.尽量不要长时间段的导入,减轻服务器压力
+        </div>
+    </fieldset>
+    <div id="intelligentDispatchPanel" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">仓库</td>
+                <td>
+                    @Html.DropDownList("WarehouseQueue", WarehouseList, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">分配操作台</td>
+                <td>
+                    @Html.DropDownList("WorkStation", WorkStation, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">优先级</td>
+                <td>
+                    <select class="form-control" id="priority">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="intelligentDispatchOK" />
+            <input type="button" class="btn btn-success" value="取消" id="intelligentDispatchRT" />
+        </div>
+    </div>
+}
+<fieldset class="AfterTop">
+    <legend>
+        选择Excel导入上架信息
+    </legend>
+    <div id="importDiv">
+        <label>客户：</label>
+        @Html.DropDownListFor(m => m.Condition.CustomerID, Model.Customers, new { @id = "StorerID", @class = "form-control", @style = "width:200px;padding-bottom:1px" })
+        <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+        <input type="submit" value="导入" class="btn btn-primary" style="margin-top: -9px;" onclick="return fileImportClick();" />
+        <a class="btn btn-primary" style="margin-top: -9px; text-decoration: none; color: white" id="portButtonTemplet">下载模板</a>
+    </div>
+</fieldset>
+<fieldset style="margin-top: 20px;">
+    <legend>
+        导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>
+<div id="Abnormals" style="display: none">
+    <table>
+        <tr>
+            <td class="TableColumnTitle" style="width: 100px">退回状态</td>
+            <td>@Html.DropDownList("backStatusid", Model.ReceiptStatusBack, "==请选择==", new { @class = "form-control", @style = "width:200px" })</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="确定" id="statusBack" />
+        <input type="button" style="margin-left: 50px;" class="btn btn-success" value="返回" id="statusBackReturn" />
+    </div>
+</div>
+<script id="CheckDifference" type="text/x-jsrender">
+    <tr>
+        <td>{{:SKU}}</td>
+        <td>{{:QtyExpected}}</td>
+        <td>{{:QtyReceived}}</td>
+        <td>{{:QtyReceived-QtyExpected}}</td>
+    </tr>
+</script>
+<script id="CheckRFDifference" type="text/x-jsrender">
+    <tr>
+        <td>{{:str2}}</td>
+        <td>{{:SKU}}</td>
+        <td>{{:QtyExpected}}</td>
+        <td>{{:QtyReceived}}</td>
+        <td>{{:QtyReceived-QtyExpected}}</td>
+    </tr>
+</script>
+<script id="CheckOrderDifference" type="text/x-jsrender">
+    <tr>
+        <td>{{:id}}</td>
+        <td>{{:mess}}</td>
+    </tr>
+</script>
+
+

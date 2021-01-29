@@ -1,0 +1,107 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.ProductWarningViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{ 
+   
+    <fieldset id="WarehouseCondition">
+        <legend >查询条件</legend>
+        <table id="conditionTable">
+             <tbody id="table_body">
+            <tr>
+                @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+                <td class="TableColumnTitle"><label>客户</label></td>
+                 <td>                   
+                     @Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })                    
+                 </td>
+                <td class="TableColumnTitle"><label>SKU</label></td>
+                 <td>                   
+                     @Html.TextBoxFor(m => m.SearchCondition.ProductName, new { @class = "form-control",style="width:100%" })                    
+                 </td>              
+            </tr>
+                @* <tr>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>                    
+                    @Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle"><label>最小库存数</label></td>
+                <td>
+                    @Html.TextBoxFor(c=>c.SearchCondition.MinNumber, new { @class="form-control"})
+                </td>
+                <td class="TableColumnTitle"><label>最大库存数</label></td>
+                <td>
+                    @Html.TextBoxFor(c=>c.SearchCondition.MaxNumber, new { @class="form-control"})
+                </td>
+                 </tr>*@
+                 </tbody>
+            </table>
+             <div class="actionButtonDiv">
+               <input type="submit" @*class="btn btn-primary"*@class ="btn btn-success" value="查询" id="searchButton" name="Action" />    
+             </div>
+        </fieldset>
+    <fieldset>
+        <legend>
+            SKU列表
+        </legend>
+         <table  id="resultTable">
+           <thead>
+               <tr>
+                   <th class="checkBoxHead">
+                       @Html.CheckBox("selectAll",new { @class="btn btn-success" })                       
+                   </th>
+                   <th>SKU</th>
+                   <th>产品描述</th>
+                   </thead>
+            <tbody>
+                @if (Model.ProductCollection != null && Model.ProductCollection.Any())
+                {
+                    foreach (var sku in Model.ProductCollection)
+                    {
+                        var tdd = "operateTD" + @sku.ID;
+                        <tr id="@sku.ID">
+                            <td>
+                               @Html.CheckBox(sku.ID.ToString(), new { data_ID = sku.ID, @class = "btn btn-success" })
+                            </td>
+                            <td>
+                               @sku.SKU
+                            </td>
+                            <td>
+                                @sku.GoodsName
+                            </td>
+                         </tr>
+                    }
+                }
+                </tbody>
+             </table>
+          @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    <fieldset>
+        <legend>设置预警</legend>
+         <table id="ResultTable">
+             <tbody id="table_body2">
+                 <tr>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>                    
+                    @Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control",style="width:100%" })
+                </td>
+                <td class="TableColumnTitle"><label>最小库存数</label></td>
+                <td>
+                    @Html.TextBoxFor(c=>c.SearchCondition.MinNumber, new { @class="form-control",style="width:100%",oninput="replaceNotNumber(this)"})
+                </td>
+                <td class="TableColumnTitle"><label>最大库存数</label></td>
+                <td>
+                    @Html.TextBoxFor(c=>c.SearchCondition.MaxNumber, new { @class="form-control",style="width:100%",oninput="replaceNotNumber(this)"})
+                </td>
+                 </tr>
+                 </tbody>
+            </table>
+         <div class="actionButtonDiv">
+               <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="提交" id="submitButton" />    
+               <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="返回" id="backButton" />    
+             </div>
+    </fieldset>
+}

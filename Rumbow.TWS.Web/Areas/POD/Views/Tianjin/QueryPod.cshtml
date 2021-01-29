@@ -1,0 +1,134 @@
+﻿@model  Runbow.TWS.Web.Areas.POD.Models.QueryTianjinPodViewModel
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件
+        </legend>
+        <table id="SearchConditionTable">
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%;">运单号</td>
+                <td style="width: 23%;">
+                    @Html.TextAreaFor(m => m.CustomerOrderNumbers, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">客户名称</td>
+                <td style="width: 23%;">
+                    @Html.DropDownListFor(m => m.CustomerID, Model.Customers, "==请选择==")
+                </td>
+
+                <td class="TableColumnTitle" style="width: 10%;">承运商</td>
+                <td>
+                    @Html.TextBoxFor(m => m.ShipperName)
+                    @Html.HiddenFor(m => m.ShipperID)
+                </td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">运单类型</td>
+                <td>
+                    @Html.DropDownListFor(m => m.InOrOut, Model.InOrOuts)
+                </td>
+                <td class="TableColumnTitle">发货日期</td>
+                <td>
+                    @Html.CalendarRange("ActualDeliverlyDate", "calendarRange")
+                    @Html.HiddenFor(m => m.ActualDeliverlyDate)
+                    @Html.HiddenFor(m => m.EndActualDeliverlyDate)
+                </td>
+                <td class="TableColumnTitle">预计到货日期</td>
+                <td>
+                    @Html.CalendarRange("ExpertArrivalDate", "calendarRange")
+                    @Html.HiddenFor(m => m.ExpertArrivalDate)
+                    @Html.HiddenFor(m => m.EndExpertArrivalDate)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align: center;">
+                    
+                    <input type="submit" value="查询" id="SearchButton" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>运单列表
+             @if (Model.PodCollection != null && Model.PodCollection.Any())
+             {
+                 @Html.Raw("(" + Model.PodCollection.Count() + ")");
+             }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>系统运单号</th>
+                    <th>客户运单号</th>
+                    <th>客户</th>
+                    <th>承运商</th>
+                    <th>运单状态</th>
+                    <th>运输类型</th>
+                    <th>起运城市</th>
+                    <th>目的城市</th>
+                    <th>运单类型</th>
+                    <th>发货日期</th>
+                    <th>箱数</th>
+                    <th>件数</th>
+                    <th>重量</th>
+                    <th>体积</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodCollection != null && Model.PodCollection.Any())
+                {
+                    foreach (var pod in Model.PodCollection)
+                    {
+                    <tr data-id="@pod.ID" data-CustomerID="@pod.CustomerID">
+                        <td>
+                            <a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAll/@pod.ID?showEditRelated=false">@pod.SystemNumber</a>
+                        </td>
+                        <td>
+                            @pod.CustomerOrderNumber
+                        </td>
+                        <td>
+                            @pod.CustomerName
+                        </td>
+                        <td>
+                            @pod.ShipperName
+                        </td>
+                        <td>
+                            @pod.PODStateName
+                        </td>
+                        <td>
+                            @pod.ShipperTypeName
+                        </td>
+                        <td>
+                            @pod.StartCityName
+                        </td>
+                        <td>
+                            @pod.EndCityName
+                        </td>
+                        <td>
+                            @pod.PODTypeName
+                        </td>
+                        <td>
+                            @if (pod.ActualDeliveryDate.HasValue)
+                            {
+                                @pod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd")
+                            }
+                        </td>
+                        <td>
+                            @pod.BoxNumber
+                        </td>
+                        <td>
+                            @pod.GoodsNumber
+                        </td>
+                        <td>
+                            @pod.Weight
+                        </td>
+                        <td>
+                            @pod.Volume
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}

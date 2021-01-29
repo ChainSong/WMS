@@ -1,0 +1,28 @@
+﻿@media print{
+body{padding: 0; margin: 0;}
+div.prth{display: none;}
+}
+
+.navi{
+text-align:right;
+background:#eee;
+float:right;
+}
+table{clear:both}
+
+table{table-layout: fixed;}
+.dd
+{
+width:180px;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+course:hand;
+text-align:center;
+}
+
+
+
+
+
+

@@ -1,0 +1,877 @@
+﻿@model Runbow.TWS.Web.Areas.ShipperManagement.Models.CRMShipperOperationViewModel
+           <!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.RateStarResource()
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.CRMShipper.ID)
+    @Html.HiddenFor(m => m.CRMShipper.Attribution)
+    @Html.HiddenFor(m => m.ViewType)
+    @Html.HiddenFor(m => m.ShowEditButton)
+    @Html.HiddenFor(m => m.CRMShipper.CreateTime)
+    @Html.HiddenFor(m => m.CRMShipper.Creator)
+    <fieldset>
+        <legend>基础信息
+        </legend>
+        <table id="BasicInfo">
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">企业名称</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType != 1)
+                    {
+                        @Model.CRMShipper.Name
+                        @Html.HiddenFor(m => m.CRMShipper.Name);
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.Name, new { @class ="form-control"});
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">法人代表</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.LegalRepresentative, new { @class ="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.LegalRepresentative
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">法人联系方式</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.LegalRepresentativeConta, new { @class ="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.LegalRepresentativeConta
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">归属区域</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "attributionID", NameKey = "attributionName", TreeKey = Guid.NewGuid().ToString() })
+                        <a id="AttributionClear" href="#">清空</a>
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.Attribution
+                    }
+                </td>
+                <td class="TableColumnTitle">负责人</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.PersonInCharge, new { @class ="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.PersonInCharge
+                    }
+                </td>
+                <td class="TableColumnTitle">负责人联系方式</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.PersonInChargeContact, new { @class ="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.PersonInChargeContact
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">运输方式</td>
+                <td colspan="5">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CheckBoxListFor(
+                        m => m.PostedTransportModes,
+                        m => m.TransportModes,
+                        m => m.Value,
+                        m => m.Text,
+                        m => m.SelectedTransportModes)
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.TransportMode
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">注册资金(万元)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.RegisteredCapital, new { @class ="form-control",style ="width:48%"})
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Html.DropDownListFor(m => m.CRMShipper.RegisteredCapitalRange, Model.RegisteredCapital, new { @class ="form-control",style ="width:48%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.RegisteredCapital
+                        @Html.Raw("万元")
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Model.CRMShipper.RegisteredCapitalRange
+                    }
+                </td>
+                <td class="TableColumnTitle">年营业额(万元)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.AnnualTurnover, new { @class ="form-control",style ="width:48%"})
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Html.DropDownListFor(m => m.CRMShipper.AnnualTurnoverRange, Model.AnnualTurnover, new { @class ="form-control",style ="width:48%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.AnnualTurnover
+                        @Html.Raw("万元")
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Model.CRMShipper.AnnualTurnoverRange
+                    }
+                </td>
+                <td class="TableColumnTitle">合作项目</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.Str2, new { @class ="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.Str2
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">合同开始日期</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CalendarFor(m => m.CRMShipper.DateTime1)
+                    }
+                    else
+                    {
+                        if (Model.CRMShipper.DateTime1.HasValue)
+                        {
+                            @Model.CRMShipper.DateTime1.Value.ToString("yyyy-MM-dd") 
+                        }
+                    }
+                </td>
+                <td class="TableColumnTitle">合同结束日期</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CalendarFor(m => m.CRMShipper.DateTime2)
+                    }
+                    else
+                    {
+                        if (Model.CRMShipper.DateTime2.HasValue)
+                        {
+                            @Model.CRMShipper.DateTime2.Value.ToString("yyyy-MM-dd") 
+                        }
+                    }
+                </td>
+                <td class="TableColumnTitle">实际终止合作日期</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CalendarFor(m => m.CRMShipper.DateTime3)
+                    }
+                    else
+                    {
+                        if (Model.CRMShipper.DateTime3.HasValue)
+                        {
+                            @Model.CRMShipper.DateTime3.Value.ToString("yyyy-MM-dd") 
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">六证</td>
+                <td colspan="5">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CheckBoxListFor(
+                        m => m.PostedSixCards,
+                        m => m.SixCards,
+                        m => m.Value,
+                        m => m.Text,
+                        m => m.SelectedSixCards)
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.SixCard
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">六证图片</td>
+                <td colspan="5">
+                    @Html.HiddenFor(m => m.CRMShipper.Str3)
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_SixCard", "Hidden_AttachmentGroupID_SixCard", Model.CRMShipper.Str3, true, true, false, false)
+                    }
+                    else
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_SixCard", "Hidden_AttachmentGroupID_SixCard", Model.CRMShipper.Str3, false, true, false, false)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">前端地址</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.FrontEndAddress, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.FrontEndAddress
+                    }
+                </td>
+                <td class="TableColumnTitle">办公面积(㎡)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.OfficeArea, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.OfficeArea
+                        @Html.Raw("㎡")
+                    }
+                </td>
+                <td class="TableColumnTitle">仓库面积(㎡)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.WarehouseArea, new { style = "width:48%",@class="form-control" })
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Html.DropDownListFor(m => m.CRMShipper.WarehouseAreaRange, Model.WarehouseArea, new { @class="form-control",style="width:48%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.WarehouseArea
+                        @Html.Raw("㎡")
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Model.CRMShipper.WarehouseAreaRange
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">员工人数</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.NumberOfEmployees, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.NumberOfEmployees
+                        @Html.Raw("人")
+                    }
+                </td>
+                <td class="TableColumnTitle">客服人数</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.NumberOfCustomerService, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.NumberOfCustomerService
+                        @Html.Raw("人")
+                    }
+                </td>
+                <td class="TableColumnTitle">装卸工人数</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.NumberOfStevedores, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.NumberOfStevedores
+                        @Html.Raw("人")
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">叉车数量(辆)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.ForkliftsUsage, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.ForkliftsUsage
+                    }
+                </td>
+                <td class="TableColumnTitle">装卸平台</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m => m.CRMShipper.LoadingPlatform, Model.LoadingPlatforms, new { style="width:50%",@class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.LoadingPlatform
+                    }
+                </td>
+                <td class="TableColumnTitle">车辆是否有GPS</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m => m.CRMShipper.Str1, Model.HasGPS, new { @class="form-control",style="width:50%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.Str1
+                    }
+                </td>
+            </tr>
+            @if (Model.ViewType != 1)
+            {
+                <tr>
+                    <td colspan="6">
+                        <fieldset style="width: 96%">
+                            <legend>终端地址信息
+                                @if (Model.ShowEditButton)
+                                {
+                                    @Html.Raw(" &nbsp; &nbsp;")
+                                    @Html.ActionLink("新增/编辑", "CRMShipperTerminalInfoManage", new { id = Model.CRMShipper.ID, ViewType = Model.ViewType })
+                                }
+                            </legend>
+                            <table id="TerminalInfoTable">
+                                <thead>
+                                    <tr>
+                                        <th>终端地址</th>
+                                        <th>联系人</th>
+                                        <th>联系方式</th>
+                                        <th>是否自有</th>
+                                        <th>办公面积(㎡)</th>
+                                        <th>仓库面积(㎡)</th>
+                                        <th>员工人数</th>
+                                        <th>客服人数</th>
+                                        <th>装卸工人数</th>
+                                        <th>叉车数量</th>
+                                        <th>装卸平台</th>
+                                        <th>配送车辆</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.CRMShipperTerminalInfoCollection != null && Model.CRMShipperTerminalInfoCollection.Any())
+                                    {
+                                        foreach (var terminalInfo in Model.CRMShipperTerminalInfoCollection)
+                                        {
+                                        <tr>
+                                            <td>@terminalInfo.TerminalAddress</td>
+                                            <td>@terminalInfo.Str1</td>
+                                            <td>@terminalInfo.Str2</td>
+                                            <td>@terminalInfo.IsOwn</td>
+                                            <td>@terminalInfo.TerminalOfficeArea</td>
+                                            <td>@terminalInfo.TerminalWareHouseAreaRange</td>
+                                            <td>@terminalInfo.TerminalNumberOfEmployees</td>
+                                            <td>@terminalInfo.TerminalNumberOfCustomerService</td>
+                                            <td>@terminalInfo.TerminalNumberOfStevedores</td>
+                                            <td>@terminalInfo.TerminalForkliftsUsage</td>
+                                            <td>@terminalInfo.TerminalLoadingPlatform</td>
+                                            <td>@terminalInfo.TerminalDeliveryVehicles</td>
+                                        </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>  
+                <tr>
+                    <td colspan="6">
+                        <fieldset style="width: 96%">
+                            <legend>主营线路
+                                @if (Model.ShowEditButton)
+                                {
+                                    @Html.Raw(" &nbsp; &nbsp;")
+                                    @Html.ActionLink("新增/编辑", "CRMShipperTransportationLineManage", new { id = Model.CRMShipper.ID, ViewType = Model.ViewType })
+                                }
+                            </legend>
+                            <table id="TransportLineTable">
+                                <thead>
+                                    <tr>
+                                        <th>出发地</th>
+                                        <th>目的地</th>
+                                        <th>运输时效</th>
+                                        <th>覆盖线路</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.CRMShipperTransportationLineCollection != null && Model.CRMShipperTransportationLineCollection.Any())
+                                    {
+                                        var groupedTransportLines = from p in Model.CRMShipperTransportationLineCollection group p by new { p.StartCityName, p.EndCityName, p.Period } into g select new { g.Key, CoverRegion = g.Select(k => k.CoverRegionName) };
+                                        foreach (var crmShipperTransportationLine in groupedTransportLines)
+                                        {
+                                        <tr>
+                                            <td>
+                                                @crmShipperTransportationLine.Key.StartCityName
+                                            </td>
+                                            <td>
+                                                @crmShipperTransportationLine.Key.EndCityName
+                                            </td>
+                                            <td>
+                                                @crmShipperTransportationLine.Key.Period
+                                            </td>
+                                            <td>
+                                                @{
+                                            int i = 0;
+                                            int count = crmShipperTransportationLine.CoverRegion.Count();
+                                            foreach (var coverRegion in crmShipperTransportationLine.CoverRegion)
+                                            {
+                                                if (i == count - 1)
+                                                {
+                                                    @coverRegion
+                                                }
+                                                else
+                                                {
+                                                    @coverRegion
+                                                    @Html.Raw("|")
+                                                }
+
+                                                i++;
+                                            }
+                                                }
+
+                                            </td>
+                                        </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>             
+            }
+        </table>
+    </fieldset>
+    
+    <fieldset>
+        <legend>车辆信息
+        </legend>
+        <table id="VehicleInfoTable">
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">干线车辆(含合同)</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.TrunkOfVehicle, new {@class="form-control", style = "width:48%" })
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Html.DropDownListFor(m => m.CRMShipper.TrunkOfVehicleRange, Model.TrunkOfVehicles, new { @class="form-control",style="width:48%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.TrunkOfVehicle
+                        @Html.Raw("辆")
+                        @Html.Raw("&nbsp;&nbsp;");
+                        @Model.CRMShipper.TrunkOfVehicleRange
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">车辆类型</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CheckBoxListFor(
+                        m => m.PostedTrunkOfVehicleTypes,
+                        m => m.TrunkOfVehicleTypes,
+                        m => m.Value,
+                        m => m.Text,
+                        m => m.SelectedTrunkOfVehicleTypes)
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.TrunkOfVehicleType
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">提货车辆(含合同)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.DeliveryOfVehicle, new {@class="form-control", style = "width:48%" })
+                        @Html.Raw("&nbsp;&nbsp")
+                        @Html.DropDownListFor(m => m.CRMShipper.DeliveryOfVehicleRange, Model.DeliveryOfVehicles, new { @class="form-control",style="width:48%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.DeliveryOfVehicle
+                        @Html.Raw("辆")
+                        @Html.Raw("&nbsp;&nbsp;");
+                        @Model.CRMShipper.DeliveryOfVehicleRange
+                    }
+                </td>
+                <td class="TableColumnTitle">车辆类型</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CheckBoxListFor(
+                        m => m.PostedDeliveryOfVehicleTypes,
+                        m => m.DeliveryOfVehicleTypes,
+                        m => m.Value,
+                        m => m.Text,
+                        m => m.SelectedDeliveryOfVehicleTypes)
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.DeliveryOfVehicleType
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">终端车辆(含合同)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.TermialOfVehicle, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.TermialOfVehicle
+                        @Html.Raw("辆")
+                    }
+                </td>
+                <td class="TableColumnTitle">车辆类型</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.CheckBoxListFor(
+                        m => m.PostedTermialOfVehicleTypes,
+                        m => m.TermialOfVehicleTypes,
+                        m => m.Value,
+                        m => m.Text,
+                        m => m.SelectedTermialOfVehicleTypes)
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.TermialOfVehicleType
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    
+    <fieldset>
+        <legend>运作信息
+        </legend>
+        <table id="OperationInfo">
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">发车频次(车/天)</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m => m.CRMShipper.FrequencyOfDeparture, Model.FrequencyOfDepartures, new { @class="form-control",style="width:50%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.FrequencyOfDeparture
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">货物结构</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m => m.CRMShipper.GoodsStructure, Model.GoodsStructures, new { @class="form-control",style="width:50%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.GoodsStructure
+                    }
+                </td>
+                <td class="TableColumnTitle">是否有保单</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m => m.CRMShipper.Str4, Model.Status_String, new { @class="form-control",style="width:50%"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.Str4
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">投保公司</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.InsuranceCompanies, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.InsuranceCompanies
+                    }
+                </td>
+                <td class="TableColumnTitle">购买险种</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.InsuranceType, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.InsuranceType
+                    }
+                </td>
+                <td class="TableColumnTitle">保额</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.SumInsured, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.SumInsured
+                    }
+                </td>
+                
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">有效期限</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.ValidityPeriod, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.ValidityPeriod
+                    }
+                </td>
+                <td class="TableColumnTitle">货损货差控制方法</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.CargoDamageControl, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.CargoDamageControl
+                    }
+                </td>
+                <td class="TableColumnTitle">货损货差处理方法</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.CargoDamageHanding, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.CargoDamageHanding
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+                    if (Model.ViewType != 1)
+                    {
+    <fieldset>
+        <legend>合作客户(现有重点客户或资源)
+            @if (Model.ShowEditButton)
+            {
+                @Html.Raw(" &nbsp; &nbsp;")
+                @Html.ActionLink("新增/编辑", "CRMShipperCooperationManage", new { id = Model.CRMShipper.ID, ViewType = Model.ViewType })
+            }
+        </legend>
+        <table id="CollaborationClient">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">客户名称</th>
+                    <th style="width: 8%;">来源</th>
+                    <th style="width: 8%;">运量</th>
+                    <th style="width: 8%;">营业额</th>
+                    <th style="width: 8%;">是否垫资</th>
+                    <th style="width: 8%;">垫资周期</th>
+                    <th style="width: 8%;">运作时间</th>
+                    <th style="width: 24%;">产品类型</th>
+                    <th style="width: 20%;">相关资料</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.CRMShipperCooperationCollection != null && Model.CRMShipperCooperationCollection.Any())
+                {
+                    foreach (var crmShipperCooperation in Model.CRMShipperCooperationCollection)
+                    {
+                    <tr>
+                        <td>
+                            @crmShipperCooperation.Name
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str1
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str2
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str3
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str4
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str5
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str6
+                        </td>
+                        <td>
+                            @crmShipperCooperation.Str7
+                        </td>
+                        <td>
+                            @Html.SingleFileUpload("fileAttachmentGroupID" + crmShipperCooperation.ID.ToString(), "Hidden_AttachmentGroupID" + crmShipperCooperation.ID, crmShipperCooperation.AttachmentGroupID, true, true, false, false)
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+                    }
+    
+    <fieldset>
+        <legend>其他信息
+        </legend>
+        <table id="OtherInfo">
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">合作类型</td>
+                <td style="width: 21%;">
+                    @Html.DropDownListFor(m => m.CRMShipper.PartnershipTypes, Model.PartnerShipTypes, new { @class="form-control",style="width:50%"})
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">原因</td>
+                <td colspan="3">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.BlackListReason, new {@class="form-control", style = "width:95%" })
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.BlackListReason
+                    }
+
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">企业形象</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.CompanyImage, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.CompanyImage
+                    }
+                </td>
+                <td class="TableColumnTitle">员工素质</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.StaffQuality, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.StaffQuality
+                    }
+                </td>
+                <td class="TableColumnTitle">现场服务</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(m => m.CRMShipper.OnsiteCustomerService, new { @class="form-control"})
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.OnsiteCustomerService
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">评分指数</td>
+                <td style="width: 21%;">
+                    <div id="RatingDiv"></div>
+                    @Html.HiddenFor(m => m.CRMShipper.Rating)
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">推荐指数</td>
+                <td style="width: 21%;">
+                    <div id="RecommendedDiv"></div>
+                    @Html.HiddenFor(m => m.CRMShipper.Recommended)
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">是否使用</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m => m.CRMShipper.Status, Model.Status, new { @class="form-control",style="width:50%"})
+                    }
+                    else
+                    {
+                        if (Model.CRMShipper.Status.HasValue && Model.CRMShipper.Status.Value)
+                        {
+                        @Html.Raw("是")
+                        }
+                        else
+                        {
+                        @Html.Raw("否")
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>说明</td>
+                <td colspan="5">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextAreaFor(m => m.CRMShipper.Remark, new {@class="form-control", style = "width:95%" })
+                    }
+                    else
+                    {
+                        @Model.CRMShipper.Remark
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>图片信息</td>
+                <td colspan="5">
+                    @Html.HiddenFor(m => m.CRMShipper.AttachmentGroupID)
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID", "Hidden_AttachmentGroupID", Model.CRMShipper.AttachmentGroupID, true, true, false, false)
+                    }
+                    else
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID", "Hidden_AttachmentGroupID", Model.CRMShipper.AttachmentGroupID, false, true, false, false)
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        @{
+                    if (Model.ViewType != 0)
+                    {
+            <input type="submit" value="提交" id="submitButton" class="btn btn-success" />
+                    }
+                    if (Model.ViewType != 1)
+                    {
+            @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;");
+            <input type="button" value="返回" id="returnButton" class="btn btn-success" />
+                    }
+        }
+    </div>
+}

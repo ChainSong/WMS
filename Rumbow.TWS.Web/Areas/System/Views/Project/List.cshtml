@@ -1,0 +1,93 @@
+﻿@{
+    var projects = ViewData["Projects"] as IEnumerable<Runbow.TWS.Entity.System.Project>;
+}
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+    });
+
+    //删除项目
+    function DeleteP(pId) {
+        //删除前询问 避免导致误删
+        layer.confirm('您确认要删除吗？', {
+            btn: ['确认', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: 'POST',
+                url: "/System/Project/Delete",
+                data: {
+                    ID: pId
+                },
+                success: function (data) {
+                    layer.msg("删除成功！", { icon: 1, time: 1000 }, function () { window.location.href = '/System/Project/List'; });
+                },
+                error: function () {
+
+                }
+
+            });
+        });
+    }
+
+
+</script>
+
+
+<fieldset>
+    <legend>查询条件</legend>
+    @using (Html.BeginForm("List", "Project", FormMethod.Post))
+    {
+        <table>
+            <tr>
+                <td class="TableColumnTitle">公司名称:</td>
+                <td>@Html.TextBox("txtName", null, new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">公司描述:</td>
+                <td>@Html.TextBox("txtDescription", null, new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">是否可用:</td>
+                <td>@Html.DropDownList("ddL", ViewData["ddl"] as IEnumerable<SelectListItem>, new { @class = "form-control" })</td>
+            </tr>
+
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="btnSave" />
+            <input class="btn btn-success" type="button" value="创建" id="btnAdd" onclick="window.location.href = '/System/Project/Create'" />
+        </div>
+    }
+</fieldset>
+<fieldset style="margin-top: 10px;">
+    <legend>
+        公司列表
+    </legend>
+    <table>
+        <thead>
+            <tr>
+                <th>公司名称</th>
+                <th>公司描述</th>
+                <th>创建时间</th>
+                <th>是否可用</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in projects)
+            {
+                <tr id="@p.ID">
+                    <td>@p.Name</td>
+                    <td>@p.Description</td>
+                    <td>@p.CreateDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @Html.ChooseString(p.State, "可用", "禁用")
+                    </td>
+                    <td style="width: 20%;">
+                        @Html.ActionLink("编辑", "Edit", new { ID = @p.ID, state = @p.State }, new { @class = "btn btn-info btn-sm", style = "color:#fff;" })
+                        <a id="btnDel" class="btn btn-info btn-sm" href="#" data-id="@p.ID" onclick="DeleteP('@p.ID');" style=" cursor:pointer;color:#fff;">删除</a>
+                        <a id="btnTemplate" class="btn btn-info btn-sm" href="#" data-id="@p.ID" onclick="EditTemplate('@p.ID');" style=" cursor:pointer;color:#fff;">编辑模板</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</fieldset>

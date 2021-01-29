@@ -1,0 +1,88 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ProjectModel
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/Framework/jquery-1.9.1.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var objtemp = '@ViewBag.Message';
+        if (objtemp != undefined && objtemp != "")
+            if (objtemp != "公司名称已存在!")
+                layer.msg(objtemp, { icon: 1, time: 1000 }, function () { window.location.href = '/System/Project/List'; });
+            else
+                layer.msg(objtemp, function () { });
+
+        //判断公司编码唯一性
+        $("#Code").blur(function () {
+            var tempvalue = $(this).val();
+
+            $.ajax({
+                type: 'POST',
+                url: "/System/Project/CheckCode",
+                data: { code: tempvalue,IsEdit:false },
+                success: function (data) {
+                    if (data != "")
+                    {
+                        layer.msg(data, function () { });
+                        $("#Code").focus();
+                        $('#btnSave').prop('disabled', true);
+                    } else {
+                        $('#btnSave').prop('disabled', false);
+                    }
+                },
+                error: function () {
+
+                }
+            });
+
+
+        });
+
+    });
+
+
+
+
+</script>
+
+
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>新增公司
+        </legend>
+        <table id="box">
+            <tr>
+                <td class="TableColumnTitle">
+
+                    @Html.Label("公司名称")
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Name)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("公司编码")
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Code)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("公司描述")
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Description)
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input id="btnSave" type="submit" class="btn btn-success" value="保存" />
+            <input id="btnCancel" type="button" onclick="window.location.href = '/System/Project/List'" class="btn btn-success" value="返回" />
+        </div>
+    </fieldset>
+}

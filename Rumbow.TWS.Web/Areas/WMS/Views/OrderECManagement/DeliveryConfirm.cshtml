@@ -1,0 +1,126 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderECManagement.DeliveryConfirmModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime)//创建时间
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+
+    <fieldset>
+        <legend>交接清单</legend>
+
+        <table id="conditionTable">
+            @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+            }
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>交接单号</label>
+                </td>
+                <td style="width: 16%;">@Html.TextBoxFor(m => m.SearchCondition.DeliverKey, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    客户
+                <td style="width: 16%;">
+                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">仓库</td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.WarehouseName, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="新增" id="addButton" />
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+        </div>
+
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            交接清单列表
+            @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+            {
+                @Html.Raw("(" + Model.DeliverHeaderConnection.Count() + ")");
+            }
+        </legend>
+
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th class="checkBoxHead">
+                            @Html.CheckBox("selectAll", new { @class = "btn btn-success" })
+                        </th>
+                        <th style="width: 150px">交接单号</th>
+                        <th style="width: 100px">客户</th>
+                        <th style="width: 100px">仓库</th>
+                        <th style="width: 150px">快递公司</th>
+                        <th style="width: 50px">状态</th>
+                        <th style="width: 100px">创建人</th>
+                        <th style="width: 150px">创建时间</th>
+                        <th style="width: 100px">更新人</th>
+                        <th style="width: 150px">更新时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        foreach (var info in Model.DeliverHeaderConnection)
+                        {
+                            <tr id="@info.ID">
+                                <td>
+                                    @Html.CheckBox(info.ID.ToString(), new { data_ID = info.ID, data_name = info.DeliverKey, @class = "btn btn-success" })
+                                </td>
+                                <td>
+
+                                    <a href="/WMS/OrderECManagement/DeliverDetail/?ID=@info.ID&Type=1&customerID=@info.CustomerID&warehouse=@info.WarehouseName">@info.DeliverKey</a>
+                                </td>
+                                <td>
+                                    @info.CustomerName
+                                </td>
+                                <td>
+                                    @info.WarehouseName
+                                </td>
+                                <td>
+                                    @info.ExpressCompany
+                                </td>
+                                <td>
+                                    @info.Status
+                                </td>
+                                <td>
+                                    @info.Creator
+                                </td>
+                                <td>
+                                    @info.CreateTime
+                                </td>
+                                <td>
+                                    @info.Updator
+                                </td>
+                                <td>
+                                    @info.UpdateTime
+                                </td>
+                            </tr>
+
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+
+
+
+}
+
+
+

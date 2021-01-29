@@ -1,0 +1,53 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>基本信息
+        </legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">预入库单号</td>
+                <td>@Html.TextBox("qq", "", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">外部单号</td>
+                <td>@Html.TextBox("11", "", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">预入库时间</td>
+                <td>@Html.TextBox("122", "", new { @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">预入库单类型</td>
+                <td>@Html.TextBox("1dd2", "", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">预入库单状态</td>
+                <td>@Html.TextBox("dee", "", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">完成时间</td>
+                <td>@Html.TextBox("dda", "", new { @class = "form-control" })</td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>明细列表
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    <th>行号</th>
+                    <th>SKU</th>
+                    <th>期望数量</th>
+                    <th>实际数量</th>
+                </tr>
+            </thead>
+        </table>
+
+    </fieldset>
+    <div class="actionButtonDiv">
+        @{if (Convert.ToInt32(@ViewData["ViewType"]) == 1)
+          {
+            <input type="submit" class="btn btn-primary" value="提交" id="submitButton" />
+          }
+            <input type="button" class="btn btn-primary" value="返回" id="returnButton" />
+        }
+
+
+    </div>
+     
+} 

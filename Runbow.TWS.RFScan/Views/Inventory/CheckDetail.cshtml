@@ -1,0 +1,492 @@
+@{
+    ViewBag.Title = "盘点明细";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <title>盘点明细</title>
+    <script type="text/javascript">
+        var checkArray = new Array();
+        var CheckNumber = "";
+        var NowLocation = "";
+        function isExistOption(id, value) {
+            var isExist = false;
+            var count = $('#' + id).find('option').length;
+            for (var i = 0; i < count; i++) {
+                if ($('#' + id).get(0).options[i].value == value) {
+                    isExist = true;
+                    break;
+                }
+            }
+            return isExist;
+        }
+        $(document).ready(function () {
+            $("#checknumber").attr("readonly", "readonly");
+            CheckNumber = $("#checknumber").val();
+            $("#sku").attr("readonly", "readonly");
+            $("#location").focus();
+            $.ajax({
+                type: "Post",
+                url: '/Inventory/GoodsTypeList',
+                data: {},
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                        $.each(data, function (index, item) {
+                            if (!isExistOption("goodstype", item.Name)) {
+                                $("#goodstype").append("<option value='" + item.Name + "'>" + item.Name + "</option>");
+                            }
+                        });
+                    }
+                    else {
+                        if (!isExistOption("goodstype", "A品")) {
+                            $("#goodstype").append("<option value='A品'>A品</option>");
+                        }
+                    }
+
+                },
+                error: function (msg) {
+                    if (!isExistOption("goodstype", "A品")) {
+                        $("#goodstype").append("<option value='A品'>A品</option>");
+                    }
+                }
+
+            });
+            $.ajax({
+                type: "Post",
+                url: '/Inventory/UintList',
+                data: {},
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                        $.each(data, function (index, item) {
+                            if (!isExistOption("unit", item.Unit)) {
+                                $("#unit").append("<option value='" + item.Unit + "'>" + item.Unit + "</option>");
+                            }
+                        });
+                    }
+                    else {
+                        if (!isExistOption("unit", "个")) {
+                            $("#unit").append("<option value='个'>个</option>");
+                        }
+                    }
+
+                },
+                error: function (msg) {
+                    if (!isExistOption("unit", "个")) {
+                        $("#unit").append("<option value='个'>个</option>");
+                    }
+                }
+
+            });
+            //var checklist=new Array();
+            //$.ajax({
+            //    type: "Post",
+            //    url: '/Inventory/GetCheckList',
+            //    data: { },
+            //    async: false,
+            //    dataType: "json",
+            //    success: function (data) {
+            //        if (data.length > 0) {
+            //            //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+            //            checklist = data;
+            //            $.each(checklist, function (index2, item2) {
+            //                var apptext = "<tr>";
+            //                apptext += "<td>";
+            //                apptext += "<a href='#'>";
+            //                apptext += item2.CheckNumber;
+            //                apptext += "</a>";
+            //                apptext += "</td>";
+            //                apptext += "<td>";
+            //                apptext += item2.Type_Description;
+            //                apptext += "</td>";
+            //                apptext += "<td>";
+            //                apptext += item2.CreateTime;
+            //                apptext += "</td>";
+            //                apptext += "</tr>";
+            //                $("#MainTable").append(apptext);
+            //            });
+            //        }
+            //        else {
+            //        }
+            //    },
+            //    error: function (msg) {
+            //        alert("网络连接失败！");
+            //    }
+
+            //});
+
+        });
+        function SaveData() {
+            if (checkArray.length <= 0) {
+                alert("没有需要提交的数据！")
+                return;
+            }
+            var JsonData = "";
+            JsonData += "[";
+            $.each(checkArray, function (index, item) {
+                JsonData += "{";
+                JsonData += "\"CheckNumber\":\"" + item[0] + "\",";
+                JsonData += "\"Location\":\"" + item[1] + "\",";
+                JsonData += "\"SKU\":\"" + item[2] + "\",";
+                JsonData += "\"GoodsType\":\"" + item[3] + "\",";
+                JsonData += "\"Unit\":\"" + item[4] + "\",";
+                JsonData += "\"ActualQty\":\"" + item[5] + "\"},";
+                //JsonData += "{";
+                //JsonData += "\"CheckNumber\":\"" + item[index][0] + "\",";
+                //JsonData += "\"Location\":\"" + item[index][1] + "\",";
+                //JsonData += "\"SKU\":\"" + item[index][2] + "\",";
+                //JsonData += "\"GoodsType\":\"" + item[index][3] + "\",";
+                //JsonData += "\"Unit\":\"" + item[index][4] + "\",";
+                //JsonData += "\"Qty\":\"" + item[index][5] + "\"},";
+
+            });
+            JsonData = JsonData.substring(0, JsonData.length - 1);
+            JsonData += "]";
+            //var txt = "[";
+            //var table = document.getElementById("Newtable");
+            //var row = table.getElementsByTagName("tr");
+            //var col = row[0].getElementsByTagName("th");
+
+            //for (var j = 1; j < row.length; j++) {
+            //    var r = "{";
+            //    for (var i = 1; i < col.length; i++) {
+            //        var tds = row[j].getElementsByTagName("td");
+            //        if (i != 0 && i != 1) {
+            //            //DisplayName
+            //            if ($(tds[i]).children("select").length > 0) {
+            //                r += "\"" + $(col[i]).data().dbcolumnname + "\"\:\"" + $(tds[i]).find("option:selected")[0].value.trim() + "\",";
+            //            } else if ($(tds[i]).children("input").length > 0) {
+            //                r += "\"" + $(col[i]).data().dbcolumnname + "\"\:\"" + $(tds[i]).children("input")[0].value.trim() + "\",";
+            //            }
+            //        }
+            //        else {
+            //            r += "\"" + $(col[i]).data().dbcolumnname + "\"\:\"" + tds[i].innerText.trim() + "\",";
+            //        }
+            //    }
+            //    r = r.substring(0, r.length - 1)
+            //    r += "},";
+            //    txt += r;
+            //}
+            //txt = txt.substring(0, txt.length - 1);
+            //txt += "]";
+
+            $.ajax({
+                type: "Post",
+                url: '/Inventory/SaveCheckList',
+                data: { "CheckNumber": CheckNumber, "JsonData": JsonData },
+                async: false,
+                success: function (data) {
+                    if (data == "1") {
+                        //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                        alert("保存成功！");
+                        $("#location").val("");
+                        $("#sku").val("");
+                        $("#sku").attr("readonly", "readonly");
+                        $("#location").removeAttr("readonly");
+                        $("#location").focus();
+                        checkArray.length = 0;
+                        $("#MainTable").empty();
+                        return;
+                    }
+                    else {
+                        alert("保存失败！");
+                    }
+
+                },
+                error: function (msg) {
+                    alert("保存失败！");
+                }
+
+            });
+        }
+        function tdback() {
+            history.back(-1);
+        }
+        function GetRequest() {
+            var url = location.search; //获取url中"?"符后的字串
+            var theRequest = new Object();
+            if (url.indexOf("?") != -1) {
+                var str = url.substr(1);
+                strs = str.split("&");
+                for (var i = 0; i < strs.length; i++) {
+                    theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                }
+            }
+            return theRequest;
+        }
+        function ScanLocation(event) {
+            if (event.keyCode == 13) {
+                if ($("#location").val() == "") {
+                    alert("库位不能为空！");
+                    return;
+                }
+
+                $("#location").attr("readonly", "readonly");
+                $("#sku").removeAttr("readonly");
+                NowLocation = $("#location").val();
+                $("#sku").focus();
+            }
+        }
+        function ClearButton() {
+            checkArray.length = 0;
+            $("#MainTable").empty();
+            $("#location").removeAttr("readonly");
+            $("#location").val("");
+            $("#sku").attr("readonly", "readonly");
+            $("#sku").val("");
+            $("#location").focus();
+        }
+
+        function ScanSKU(event) {
+            if (event.keyCode == 13) {
+                if ($("#sku").val() == "") {
+                    alert("SKU不能为空");
+                    return;
+                }
+                if ($("#ck_scan").get(0).checked && $("#sku").val().length >= 2 && $("#sku").val().substring(0, 2) != "00") {
+                    $("#sku").val("00" + $("#sku").val());
+                }
+                var isexist = false;
+                $.each(checkArray, function (index, item) {
+                    if (item[2] == $("#sku").val() && item[3] == $("#goodstype").val() && item[4] == $("#unit").val()) {
+                        item[5] += 1;
+                        isexist = true;
+                    }
+                });
+                if (!isexist) {
+                    var totallength = 0;
+                    totallength = checkArray.length;
+                    checkArray[totallength] = new Array();
+                    checkArray[totallength][0] = CheckNumber;
+                    checkArray[totallength][1] = NowLocation;
+                    checkArray[totallength][2] = $("#sku").val();
+                    checkArray[totallength][3] = $("#goodstype").val();
+                    checkArray[totallength][4] = $("#unit").val();
+                    checkArray[totallength][5] = 1;
+                }
+                $("#sku").select();
+
+                Refresh();
+            }
+        }
+        function ScanFouce(obj) {
+            $("#sku").select();
+            $("#sku").focus();
+        }
+        function Refresh() {
+            $("#MainTable").empty();//清空所有数据，全部重新加载
+            $.each(checkArray, function (index, item) {
+                var apptext = "<tr style='width:100%' >";
+                apptext += "<td  style='width:60%'>";
+                apptext += item[2];
+                apptext += "</td>";
+                apptext += "<td style='width:20%'>";
+                apptext += item[3];
+                apptext += "</td>";
+                apptext += "<td  style='width:10%'>";
+                apptext += item[4];
+                apptext += "</td>";
+                apptext += "<td style='width:10%'>";
+                apptext += item[5];
+                apptext += "</td>";
+                apptext += "</tr>";
+                $("#MainTable").append(apptext);
+            });
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+            margin: 0 auto;
+        }
+
+            table tbody tr td {
+                height: 10px;
+                line-height: 40px;
+            }
+
+            table tr input {
+                border: 1px solid #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+                padding: 5px 0;
+            }
+
+            table tr select {
+                padding: 5px;
+                border-color: #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+            }
+            /*#table tr:nth-child(n+2){
+             width: 90%!important;
+        }*/
+            table img {
+                width: 15px;
+                height: 21px;
+                vertical-align: middle;
+            }
+
+        input[type=checkbox], input[type=button] {
+            cursor: pointer !important
+        }
+
+        input[type=button] {
+            background: #428BCA;
+            border: none;
+            outline: none;
+            padding: 5px 0;
+            color: white;
+            width: 65%;
+            border-radius: 15px;
+            margin: 0 auto;
+            margin-left: 7%;
+        }
+
+        #checknumber {
+            width: 48%;
+            margin-left: 10%;
+        }
+
+        .mklo {
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+            text-align: left;
+            width: 95%;
+            margin: 0 auto;
+            margin-top: 0px;
+        }
+
+            .mklo td {
+                border-left: 1px solid #428BCA;
+                border-top: 1px solid #428BCA;
+                line-height: 25px;
+            }
+        #showdata {
+            font-size: 16px;
+        }
+
+        #showdatas {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+        }
+
+            #showdatas input {
+                margin-top: 20px;
+            }
+
+        #showtable {
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+            width: 100%;
+            text-align: center;
+        }
+
+            #showtable tbody tr td {
+                line-height: 25px !important;
+                height: 25px !important;
+            }
+
+            #showtable td {
+                border-left: 1px solid #428BCA;
+                border-top: 1px solid #428BCA
+            }
+    </style>
+</head>
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+    @using (Html.BeginForm())
+    {
+        var CheckNumber = ViewBag.CheckNumber;
+        <table style="text-align: left; width: 100%;">
+            <tr style="height: 10px">
+                <td style="text-align: left; font-weight: bold;    padding: 10px 5px;color: #428BCA;" onclick="tdback()">
+                    <img src="img/right.png" />返回
+                </td>
+                <!--<td style="text-align: left; font-weight: bold; font-size: 24px;padding-top: 10px;" onclick="tdback()">← </td>-->
+            </tr>
+
+        </table>
+        <table style="text-align: left; width: 90%;">
+
+            <tr style="height: 10px">
+                <td colspan="5" style="width: 100%;line-height: 54px;">
+                    盘点单号
+                    <span id="txtReceiptNum"></span>
+
+
+                    <input id="checknumber" type="text" readonly="readonly" value="PD20180913172452" />
+                </td>
+
+            </tr>
+
+            <tr style="width: 100%">
+                <!--<td style="width: 40%;">&nbsp</td>-->
+                <td style="width: 30%">
+                    <input type="button" value="清空" onclick="ClearButton()">
+                </td>
+                <td style="width: 30%">
+                    <input type="button" value="提交" onclick="SaveData()">
+                </td>
+            </tr>
+
+        </table>
+        <table style="text-align: left; width: 100%">
+            <tr style="width: 100%">
+                <td colspan="2" style="width: 100%">扫描&nbsp;&nbsp;扫描模式：<input type="checkbox" id="ck_scan" checked="checked" /></td>
+            </tr>
+            <tr style="width: 100%">
+                <td style="width: 40%;">库位</td>
+                <td style="width: 60%">SKU</td>
+            </tr>
+            <tr style="width: 100%">
+                <td style="width: 40%;">
+                    <input style="width: 100%" id="location" type="text" onkeydown="ScanLocation(event)" />
+                </td>
+                <td style="width: 60%">
+                    <input style="width: 100%" id="sku" type="text" onkeydown="ScanSKU(event)" />
+                </td>
+            </tr>
+            <tr style="width: 100%">
+                <td style="width: 40%;">单位</td>
+                <td style="width: 60%">品级</td>
+            </tr>
+            <tr style="width: 100%">
+                <td style="width: 40%;">
+                    <select style="width: 100%" id="unit" onchange="ScanFouce(this)" />
+                </td>
+                <td style="width: 60%">
+                    <select style="width: 100%" id="goodstype" onchange="ScanFouce(this)" />
+                </td>
+            </tr>
+        </table>
+        <table border="0" cellspacing="0" cellpadding="0" class="mklo">
+            <tr style="width: 100%">
+                <td style="width: 60%;">SKU</td>
+                <td style="width: 20%;">品级</td>
+                <td style="width: 10%;">单位</td>
+                <td style="width: 10%">数量</td>
+            </tr>
+        </table>
+        <table border="0" cellspacing="0" cellpadding="0" class="mklo" id="MainTable"></table>
+
+    }
+
+</body>
+</html>

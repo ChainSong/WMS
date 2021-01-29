@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "库存查询";
+}
+
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <script src="~/Assets/JS/Layer/layer.js"></script>
+    @model Runbow.TWS.RFScan.Models.ReceiptViewModel
+    <link href="~/Assets/CSS/bootstrap.min.css" rel="stylesheet" />
+
+    <title>库存查询</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#ScanNumbers").focus();
+        });
+        var AreaName = "";
+        var layerindex;
+        var adjustnumber = "";
+        function ScanNumber(event) {
+            if (event.keyCode == 13) {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/GetInventoryByScanRF',
+                    data: { "ScanNumber": $("#ScanNumbers").val() },
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+
+                        $("#ScanNumbers").select();
+                        if (data.Code == 1) {
+                            $("#SuccessAudio")[0].play();
+                            var tablediffs = $("#checkzjtable");
+                            $('#checkzjtable tbody').html('');
+
+                            for (var i = 0; i < data.data.length; i++) {
+                                var tr = "<tr style='text-align: left'>" +
+                                    "<td> " + data.data[i].Location + "</td>" +
+                                    "<td> " + data.data[i].SKU + "</td>" +
+                                    "<td> " + data.data[i].Qty + "</td>" +
+                                    "</tr > ";
+                                tablediffs.append(tr);
+                            }
+
+
+                        }
+                        else if (data.Code == 0) {
+                            $("#Audio")[0].play();
+                            layer.confirm('库存不存在', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#ScanNumbers").select();
+                                layer.closeAll();
+                            });
+                        }
+                        else {
+                            $("#Audio")[0].play();
+                            layer.confirm('异常错误', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#ScanNumbers").select();
+                                layer.closeAll();
+                            });
+                        }
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+            }
+        }
+
+
+
+
+    </script>
+</head>
+    <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="height: 100%">
+        <div class="row" style="margin-top:10px">
+            <audio src="~/audio/1.mp3" id="Audio">
+                您的浏览器不支持 audio 标签。
+            </audio>
+            <audio src="~/audio/success.mp3" id="SuccessAudio">
+                您的浏览器不支持 audio 标签。
+            </audio>
+            <div class="col-lg-6">
+                <div class="panel panel-primary" style="width:315px;margin-left:3px">
+                    <div class="panel-heading">扫描框</div>
+                    <div class="panel-body">
+                        <div>
+                            <input id="ScanNumbers" class="form-control" type="text" onkeydown="ScanNumber(event)" />
+                        </div>
+                            <div id="showzjdata" style="width:300px;">
+                                <table class="table table-striped" id="checkzjtable" style="width:285px">
+                                    <thead>
+                                        <tr style="text-align:left">
+                                            <th style="text-align:left">库位</th>
+                                            <th style="text-align:left">产品条码</th>
+                                            <th style="text-align:left">数量</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+
+</html>

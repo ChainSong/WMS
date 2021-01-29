@@ -1,0 +1,159 @@
+@{
+    ViewBag.Title = "库存查询";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <title>库存查询</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+           
+        });
+        function tdback() {
+            history.back(-1);
+        }
+        function checkRecNum(event) {
+            if (event.keyCode == 13) {
+                var scanreceipt = "";
+                if ($("#receiptnum").val() == "") {
+                    alert("SKU不能为空！");
+                    $("#receiptnum").focus();
+                    return;
+                }
+               
+                var SKU = $("#receiptnum").val();
+                if ($("#ck_scan").get(0).checked && SKU.length >= 2 && SKU.substring(0, 2) != "00") {
+                    //$("#Scan").val("00" + $("#Scan").val());
+                    SKU = "00" + SKU;
+                    $("#receiptnum").val(SKU);
+                }
+                var checklist = new Array();
+                $("#MainTable tr:not(:first)").empty();
+                $.ajax({
+                    type: "Post",
+                    url: '/Inventory/GetInventory',
+                    data: {"SKU":SKU},
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                            checklist = data;
+                            $.each(checklist, function (index2, item2) {
+                                var apptext = "<tr>";
+                                apptext += "<td>";
+                                apptext += item2.SKU;
+                                apptext += "</td>";
+                                apptext += "<td>";
+                                apptext += item2.Area+"|"+ item2.Location;
+                                apptext += "</td>";
+                                apptext += "<td>";
+                                apptext += item2.Qty;
+                                apptext += "</td>";
+                                apptext += "</tr>";
+                                $("#MainTable").append(apptext);
+                            });
+                        }
+                        else {
+                        }
+                    },
+                    error: function (msg) {
+                        alert("网络连接失败！");
+                    }
+
+                });
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+        }
+            table tr input {
+                border: 1px solid #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+                padding: 5px 0;
+            }
+        #MainTable tbody tr td {
+            line-height: 25px !important;
+            height: 25px !important;
+        }
+
+        #MainTable td {
+            border-left: 1px solid #428BCA;
+            border-top: 1px solid #428BCA
+        }
+
+        #MainTable {
+            text-align: center;
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+        }
+        input[type=checkbox], input[type=button] {
+            cursor: pointer !important
+        }
+
+        input[type=button] {
+            background: #428BCA;
+            border: none;
+            outline: none;
+            padding: 5px 0;
+            color: white;
+            width: 65%;
+            border-radius: 15px;
+            margin: 0 auto;
+            margin-left: 7%;
+        }
+
+        #checknumber {
+            width: 48%;
+            margin-left: 10%;
+        }
+    </style>
+</head>
+    <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+        <table style="text-align:left;width:100%;" >
+ <tr style="height:10px"><td style="text-align: left; font-weight: bold;    padding: 10px 5px;color: #428BCA;line-height: 40px;" onclick="tdback()">
+    <img src="/img/right.png" style="width: 15px;height: 21px;vertical-align: middle;" />返回
+</td></tr>
+           </table> 
+        <table style="text-align:left;width:100%;">
+           
+
+            <tr style="height:10px">
+                <td style="width:20%">
+                    扫描模式
+
+                </td>
+                <td style="width:70%">
+                    <input type="checkbox" id="ck_scan" checked="checked" />
+                </td>
+
+            </tr>
+            <tr style="height:10px">
+                <td style="width:20%">
+                    SKU
+
+                </td>
+                <td style="width:70%">
+
+                    <input style="width: 71%;margin-left: 10%;" id="receiptnum" type="text" onkeydown="checkRecNum(event)" />
+                </td>
+
+            </tr>
+        </table>
+          <table style="text-align:left;width:100%" border="1" id="MainTable" >
+     <tr style="width:100%" ><td   style="width:50%;">SKU</td><td   style="width:40%">库位</td><td style="width:10%">数量</td></tr>
+           </table> 
+    </body>
+    </html>

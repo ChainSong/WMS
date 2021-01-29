@@ -1,0 +1,162 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@model  Runbow.TWS.Web.Areas.WMS.Storer.CreateViewModel
+
+@using (Html.BeginForm())
+{
+
+<fieldset>
+    <legend>基本信息</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">货主</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.StorerName)</td>
+            <td class="TableColumnTitle">类型</td>
+            <td>@Html.DropDownListFor(m => m.SearchCondition.Type,Model.GetTypes, "==请选择==")</td>
+            <td class="TableColumnTitle">状态</td>
+            <td>@Html.DropDownListFor(m => m.SearchCondition.Status,Model.GetStatus, "==请选择==")</td>
+
+        </tr>
+        <tr>                
+            <td class="TableColumnTitle">货主名称</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.FullName)</td>
+            <td class="TableColumnTitle">公司代码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Company)</td>
+            <td class="TableColumnTitle">信用额度</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.CreditLine)</td>
+        </tr>
+        <tr>                
+            <td class="TableColumnTitle">省份城市</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>
+            <td class="TableColumnTitle">邮政编码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>
+            <td class="TableColumnTitle">地址</td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.Address,0,23,null)</td>
+        </tr>
+
+        <tr>                
+            <td class="TableColumnTitle">手机</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Mobile)</td>
+            <td class="TableColumnTitle">联系电话</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Phone)</td>
+            <td class="TableColumnTitle">联系方式</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Phone)</td>
+        </tr>
+
+        <tr>                
+            <td class="TableColumnTitle">联系人</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+            <td class="TableColumnTitle">传真</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Fax)</td>
+            <td class="TableColumnTitle">电子邮箱</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Email)</td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">备注</td>
+            <td colspan="5">@Html.TextAreaFor(m => m.SearchCondition.Address,10,117,null)</td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="submit" value="保存" id="btnSave" onclick="return checkvalues()"/>
+    </div>
+</fieldset>
+
+
+<fieldset style="display:none">
+    <legend>出货信息</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">出货公司名称</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+        </tr>
+        <tr>   
+            <td class="TableColumnTitle">省份城市</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">邮政编码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+            <td class="TableColumnTitle">地址</td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.Address,0,23,null)</td>
+       </tr>
+    </table>
+</fieldset>
+
+<fieldset style="display:none">
+    <legend>付款信息</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">付款公司名称</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+        </tr>
+        <tr>   
+            <td class="TableColumnTitle">省份城市</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">邮政编码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+            <td class="TableColumnTitle">地址</td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.Address,0,23,null)</td>
+       </tr>
+    </table>
+</fieldset>
+
+<fieldset style="display:none">
+    <legend>退货信息</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">退货公司名称</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+             <td class="TableColumnTitle">AttentioTo</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+        </tr>
+        <tr>   
+            <td class="TableColumnTitle">省份城市</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">邮政编码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+            <td class="TableColumnTitle">地址</td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.Address,0,23,null)</td>
+       </tr>
+    </table>
+</fieldset>
+
+<fieldset style="display:none">
+    <legend>自定义</legend>
+    <table style="width:100%">
+        <tr>
+            <td class="TableColumnTitle">收货前缀码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+            <td class="TableColumnTitle">订单前缀码</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.Contractor)</td>
+        </tr>
+        <tr>   
+            <td class="TableColumnTitle">属性一</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">属性二</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+       </tr>
+         <tr>   
+            <td class="TableColumnTitle">属性三</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">属性四</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+       </tr>
+         <tr>   
+            <td class="TableColumnTitle">属性五</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">属性六</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+       </tr>
+         <tr>   
+            <td class="TableColumnTitle">属性七</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">属性八</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+       </tr>
+         <tr>   
+            <td class="TableColumnTitle">属性九</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ProvinceCity)</td>  
+             <td class="TableColumnTitle">属性十</td>
+            <td>@Html.TextBoxFor(m => m.SearchCondition.ZipCode)</td>           
+       </tr>
+    </table>
+    
+</fieldset>
+}

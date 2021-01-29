@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Runbow.TWS.Entity.WMS.Print;
+
+namespace Runbow.TWS.MessageContracts.WMS.Print
+{
+    public class GetPrintByConditionRequest
+    {
+        public PrintHeaderSearchCondition SearchCondition { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+    }
+}

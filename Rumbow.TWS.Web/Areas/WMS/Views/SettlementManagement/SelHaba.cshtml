@@ -1,0 +1,131 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.SettlementManagement.HabaModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+    window.onload = function () {
+        var message = '@ViewBag.message';
+        if (message != undefined && message != "" && message == '操作成功') {
+            alert('操作成功');
+        }
+        var message2 = '@ViewBag.message2';
+        if (message2 != undefined && message2 != "" && message2 == '1') {
+            alert('当前日期没有结算单')
+        }
+    }
+</script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="UserTable">
+            <tr>
+
+                <td class="TableColumnTitle" style="width: 5%;">
+                    <label>仓库</label>
+
+                </td>
+                <td style="width: 12%;">
+                    @Html.DropDownListFor(m => m.WarehouseID, Model.SettlementCustomerName, "==请选择==", new { @class = "form-control", style = "width:100%" })
+                </td>
+
+                <td class="TableColumnTitle" style="width: 5%;">
+                    <label>结算单号</label>
+                </td>
+                <td style="width: 12%;">
+                    @Html.TextBoxFor(m => m.SearchCondition.SettlementNumber, new { @class = "form-control", style = "width:100%" })
+                </td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 5%;">
+                    <label>创建日期</label>
+                </td>
+                <td style="width: 12%;">
+                    @Html.CalendarFor(model => model.StartSettlementdate)~@Html.CalendarFor(model => model.EndSettlementdate)
+                </td>
+
+                <td class="TableColumnTitle" style="width: 5%;">
+                    <label>月份</label>
+                </td>
+                <td style="width: 12%;">
+                    @Html.TextBoxFor(m => m.DateTime1, new { @class = "form-control", style = "width:100%", placeholder = "例：201903" })
+                </td>
+            </tr>
+        </table>
+
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" name="Action" class="btn btn-success" value="导出" />
+            <input type="button" class="btn btn-success" value="新增结算单" id="AddButton" name="Action" />
+            <label>请选择新增结算日期</label>  @Html.CalendarDateTimeFor(m => m.CreateTime)
+
+        </div>
+        <div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            结算列表
+            @if (Model.SettlementCollection != null && Model.SettlementCollection.Any())
+            {
+                @Html.Raw("(" + Model.SettlementCollection.Count() + ")");
+            }
+            else
+            {
+                @Html.Raw("(0)");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+
+                        <th>仓库</th>
+                        <th>结算单号</th>
+                        <th>创建日期</th>
+                        <th>仓租收入</th>
+                        <th>入库管理费</th>
+                        <th>门店出库管理费</th>
+                        <th>门店出库理货费</th>
+                        <th>电商出货拣货费</th>
+                        <th>门店出库拣货费</th>
+                        <th>总费用</th>
+                        <th style="width: 50px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="Tbody">
+                    @if (Model.SettlementCollection != null && Model.SettlementCollection.Any())
+                    {
+                        foreach (var item in Model.SettlementCollection)
+                        {
+                            <tr>
+                                <td>@item.WarehouseName</td>
+                                <td>@item.SettlementNumber</td>
+                                <td>@item.CreateTime</td>
+                                <td>@item.OperationCost2</td>@*仓租收入*@
+                                <td>@item.OperationCost4</td>@*入库管理费*@
+                                <td>@item.Cost2</td>@*门店出库管理费*@
+                                <td>@item.Cost4</td>@*门店出库理货费*@
+                                <td>@item.Cost5</td>@*电商出货拣货费*@
+                                <td>@item.Cost6</td>@*门店出库拣货费*@
+                                <td>
+
+                                    @{
+                                        var Mergercost = item.OperationCost2 + item.OperationCost4 + item.Cost2 + item.Cost4 + item.Cost4 + item.Cost5 + item.Cost6;
+                                        @Mergercost
+                                    }
+
+                                </td>@*总费用*@
+                                <td><a href="#" class=" btn btn-info btn-sm" style="color:#fff;" id="delete" data-id="@item.ID">删除</a>
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

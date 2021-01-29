@@ -1,0 +1,229 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.GoodsShelfsViewModel 
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{ 
+    @Html.Hidden("ViewType",Model.ViewType) 
+    @Html.HiddenFor(m=>m.SearchCondition.ID)
+    <fieldset id="WarehouseCondition">
+        <legend >货架信息</legend>
+        <table id="conditionTable">
+             <tbody id="table_body">
+            <tr>
+                @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+                <td class="TableColumnTitle"><label>客户</label></td>
+                 <td>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                     @Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })
+                     }
+                     else
+                     {
+                      @(CustomerList.SingleOrDefault(o=>o.Value==Model.SearchCondition.CustomerID.ToString()).Text ?? "")
+                     }
+
+                 </td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>  
+                    @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    @Html.DropDownListFor(m => m.SearchCondition.WareHouseID, WarehouseList, "==请选择==", new { @class = "form-control" })
+                    }
+                     else
+                     {
+                      @(WarehouseList.SingleOrDefault(o=>o.Value==Model.SearchCondition.WareHouseID.ToString()).Text ?? "")
+                     }
+                </td>
+                <td class="TableColumnTitle"><label>货架名称</label></td>
+                <td>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    @Html.TextBoxFor(m => m.SearchCondition.GoodsShelvesName , new { @class ="form-control",style="width:100%"})
+                     }
+                    else
+                    {
+                         @Model.SearchCondition.GoodsShelvesName
+                     }
+                </td>
+            </tr>
+            <tr>
+                @*<td class="TableColumnTitle"><label>货架层数</label></td>
+                <td>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    @Html.TextBoxFor(m=>m.SearchCondition.Levels , new { @class ="form-control",style="width:100%"})
+                     }
+                     else
+                    {
+                         @Model.SearchCondition.Levels
+                     }
+                </td>*@
+             @*   <td class="TableColumnTitle"><label>货架列数</label></td>
+                <td>@Html.TextBoxFor(m=>m.SearchCondition.Grids , new { @class ="form-control"})</td>*@
+                
+                <td class="TableColumnTitle"><label>货架长度</label></td>
+                <td>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    @Html.TextBoxFor(m=>m.SearchCondition.Lengths , new { @class ="form-control",style="width:100%"})
+                     }
+                       else
+                    {
+                         @Model.SearchCondition.Lengths
+                     }
+                </td>
+                 <td class="TableColumnTitle"><label>货架宽度</label></td>
+                <td>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    @Html.TextBoxFor(m=>m.SearchCondition.Widths , new { @class ="form-control",style="width:100%"})
+                     }
+                       else
+                    {
+                         @Model.SearchCondition.Widths
+                     }
+                </td>
+                <td class="TableColumnTitle"><label>货架高度</label></td>
+                <td colspan="3">
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                        @Html.TextBoxFor(m=>m.SearchCondition.Heights , new { @class ="form-control",style="width:100%"})
+                     }
+                     else
+                     {
+                        @Model.SearchCondition.Heights
+                     }
+                </td>
+            </tr>
+            <tr>                             
+                <td class="TableColumnTitle"><label>货架重量</label></td>
+                <td>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    @Html.TextBoxFor(m=>m.SearchCondition.Weights , new { @class ="form-control",style="width:100%"})
+                     }
+                      else
+                    {
+                         @Model.SearchCondition.Weights
+                     }
+                </td>  
+            </tr>
+                 </tbody>
+        </table>
+         <fieldset style="margin-top:30px">
+            <legend>货架层列
+                @if(Model.ViewType==1||Model.ViewType==2)
+                     { <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" onclick="AddNewCells(this)">添加一行</label>}
+            </legend>
+        <table id="rowAndcellTable">
+            <thead>
+                <tr>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    <th>操作</th>
+                     }
+                    <th>第几层</th>
+                    <th>格数</th>  
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.GoodsShelfRowAndCellCollection != null && Model.GoodsShelfRowAndCellCollection.Any())
+                {
+                    foreach (var g in Model.GoodsShelfRowAndCellCollection)
+                    {                     
+                <tr>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                     <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                   <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton" onclick='DelCells(this)'>删除</label>
+                                    <label data-skuid="@g.RowNumber" style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" onclick="AddNewCells(this)">添加</label>
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                            </td> 
+                    
+                    <td class='Rows'>@Html.TextBox("Rows", @g.RowNumber, new { @class ="form-control"})</td>
+                    <td class='Cells'>@Html.TextBox("Cells", @g.CellNumber, new { @class ="form-control"})</td>
+                          }
+                    else
+                    {
+                    <td>@g.RowNumber</td>
+                    <td>@g.CellNumber</td>
+                     }
+                    
+                </tr>
+                   }
+              }
+            </tbody>
+            </table>
+             </fieldset>
+
+        <fieldset style="margin-top:30px">
+            <legend>货架中的库位
+                @if(Model.ViewType==1||Model.ViewType==2)
+                     { <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" onclick="AddNew(this)">添加一行</label>}
+            </legend>
+        <table id="LocationTable">
+            <thead>
+                <tr>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                    <th>操作</th>
+                     }
+                    <th>库区|库位</th>
+                    <th>第几层</th>
+                    <th>第几格</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.GoodsShelfCollection != null && Model.GoodsShelfCollection.Any())
+                {
+                    foreach (var g in Model.GoodsShelfCollection)
+                    {                     
+                <tr>
+                     @if(Model.ViewType==1||Model.ViewType==2)
+                     {
+                     <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                   <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton" onclick='Del(this)'>删除</label>
+                                    <label data-skuid="@g.Location" style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" onclick="AddNew(this)">添加</label>
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                            </td> 
+                    
+                    <td class='Locationcheck2'>@Html.TextBox("Location", @g.Location, new { @class ="form-control"})</td>
+                    <td class='LevelsNumber'>@Html.TextBox("LevelsNumber", @g.LevelsNumber, new { @class ="form-control"})</td>
+                    <td class='SerialNumber'>@Html.TextBox("SerialNumber", @g.SerialNumber, new { @class ="form-control"})</td>
+                          }
+                    else
+                    {
+                    <td>@g.Location</td>
+                    <td>@g.LevelsNumber</td>
+                    <td>@g.SerialNumber</td>  
+                     }
+                    
+                </tr>
+                   }
+              }
+            </tbody>
+        </table>
+
+        </fieldset>
+          <div class="actionButtonDiv">
+               @if(Model.ViewType==1||Model.ViewType==2)
+               {
+                  <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="保存" id="saveButton" />
+               }
+         <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="返回" id="returnButton"/>     
+        </div>
+        </fieldset>
+    
+    
+}

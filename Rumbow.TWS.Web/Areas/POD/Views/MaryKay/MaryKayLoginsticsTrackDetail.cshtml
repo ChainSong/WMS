@@ -1,0 +1,58 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.MaryKayTrackInfoModel
+<link href="/Content/POD/MaryKay/LocastisDetail.css" rel="stylesheet" />
+
+
+<body>
+    <div class="content">
+        <div class="wrapper">
+            <div class="light"><i></i></div>
+            <hr class="line-left">
+            <hr class="line-right">
+            <div class="main">
+
+                @using System.Web.Mvc;
+                @using System.Text;
+                @functions{  
+                    //按自己的格式输出日期
+                    public static string DateSplit(string objTime)
+                    {
+                        string month = string.Empty, date = string.Empty, time = string.Empty;
+                        if (objTime != null)
+                        {
+                            month = objTime.Substring(5, 1);//获取月
+                            date = objTime.Substring(7, 2);//获取日
+                            time = objTime.Substring(10, 5);//获取时间
+
+                        }
+                        return string.Format("{0}月{1}日 {2}", month, date, time);
+                    }
+                        }
+
+                @{
+                    int i = 0;
+                    var objClass = "";
+                    <h1 class="title">物流状态：<span style=" font-size:14pt;">@Model.MkOrderNo</span>
+                    </h1>
+                    <div class="year">
+                        <h2><a href="#">@Model.TrackInfo<i></i></a></h2>
+                        <div class="list">
+                            <ul>
+                                @foreach (System.Data.DataRow dr in Model.TrackInfoTable.Rows)
+                                {
+                                    objClass = i == 0 ? "cls highlight" : "cls";
+                                    <li class="@objClass">
+                                        <p class="date"> @DateSplit(@dr["colSignTime"].ToString())  </p>
+                                        <p class="intro">@dr["colTrackComment"].ToString()</p>
+                                        <p class="version">&nbsp;</p>
+                                    </li> 
+                                    i++;
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</body>

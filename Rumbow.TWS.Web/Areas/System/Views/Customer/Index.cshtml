@@ -1,0 +1,114 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.CustomerListViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Code)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control", style = "width:40%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @*@Html.Raw("客户名称")*@
+                    @Html.LabelFor(m => m.Name)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", style = "width:40%" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.State)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.State, Model.States, new { @class = "form-control", style = "width:40%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.StoreType)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.StoreType, Model.Type, new { @class = "form-control", style = "width:40%" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" class="btn btn-success" />
+            <input type="button" value="新增" id="addButton" class="btn btn-success" onclick="javascript: window.location.href = 'Create';" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            @Html.Raw("客户列表")
+            @Html.Raw("(" + Model.Customer.Count() + ")")
+
+            &nbsp;&nbsp;@ViewBag.Message
+        </legend>
+        <div style="overflow-x: auto; overflow-y: auto; height: 500px; width:100%;">
+            <table id="resultTable" style=" height: 700px; width:1700px;">
+                <thead>
+                    <tr>
+                        <th>公司代码</th>
+                        <th>货主名称</th>
+                        <th>联系人</th>
+                        <th>联系电话</th>
+                        <th>传真</th>
+                        <th>地址</th>
+                        <th>是否有效</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Customer.Any())
+                    {
+                        foreach (var shipper in Model.Customer)
+                        {
+                            <tr>
+                                <td>
+                                    @* @Html.ActionLink(@shipper.Code, "Create?ViewType=0", new { id = shipper.ID })*@
+                                    <a href="Create/@shipper.ID?ViewType=0&customerType=@Model.Types">@shipper.Code</a>
+                                </td>
+                                <td>@shipper.Name</td>
+                                <td>@shipper.Contactor1</td>
+                                <td>@shipper.Phone1</td>
+                                <td>@shipper.Fax1</td>
+                                <td>@shipper.Address1</td>
+                                <td>
+                                    @{
+                                        if (shipper.State)
+                                        {
+                                            @Html.Raw("可用")
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw("禁用")
+                                        }
+                                }
+                            </td>
+                            <td>
+                                <a class=" btn btn-info btn-sm" href="Create/@shipper.ID?ViewType=1" data-name="@shipper.ID" data-id="@Model.Types" style="color:#fff;">编辑</a>
+                                <a class=" btn btn-info btn-sm" href="#" data-name="@shipper.ID" data-id="@Model.Types" style="color:#fff;" onclick="DeleteCustomer('@shipper.ID');">删除</a>
+                                @{
+                                    if (shipper.StoreType > 1)
+                                    {
+                                        <a class=" btn btn-info btn-sm" href="/WMS/Warehouse/WarehouseAllocate?CustomerID=@shipper.ID" data-name="@shipper.ID" data-id="@Model.Types" style="color:#fff;">操作仓库</a>
+                                        <a class=" btn btn-info btn-sm" href="/WMS/TemplateManagement/Index/?CustomerID=@shipper.ID&ProjectID=@shipper.ProjectID" data-name="@shipper.ID" data-id="@Model.Types" style="color:#fff;">编辑模板</a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+        
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

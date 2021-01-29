@@ -1,0 +1,252 @@
+﻿<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/WMS/OrderManagement/PrintOrder.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.MachiningManagement.IndexViewModel
+@Url.jsrender()
+@Url.Json2()
+@{
+    Layout = null; 
+}
+
+<style media="print">
+    .Noprint
+    {
+        display: none;
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+</style>
+ <div class ="Noprint" style ="text-align :center; height:10px;">
+      <object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none"></object>
+     @*<object id="wb" width="0" height="0" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none;"></object>*@
+     <input type="button" name="button-print" value="打印" onclick="PrintOrders()" />
+    @* <input type="button" name="button_setup" value="打印页面设置" onclick="Printsetup()" />
+     <input type="button" name="button_show" value ="打印预览" onclick ="Printpreview()" />*@
+     <input type ="button" name ="button_return" value ="返回" onclick ="history.go(-1)" />
+ </div>
+ 
+
+  
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+
+@if (Model.MachiningCollection != null && Model.MachiningCollection.Any())
+{
+    var ss = 0;
+    foreach (var item in Model.MachiningCollection)
+    {
+        var counts = Model.MachiningCollection.Where(c => c.MID == item.MID).Count();
+
+        var i = counts / 10;
+        for (var j = 0; j < i + 1; j++)
+        {
+            ss = ss + 1;
+            var pages = "page" + ss;
+<div id ="@pages" style ="width:100%;height:100%;">
+ 
+    @*<hr size="1" noshadow color="black" class="Noprint">*@
+       
+    <div class ="PageNext" style ="width:100%; height:100%;">
+    <table style ="width:100%;">
+        <tr>
+            @*<td style ="width:20%;text-align:center;">
+                <img width="200px" heigh="100px" src="../../../../Image/BSReport.png" />  <div>出库单</div>
+            </td>*@ 
+            <td style ="width:40%; font-weight:bolder; font-size:40px; vertical-align:bottom;text-align:center; ">
+                    <span style ="margin-left :40px;">加工单</span>   
+            </td>
+        </tr>
+    </table>
+          
+     
+    <hr size ="2" noshadow color ="black" style ="border:none; border-top:2px solid #000;" />
+
+    <table style ="width:100%;">
+        <tr>
+            <td colspan ="3" style="font-weight: bold; font-size: 22px;">
+                 加工单信息 
+            </td>
+            @*<td>
+              <div style="width:127px;">
+                <img style="width:160px;height:160px;padding-top:40px" src="../../../../TotalImage/@item.PictureStr"/>
+              </div>
+            </td>*@
+        </tr>
+        <tr style ="height:28px;">
+             <td style="font-weight: bold; font-size: 16px; text-align:right;">
+                客户：
+            </td>
+            <td style="border-bottom: 1px solid #000; width: 22%; text-align:center;">@item.CustomerName</td>
+            <td style ="font-weight:bold; font-size:16px; text-align:right;">
+                加工单号：
+            </td>                   
+            <td style ="border-bottom: 1px solid #000; width:22%; text-align:center;">@item.MachiningNumber</td>
+            <td style ="font-weight:bold; font-size:16px; text-align:right;">
+                加工单类型：
+            </td>
+            <td style ="border-bottom: 1px solid #000; width:22%; text-align:center;">@item.MachiningType</td>
+           
+        </tr>
+        <tr style ="height:28px;">          
+            <td style="font-weight: bold; font-size: 16px; text-align:right;">
+                储罐位号：
+            </td>
+            <td style="border-bottom: 1px solid #000; width: 22%; text-align:center;">@item.CarOrBoxNumber</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:right;">
+                预计日期：
+            </td>
+            <td style="border-bottom: 1px solid #000; width: 22%; text-align:center;">@item.ExpectDate</td>
+        </tr>
+    </table>
+
+    <table style ="width:100%; margin-top:20px;">
+        <tr>
+            <td style="font-weight: bold; font-size: 22px; width:16%;">
+                加工单明细
+            </td>
+        </tr>
+    </table>
+
+    <table border="1" cellspacing="0" cellpadding="0" style ="width:100%; margin-top:20px; border-collapse:collapse;">
+        <tr>
+           @* <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                行号
+            </td>*@
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                SKU
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                品名
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                批号
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                货物类别
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                要求完工时间
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                铅封号
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                预计重量（吨）
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                实收重量（吨）
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                冲洗数量（吨）
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                冲洗桶规格
+            </td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                冲洗放置库位
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                库存出库其他转入（吨）
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                包装规格
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                灌装规格（吨）
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                预计灌装桶数
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                实际灌装桶数
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                灌装桶规格
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                灌装放置库位
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                余料（吨）
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                余料桶规格
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                余料放置库位
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                灌装后合计重量（吨）
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                灌装后合计桶数
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                配比后SKU
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                实际损耗（吨）
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                实际损耗率
+            </td>
+             <td style="font-weight: bold; font-size: 16px; text-align:center;">
+                备注
+            </td>
+        </tr>
+        @if (Model.MachiningCollection.Where(c => c.MID == item.MID).Any() != null && Model.MachiningCollection.Where(c => c.MID == item.MID).Any())
+        {
+            foreach (var items in Model.MachiningCollection.Where(c => c.MID == item.MID).Skip(j * 10).Take(10))
+            {
+                if (items.MID == item.MID)
+                {
+        <tr>
+                            <td style ="text-align:center;">@item.GoodsName</td>
+                            <td style ="text-align:center;">@item.SKU</td>
+                            <td style ="text-align:center;">@item.BatchNumber</td>
+                            <td style ="text-align:center;">@item.SKUType</td>
+                            <td style ="text-align:center;">@item.ExpectCompleteTime</td>
+                            <td style ="text-align:center;">@item.QianFengNumber</td>
+                            <td style ="text-align:center;">@item.ExpectWeight</td>
+                            <td style ="text-align:center;">@item.ActualWeight</td>
+                            <td style ="text-align:center;">@item.WashWeight</td>
+                            <td style ="text-align:center;">@item.WashSpecifications</td>
+                            <td style ="text-align:center;">@item.WashLocation</td>
+                            <td style ="text-align:center;">@item.OtherWeight</td>
+                            <td style ="text-align:center;">@item.PackageType</td>
+                            <td style ="text-align:center;">@item.FillingType</td>
+                            <td style ="text-align:center;">@item.EstimateFillingCount</td>
+                            <td style ="text-align:center;">@item.ActualFillingBucket</td>
+                            <td style ="text-align:center;">@item.Specifications</td>
+                            <td style ="text-align:center;">@item.Location</td>
+                            <td style ="text-align:center;">@item.MoreThanExpected</td>
+                            <td style ="text-align:center;">@item.MoreThanSpecifications</td>
+                            <td style ="text-align:center;">@item.MoreThanLocation</td>
+                            <td style ="text-align:center;">@item.FillingWeightSUM</td>
+                            <td style ="text-align:center;">@item.FillingBucketSUM</td>
+                            <td style ="text-align:center;">@item.ProportioningSKU</td>
+                            <td style ="text-align:center;">@item.ActualLossWeight</td>
+                            <td style ="text-align:center;">@item.ActualLossRate</td>
+                            <td style ="text-align:center;">@item.Remark</td>
+        </tr>
+                }
+            }
+        }
+    </table>
+    </div>
+                  
+
+    <hr size="1" noshadow color="black" class="Noprint">
+    
+</div>
+        }
+    }
+}
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

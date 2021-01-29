@@ -1,0 +1,213 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.WorkingViewModel
+@using Runbow.TWS.Common;
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.PopupJs()
+@Url.jsrender()
+
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+@using (Html.BeginForm())
+{
+
+    @Html.HiddenFor(m => m.SearchCondition.BeginCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+    <fieldset>
+        <legend>预出库查询条件</legend>
+        <table id="conditionTable">
+
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, new { @class = "form-control", @style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, new { @class = "form-control", @style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>创建日期</label>
+                </td>
+
+                <td style="width: 25%;">@Html.CalendarRange("CreateTime", "calendarRange form-control calendarRangeReWrite", Model.SearchCondition.BeginCreateTime, Model.SearchCondition.EndCreateTime)</td>
+
+            </tr>
+
+
+        </table>
+
+
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增" id="addWorkingStatis" />
+            @*<input type="submit" class="btn btn-success" value="导出" id="Export" name="Action" />*@
+
+        </div>
+    </fieldset>
+    <fieldset>
+
+        <legend>
+            预出库信息列表
+            @if (Model.WorkingCollection != null && Model.WorkingCollection.Any())
+            {
+                @Html.Raw("(" + Model.WorkingCollection.Count() + ")");
+            }
+        </legend>
+        <div id="Newdiv" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable" style="width: 130%; table-layout: fixed;width:100%">
+                <thead>
+
+                    <tr>
+                        <th id="OperateTh" style="width: 50px;">操作</th>
+
+                        <th class="checkBoxHead" style="width:50px;">
+                            @Html.CheckBox("selectAll", "onclick=selectAll")
+                        </th>
+                        <th>
+                            客户
+                        </th>
+                        <th>
+                            仓库
+                        </th>
+                        <th>
+                            统计日期
+                        </th>
+                        <th>
+                            当日在岗人数
+                        </th>
+                        <th>
+                            当日总工时
+                        </th>
+
+                        <th style="width: 110px;">
+                            创建人
+                        </th>
+                        <th>
+                            创建时间
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="resultTbody">
+
+                    @if (Model.WorkingCollection != null && Model.WorkingCollection.Any())
+                    {
+                        foreach (var item in Model.WorkingCollection)
+                        {
+                            var tdd = "operateTD" + @item.ID;
+
+                            <tr>
+                                <td style="position: relative">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="UpdateWorking(@item.ID,this)">更新工时</label>
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                </td>
+                                <td class="checkBox">
+                                    @Html.CheckBox("check" + item.ID.ToString(), new { data_ID = @item.ID, data_CustomerID = @item.CustomerID, data_Warehouse = @item.WarehouseName, @class = "checkForSelect" })
+                                </td>
+                                <td>@item.CustomerName</td>
+                                <td>@item.WarehouseName</td>
+                                <td style="font-weight:bold" name="StatisD">@item.StatisDate</td>
+                                <td name="PersonNo">@item.PersonNumber</td>
+                                <td name="WorkH">@item.WorkHour</td>
+                                <td>@item.Creator</td>
+                                <td>@item.CreateTime</td>
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}
+
+
+<!--更新-->
+<div id="UpdateDiv" style="display:none">
+    <br />
+    <table style="text-align:center;border:none">
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">统计日期</td>
+            <td style="text-align:left"><strong><span id="updateStatisDate"></span></strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">当日在岗人数</td>
+            <td><strong><input style="width:100%" class="form-control" id="updatePersonNo" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'')" onblur="value=value.replace(/[^\d]/g,'')" /></strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">当日总工时</td>
+            <td><strong><input style="width:100%;" class="form-control" id="updateWorkH" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'')" onblur="value=value.replace(/[^\d]/g,'')" /></strong></td>
+            <td><span>小时</span></td>
+        </tr>
+        <tr style="display:none">
+            <td><input type="hidden" id="UpdateWorkID" /></td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <div style="text-align:center">
+        <input type="button" class="btn btn-success" value="确定" id="UpdateOK" />
+        <input type="button" class="btn btn-success" value="返回" id="UpdateCancel" />
+    </div>
+</div>
+
+
+<!--新增-->
+<div id="CreateDiv" style="display:none">
+    <br />
+    <table style="text-align:center;border:none">
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">客户</td>
+            <td style="text-align:left"><strong><span id="createCustomer"></span></strong></td>
+            <td><input hidden id="createCustomerID" /></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">仓库</td>
+            <td style="text-align:left"><strong><span id="createWarehouse"></span></strong></td>
+            <td><input hidden id="createWarehouseID" /></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">统计日期</td>
+            <td style="text-align:left;">@Html.Calendar("createStatisTime", "calendarRange form-control calendarRangeReWrite") </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">当日在岗人数</td>
+            <td><strong><input style="width:100%" class="form-control" id="createPersonNo" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'')" onblur="value=value.replace(/[^\d]/g,'')" /></strong></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px">当日总工时</td>
+            <td><strong><input style="width:100%;" class="form-control" id="createWorkH" maxlength="8" onkeyup="value=value.replace(/[^\d]/g,'')" onblur="value=value.replace(/[^\d]/g,'')" /></strong></td>
+            <td><span>小时</span></td>
+        </tr>
+        <tr style="display:none">
+            <td><input type="hidden" id="CreateWorkID" /></td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <div style="text-align:center">
+        <input type="button" class="btn btn-success" value="确定" id="CreateOK" />
+        <input type="button" class="btn btn-success" value="返回" id="CreateCancel" />
+    </div>
+</div>
+

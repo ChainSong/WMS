@@ -1,0 +1,177 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PrintHandoverDetailedListDetailModel
+
+@using (Html.BeginForm())
+{
+    if (Model.DataTable.Rows.Count > 0)
+    {
+    <div>
+<div class="prth">
+以下为打印内容：<input type="button" value="打印" onclick="window.print()" class="printStyle"/>
+    <input type="submit" value="导出" name="Exprot" class="ExprotStyle"/>
+    <input type="button" value="保存" name="Save" onclick="tSave()" />
+    <input type="button" value="编辑" name="edit" onclick="editInput()"/>
+    <input type="button" value="发送邮件" name="send"  onclick='SendEmail("@ViewBag.DateTime","@ViewBag.ShipperName","@ViewBag.ShipperID")'/>
+<hr>
+</div>
+   
+    <div style="text-align:right; width:100%">
+         @Html.Raw(Model.TitleText)
+        <table  style="width:100%; font-size:11px;" class="table" id="btSave">
+           
+            <tr>
+               
+                <td style="width:15px; text-align:center" class="TableColumnTitle">序号</td>
+                    <td style="width:20px; text-align:center" class="TableColumnTitle">仓库编号</td>
+                    <td style="width:35px; text-align:center" class="TableColumnTitle">订单日期</td>
+                    <td style="width:35px; text-align:center" class="TableColumnTitle">订单编号</td>
+                    <td style="width:35px; text-align:center" class="TableColumnTitle">包装件数</td>
+                    <td style="width:35px; text-align:center" class="TableColumnTitle">承运商编号</td>
+                    <td style="width:30px; text-align:center" class="TableColumnTitle">客户名称</td>
+                    <td style="width:20px; text-align:center" class="TableColumnTitle">省份</td>
+                    <td style="width:20px; text-align:center" class="TableColumnTitle">目的城市</td>
+                    <td style="width:30px; text-align:center" class="TableColumnTitle">送货地址</td>
+                    <td style="width:25px; text-align:center" class="TableColumnTitle">收货人姓名</td>
+                    <td style="width:40px; text-align:center" class="TableColumnTitle">收货人电话</td>
+                    <td style="width:20px; text-align:center" class="TableColumnTitle">净重(KG)</td>
+                    <td style="width:20px; text-align:center" class="TableColumnTitle">运输方式</td>
+                    <td style="width:10px; text-align:center; word-break:break-all; word-wrap:break-word" class="TableColumnTitle">质保书是否随货(Y/N)</td>
+                    <td style="width:10px; text-align:center; word-break:break-all; word-wrap:break-word" class="TableColumnTitle">发票是否随货(Y/N)</td>
+                    <td style="width:30px; text-align:center" class="TableColumnTitle">发票号码</td>
+                    <td style="width:10px; text-align:center;word-break:break-all;word-wrap:break-word" class="TableColumnTitle">是否需要代收款(Y/N)</td>
+                    <td style="width:30px; text-align:center" class="TableColumnTitle">代收款金额</td>
+                    <td style="width:30px; text-align:center" class="TableColumnTitle">备注</td>
+
+                
+            </tr>
+                @for (int y = 0; y < Model.DataTable.Rows.Count; y++)
+                {
+                <tr>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["序号"].ToString()<input type="hidden" class="IDCss" value="@Model.DataTable.Rows[y]["ID"].ToString()" /></td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["仓库编号"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["订单日期"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["订单编号"].ToString()</td>
+                    @if (!string.IsNullOrEmpty(Model.DataTable.Rows[y]["包装件数"].ToString()))
+                    {
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["包装件数"].ToString()</td>
+                    }
+                    else
+                    {
+                     <td style="text-align:center"><input  type="text" value="" style="width:35px" class="Packages" onblur="EditValue(this)"/></td>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.DataTable.Rows[y]["承运商编号"].ToString()))
+                    {
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["承运商编号"].ToString()</td>
+                    }
+                    else
+                    {
+                      <td style="text-align:center"><input  type="text" value="" style="width:35px" class="ShippeNum" onblur="EditValue(this)"/></td>
+                    }
+                   
+                   
+                    <td style="text-align:center" class="dd">@Model.DataTable.Rows[y]["客户名称"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["省份"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["目的城市"].ToString()</td>
+                    <td style="text-align:center" class="dd">@Model.DataTable.Rows[y]["送货地址"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["收货人姓名"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["收货人电话"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["净重(KG)"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["运输方式"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["质保书是否随货(Y/N)"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["发票是否随货(Y/N)"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["发票号码"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["是否需要代收款(Y/N)"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["代收款金额"].ToString()</td>
+                    <td style="text-align:center">@Model.DataTable.Rows[y]["备注"].ToString()</td>
+                </tr>
+                }
+        </table>
+         <br />
+         <br />
+        <div  style="width:100%">
+            <div style="float:left; width:20%">
+                @if (Model.DataTableInvoice != null)
+                {
+            <table style="width:100%;  text-align:center">
+                <tr>
+                    <td colspan="2" class="TableColumnTitle">今日发票随货统计</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">订单号</td>
+                    <td class="TableColumnTitle">发票号</td>
+                </tr>
+                
+                @for (int i = 0; i < @Model.DataTableInvoice.Rows.Count; i++)
+                {
+                <tr>
+                    <td>@Model.DataTableInvoice.Rows[i]["订单号"].ToString()</td>
+                    <td>@Model.DataTableInvoice.Rows[i]["发票号"].ToString()</td>
+                </tr>
+                }
+                
+                <tr>
+                    <td>@Html.Raw("共计" + Model.DataTableInvoice.Rows.Count.ToString() + "份,请签收:")</td>
+                    <td></td>
+                </tr>
+            </table>
+                }
+            </div>
+            <div style="float:left; width:20%;padding-left:10px">
+                 @if (Model.DataTableForCollection != null)
+                 {
+            <table style="width:100%; text-align:center">
+                <tr>
+                    <td colspan="2" class="TableColumnTitle">今日待收款统计</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">订单号</td>
+                    <td class="TableColumnTitle">收款金额</td>
+                </tr>
+               
+                    @for (int i = 0; i < Model.DataTableForCollection.Rows.Count; i++)
+                    {
+                    <tr>
+                        <td>@Model.DataTableForCollection.Rows[i]["订单号"].ToString()</td>
+                        <td>@Model.DataTableForCollection.Rows[i]["代收金额"].ToString()</td>
+                    </tr>
+                    }
+                
+                <tr>
+                    <td>
+                       @Html.Raw("共计" + Model.DataTableForCollection.Rows.Count.ToString() + "票,请确认:")
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+                 }
+            </div>
+        </div>
+         <br />
+         <br />
+        
+        <div class=".navi">
+            
+            <table style="width:40%;  text-align:left; float:right;padding-top:30px;margin-top:30px">
+                                <tr>
+                                <td style='width:6%; height:5%; font-size:15px '>仓库接货人：</td>
+                                <td style='width:6%; height:5%'></td>
+                                <td style='width:6%; height:5%; font-size:15px'>时间：</td>
+                                <td style='width:6%; height:5%'></td>
+                                </tr>
+                                <tr>
+                                <td style='width:6%; height:5%; font-size:15px'>供应商签收人：</td>
+                                <td style='width:6%; height:5%'></td>
+                                <td style='width:6%; height:5%; font-size:15px'>时间：</td>
+                                <td style='width:6%; height:5%'></td>
+                                </tr>
+                              </table>
+
+          
+         </div>
+      </div>
+   </div>
+    }
+    else
+    {
+    <div><span><h3>抱歉没有你所查询的信息</h3></span></div>
+    }
+}

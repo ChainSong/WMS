@@ -1,0 +1,93 @@
+﻿@model Runbow.TWS.Web.Areas.CRM.Models.CrmTrackViewModel
+
+@*承运商、经销商和客户 跟踪拜访信息新增页面*@
+
+
+
+@using (Html.BeginForm("CrmTrack", "Crm"))
+{ 
+    @Html.HiddenFor(m => m.CRMID)
+    @Html.HiddenFor(m => m.typeid)
+       @Html.HiddenFor(m => m.TempID)
+    <fieldset>
+         <legend>   新增 &nbsp;&nbsp;@ViewBag.Message</legend>
+         
+         <table style="width:100%">
+             
+
+                <tr style="border: 1px  solid  #ff6a00;">
+
+                    <td colspan="6" size="15px" style=" flex-align: center; text-align: center;">
+                       基础信息
+                    </td>
+                </tr>
+             <tr >
+                <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.VisitPeople)
+                </td>
+                 <td style="width:20%">@Html.TextBoxFor(model=> model.VisitPeople)</td>
+                 <td style="width:20%" class="TableColumnTitle"> @Html.LabelFor(model => model.VisitTime)</td>
+                 <td style="width:20%" > @Html.CalendarFor(model => model.VisitTime)</td>
+                 
+                 <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.VisitPlace)
+                </td>
+                 <td style="width:20%">@Html.TextBoxFor(model=> model.VisitPlace)</td>
+                 </tr>
+             <tr>
+                 <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.VisitForm)
+                </td>
+                 <td style="width:80%" colspan="5">@Html.TextBoxFor(model=> model.VisitForm)</td>
+                
+             </tr>
+             <tr>
+                  <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.GiftsArticles)
+                </td>
+                 <td colspan="5"  style="width:80%">@Html.TextAreaFor(model=> model.GiftsArticles, new { style = "width:95%" })</td>
+                 
+
+
+             </tr>
+             <tr>
+
+                 <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.VisitToCustomerEvaluation)
+                </td>
+                 <td style="width:80%"  colspan="5">@Html.TextAreaFor(model=> model.VisitToCustomerEvaluation , new { style = "width:95%" })</td>
+             </tr>
+               <tr>
+                
+                 <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.VisitingPersonnelFeedbackVisit)
+                </td>
+                 <td style="width:80%"  colspan="5">@Html.TextAreaFor(model=> model.VisitingPersonnelFeedbackVisit, new { style = "width:95%" })</td>
+
+             </tr>
+             <tr>
+
+                  <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.ProjectCustomerCommunication)
+                </td>
+                 <td style="width:80%; "   colspan="5">@Html.TextAreaFor(model=> model.ProjectCustomerCommunication, new { style = "width:95%" })</td>
+
+             </tr>
+             <tr>
+                
+                 <td class="TableColumnTitle" style="width:20%">
+                    @Html.LabelFor(model => model.CustomerSupportAndAssistance)
+                </td>
+                 <td style="width:80%"  colspan="5">@Html.TextAreaFor(model=> model.CustomerSupportAndAssistance, new { style = "width:95%" })</td>
+
+             </tr>
+             
+             
+             </table>
+         <div class="actionButtonDiv">
+
+               <input type="submit" value="保存" id="btnSave" />
+         </div>
+        </fieldset>
+
+}

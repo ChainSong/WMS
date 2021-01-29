@@ -1,0 +1,233 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+@Url.jsrender()
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@*<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none">*@
+@*</object>*@
+@using (Html.BeginForm())
+{
+    @Html.DropDownList("AreaLists", (IEnumerable<SelectListItem>)ViewBag.Areas, new { style = "display:none" });
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName);
+    var PorjectName = ViewBag.ProjectName;
+    <fieldset>
+        <legend>
+            查询条件
+        </legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                }
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>客户</label>
+                </td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>库区</label>
+                </td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Area, (IEnumerable<SelectListItem>)ViewBag.AreaLists, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>库位</label>
+                </td>
+                <td style="width: 11%;">@Html.TextBoxFor(m => m.InventorySearchCondition.Location, new { @style = "width:100%", @class = "form-control" })</td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>库存类型</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.InventoryType, Model.InventoryTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>产品过期</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.Int1, Model.SKUListEndTime, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>SKU</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.InventorySearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>批次号</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.InventorySearchCondition.BatchNumber, new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>排序规则</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.OrderByType, Model.OrderByType, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>货品等级</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.GoodsType, Model.GoodsTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>门店</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.InventorySearchCondition.str3, Model.StorerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" style="display:none" value="生成出库单" id="OutboundOrder" />
+            @*<input type="button" class="btn btn-success" value="打印标签" id="PrintInventorylabel" />*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            库存列表
+            @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+            {
+                @Html.Raw("(" + Model.InventoryCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="display:none;">操作</th>
+                        <th class="checkBoxHead" style="display:none;">@Html.CheckBox("selectAll")</th>
+                        <th>客户</th>
+                        <th>仓库</th>
+                        <th>库区&nbsp;|&nbsp;库位</th>
+                        <th>门店代码</th>
+                        <th>SKU</th>
+                        <th>货品名称</th>
+                        <th>UPC</th>
+                        <th>货品等级</th>
+                        <th>库存状态</th>
+                        <th>数量</th>
+                        <th>批次号</th>
+                        <th>托号</th>
+                        <th>生产日期</th>
+                        <th>单位</th>
+                        <th>规格</th>
+                        @*<th id="OperateTh" style="position: absolute;left: 87%;width: 100px;height:35px;margin-top:-1px;  background-color:#e8eef4;text-align:center">操作</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+                    {
+                        int rows = 1;
+                        foreach (var item in Model.InventoryCollection)
+                        {
+
+                            var tdd = "operateTD" + rows;
+                            <tr>
+                                <td style="position: relative;display:none;">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        @if (item.InventoryType == 1)
+                                        {
+                                            if (@item.Qty <= 0)
+                                            {
+                                                @*<label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs EditorButton editSettledPod" >编辑</label>*@
+                                                <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                                            }
+                                            <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="tiaoadjustment(@item.CustomerID,'库存移动单','@item.Area|@item.Location.ToString().Trim()','@item.SKU|@item.GoodsType.ToString().Trim()','@item.UPC.ToString().Trim()','@item.BatchNumber','@item.BoxNumber','@item.Unit','@item.Specifications','@item.WarehouseID','@item.GoodsName','@item.Qty','@item.GoodsType')">移库</label>
+
+                                            if (PorjectName != "Akzo")
+                                            {
+                                                <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="tiaoadjustment(@item.CustomerID,'库存冻结单','@item.Area|@item.Location.ToString().Trim()','@item.SKU|@item.GoodsType.ToString().Trim()','@item.UPC.ToString().Trim()','@item.BatchNumber','@item.BoxNumber','@item.Unit','@item.Specifications','@item.WarehouseID','@item.GoodsName','@item.Qty','@item.GoodsType')">冻结</label>
+                                            }
+
+                                            <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="tiaoadjustment(@item.CustomerID,'库存调整单','@item.Area|@item.Location.ToString().Trim()','@item.SKU|@item.GoodsType.ToString().Trim()','@item.UPC.ToString().Trim()','@item.BatchNumber','@item.BoxNumber','@item.Unit','@item.Specifications','@item.WarehouseID','@item.GoodsName','@item.Qty','@item.GoodsType')">调整</label>
+                                            if (PorjectName == "Akzo")
+                                            {
+                                                <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="Unboxing_akzo('@item.IDS')">拆箱</label>
+                                            }
+                                            if (@item.Qty > 0)
+                                            {
+                                                <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="outbound(@item.CustomerID,'@item.Warehouse','@item.IDS')">生成出库单</label>
+                                            }
+
+
+                                        }
+                                    </div>
+                                    @if (PorjectName != "NIKE")
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    }
+
+                                </td>
+                                <td style="display:none;">
+                                    @Html.CheckBox("check" + @item.ID, new { data_ID = @item.IDS, @class = "checkForSelect" })
+                                </td>
+                                <td>@item.CustomerName</td>
+                                <td>@item.Warehouse</td>
+                                <td>@item.Area@Html.Raw("&nbsp;")|@Html.Raw("&nbsp;")<a onclick="GetInventoryViewByLocation('@item.Warehouse','@item.CustomerID','@item.Location')">@item.Location</a></td>
+                                <td>@item.str3</td>
+                                <td>
+                                    @item.SKU
+                                    @*<a onclick ="GetInventoryViewBySKU('@item.Warehouse','@item.CustomerID','@item.SKU')">@item.SKU</a>*@
+                                </td>
+                                <td>@item.GoodsName</td>
+                                <td>
+                                    @item.UPC
+                                </td>
+                                <td>@item.GoodsType</td>
+                                <td>
+                                    @switch (item.InventoryType)
+                                    {
+                                        case 1:
+                                            @Html.Raw("可用");
+                                            break;
+                                        case 2:
+                                            @Html.Raw("操作中");
+                                            break;
+                                        case 3:
+                                            @Html.Raw("冻结");
+                                            break;
+                                        default:
+                                            @Html.Raw("已出库");
+                                            break;
+                                    }
+                            </td>
+                            <td>@item.Qty</td>
+                            <td>@*<span class="glyphicon glyphicon-plus"></span>*@ @item.BatchNumber</td>
+                            <td>@*<span class="glyphicon glyphicon-minus"></span>*@ @item.BoxNumber</td>
+                            <td>@item.DateTime1</td>
+                            <td>@item.Unit</td>
+                            <td>@item.Specifications</td>
+
+                        </tr>
+                        rows++;
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}
+<div style="display: none" id="DisInfoBody"></div>
+<script id="Evaluation" type="text/x-jsrender">
+
+    <div id="{{:PageIndex}}" class='only_for_print pagestyle' style='width: 500px; height: 196px'>
+
+        <div style="float: left; width: 127px;">
+            <img style="width: 120px; height: 160px; padding-top: 40px" src="../../../../TotalImage/{{:PictureStr}}" />
+        </div>
+        <div style="float: left; padding-top: 20px; left: 40%">
+            <strong>名称:</strong></br>
+            <strong>{{:GoodsName}}</strong></br>
+            <strong>产品编码:{{:SKU}}</strong></br>
+            <strong>生产日期:{{:StringDateTime1}}</strong></br>
+            <strong>过期日期:{{:StringDateTime2}}</strong></br>
+            <strong>生产批次:{{:BatchNumber}}</strong></br>
+            <strong>供应商:{{:Manufacturer}}</strong></br>
+            <strong>流水号:</strong></br>
+            <strong>{{:BoxNumber}}</strong></br>
+            <strong>数量:{{:QtyExpected}}</strong></br>
+            <strong>净重:</strong></br>
+            <strong>毛重:</strong></br>
+        </div>
+    </div>
+</script>
+
+@*<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+        <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+    </object>*@

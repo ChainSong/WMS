@@ -1,0 +1,555 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    string OrderDetailInfoList = ViewBag.OrderDetailInfoList;
+    var totalcount = 0;
+    var totalpackagecount = "0";
+    string orderstatus = string.Empty;
+    @Html.Hidden("OrderID", Model.OrderCollection.Select(m => m.ID).FirstOrDefault());
+    @Html.Hidden("CustomerName", Model.OrderCollection.Select(m => m.CustomerName).FirstOrDefault());
+    @Html.Hidden("OrderDetail", OrderDetailInfoList);
+    <fieldset>
+        <legend>基本信息</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>出库单号</label>
+                </td>
+                <td style="width: 20%;" id="label_OrderNumber">
+                    @Model.OrderCollection.Select(m => m.OrderNumber).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>外部单号</label>
+                </td>
+                <td style="width: 20%;" id="label_ExternOrderNumber">
+                    @Model.OrderCollection.Select(m => m.ExternOrderNumber).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>预出库单号</label>
+                </td>
+                <td style="width: 20%;" id="label_PreOrderNumber">
+                    @Model.OrderCollection.Select(m => m.PreOrderNumber).FirstOrDefault()
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 20%;" id="label_customer">
+                    @Model.OrderCollection.Select(m => m.CustomerName).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 20%;" id="label_Warehouse">
+                    @Model.OrderCollection.Select(m => m.Warehouse).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>订单类型</label>
+                </td>
+                <td style="width: 20%;" id="label_OrderType">
+                    @Model.OrderCollection.Select(m => m.OrderType).FirstOrDefault()
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>订单状态</label>
+                </td>
+                <td style="width: 20%;" id="label_OrderStatus">
+                    @Model.OrderStatus.SingleOrDefault(c => c.Value == @Model.OrderCollection.Select(m => m.Status).FirstOrDefault().ToString()).Text
+
+                </td>
+                <td class="TableColumnTitle">
+                    <label>出库时间</label>
+                </td>
+                <td style="width: 20%;" id="label_OrderTime">
+                    @Model.OrderCollection.Select(m => m.OrderTime).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>是否是合并单</label>
+                </td>
+                <td style="width: 20%;" id="label_IsMerged">
+                    @Model.IsMerged.SingleOrDefault(c => c.Value == @Model.OrderCollection.Select(m => m.IsMerged).FirstOrDefault().ToString()).Text
+
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>省份</label>
+                </td>
+                <td style="width: 20%;" id="label_Province">
+                    @Model.OrderCollection.Select(m => m.Province).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>城市</label>
+                </td>
+                <td style="width: 20%;" id="label_City">
+                    @Model.OrderCollection.Select(m => m.City).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>区县</label>
+                </td>
+                <td style="width: 20%;" id="label_District">
+                    @Model.OrderCollection.Select(m => m.District).FirstOrDefault()
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>快递公司</label>
+                </td>
+                <td style="width: 20%;" id="label_ExpressCompany">
+                    @Model.OrderCollection.Select(m => m.ExpressCompany).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>快递单号</label>
+                </td>
+                <td style="width: 20%;" id="label_ExpressNumber">
+                    @Model.OrderCollection.Select(m => m.ExpressNumber).FirstOrDefault()
+                </td>
+                <td class="TableColumnTitle">
+                    <label>快递状态</label>
+                </td>
+                <td style="width: 20%;" id="label_ExpressStatus">
+                    @Model.OrderCollection.Select(m => m.ExpressStatus).FirstOrDefault()
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <audio src="/Areas/WMS/1.mp3" id="Audio">
+            您的浏览器不支持 audio 标签。
+        </audio>
+
+        @if (Model.OrderCollection.Select(m => m.Status).FirstOrDefault() == 9)
+        {
+            orderstatus = "display:none";
+        }
+        <input type="button" class="btn btn-success" style="@orderstatus" value="新增箱" id="addButton" />
+        <input type="button" class="btn btn-success" style="@orderstatus" value="保存包装" id="submitButton" />
+        <input type="button" class="btn btn-success" style="@orderstatus" value="提交包装" id="packageButton" />
+        @*<input type="button" class="btn btn-success" value="导出包装" id="packageExcel" />*@
+        <input type="button" class="btn btn-success" style="@orderstatus" value="直接出库" id="outButton" onclick="Outs()" />
+        @if (Model.OrderCollection.Select(m => m.CustomerID.ToString()).FirstOrDefault() != "71")
+        {
+            <input type="button" class="btn btn-success" value="箱清单导出" onclick="ExportBoxDetails(@Model.OrderCollection.Select(m => m.ID).FirstOrDefault(),'1','0')" />
+            <input type="button" class="btn btn-success" value="批量打印托运单" onclick="printDiv(@Model.OrderCollection.Select(m => m.ID).FirstOrDefault(),'1','0')" />
+        }
+        <input type="button" class="btn btn-success" value="批量打印箱清单" onclick="printboxDiv(@Model.OrderCollection.Select(m => m.ID).FirstOrDefault(),'1','0')" />
+        <input type="button" class="btn btn-success" value="批量打印箱唛" onclick="printboxmDiv(@Model.OrderCollection.Select(m => m.ID).FirstOrDefault(),'1','0')" />
+        @if (Model.OrderCollection.Select(m => m.CustomerID.ToString()).FirstOrDefault() == "71")
+        {
+            <input type="button" class="btn btn-success" value="批量打印报关箱唛" onclick="PrintCustomsCarton(@Model.OrderCollection.Select(m => m.ID).FirstOrDefault(),'1','0')" />
+        }
+        <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+    </div>
+    <fieldset>
+
+        <legend>包装信息</legend>
+        <input type="checkbox" checked="checked" id="chkZero">扫描模式
+        <div id="packagesModel" style="border: 2px solid #e8eef4; display: none">
+            <label style="font-size: 20px">第1箱</label>
+            <label style="font-size: 20px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;       </label>
+            <label style="font-size: 20px">扫描条码: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
+            <input class="form-control" style="width: 22%" type="text" id="ScanSKU" />
+
+            <table>
+                <tr>
+                    @{
+                        var BoxListModel = (IEnumerable<SelectListItem>)ViewBag.BoxList;
+                    }
+                    <td class="TableColumnTitle">
+                        <label>箱型</label>
+                    </td>
+                    <td style="width: 20%;">@Html.DropDownList("box", BoxListModel, new { @class = "form-control", style = "width:100%" })</td>
+                    <td>
+                        <input type="button" class="btn btn-success" style="@orderstatus" value="删除本箱" onclick="deleteDiv(this)" />
+                    </td>
+                    @* <td colspan="2">
+                            <div id="operateTD" style="float:right;display:none;width:250px;" class="ddiv" >
+                                <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  onclick="printDiv(@package.ID,0)">打印托运单</div>
+                                <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  onclick="printboxDiv(@package.ID,0)">打印箱清单</div>
+                                <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  onclick="printboxmDiv(@package.ID,0)">打印箱唛</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de "  onmouseover ="ShowsIn(@package.ID.ToString(),this)"  >打印</div>
+                        </td>*@
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>长</label>
+                    </td>
+                    <td style="width: 20%;">@Html.TextBox("Length", null, new { @class = "form-control", style = "width:100%" })</td>
+                    <td class="TableColumnTitle">
+                        <label>宽</label>
+                    </td>
+                    <td style="width: 20%;">@Html.TextBox("Width", null, new { @class = "form-control", style = "width:100%" })</td>
+                    <td class="TableColumnTitle">
+                        <label>高</label>
+                    </td>
+                    <td style="width: 20%;">@Html.TextBox("Height", null, new { @class = "form-control", style = "width:100%" })</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>箱号</label>
+                    </td>
+                    <td style="width: 20%;">@Html.TextBox("PackageNumber", null, new { @class = "form-control", style = "width:100%" })</td>
+                    <td class="TableColumnTitle">
+                        <label>净重</label>
+                    </td>
+                    <td style="width: 20%;">@Html.TextBox("NetWeight", null, new { @class = "form-control", style = "width:100%" })</td>
+                    <td class="TableColumnTitle">
+                        <label>毛重</label>
+                    </td>
+                    <td style="width: 20%;">@Html.TextBox("GrossWeight", null, new { @class = "form-control", style = "width:100%" })</td>
+                </tr>
+
+            </table>
+            <table id="resultTableModel">
+                <thead>
+                    <tr>
+                        <th>
+                            SKU
+                        </th>
+                        <th>
+                            UPC
+                        </th>
+                        <th>
+                            货品等级
+                        </th>
+                        <th>
+                            货品描述
+                        </th>
+                        <th>
+                            数量
+                        </th>
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="form-control" style="width: 100%" id="SKU" readonly="true" /></td>
+                        <td><input type="text" class="form-control" style="width: 100%" id="UPC" readonly="true" /></td>
+                        <td><input type="text" class="form-control" style="width: 100%" id="GoodsType" readonly="true" /></td>
+                        <td><input type="text" class="form-control" style="width: 100%" id="GoodsName" readonly="true" /></td>
+                        <td>
+                            <input type="text" class="form-control" style="width: 100%" id="Qty" readonly="true" onchange="QtyChanged(this)" />
+                            <input type="hidden" name="Barcodes" />
+                        </td>
+                        <td style="background-color: white;">@*<label  style="cursor:pointer; color:white;font-size:15px" class="label label-info" onclick="addNew(this)">新增行</label>*@<label style="cursor: pointer; color: white; font-size: 15px" class="label label-info" onclick="deleteNew(this)">删除行</label></td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @if (Model.PackageCollection != null && Model.PackageCollection.Any())
+        {
+
+            var j = Model.PackageCollection.Count();
+            var str = "";
+            foreach (var package in Model.PackageCollection)
+            {
+                var td = "operateTD" + package.PackageNumber.ToString();
+                Model.box = package.PackageType;
+                var boxnumber = package.PackageNumber.Substring(package.PackageNumber.Length - 3, 3).ToString();
+
+                //str = "第" + int.Parse(boxnumber) + "箱";
+                str = "第" + j + "箱";
+                decimal boxtotalqty = 0;
+                foreach (var packageDetail in Model.PackageDetailCollection.Where(c => c.PackageNumber == package.PackageNumber))
+                {
+                    boxtotalqty += packageDetail.Qty.Value;
+                }
+                j--;
+                var divid = "packages" + @package.PackageNumber;
+                <div id="@divid" style="margin-bottom:40px;border:2px solid #e8eef4" class="counts">
+                    <label style="font-size: 20px">@str</label>
+                    <label style="font-size: 20px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;       </label>
+                    <label style="font-size: 20px">扫描条码: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
+                    <input class="form-control" style="width: 22%" type="text" id="ScanSKU" />
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;该箱总件数：@boxtotalqty.ToString()
+                    <table>
+                        <tr>
+                            @{
+                                var BoxList = (IEnumerable<SelectListItem>)ViewBag.BoxList;
+                            }
+                            <td class="TableColumnTitle">
+                                <label>箱型</label>
+                            </td>
+                            <td style="width: 20%;">@Html.DropDownListFor(m => m.box, BoxList, new { @class = "form-control", style = "width:100%" })</td>
+                            <td>
+                                <input type="button" class="btn btn-success" style="@orderstatus" value="删除本箱" onclick="deleteDiv(this)" />
+                            </td>
+
+                            <td colspan="2">
+                                <div id='@td' style="float:right;display:none;width:250px;" class="ddiv">
+                                    @* @if (package.CustomerID.ToString() != "71")
+                                        {
+                                        <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  onclick="printDiv('@package.PackageNumber',0,'@package.OID.ToString()')">打印托运单</div>
+                                        }*@
+                                    <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="printboxDiv('@package.PackageNumber',0,'@package.OID.ToString()')">打印箱清单</div>
+                                    <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="printboxmDiv('@package.PackageNumber',0,'@package.OID.ToString()')">打印箱唛</div>
+                                    @if (package.CustomerID.ToString() == "71")
+                                    {
+                                        <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:100px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="PrintCustomsCarton('@package.PackageNumber',0,'@package.OID.ToString()')">打印报关箱唛</div>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de " onmouseover="ShowsIn('@package.PackageNumber',this)">打印</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">
+                                <label>长</label>
+                            </td>
+                            <td style="width: 20%;">@Html.TextBox("Length", package.Length, new { @class = "form-control", style = "width:100%" })</td>
+                            <td class="TableColumnTitle">
+                                <label>宽</label>
+                            </td>
+                            <td style="width: 20%;">@Html.TextBox("Width", package.Width, new { @class = "form-control", style = "width:100%" })</td>
+                            <td class="TableColumnTitle">
+                                <label>高</label>
+                            </td>
+                            <td style="width: 20%;">@Html.TextBox("Height", package.Height, new { @class = "form-control", style = "width:100%" })</td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">
+                                <label>箱号</label>
+                            </td>
+                            <td style="width: 20%;">@Html.TextBox("PackageNumber", package.PackageNumber, new { @class = "form-control", style = "width:100%" })</td>
+                            <td class="TableColumnTitle">
+                                <label>净重</label>
+                            </td>
+                            <td style="width: 20%;">@Html.TextBox("NetWeight", package.NetWeight, new { @class = "form-control", style = "width:100%" })</td>
+                            <td class="TableColumnTitle">
+                                <label>毛重</label>
+                            </td>
+                            <td style="width: 20%;">@Html.TextBox("GrossWeight", package.GrossWeight, new { @class = "form-control", style = "width:100%" })</td>
+                        </tr>
+                    </table>
+                    <table id="resultTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    SKU
+                                </th>
+                                <th>
+                                    UPC
+                                </th>
+                                <th>
+                                    货品等级
+                                </th>
+                                <th>
+                                    货品描述
+                                </th>
+                                <th>
+                                    数量
+                                </th>
+                                <th>
+                                    操作
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.PackageDetailCollection != null && Model.PackageDetailCollection.Any())
+                            {
+                                foreach (var packageDetail in Model.PackageDetailCollection.Where(c => c.PackageNumber == package.PackageNumber))
+                                {
+                                    var str_barcode = "";
+                                    if (Model.BarCodeCollection != null && Model.BarCodeCollection.Any())
+                                    {
+                                        foreach (var item in Model.BarCodeCollection)
+                                        {
+                                            if (item.PackageNumber == packageDetail.PackageNumber)
+                                            {
+                                                str_barcode += item.BarCode;
+                                            }
+                                        }
+                                    }
+                                    <tr>
+                                        <td><input type="text" class="form-control" style="width:100%" id="SKU" readonly="true" value=@packageDetail.SKU /></td>
+                                        <td><input type="text" class="form-control" style="width:100%" id="UPC" readonly="true" value="@packageDetail.UPC" /></td>
+                                        <td><input type="text" class="form-control" style="width:100%" id="GoodsType" readonly="true" value=@packageDetail.GoodsType /></td>
+                                        <td><input type="text" class="form-control" style="width:100%" id="GoodsName" readonly="true" /></td>
+                                        <td>
+                                            <input type="text" class="form-control" style="width:100%" id="Qty" readonly="true" onchange="QtyChanged(this)" value=@packageDetail.Qty />
+                                            <input type="hidden" name="Barcodes" value="@str_barcode" />
+                                        </td>
+                                        <td style="background-color: white;">@*<label  style="cursor:pointer; color:white;font-size:15px" class="label label-info" onclick="addNew(this)">新增行</label>*@<label style="cursor: pointer; color: white; font-size: 15px" class="label label-info" onclick="deleteNew(this)">删除行</label></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+        else
+        {
+            var pid = "operateTD" + Model.OrderCollection.Select(m => m.ID).FirstOrDefault().ToString();
+            <div id="packages" style="border: 2px solid #e8eef4; margin-bottom: 40px" class="counts">
+                <label style="font-size: 20px">第1箱</label><label style="font-size: 20px"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;       </label>
+                <label style="font-size: 20px">扫描条码: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label>
+                <input class="form-control" style="width: 22%" type="text" id="ScanSKU" />
+
+                <table>
+                    <tr>
+                        @{
+                            var BoxList = (IEnumerable<SelectListItem>)ViewBag.BoxList;
+                            string FirstBoxnumber = ViewBag.FirstBox;
+                        }
+                        <td class="TableColumnTitle">
+                            <label>箱型</label>
+                        </td>
+                        <td style="width: 20%;">@Html.DropDownList("box", BoxList, new { @class = "form-control", style = "width:100%" })</td>
+                        <td>
+                            <input type="button" class="btn btn-success" value="删除本箱" onclick="deleteDiv(this)" />
+                        </td>
+                        <td colspan="2">
+                            <div id="@pid" + style="float:right;display:none;width:250px;" class="ddiv">
+                                @*@if (Model.OrderCollection.Select(m => m.CustomerID).FirstOrDefault().ToString() != "71")
+                                    {
+                                    <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  onclick="printDiv('@FirstBoxnumber',0,'@Model.OrderCollection.Select(m => m.ID).FirstOrDefault().ToString()')">打印托运单</div>
+                                    }*@
+                                <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="printboxDiv('@FirstBoxnumber',0,'@Model.OrderCollection.Select(m => m.ID).FirstOrDefault().ToString()')">打印箱清单</div>
+                                <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="printboxmDiv('@FirstBoxnumber',0,'@Model.OrderCollection.Select(m => m.ID).FirstOrDefault().ToString()')">打印箱唛</div>
+                                @if (Model.OrderCollection.Select(m => m.CustomerID).FirstOrDefault().ToString() == "71")
+                                {
+                                    <div class="CheckOutboundOrder" data-id="" style="text-align:center; width:100px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; " onclick="PrintCustomsCarton('@FirstBoxnumber',0,'@Model.OrderCollection.Select(m => m.ID).FirstOrDefault().ToString()')">打印报关箱唛</div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de " onmouseover="ShowsIn(@Model.OrderCollection.Select(m => m.ID).FirstOrDefault().ToString(),this)">打印</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="TableColumnTitle">
+                            <label>长</label>
+                        </td>
+                        <td style="width: 20%;">@Html.TextBox("Length", null, new { @class = "form-control", style = "width:100%" })</td>
+                        <td class="TableColumnTitle">
+                            <label>宽</label>
+                        </td>
+                        <td style="width: 20%;">@Html.TextBox("Width", null, new { @class = "form-control", style = "width:100%" })</td>
+                        <td class="TableColumnTitle">
+                            <label>高</label>
+                        </td>
+                        <td style="width: 20%;">@Html.TextBox("Height", null, new { @class = "form-control", style = "width:100%" })</td>
+                    </tr>
+                    <tr>
+                        <td class="TableColumnTitle">
+                            <label>箱号</label>
+                        </td>
+                        <td style="width: 20%;">@Html.TextBox("PackageNumber", FirstBoxnumber, new { @class = "form-control", style = "width:100%" })</td>
+                        <td class="TableColumnTitle">
+                            <label>净重</label>
+                        </td>
+                        <td style="width: 20%;">@Html.TextBox("NetWeight", null, new { @class = "form-control", style = "width:100%" })</td>
+                        <td class="TableColumnTitle">
+                            <label>毛重</label>
+                        </td>
+                        <td style="width: 20%;">@Html.TextBox("GrossWeight", null, new { @class = "form-control", style = "width:100%" })</td>
+                    </tr>
+                </table>
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                SKU
+                            </th>
+                            <th>
+                                UPC
+                            </th>
+                            <th>
+                                货品等级
+                            </th>
+                            <th>
+                                货品描述
+                            </th>
+                            <th>
+                                数量
+                            </th>
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control" style="width: 100%" id="SKU" readonly="true" /></td>
+                            <td><input type="text" class="form-control" style="width: 100%" id="UPC" readonly="true" /></td>
+                            <td><input type="text" class="form-control" style="width: 100%" id="GoodsType" readonly="true" /></td>
+                            <td><input type="text" class="form-control" style="width: 100%" id="GoodsName" readonly="true" /></td>
+                            <td>
+                                <input type="text" class="form-control" style="width: 100%" id="Qty" readonly="true" onchange="QtyChanged(this)" />
+                                <input type="hidden" name="Barcodes" />
+                            </td>
+                            <td style="background-color: white;">@*<label  style="cursor:pointer; color:white;font-size:15px" class="label label-info" onclick="addNew(this)">新增行</label>*@<label style="cursor: pointer; color: white; font-size: 15px" class="label label-info" onclick="deleteNew(this)">删除行</label></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        }
+    </fieldset>
+
+    <div id="showdata2" style="position: fixed;overflow-y:scroll; top: 100px; left: 100px; width: 500px; height: 400px; display: none; background-color: white; border: solid 1px #add9c0;">
+        <table id="showtable2"></table>
+        <input type="button" value="关闭" onclick="    CloseDiv()" />
+    </div>
+    <div id="showdata" style="position: fixed; top: 200px; right: 100px; width: 350px; max-height: 150px; background-color: gray; border: solid 1px #add9c0; color: white;">
+        @foreach (var item in @Model.OrderDetailCollection)
+        {
+            var qty = Convert.ToInt32(item.Qty);
+            totalcount = totalcount + qty;
+        }
+        @foreach (var item in @Model.PackageDetailCollection)
+        {
+            var qty = Convert.ToInt32(totalpackagecount) + Convert.ToInt32(item.Qty);
+            totalpackagecount = qty.ToString();
+        }
+        <table id="showtable">
+
+
+            <tr>
+                <td id="totalcount">订单总数:@totalcount</td>
+                <td id="packagecount">已完成数量:@totalpackagecount</td>
+                <td id="lastcount">剩余数量:0</td>
+                <td>搜索箱号</td>
+            </tr>
+            <tr>
+                <td id="msgtd"></td>
+                <td></td>
+                <td>
+                    <input type="button" value="检测差异" onclick="CheckDiffent()" />
+                </td>
+                <td>
+                    <input type="text" id="SearchBoxID" style="width:100px" onkeydown="SearchBox()" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="toExcel" style="position: fixed; top: 100px; left: 100px; width: 300px; height: 400px; display: none; background-color: white; border: solid 1px #add9c0;">
+        <table id="toExcelT">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+}

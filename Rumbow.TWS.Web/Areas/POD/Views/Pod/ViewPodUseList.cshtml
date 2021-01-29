@@ -1,0 +1,103 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.ViewPodUseListViewModel
+@using Runbow.TWS.Common;
+@{
+    var showColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => c.IsShowInList) : Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+}
+
+<fieldset>
+    <legend>运单列表
+          @if (Model.PodCollection != null && Model.PodCollection.Any())
+            {
+                @Html.Raw("(" + Model.PodCollection.Count() + ")");
+            }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>
+                    @Model.Config.ColumnCollection.First(c => c.DbColumnName == "SystemNumber").DisplayName
+                </th>
+                @foreach (var column in showColumns)
+                {
+                    <th>
+                        @column.DisplayName
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.PodCollection != null && Model.PodCollection.Any())
+            {
+                foreach (var pod in Model.PodCollection)
+                {
+                <tr>
+                    <td>
+                        @if (Model.IsInnerUser)
+                        {
+                            <a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAll/@pod.ID?showEditRelated=False">@pod.SystemNumber</a>
+                        }
+                        else
+                        {
+                            <a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAllForOuterUser/@pod.ID?showEditRelated=False">@pod.SystemNumber</a>
+                        }
+                    </td>
+                    @foreach (var column in showColumns)
+                    {
+                        <td>
+                            @{
+                        var o = typeof(Runbow.TWS.Entity.Pod).GetProperty(column.DbColumnName).GetValue(pod);
+                        if (o != null)
+                        {
+                            switch (column.Type)
+                            {
+                                case "CheckBox":
+                                    if ((int)o == 1)
+                                    {
+                                @Html.Raw("Y")
+                                    }
+                                    else
+                                    {
+                                @Html.Raw("N")
+                                    }
+                                    break;
+                            case "DropDownList":
+                                if(!column.IsKey)
+                                {
+                                @Html.ChooseString(o != null && o.ToString() == "1", "Y","N")
+                                }
+                                else
+                                {
+                                    @o.ToString()
+                                }
+                            break;
+                                case "DateTime":
+                                    var temp = (DateTime?)o;
+                                    if (temp.HasValue)
+                                    {
+                                @temp.Value.DateTimeToString()
+                                    }
+                                    break;
+                                case "DateTimeWithTime":
+                                    var temp1 = (DateTime?)o;
+                                    if (temp1.HasValue)
+                                    {
+                                @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                    }
+                                    break;
+                                default:
+                                @o.ToString()
+                                    break;
+                            }
+                        }
+                            }
+                        </td>
+                    }
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+<div class="actionButtonDiv">
+        <input type="button" value="返回" id="btnReturn" />
+</div>

@@ -1,0 +1,105 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+@Url.jsrender()
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@*<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none">*@
+@*</object>*@
+@using (Html.BeginForm())
+{ 
+    
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName);
+    @Html.HiddenFor(m => m.InventorySearchCondition.InventoryDate)
+                                                            var PorjectName = ViewBag.ProjectName;
+    <fieldset>
+        <legend>查询条件
+        </legend>
+        <table>
+            <tr>
+                @{
+                                                            var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                                                            var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+     
+                }
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>客户</label></td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>仓库</label></td>
+                <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>日期</label></td>
+                <td>@Html.Calendar("InventoryDate", "calendarRange  form-control calendarRangeReWrite", @Model.InventorySearchCondition.InventoryDate)</td>
+
+
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+            @*<input type="button" class="btn btn-success" value="打印标签" id="PrintInventorylabel" />*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>库存列表
+            @if (Model.InventorySnapCollection != null && Model.InventorySnapCollection.Any())
+            {
+                @Html.Raw("(" + Model.InventorySnapCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>入库单号</th>
+                        <th>SKU</th>
+                        <th>Article</th>
+                        <th>Size</th>
+                        <th>库位</th>
+                        <th>批次号</th>
+                        <th>托号</th>
+                        <th>单位</th>
+                        <th>规格</th>
+                        <th>货物类型</th>
+                        <th>总数</th>
+                        <th>库存数量</th>
+                        <th>可用库存</th>
+                        <th>操作中库存</th>
+                        <th>冻结数量</th>
+                        <th>已出库数量</th>
+                        <th>日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.InventorySnapCollection != null && Model.InventorySnapCollection.Any())
+                    {
+
+                        foreach (var item in Model.InventorySnapCollection)
+                        {
+                        <tr>
+                            <td>@item.ReceiptNumber</td>
+                            <td>@item.SKU</td>
+                            <td>@item.Article</td>
+                            <td>@item.Size</td>
+                            <td>@item.Location</td>
+                            <td>@item.BatchNumber</td>
+                            <td>@item.BoxNumber</td>
+                            <td>@item.Unit</td>
+                            <td>@item.Specifications</td>
+                            <td>@item.GoodsType</td>
+                            <td>@item.Qty</td>
+                            <td>@item.LocalQty</td>
+                            <td>@item.InventoryQty</td>
+                            <td>@item.UsingQty</td>
+                            <td>@item.LockQty</td>
+                            <td>@item.OutQty</td>
+                            <td>@item.InventoryDate</td>
+                        </tr>
+                       
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

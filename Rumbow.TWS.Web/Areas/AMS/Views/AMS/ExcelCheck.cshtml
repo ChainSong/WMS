@@ -1,0 +1,27 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+<fieldset>
+    <legend>
+        操作提示
+    </legend>
+    <div id="message">
+        请按项目要求的标准表格进行验证(表头+项目名称，运单号) <br />
+        只验证2个月内的回单图片记录
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        @ViewBag.DisplyMessage
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="验证" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>验证结果<label id="resultCount" style="display:none"></label>
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

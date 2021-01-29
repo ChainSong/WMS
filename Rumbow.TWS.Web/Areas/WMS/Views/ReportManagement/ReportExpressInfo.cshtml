@@ -1,0 +1,124 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.ReportExpressInfoViewModel
+@using Runbow.TWS.Common
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartReportDate);//开始时间
+    @Html.HiddenFor(m => m.SearchCondition.EndReportDate);
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                                                         var CustonerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                                                         var WarehouserList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                                                         var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                                                         var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;//条件
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustonerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouserList, "==请选择==", new { @style = "width:100%", @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>订单创建时间</label>
+                </td>
+                <td style="width: 25%">@Html.CalendarRange("ReportDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartReportDate, @Model.SearchCondition.EndReportDate)</td>
+            </tr>
+
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>外部订单号</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.ExternOrderNumber, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>系统订单号</label>
+                </td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.OrderNumber, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label></label>
+                </td>
+                <td></td>
+
+            </tr>
+            <tr></tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+    </fieldset>
+    
+                                                         // if (Model.ProjectRoleID == 12 && (Model.SearchCondition.CustomerID == 83 || Model.SearchCondition.CustomerID == 79))
+                                                         if (ctype.Where(m => m.Type == "CustomerID" && (m.Code == "YXDRB2B" || m.Code == "YXDRB2C") && m.Name == Model.SearchCondition.CustomerID.ToString()) != null)
+                                                         {
+    <fieldset>
+        @{
+                                                             System.Data.DataTable project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, Model.SearchCondition.CustomerID, "WMS_ResponExpress");
+        }
+        <legend>快递单列表
+           @if (Model.ReportExpressChangeCollection != null && Model.ReportExpressChangeCollection.Any())
+           {
+               @Html.Raw("(" + Model.ReportExpressChangeCollection.Count() + ")");
+           }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    @foreach (System.Data.DataRow dr in project.Rows)
+                    {
+                        <th>
+                            @dr["DisplayName"]
+                        </th>                        
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ReportExpressChangeCollection != null && Model.ReportExpressChangeCollection.Any())
+                {
+                    foreach (var item in Model.ReportExpressChangeCollection.OrderByDescending(o => o.CompleteDate))
+                    {
+                <tr>
+                    <td>@item.OrderNumber</td>
+                    <td>@item.ExternOrderNumber</td>
+                    <td>@item.OrderTime</td>
+                    <td>@item.CompleteDate</td>
+                    <td>@item.StorerKey</td>
+                    <td>@item.Status</td>
+                    <td>@item.NetWeight</td>
+                    <td>@item.Qty</td>
+                    <td>@item.BoxSize</td>
+                    <td>@item.Volume</td>
+                    <td>@item.Box</td>
+                    <td>@item.Company</td>
+                    <td>@item.Contact1</td>
+                    <td>@item.PhoneNum1</td>
+                    <td>@item.AddressLine1</td>
+                    <td>@item.str1</td>
+                    <td>@item.str2</td>
+                </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+                                                             
+                                                         }
+
+
+
+
+
+
+
+
+}
+
+

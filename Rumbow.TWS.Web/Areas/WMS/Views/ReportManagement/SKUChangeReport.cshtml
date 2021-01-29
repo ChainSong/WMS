@@ -1,0 +1,107 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.SKUChangeViewModel
+@using Runbow.TWS.Common;
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.CreateTime);
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime);
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime);
+  
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                                                         var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                                                         var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+   
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList,  new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>日期</label></td>
+                
+                <td style="width: 25%;">@Html.CalendarRangeDateTime("CreateTime", "calendarRange form-control calendarRangeReWrite", Model.SearchCondition.StartCreateTime, Model.SearchCondition.EndCreateTime)</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>SKU</label></td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>库位</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.ToLocation, new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+
+            <tr>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+    </fieldset> 
+    
+    <fieldset>
+        <legend>明细列表
+            @{
+                                                         System.Data.DataTable project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, Model.SearchCondition.CustomerID, "WMS_SkuChangeReport");
+                                                         if (project == null || project.Rows.Count == 0)
+                                                         {
+                                                             project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, null, "WMS_SkuChangeReport");
+                                                             if (project == null || project.Rows.Count == 0)
+                                                             {
+                                                                 project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(null, null, "WMS_SkuChangeReport");
+                                                             }
+                                                         }
+            }
+            @if (Model.ReportSKUChangeCollection != null && Model.ReportSKUChangeCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReportSKUChangeCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    @foreach (System.Data.DataRow dr in project.Rows)
+                    {
+                        <th>@dr["DisplayName"]</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ReportSKUChangeCollection != null && Model.ReportSKUChangeCollection.Any())
+                {
+                    foreach (var item in Model.ReportSKUChangeCollection)
+                    { 
+                    <tr>
+                        @foreach (System.Data.DataRow dr in project.Rows)
+                        {
+                            <td>
+                                @{
+                            var o = typeof(Runbow.TWS.Entity.WMS.Report.ReportSKUChange).GetProperty(dr["Columns"].ToString()).GetValue(item);
+                            if (o == null)
+                            {
+
+                            }
+                            else
+                            {
+                                    @o.ToString();
+                            }
+                                }
+                            </td>
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

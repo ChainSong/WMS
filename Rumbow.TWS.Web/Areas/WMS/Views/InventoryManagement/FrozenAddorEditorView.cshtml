@@ -1,0 +1,521 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.PopupJs()
+@Url.jsrender()
+@Url.FrameworkJs("ajaxfileupload.js")
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@Url.Json2()
+@*<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>*@
+<style>
+    strong {
+        padding: 0;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+</style>
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@using (Html.BeginForm())
+{
+    <input id="HiddenViewType" type="hidden" value="@Model.ViewType" />
+    <input type="hidden" id="AdjustmentType" value="库存冻结单" />
+
+    @Html.DropDownList("ProductLevel", Model.GoodsTypes, new { style = "display:none" });
+    <fieldset>
+        <legend>
+            基本信息
+        </legend>
+        <table>
+            <tbody id="table_body">
+
+                @*//ViewType: 0查看 1新增 2编辑*@
+                <tr>
+                    @{
+                        var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                        var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                        var skulist = (IEnumerable<SelectListItem>)ViewBag.skulist;
+                        var upclist = (IEnumerable<SelectListItem>)ViewBag.upclist;
+                        var batchnumberlist = (IEnumerable<SelectListItem>)ViewBag.batchnumberlist;
+                        var boxnumberlist = (IEnumerable<SelectListItem>)ViewBag.boxnumberlist;
+                        var Unitlist = (IEnumerable<SelectListItem>)ViewBag.Unitlist;
+                        var Specificationslist = (IEnumerable<SelectListItem>)ViewBag.Specificationslist;
+                        var togoodstypelist = (IEnumerable<SelectListItem>)ViewBag.togoodstypelist;
+                    }
+                    <td class="TableColumnTitle">
+                        <label>客户</label>
+                    </td>
+                    <td style="width: 20%;" id="label_CustomerID">
+                        @if (Model.ViewType == 0)
+                        {
+                            @Model.AdjustmentAndAdjustmentDetails.adjustment.CustomerName
+                        }
+                        @if (Model.ViewType == 1)
+                        {
+
+                            @Html.DropDownListFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.CustomerID, CustomerList, "==请选择==", new
+                       {
+                           id = "CustomerID",
+                           @class = "form-control",
+
+                       })
+                        }
+                        @if (Model.ViewType == 2)
+                        {
+
+                            @Html.DropDownListFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.CustomerID, CustomerList, "==请选择==", new
+                       {
+                           id = "CustomerID",
+                           @class = "form-control",
+                           disabled = "false"
+                       })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>仓库</label>
+                    </td>
+                    <td style="width: 20%;" id="label_WarehouseID">
+                        @if (Model.ViewType == 0)
+                        {
+                            @Model.AdjustmentAndAdjustmentDetails.adjustment.Warehouse
+                        }
+                        @if (Model.ViewType == 1)
+                        {
+                            @Html.DropDownListFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.Warehouse, WarehouseList, new { id = "WarehouseID", @class = "form-control" })
+                        }
+                        @if (Model.ViewType == 2)
+                        {
+                            @Html.DropDownListFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.Warehouse, WarehouseList, new { id = "WarehouseID", @class = "form-control", disabled = "false" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label id="lbltime">调整时间</label>
+                    </td>
+                    <td style="width: 20%;" id="label_Adjusttime">
+                        @if (Model.ViewType == 0)
+                        {
+                            @Model.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentTime.DateTimeToString("yyyy-MM-dd");
+                        }
+                        @if (Model.ViewType == 1 || Model.ViewType == 2)
+                        {
+                            @Html.CalendarFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentTime, "AdjustmentTime form-control")
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label id="lblnumber">调整单号</label>
+                    </td>
+                    <td style="width: 20%;" id="label_AdjustmentNumber">
+                        @if (Model.ViewType == 0)
+                        {
+                            @Model.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentNumber
+                        }
+                        else if (Model.ViewType == 1 || Model.ViewType == 2)
+                        {
+                            @Html.TextBoxFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentNumber, new
+                       {
+                           Readonly = "true",
+                           id = "AdjustmentNumber",
+                           @class = "form-control",
+                           style = "width:100%;",
+                       })
+                        }
+
+                    </td>
+
+
+
+                    @*  <td class="TableColumnTitle">
+                            <label style="display: none" id="lblhold">冻结状态</label></td>
+                        <td style="width: 20%">
+                            @if (Model.ViewType == 0)
+                            {
+                                if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1)
+                                {
+                                @Html.Raw("冻结");
+                                }
+                                if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 2)
+                                {
+                                @Html.Raw("已解冻");
+                                }
+                            }
+                            @if (Model.ViewType == 1)
+                            {
+                                @Html.TextBox("isholdname", "冻结", new { @class = "form-control", id = "ishold", style = "width:100%;display:none", Readonly = "true" });
+                            }
+                            @if (Model.ViewType == 2)
+                            {
+                                @Html.TextBox("isholdname", Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1 ? "冻结" : "已解冻", new { @class = "form-control", id = "ishold", style = "display:none;width:100%;", Readonly = "true" });
+                            }
+                            </td>*@
+
+                    <td class="TableColumnTitle">
+                        <label>调整单类型</label>
+                    </td>
+                    <td style="width: 20%;">
+                        <label>库存冻结单</label>
+                    </td>
+
+                    @if (Model.ViewType == 0 || Model.ViewType == 2)
+                    {
+                        if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1)
+                        {
+                            <td class="TableColumnTitle">
+                                <label>冻结状态</label>
+                            </td>
+                            <td style="width: 20%">
+                                @Html.Raw("冻结")
+                            </td>
+                        }
+                        if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 2)
+                        {
+                            <td class="TableColumnTitle">
+                                <label>冻结状态</label>
+                            </td>
+                            <td style="width: 20%">
+                                @Html.Raw("已解冻");
+                            </td>
+                        }
+                        if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 0)
+                        {
+                            <td class="TableColumnTitle">
+                                <label></label>
+                            </td>
+                            <td style="width: 20%"></td>
+                        }
+                    }
+                    @if (Model.ViewType == 1)
+                    {
+                        <td class="TableColumnTitle">
+                            <label style="display: none" id="lblhold">冻结状态</label>
+                        </td>
+                        <td style="width: 20%">
+                            <label style="display: none" id="ishold">冻结</label>
+                            @*@Html.TextBox("isholdname", "冻结", new { @class = "form-control", id = "ishold", style = "width:100%;display:none" })*@
+                        </td>
+                    }
+
+                </tr>
+                <tr>
+                    @*<td class="TableColumnTitle">
+                        <label>门店代码</label>
+                    </td>
+                    <td>
+                        @if (Model.ViewType == 0)
+                        {
+                            @Model.AdjustmentAndAdjustmentDetails.adjustment.str3
+                        }
+                        @if (Model.ViewType == 1)
+                        {
+
+                            @Html.DropDownList("CompanyCode", Model.CompanyCodeList, "===请选择===", new { @class = "form-control", @style = "width:100%", placeholder = "门店代码" })
+                        }
+                        @if (Model.ViewType == 2)
+                        {
+                            @Html.DropDownListFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.str3, Model.CompanyCodeList, "==请选择==", new
+                       {
+                           id = "CompanyCode",
+                           @class = "form-control",
+                           disabled = "false"
+                       })
+                        }
+                    </td>*@
+                    <td class="TableColumnTitle">
+                        <label>调整备注</label>
+                    </td>
+                    <td colspan="4" style="width: 90%;" id="label_Remark">
+                        @if (Model.ViewType == 0 || Model.ViewType == 3)
+                        {
+                            @Model.AdjustmentAndAdjustmentDetails.adjustment.Remark
+                        }
+                        else if (Model.ViewType == 1 || Model.ViewType == 2)
+                        {
+
+                            @Html.TextAreaFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.Remark, new { @class = "form-control", id = "AdjustmentRemark" })
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>
+            明细信息
+        </legend>
+        <div id="NewDiv" style="overflow-X: scroll">
+
+            <table id="Newtable" style="width: 130%">
+                <thead>
+                    <tr>
+                        @if (Model.ViewType == 1 || Model.ViewType == 2)
+                        {
+                            <th>操作</th>
+                        }
+                        <th>行号</th>
+                        <th>原库位</th>
+                        <th>SKU</th>
+                        <th>UPC</th>
+                        <th>批次号</th>
+                        <th>托号</th>
+                        <th>单位</th>
+                        <th>规格</th>
+                        <th>货品等级</th>
+                        <th>货品描述</th>
+                        <th id="lbloldcount">可调整库存</th>
+                        <th>新库位</th>
+                        <th id="lblcounts">调整后数量</th>
+                        <th>调整等级</th>
+                        <th id="lblreson">调整原因</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ViewType == 0)
+                    {
+                        foreach (var item in Model.AdjustmentAndAdjustmentDetails.adjustmentDetails)
+                        {
+                            <tr>
+                                <td class="LineNumber"></td>
+                                <td class="FromLocation">@item.FromArea|@item.FromLocation</td>
+                                <td class="SKU">@item.SKU</td>
+                                <td class="UPC">@item.UPC</td>
+                                <td class="BatchNumber">@item.BatchNumber</td>
+                                <td class="BoxNumber">@item.BoxNumber</td>
+                                <td class="Unit">@item.Unit</td>
+                                <td class="Specifications">@item.Specifications</td>
+                                <td class="FromGoodsType">@item.FromGoodsType</td>
+                                <td class="GoodsName">@item.GoodsName</td>
+                                <td class="FromQty">@item.FromQty</td>
+                                <td class="ToLocation">@item.ToArea|@item.ToLocation</td>
+                                <td class="ToQty">@item.ToQty</td>
+                                <td class="ToGoodsType">@item.ToGoodsType</td>
+                                <td class="AdjustmentReason">@item.AdjustmentReason</td>
+                            </tr>
+                        }
+                    }
+                    @if (Model.ViewType == 2)
+                    {
+                        var icount = 1;
+                        foreach (var item in Model.AdjustmentAndAdjustmentDetails.adjustmentDetails)
+                        {
+
+                            var number = (100000 + icount).ToString().Substring(1);
+                            <tr>
+                                <td style="position: relative">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        @*     <label id="labelRemove" style="cursor: pointer; color: white" class="label label-info">删除</label>&nbsp;&nbsp;<label style="cursor: pointer; color: white" class="label label-info" onclick="addNew()">新增</label>*@
+                                        <label id="labelRemove" style="cursor: pointer;" class="btn btn-primary btn-xs">删除</label>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   addNew" onclick="addNew()">新增</label>
+
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+
+                                </td>
+
+                                <td class="LineNubmer">@number</td>
+                                <td class="FromLocation">
+                                    @Html.TextBox("OldLocation", @item.FromArea + '|' + @item.FromLocation, new { @class = "form-control OldLocation", style = "width:130px;" })
+                                </td>
+                                @{
+                                    var list11 = skulist.ToList();
+                                    for (int i = 0; i < list11.Count(); i++)
+                                    {
+                                        if (list11[i].Text == @item.SKU + '|' + @item.ToGoodsType)
+                                        {
+                                            list11[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                <td class="SKU">
+                                    @Html.DropDownList("sku", list11, new { @class = "form-control sku", style = "width:130px;" })
+                                </td>
+                                @{
+                                    var listupc = upclist.ToList();
+                                    for (int i = 0; i < listupc.Count(); i++)
+                                    {
+                                        if (listupc[i].Text == @item.UPC)
+                                        {
+                                            listupc[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                <td class="UPC">
+                                    @Html.DropDownList("upc", listupc, new { @class = "form-control upc" + number, style = "width:130px;" })
+                                </td>
+                                @{
+                                    var listba = batchnumberlist.ToList();
+                                    for (int i = 0; i < listba.Count(); i++)
+                                    {
+                                        if (listba[i].Text == @item.BatchNumber)
+                                        {
+                                            listba[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                <td class="BatchNumber">
+                                    @Html.DropDownList("batchnumber", listba, new { @class = "form-control batchnumber", style = "width:130px;" })
+                                </td>
+                                @{
+                                    var listbo = boxnumberlist.ToList();
+                                    for (int i = 0; i < listbo.Count(); i++)
+                                    {
+                                        if (listbo[i].Text == @item.BoxNumber)
+                                        {
+                                            listbo[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                <td class="BoxNumber">
+                                    @Html.DropDownList("boxnumber", listbo, new { @class = "form-control boxnumber", style = "width:130px;" })
+                                </td>
+                                @{
+                                    var list1 = Unitlist.ToList();
+                                    for (int i = 0; i < list1.Count(); i++)
+                                    {
+                                        if (list1[i].Text == item.Unit)
+                                        {
+                                            list1[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                <td>
+                                    @Html.DropDownList("Unit", list1, new { @class = "form-control Unit" + number, style = "width:130px;" })
+                                </td>
+                                @{
+                                    var list3 = Specificationslist.ToList();
+                                    for (int i = 0; i < list3.Count(); i++)
+                                    {
+                                        if (list3[i].Text == item.Specifications)
+                                        {
+                                            list3[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                <td>
+                                    @Html.DropDownList("Specifications", list3, new { @class = "form-control Specifications" + number, style = "width:130px;" })
+                                </td>
+                                <td class="FromGoodsType">
+                                    @Html.TextBox("FromGoodsType" + number, @item.FromGoodsType, new { Readonly = "true", @class = "form-control FromGoodsType" + number, style = "width:130px;" })
+                                </td>
+                                <td class="GoodsName">
+                                    @Html.TextBox("GoodsName" + number, @item.GoodsName, new { Readonly = "true", @class = "form-control GoodsName" + number, style = "width:130px;" })
+                                </td>
+                                <td class="FromQty">
+                                    @Html.TextBox("FromQty" + number, @item.FromQty, new { Readonly = "true", @class = "form-control FromQty" + number, style = "width:130px;" })
+                                </td>
+                                <td class="ToLocation">
+                                    @Html.TextBox("ToLocation" + number, @item.ToArea + '|' + @item.ToLocation, new { @class = "form-control ToLocation", style = "width:130px;" })
+                                </td>
+                                <td class="ToQty">
+                                    @Html.TextBox("ToQty" + number, @item.ToQty, new { @class = "form-control ToQty" + number, style = "width:130px;" })
+                                </td>
+                                @{
+                                    var list = Model.GoodsTypes.ToList();
+                                    for (int i = 0; i < list.Count(); i++)
+                                    {
+                                        if (list[i].Text == item.ToGoodsType)
+                                        {
+                                            list[i].Selected = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                <td>
+                                    @Html.DropDownList("ToGoodsType" + number, list, new { @class = "form-control ToGoodsType" + number, style = "width:130px;" })
+                                </td>
+                                <td class="AdjustmentReason">
+                                    @Html.TextBox("AdjustmentReason" + number, @item.AdjustmentReason, new { @class = "form-control AdjustmentReason" + number, style = "width:130px;" })
+                                </td>
+
+                            </tr>
+                            icount++;
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </fieldset>
+    <div class="actionButtonDiv">
+
+        <input type="button" class="btn btn-success" style="display: none" value="打印标签" id="PrintLabel" />
+
+        @if (Model.ViewType == 1)
+        {
+            <input type="button" class="btn btn-success" value="暂存" id="zancunButton" onclick="AddAdjustAndAdjustDetail(true)" />
+            <input id="hiddenid" type="hidden" value="" />
+            <input type="button" class="btn btn-success" style="display:none" value="提交" id="submitButton" onclick="submitClick()" />
+
+        }
+        @if (Model.ViewType == 2)
+        {
+            <input type="button" class="btn btn-success" value="暂存" id="editbtn" onclick="UpdateAdjustAndAdjustDetail(@Model.AdjustmentAndAdjustmentDetails.adjustment.ID)" />
+            <input id="hiddenid" type="hidden" value="@Model.AdjustmentAndAdjustmentDetails.adjustment.ID" />
+            <input type="button" class="btn btn-success" style="display:none" value="提交" onclick="editsubmit()" />
+
+        }@if (Model.ViewType == 0)
+        {
+            <input type="button" class="btn btn-success" style="display:none;" value="继续添加" id="Addangian" onclick="addangian()" />
+
+        }
+        <input type="button" class="btn btn-success" value="返回" id="backButton" />
+        <input id="hiddengoodstype" type="hidden" />
+    </div>
+
+}
+
+<div id="PrintDiv" style="display: none">
+    <div class="actionButtonDiv">
+        <label id="editReturn" style="font-size: 30px; color: blue; text-align: center">是否立即打印标签</label>
+        <br>
+        <br>
+        <br>
+        <br>
+        <input type="button" class="btn btn-success" style="vertical-align: middle; width: 80px" value="是" id="PrintOK" />
+        <input type="button" class="btn btn-success" style="vertical-align: middle; width: 80px" value="否" id="PrintCancel" />
+    </div>
+
+</div>
+
+<div style="display: none;" id="DisInfoBody"></div>
+<script id="Evaluation" type="text/x-jsrender">
+    <div id="{{:PageIndex}}" class='only_for_print pagestyle' style='width: 500px; height: 196px'>
+        <div style="float: left; width: 127px;">
+            <img style="width: 120px; height: 160px; padding-top: 40px" src="../../../../TotalImage/{{:PictureStr}}" />
+        </div>
+        <div style="float: left; padding-top: 20px; left: 40%">
+            <p style="width: 200px; line-height: 20px; padding: 0px; margin: 0px;"><strong>名称:{{:GoodsName}}</strong></p>
+            <strong>产品编码:{{:SKU}}</strong></br>
+            <strong>生产日期:{{:StringDateTime1}}</strong></br>
+            <strong>过期日期:{{:StringDateTime2}}</strong></br>
+            <strong>生产批次:{{:BatchNumber}}</strong></br>
+            <strong>供应商:{{:Manufacturer}}</strong></br>
+            <strong>流水号:</strong></br>
+            <strong>{{:BoxNumber}}</strong></br>
+            <strong>数量:{{:ToQty}}</strong></br>
+            <strong>净重:</strong></br>
+            <strong>毛重:</strong></br>
+        </div>
+    </div>
+</script>
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

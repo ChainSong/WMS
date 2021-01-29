@@ -1,0 +1,37 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ProjectCustomersOrShippersAllocateViewModel
+           <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>
+            @Html.ChooseString(Model.Target == 0, "客户列表", "承运商列表")
+        </legend>
+        <table id="RoleTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>@Html.ChooseString(Model.Target == 0, "客户名称", "承运商名称")</th>
+                    <th>是否默认</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var csc in Model.CustomerOrShippersCollection)
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBox("checkBoxForMapping", csc.ProjectID > 0 && csc.State, new { data_ID = csc.ProjectShipperOrCustomerID, data_CustomerOrShipperID = csc.CustomerOrShipperID, @class = "checkBoxForMapping" })
+                        </td>
+                        <td>@csc.CustomerOrShipperName</td>
+                        <td>@Html.CheckBox("checkBoxForIsDefault", csc.IsDefault, new { data_ID = csc.ProjectShipperOrCustomerID, data_CustomerOrShipperID = csc.CustomerOrShipperID, @class = "checkBoxForIsDefault" })</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="actionButtonDiv">
+            <input id="submitProjectCustomerOrShipper" type="button" class="btn btn-success"  value="提交" />
+                        <input id="btnCancel" type="button" onclick="window.location.href = '/System/Project/List'" class="btn btn-success" value="返回" />
+            @Html.HiddenFor(x => x.SelectedConfig)
+            @Html.HiddenFor(x => x.Target)
+        </div>
+    </fieldset>
+}

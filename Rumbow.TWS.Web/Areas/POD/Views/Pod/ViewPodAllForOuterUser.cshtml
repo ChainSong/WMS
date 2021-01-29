@@ -1,0 +1,968 @@
+﻿@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.POD.Models.PodAllViewModel
+@{
+    var showEdit = Model.ShowEditRelated ?? false;
+
+    var showTrackEdit = (bool)ViewBag.ShowTrackEdit;
+
+    var columnsForPod = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "Pod").ColumnCollection;
+    var notKeyColumns = columnsForPod.Where(c => (!c.IsKey && !c.IsHide || c.IsKey && c.ForView) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+       .Select(c =>
+       {
+           if (c.InnerColumns.Count == 0)
+           {
+               return c;
+           }
+           else
+           {
+               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+               {
+                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+               }
+
+               return c;
+           }
+       }).Where(c => c.ShowRoleIDs.Contains(Model.ProjectRole));
+    //var notKeyColumns = columnsForPod.Where(c => (!c.IsKey && !c.IsHide || c.IsKey && c.ForView) && c.ShowRoleIDs.Contains(Model.ProjectRole));
+    var notKeyTextAreaColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    int notKeyTextAreaRowCount = notKeyTextAreaColumns.Count;
+    var notKeyTextBoxColumns = notKeyColumns.Where(c => !string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumnsCount = notKeyTextBoxColumns.Count;
+    int notKeyTextBoxRowCount = notKeyTextBoxColumnsCount % 3 > 0 ? notKeyTextBoxColumnsCount / 3 + 1 : notKeyTextBoxColumnsCount / 3;
+
+    var columnsForPodDetail = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodDetail").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+       .Select(c =>
+       {
+           if (c.InnerColumns.Count == 0)
+           {
+               return c;
+           }
+           else
+           {
+               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+               {
+                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+               }
+
+               return c;
+           }
+       });
+    //var columnsForPodDetail = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodDetail").ColumnCollection;
+    var showPodDetail = columnsForPodDetail.Where(c => c.IsKey == false && c.IsHide == false).Count() > 0;
+
+    var columnsForPodFeadBack = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodFeadBack").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+                }
+
+                return c;
+            }
+        });
+    //var columnsForPodFeadBack = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodFeadBack").ColumnCollection;
+    var showPodFeadBack = columnsForPodFeadBack.Where(c => c.IsKey == false && c.IsHide == false).Count() > 0;
+
+    var columnsForPodReplyDocument = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodReplyDocument").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+                }
+
+                return c;
+            }
+        });
+    //var columnsForPodReplyDocument = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodReplyDocument").ColumnCollection;
+    var notKeyColumnsForPodReplyDocument = columnsForPodReplyDocument.Where(c => c.IsKey == false && c.IsHide == false);
+    var notKeyTextAreaColumnsForPodReplyDocument = notKeyColumnsForPodReplyDocument.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    int notKeyTextAreaRowCountForPodReplyDocument = notKeyTextAreaColumnsForPodReplyDocument.Count;
+    var notKeyTextBoxColumnsForPodReplyDocument = notKeyColumnsForPodReplyDocument.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumnsCountForPodReplyDocument = notKeyTextBoxColumnsForPodReplyDocument.Count;
+    var notKeyTextBoxRowCountForPodReplyDocument = notKeyTextBoxColumnsCountForPodReplyDocument % 3 > 0 ? notKeyTextBoxColumnsCountForPodReplyDocument / 3 + 1 : notKeyTextBoxColumnsCountForPodReplyDocument / 3;
+
+    var columnsForPodTrack = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodTrack").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+                }
+
+                return c;
+            }
+        });
+    //var columnsForPodTrack = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodTrack").ColumnCollection;
+    var showPodTrack = columnsForPodTrack.Where(c => c.IsKey == false && c.IsHide == false).Count() > 0;
+
+    var columnsForPodException = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodException").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+       .Select(c =>
+       {
+           if (c.InnerColumns.Count == 0)
+           {
+               return c;
+           }
+           else
+           {
+               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+               {
+                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+               }
+
+               return c;
+           }
+       });
+    //var columnsForPodException = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodException").ColumnCollection;
+    var showPodException = columnsForPodException.Where(c => c.IsHide == false && c.IsKey == false).Count() > 0;
+
+    var columnsForPodStatusLog = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodStatusLog").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+       .Select(c =>
+       {
+           if (c.InnerColumns.Count == 0)
+           {
+               return c;
+           }
+           else
+           {
+               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+               {
+                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+               }
+
+               return c;
+           }
+       });
+    //var columnsForPodStatusLog = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodStatusLog").ColumnCollection;
+    var showPodStatusLog = columnsForPodStatusLog.Where(c => c.IsHide == false && c.IsKey == false).Count() > 0;
+
+    var columnsForPodStatusTrack = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodStatusTrack").ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID)))
+       .Select(c =>
+       {
+           if (c.InnerColumns.Count == 0)
+           {
+               return c;
+           }
+           else
+           {
+               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID))
+               {
+                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PodAll.Pod.CustomerID);
+               }
+
+               return c;
+           }
+       });
+    //var columnsForPodStatusLog = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "PodStatusLog").ColumnCollection;
+    var showPodStatusTrack = columnsForPodStatusLog.Where(c => c.IsHide == false && c.IsKey == false).Count() > 0;
+
+}
+
+<fieldset>
+    <legend>基础信息</legend>
+    <table>
+        @for (int i = 0; i < notKeyTextBoxRowCount; i++)
+        {
+            <tr>
+                @for (int j = 0; j < 3; j++)
+                {
+                    var index = i * 3 + j;
+                    if (index >= notKeyTextBoxColumnsCount)
+                    {
+                    <td colspan="2"></td>
+                    }
+                    else
+                    {
+                        var column = notKeyTextBoxColumns[i * 3 + j];
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                    </td>
+                    <td class="TableColumnVal">
+                        @{
+                        object val = typeof(Runbow.TWS.Entity.Pod).GetProperty(column.DbColumnName).GetValue(Model.PodAll.Pod);
+
+                        switch (column.Type)
+                        {
+                            case "TextBox":
+                            case "RegionPicker":
+                            case null:
+                                if (val != null)
+                                {
+                            @val.ToString()
+                                }
+                                break;
+                            case "DropDownList":
+                                if (column.IsKey)
+                                {
+                                    @val.ToString()
+                                }
+                                else
+                                {
+                                    @Html.ChooseString(val != null && val.ToString() == "1", "Y", "N")
+                                }
+                                break;
+                            case "DateTime":
+                                var time = (DateTime?)val;
+                                if (time != null && time.HasValue)
+                                {
+                            @time.Value.DateTimeToString()
+                                }
+                                break;
+                            case "DateTimeWithTime":
+                                var time1 = (DateTime?)val;
+                                if (time1 != null && time1.HasValue)
+                                {
+                            @time1.Value.ToString("yyyy-MM-dd HH:mm")
+                                }
+                                break;
+                            case "CheckBox":
+                                var temp = val.ConvertSimpleType(typeof(int));
+                                if (temp != null && (int)temp == 1)
+                                {
+                            @Html.Raw("Y")
+                                }
+                                else if (temp != null && (int)temp == 0)
+                                {
+                            @Html.Raw("N")
+                                }
+                                break;
+                             case "FileUpload":
+                                @Html.SingleFileUpload("fileAttachmentGroupID" + val.ToString(), "Hidden_AttachmentGroupID" + val.ToString(), val.ToString(), true, true, false, false)
+                                break;  
+                            default:
+                                break;
+                        }
+                        }
+                    </td>
+                    }
+                }
+            </tr>
+        }
+
+        @for (int i = 0; i < notKeyTextAreaRowCount; i++)
+        {
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lbl" + notKeyTextAreaColumns[i].DbColumnName, notKeyTextAreaColumns[i].DisplayName)
+                </td>
+                <td colspan="5">
+                    @{
+            object v = typeof(Runbow.TWS.Entity.Pod).GetProperty(notKeyTextAreaColumns[i].DbColumnName).GetValue(Model.PodAll.Pod);
+            if (v != null)
+            {
+                        @v.ToString()
+            }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</fieldset>
+
+@if (showPodDetail)
+{
+    <fieldset>
+        <legend>明细
+            @if (showEdit)
+            {
+                @Html.Raw(" &nbsp; &nbsp;");
+                @Html.ActionLink("新增/编辑", "PodDetailManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+            }
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var column in columnsForPodDetail.OrderBy(d => d.Order))
+                    {
+                        if (column.IsHide)
+                        {
+                        <th style="display: none">
+                            @column.DisplayName
+                        </th>
+                        }
+                        else
+                        {
+                        <th>
+                            @column.DisplayName
+                        </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodAll.PodDetails != null)
+                {
+                    foreach (var row in Model.PodAll.PodDetails)
+                    {
+                    <tr>
+                        @foreach (var column in columnsForPodDetail.OrderBy(d => d.Order))
+                        {
+                            if (column.IsHide == true)
+                            {
+                            <td style="display: none"></td>
+                                continue;
+                            }
+                            else
+                            {
+                                object v1 = typeof(Runbow.TWS.Entity.PodDetail).GetProperty(column.DbColumnName).GetValue(row);
+                            <td>
+                                @if (v1 != null)
+                                {
+                                    if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.DateTimeToString()
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.ChooseString(v1 != null && v1.ToString() == "1", "Y", "N")
+                                    }
+                                    else
+                                    {
+                                    @v1.ToString()
+                                    }
+                                }
+                            </td>
+
+                            }
+
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+@if (showPodFeadBack)
+{
+    <fieldset>
+        <legend>回访信息
+            @if (showEdit)
+            {
+                @Html.Raw(" &nbsp; &nbsp;");
+                @Html.ActionLink("新增/编辑", "PodFeadBackManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+            }
+        </legend>
+        @{
+            var notKeyColumnsForFeadBack = columnsForPodFeadBack.Where(c => c.IsKey == false && c.IsHide == false);
+            var notKeyTextAreaColumnsForFeadBack = notKeyColumnsForFeadBack.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+            int notKeyTextAreaRowCountForFeadBack = notKeyTextAreaColumnsForFeadBack.Count;
+            var notKeyTextBoxColumnsForFeadBack = notKeyColumnsForFeadBack.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+            var notKeyTextBoxColumnsCountForFeadBack = notKeyTextBoxColumnsForFeadBack.Count;
+            int notKeyTextBoxRowCountForFeadBack = notKeyTextBoxColumnsCountForFeadBack % 3 > 0 ? notKeyTextBoxColumnsCountForFeadBack / 3 + 1 : notKeyTextBoxColumnsCountForFeadBack / 3;
+            <table>
+                @for (int i = 0; i < notKeyTextBoxRowCountForFeadBack; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < 3; j++)
+                        {
+                            var index = i * 3 + j;
+                            if (index >= notKeyTextBoxColumnsCountForFeadBack)
+                            {
+                            <td colspan="2"></td>
+                            }
+                            else
+                            {
+                                var column = notKeyTextBoxColumnsForFeadBack[i * 3 + j];
+                            <td class="TableColumnTitle">
+                                @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                            </td>
+                                if (Model.PodAll.PodFeadBack == null)
+                                {
+                            <td class="TableColumnVal"></td>
+                                }
+                                else
+                                {
+                            <td class="TableColumnVal">
+                                @{
+                                    object val = typeof(Runbow.TWS.Entity.PodFeadBack).GetProperty(column.DbColumnName).GetValue(Model.PodAll.PodFeadBack);
+
+                                    switch (column.Type)
+                                    {
+                                        case "TextBox":
+                                            if (val != null)
+                                            {
+                                    @val.ToString()
+                                            }
+                                            break;
+                                        case "DateTime":
+                                            var time = (DateTime?)val;
+                                            if (time != null && time.HasValue)
+                                            {
+                                    @time.Value.DateTimeToString()
+                                            }
+                                            break;
+                                        case "DateTimeWithTime":
+                                            var time1 = (DateTime?)val;
+                                            if (time1 != null && time1.HasValue)
+                                            {
+                                    @time1.Value.ToString("yyyy-MM-dd HH:mm")
+                                            }
+                                            break;
+                                        case "DropDownList":
+                                            @Html.ChooseString(val != null && val.ToString() == "1", "Y", "N")
+                                            break;
+                                        case "CheckBox":
+                                            var temp = val.ConvertSimpleType(typeof(int));
+                                            if (temp != null && (int)temp == 1)
+                                            {
+                                    @Html.Raw("Y")
+                                            }
+                                            else if (temp != null && (int)temp == 0)
+                                            {
+                                    @Html.Raw("N")
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            </td>
+                                }
+                            }
+                        }
+                    </tr>
+                }
+
+                @for (int i = 0; i < notKeyTextAreaRowCountForFeadBack; i++)
+                {
+                    <tr>
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + notKeyTextAreaColumnsForFeadBack[i].DbColumnName, notKeyTextAreaColumnsForFeadBack[i].DisplayName)
+                        </td>
+                        @if (Model.PodAll.PodFeadBack == null)
+                        {
+                            <td colspan="5"></td>
+                        }
+                        else
+                        {
+                            <td colspan="5">
+                                @{
+                            object v = typeof(Runbow.TWS.Entity.PodFeadBack).GetProperty(notKeyTextAreaColumnsForFeadBack[i].DbColumnName).GetValue(Model.PodAll.PodFeadBack);
+                            if (v != null)
+                            {
+                                    @v.ToString()
+                            }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+
+        }
+    </fieldset>
+}
+
+<fieldset>
+    <legend>回单信息
+        @if (showEdit)
+        {
+            @Html.Raw(" &nbsp; &nbsp;");
+            @Html.ActionLink("新增/编辑", "PodReplyDocumentManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+        }
+    </legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.Label("lblReplier", columnsForPodReplyDocument.First(c => c.DbColumnName == "Replier").DisplayName)
+            </td>
+            <td class="TableColumnVal">
+                @Model.PodAll.PodReplyDocument.Replier
+            </td>
+            <td class="TableColumnTitle">
+                @Html.Label("lblReplyTime", columnsForPodReplyDocument.First(c => c.DbColumnName == "ReplyTime").DisplayName)
+            </td>
+            <td class="TableColumnVal">
+                @if (Model.PodAll.PodReplyDocument.ReplyTime.HasValue)
+                {
+                    @Model.PodAll.PodReplyDocument.ReplyTime.Value.DateTimeToString()
+                }
+            </td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.Label("lblAttachmentGroupID", columnsForPodReplyDocument.First(c => c.DbColumnName == "AttachmentGroupID").DisplayName)
+            </td>
+            <td colspan="5">
+                @Html.SingleFileUpload("single", "Hidden_Signle_GroupID", Model.PodAll.PodReplyDocument.AttachmentGroupID, true, true, true)
+            </td>
+        </tr>
+        @for (int i = 0; i < notKeyTextBoxRowCountForPodReplyDocument; i++)
+        {
+            <tr>
+                @for (int j = 0; j < 3; j++)
+                {
+                    var index = i * 3 + j;
+                    if (index >= notKeyTextBoxColumnsCountForPodReplyDocument)
+                    {
+                    <td colspan="2"></td>
+                    }
+                    else
+                    {
+                        var column = notKeyTextBoxColumnsForPodReplyDocument[i * 3 + j];
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                    </td>
+                    <td class="TableColumnVal">
+                        @{
+                        object val = typeof(Runbow.TWS.Entity.PodReplyDocument).GetProperty(column.DbColumnName).GetValue(Model.PodAll.PodReplyDocument);
+
+                        switch (column.Type)
+                        {
+                            case "TextBox":
+                                if (val != null)
+                                {
+                            @val.ToString()
+                                }
+                                break;
+                            case "DateTime":
+                                var time = (DateTime?)val;
+                                if (time != null && time.HasValue)
+                                {
+                            @time.Value.DateTimeToString()
+                                }
+                                break;
+                            case "DateTimeWithTime":
+                                var time1 = (DateTime?)val;
+                                if (time1 != null && time1.HasValue)
+                                {
+                            @time1.Value.ToString("yyyy-MM-dd HH:mm")
+                                }
+                                break;
+                            case "DropDownList":
+                                @Html.ChooseString(val != null && val.ToString() == "1", "Y", "N")
+                                break;
+                            case "CheckBox":
+                                var temp = val.ConvertSimpleType(typeof(int));
+                                if (temp != null && (int)temp == 1)
+                                {
+                            @Html.Raw("Y")
+                                }
+                                else if (temp != null && (int)temp == 0)
+                                {
+                            @Html.Raw("N")
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        }
+                    </td>
+                    }
+                }
+            </tr>
+        }
+
+        @for (int i = 0; i < notKeyTextAreaRowCountForPodReplyDocument; i++)
+        {
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lbl" + notKeyTextAreaColumnsForPodReplyDocument[i].DbColumnName, notKeyTextAreaColumnsForPodReplyDocument[i].DisplayName)
+                </td>
+                <td colspan="5">
+                    @{
+            object v = typeof(Runbow.TWS.Entity.PodReplyDocument).GetProperty(notKeyTextAreaColumnsForPodReplyDocument[i].DbColumnName).GetValue(Model.PodAll.PodReplyDocument);
+            if (v != null)
+            {
+                        @v.ToString()
+            }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</fieldset>
+
+@if (showPodTrack)
+{
+    <fieldset>
+        <legend>跟踪信息
+            @if (showTrackEdit)
+            {
+                @Html.Raw(" &nbsp; &nbsp;");
+                @Html.ActionLink("新增/编辑", "PodTrackManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+            }
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var column in columnsForPodTrack.OrderBy(c => c.Order))
+                    {
+                        if (column.IsHide)
+                        {
+                        <th style="display: none">
+                            @column.DisplayName
+                        </th>
+                        }
+                        else
+                        {
+                        <th>
+                            @column.DisplayName
+                        </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodAll.PodTracks != null)
+                {
+                    foreach (var row in Model.PodAll.PodTracks)
+                    {
+                    <tr>
+                        @foreach (var column in columnsForPodTrack.OrderBy(d => d.Order))
+                        {
+                            if (column.IsHide == true)
+                            {
+                            <td style="display: none"></td>
+                                continue;
+                            }
+                            else
+                            {
+                                object v1 = typeof(Runbow.TWS.Entity.PodTrack).GetProperty(column.DbColumnName).GetValue(row);
+                            <td>
+                                @if (v1 != null)
+                                {
+                                    if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.DateTimeToString()
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.ChooseString(v1 != null && v1.ToString() == "1", "Y", "N")
+                                    }
+                                    else
+                                    {
+                                    @v1.ToString()
+                                    }
+                                }
+                            </td>
+
+                            }
+
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+@if (showPodException)
+{
+    <fieldset>
+        <legend>异常信息
+            @if (showEdit)
+            {
+                @Html.Raw(" &nbsp; &nbsp;");
+                @Html.ActionLink("新增/编辑", "PodExceptionManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+            }
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var column in columnsForPodException.OrderBy(c => c.Order))
+                    {
+                        if (column.IsHide)
+                        {
+                        <th style="display: none">
+                            @column.DisplayName
+                        </th>
+                        }
+                        else
+                        {
+                        <th>
+                            @column.DisplayName
+                        </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodAll.PodExceptions != null)
+                {
+                    foreach (var row in Model.PodAll.PodExceptions)
+                    {
+                    <tr>
+                        @foreach (var column in columnsForPodException.OrderBy(d => d.Order))
+                        {
+                            if (column.IsHide == true)
+                            {
+                            <td style="display: none"></td>
+                                continue;
+                            }
+                            else
+                            {
+                                object v1 = typeof(Runbow.TWS.Entity.PodException).GetProperty(column.DbColumnName).GetValue(row);
+                            <td>
+                                @if (v1 != null)
+                                {
+                                    if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.DateTimeToString()
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.ChooseString(v1 != null && v1.ToString() == "1", "Y", "N")
+                                    }
+                                    else
+                                    {
+                                    @v1.ToString()
+                                    }
+                                }
+                            </td>
+
+                            }
+
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+@if (showPodStatusLog)
+{
+    <fieldset>
+        <legend>车辆信息
+            @if (showEdit)
+            {
+                @Html.Raw(" &nbsp; &nbsp;");
+                @Html.ActionLink("新增/编辑", "PodStatusLogManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+            }
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var column in columnsForPodStatusLog.OrderBy(c => c.Order))
+                    {
+                        if (column.IsHide)
+                        {
+                        <th style="display: none">
+                            @column.DisplayName
+                        </th>
+                        }
+                        else
+                        {
+                        <th>
+                            @column.DisplayName
+                        </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodAll.PodStatusLogs != null)
+                {
+                    foreach (var row in Model.PodAll.PodStatusLogs)
+                    {
+                    <tr>
+                        @foreach (var column in columnsForPodStatusLog.OrderBy(d => d.Order))
+                        {
+                            if (column.IsHide == true)
+                            {
+                            <td style="display: none"></td>
+                                continue;
+                            }
+                            else
+                            {
+                                object v1 = typeof(Runbow.TWS.Entity.PodStatusLog).GetProperty(column.DbColumnName).GetValue(row);
+                            <td>
+                                @if (v1 != null)
+                                {
+                                    if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.DateTimeToString()
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.ChooseString(v1 != null && v1.ToString() == "1", "Y", "N")
+                                    }
+                                    else if(string.Equals(column.Type, "FileUpload",StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.SingleFileUpload("fileAttachmentGroupID" + v1.ToString(), "Hidden_AttachmentGroupID" + v1.ToString(), v1.ToString(), true, true, false, false)
+                                    }
+                                    else
+                                    {
+                                    @v1.ToString()
+                                    }
+                                }
+                            </td>
+
+                            }
+
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+@if (showPodStatusTrack)
+{
+    <fieldset>
+        <legend>状态跟踪
+            @if (showEdit)
+            {
+                @Html.Raw(" &nbsp; &nbsp;");
+                @Html.ActionLink("新增/编辑", "PodStatusTrackManage", new { id = Model.PodAll.Pod.ID, systemNumber = Model.PodAll.Pod.SystemNumber, customerOrderNumber = Model.PodAll.Pod.CustomerOrderNumber, customerID = Model.PodAll.Pod.CustomerID })
+            }
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var column in columnsForPodStatusTrack.OrderBy(c => c.Order))
+                    {
+                        if (column.IsHide)
+                        {
+                        <th style="display: none">
+                            @column.DisplayName
+                        </th>
+                        }
+                        else
+                        {
+                        <th>
+                            @column.DisplayName
+                        </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodAll.PodStatusTracks != null)
+                {
+                    foreach (var row in Model.PodAll.PodStatusTracks)
+                    {
+                    <tr>
+                        @foreach (var column in columnsForPodStatusTrack.OrderBy(d => d.Order))
+                        {
+                            if (column.IsHide == true)
+                            {
+                            <td style="display: none"></td>
+                                continue;
+                            }
+                            else
+                            {
+                                object v1 = typeof(Runbow.TWS.Entity.PodStatusTrack).GetProperty(column.DbColumnName).GetValue(row);
+                            <td>
+                                @if (v1 != null)
+                                {
+                                    if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.DateTimeToString()
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var time = (DateTime?)v1;
+                                        if (time != null && time.HasValue)
+                                        {
+                                    @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                        }
+                                    }
+                                    else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.ChooseString(v1 != null && v1.ToString() == "1", "Y", "N")
+                                    }
+                                    else if(string.Equals(column.Type, "FileUpload",StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        @Html.SingleFileUpload("fileAttachmentGroupID" + v1.ToString(), "Hidden_AttachmentGroupID" + v1.ToString(), v1.ToString(), true, true, false, false)
+                                    }
+                                    else
+                                    {
+                                    @v1.ToString()
+                                    }
+                                }
+                            </td>
+
+                            }
+
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+<div class="actionButtonDiv">
+    <input type="button" value="返回" onclick="window.history.back();" />
+</div>

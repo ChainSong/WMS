@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "RoleDetail";
+}
+@model Runbow.TWS.Web.Areas.System.Models.RoleModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="/Scripts/System/Layer/layer.js"></script>
+
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+
+<script type="text/javascript">
+    var objtemp = "";
+    $(document).ready(function () {
+        var objtemp = '@ViewBag.rId';
+        if (objtemp.length > 0) {
+            $("#btnQx").show();
+            $("#btnReturn").hide();
+        }
+        else {
+            $("#btnQx").hide();
+            $("#btnReturn").show();
+        }
+
+
+        //设置菜单权限
+        $("#btnQx").click(function () {
+            window.location.href = '/System/ProjectRoleMenu/Index?id=' + objtemp;
+        });
+    });
+
+
+
+</script>
+
+@using (Html.BeginForm("RoleDetail", "Role"))
+{
+    @Html.HiddenFor(m => m.ID)
+    <fieldset>
+        <legend>&nbsp;&nbsp;角色详细页</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Name)</td>
+                <td>@Model.Name</td>
+              
+            </tr>
+            <tr>
+                  <td class="TableColumnTitle">@Html.LabelFor(model => model.Description)</td>
+                <td>@Model.Description</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Satate)</td>
+                <td>@if (Model.Satate)
+                    {@Html.Raw("可用");
+                    }
+                    else
+                    {   @Html.Raw("禁用");
+                    }
+                </td>
+
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="继续新增"  onclick="window.location.href = '/System/Role/RoleAdd'" id="btnSave" />
+            <input class="btn btn-success" value="菜单分配" id="btnQx" />
+            <a class="btn btn-success" onclick="window.location.href = '/System/Role/RoleManage'">返回</a>
+        </div>
+    </fieldset>
+}

@@ -1,0 +1,508 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@{
+
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns1;
+    IList<Runbow.TWS.Entity.Column> notKeyTextBoxColumns1;
+    int notKeyTextBoxRowCount1;
+    IList<Runbow.TWS.Entity.Column> notKeyTextAreaColumns1;
+    int notKeyTextAreaRowCount1;
+
+    var notKeyColumns1 = Model.Config1.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.order.CustomerID)))
+    //       .Select(c =>
+    //       {
+    //           if (c.InnerColumns.Count == 0)
+    //           {
+    //               return c;
+    //           }
+    //           else
+    //           {
+    //               if (c.InnerColumns.Any(innerc => innerc.CustomerID ==  Model.order.CustomerID))
+    //               {
+    //                   return c.InnerColumns.First(innerc => innerc.CustomerID ==  Model.order.CustomerID);
+    //               }
+    //               return c;
+    //           }
+    //       });
+
+
+    //if (Model.IsInnerUser)
+    //{
+
+    //    if (!(Model.order.CustomerID).HasValue || (Model.order.CustomerID) == 0)
+    //    {
+    //        tmpDynamicSearchColumns1 = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+    //    }
+
+
+    //    else
+    //    {
+    //        tmpDynamicSearchColumns1 = notKeyColumns1.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+    //        tmpDynamicSearchColumns1 = tmpDynamicSearchColumns1.Union(Model.Config1.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+    //    }
+    //}
+    //else
+    //{
+    //    if (!(Model.order.CustomerID).HasValue || (Model.order.CustomerID) == 0)
+    //    {
+    //        tmpDynamicSearchColumns1 = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+    //    }
+    //    else
+    //    {
+    tmpDynamicSearchColumns1 = notKeyColumns1.Where(c => c.IsSearchCondition).ToList();
+    // tmpDynamicSearchColumns1 = tmpDynamicSearchColumns1.Union(Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).ToList();
+    // }
+    //  }
+
+    notKeyTextBoxColumns1 = tmpDynamicSearchColumns1.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase)
+         || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "FileUpload", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    notKeyTextBoxRowCount1 = notKeyTextBoxColumns1.Count % 3 > 0 ? notKeyTextBoxColumns1.Count / 3 + 1 : notKeyTextBoxColumns1.Count / 3;
+    notKeyTextAreaColumns1 = tmpDynamicSearchColumns1.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    notKeyTextAreaRowCount1 = notKeyTextAreaColumns1.Count;
+    var showColumns1 = Model.IsInnerUser ? Model.Config1.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns1.Where(c => c.IsShowInList)) : Model.Config1.ColumnCollection.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)).Union(notKeyColumns1.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)));
+
+
+
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns2;
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns2;
+    int dynamicSearchColumnRowCount2;
+
+    var notKeyColumns2 = Model.Config2.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID ==  Model.order.CustomerID)))
+    //       .Select(c =>
+    //       {
+    //           if (c.InnerColumns.Count == 0)
+    //           {
+    //               return c;
+    //           }
+    //           else
+    //           {
+    //               if (c.InnerColumns.Any(innerc => innerc.CustomerID ==Model.order.CustomerID))
+    //               {
+    //                   return c.InnerColumns.First(innerc => innerc.CustomerID ==Model.order.CustomerID);
+    //               }
+
+    //               return c;
+    //           }
+    //       });
+
+    //if (Model.IsInnerUser)
+    //{
+    //    if (!(Model.order.CustomerID).HasValue || (Model.order.CustomerID) == 0)
+    //    {
+    //        tmpDynamicSearchColumns2 = Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+    //    }
+    //    else
+    //    {
+    //        tmpDynamicSearchColumns2 = notKeyColumns2.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+    //        tmpDynamicSearchColumns2 = tmpDynamicSearchColumns2.Union(Model.Config2.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+    //    }
+    //}
+    //else
+    //{
+    //    if (!(Model.order.CustomerID).HasValue || (Model.order.CustomerID) == 0)
+    //    {
+    //        tmpDynamicSearchColumns2 = Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+    //    }
+    //    else
+    //    {
+    tmpDynamicSearchColumns2 = notKeyColumns2.Where(c => c.IsShowInList).ToList();
+    //   tmpDynamicSearchColumns2 = tmpDynamicSearchColumns2.Union(Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).ToList();
+    //  }
+    // }
+    dynamicSearchColumns2 = tmpDynamicSearchColumns2.OrderBy(c => c.Order).ToList();
+    dynamicSearchColumnRowCount2 = dynamicSearchColumns2.Count % 3 > 0 ? dynamicSearchColumns2.Count / 3 + 1 : dynamicSearchColumns2.Count / 3;
+    var showColumns2 = Model.IsInnerUser ? Model.Config2.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns2.Where(c => c.IsShowInList)) : Model.Config2.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns2.Where(c => c.IsShowInList));
+
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.order.ID)
+    @Html.HiddenFor(m => m.order.Status)
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>出库单主信息</legend>
+        <table id="table_body">
+            <tr>
+                <td class="TableColumnTitle"><label>出库单号</label></td>
+                <td style="width: 20%;" id="label_OrderNumber">
+                    @Model.order.OrderNumber
+                </td>
+                <td class="TableColumnTitle"><label>预出库单号</label> </td>
+                <td style="width: 20%;" id="label_PreOrderNumber">
+                    @Model.order.PreOrderNumber
+                </td>
+                <td class="TableColumnTitle"><label>外部单号</label></td>
+                <td style="width: 20%;" id="label_ExternOrderNumber">
+                    @Model.order.ExternOrderNumber
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>客户</label></td>
+                <td style="width: 20%;" id="label_customer">
+                    @Model.order.CustomerName
+                </td>
+                <td class="TableColumnTitle"><label>仓库</label> </td>
+                <td style="width: 20%;" id="label_Warehouse">
+                    @Model.order.Warehouse
+                </td>
+                <td class="TableColumnTitle"><label>订单类型</label></td>
+                <td style="width: 20%;" id="label_OrderType">
+                    @Model.order.OrderType
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>订单状态</label></td>
+                <td style="width: 20%;" id="label_OrderStatus">
+                    @Model.OrderStatus.SingleOrDefault(c => c.Value == @Model.order.Status.ToString()).Text
+                </td>
+                <td class="TableColumnTitle"><label>出库时间</label> </td>
+                <td style="width: 20%;" id="label_OrderTime">
+                    @Model.order.OrderTime
+                </td>
+                <td class="TableColumnTitle"><label>是否是合并单</label></td>
+                <td style="width: 20%;" id="label_IsMerged">
+                    @Model.IsMerged.SingleOrDefault(c => c.Value == @Model.order.IsMerged.ToString()).Text
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>省份</label></td>
+                <td style="width: 20%;" id="label_Province">
+                    @Model.order.Province
+                </td>
+                <td class="TableColumnTitle"><label>城市</label> </td>
+                <td style="width: 20%;" id="label_City">
+                    @Model.order.City
+                </td>
+                <td class="TableColumnTitle"><label>区县</label></td>
+                <td style="width: 20%;" id="label_District">
+                    @Model.order.District
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>收货人</label></td>
+                <td style="width: 20%;" id="label_Consignee">
+                    @Model.order.Consignee
+                </td>
+                <td class="TableColumnTitle"><label>联系方式</label> </td>
+                <td style="width: 20%;" id="label_Contact">
+                    @Model.order.Contact
+                </td>
+                <td class="TableColumnTitle"><label>收货地址</label></td>
+                <td style="width: 20%;" id="label_Address">
+                    @Model.order.Address
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>快递公司</label></td>
+                <td style="width: 20%;" id="label_ExpressCompany">
+                    @Model.order.ExpressCompany
+                </td>
+                <td class="TableColumnTitle"><label>快递单号</label> </td>
+                <td style="width: 20%;" id="label_ExpressNumber">
+                    @Model.order.ExpressNumber
+                </td>
+                <td class="TableColumnTitle"><label>快递状态</label></td>
+                <td style="width: 20%;" id="label_ExpressStatus">
+                    @Model.order.ExpressStatus
+                </td>
+
+            </tr>
+            <tr>
+
+                <td class="TableColumnTitle"><label>合并单号</label></td>
+                <td style="width: 20%;" id="label_MergeNumber">
+                    @Model.order.MergeNumber
+                </td>
+                <td class="TableColumnTitle"><label>拣货单打印次数</label> </td>
+                <td style="width: 20%;" id="label_PickPrintCount">
+                    @Model.order.PickPrintCount
+                </td>
+                <td class="TableColumnTitle"><label>快递单打印次数</label></td>
+                <td style="width: 20%;" id="label_ExpressPrintCount">
+                    @Model.order.ExpressPrintCount
+                </td>
+            </tr>
+            @for (int i = 0; i < notKeyTextBoxRowCount1; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= notKeyTextBoxColumns1.Count)
+                        {
+                            <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = notKeyTextBoxColumns1[i * 3 + j];
+                            var o = typeof(Runbow.TWS.Entity.OrderInfo).GetProperty(column.DbColumnName).GetValue(Model.order);
+
+                            <td class="TableColumnTitle">
+                                @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                            </td>
+                            <td>
+                                @{
+                                    if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                    {
+                                        if (o != null && o != "")
+                                        {
+                                            @o.ObjectToDateTime().DateTimeToString()
+                                        }
+                                        else
+                                        {
+                                            @o
+                                        }
+                                    }
+
+                                    else if (column.Type == "CheckBox")
+                                    {
+                                        if (o != null && o != "")
+                                        {
+                                            @Html.CheckBox(column.DbColumnName, (o.ToString() == "1" ? true : false), new { @class = "notKeyVal" });
+                                        }
+                                        else
+                                        {
+                                            @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                                        }
+                                    }
+                                    else if (column.Type == "DropDownList" && column.IsKey)
+                                    {
+                                        @Html.DropDownList(column.DbColumnName, (IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel).GetProperty(column.DbColumnName.Substring(0, column.DbColumnName.Length - 4) + "s").GetValue(Model).ConvertSimpleType(typeof(IEnumerable<SelectListItem>)), "==请选择==", new { @class = "DropDownList" })
+                                    }
+                                    else if (column.Type == "DropDownList" && !column.IsKey)
+                                    {
+                                        @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                                    }
+                                    else if (column.Type == "RegionPicker")
+                                    {
+                                        if (column.DbColumnName == "StartCityName")
+                                        {
+                                            @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                            <a id="startCityClear" href="#">清空</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                            <a id="endCityClear" href="#">清空</a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @o
+
+                                    }
+                                }
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+            @for (int i = 0; i < notKeyTextAreaRowCount1; i++)
+            {
+                var column = notKeyTextAreaColumns1[i];
+                var o = typeof(Runbow.TWS.Entity.OrderInfo).GetProperty(column.DbColumnName).GetValue(Model.order);
+
+                <tr>
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + notKeyTextAreaColumns1[i].DbColumnName, notKeyTextAreaColumns1[i].DisplayName)
+                    </td>
+                    <td colspan="5">
+                        @{if (o == null)
+                            {
+
+                                @Html.TextArea(notKeyTextAreaColumns1[i].DbColumnName, new { style = "width:95%", @class = "form-control" })
+
+                            }
+                            else
+                            {
+                                @o;
+                            }
+                        }
+                    </td>
+
+                </tr>
+            }
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%;">
+                    <label>收货公司</label>
+                </td>
+                <td style="width: 20%;">
+                    @Model.order.str5
+                </td>
+                <td class="TableColumnTitle">
+                    <label>备注</label>
+                </td>
+                <td colspan="5" style="width: 60%;" id="label_Remark">
+                    @Model.order.Remark
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>
+            明细信息
+        </legend>
+        <table id="Newtable">
+            <thead>
+                <tr>
+
+                    @foreach (var column2 in showColumns2)
+                    {
+
+                        <th>
+                            @column2.DisplayName
+                        </th>
+                    }
+
+                </tr>
+            </thead>
+            <tbody id="Newtbody">
+                @if (Model.OrderDetailCollection != null && Model.OrderDetailCollection.Any())
+                {
+                    var n = 1;
+                    foreach (var order in Model.OrderDetailCollection)
+                    {
+                        var str = "0000" + n;
+                        n++;
+                        <tr id="@order.OrderNumber">
+                            @foreach (var column2 in showColumns2)
+                            {
+                                <td>
+                                    @{
+                                        var o = typeof(Runbow.TWS.Entity.OrderDetailInfo).GetProperty(column2.DbColumnName).GetValue(order);
+                                        switch (column2.Type)
+                                        {
+
+                                            case "CheckBox":
+                                                if (o != null && o != "")
+                                                {
+                                                    if (o.ObjectToNullableInt32() == 1)
+                                                    {
+                                                        @Html.Raw("Y")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw("N")
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (o != null && o != "")
+                                                    {
+                                                        @Html.CheckBox(column2.DbColumnName, (o.ToString() == "1" ? true : false), new { @class = "notKeyVal" });
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.CheckBox(column2.DbColumnName, new { @class = "notKeyVal" });
+                                                    }
+                                                }
+                                                break;
+                                            case "DropDownList":
+                                                if (o != null && o != "")
+                                                {
+                                                    if (!column2.IsKey)
+                                                    {
+                                                        @Html.ChooseString(o != null && o.ToString() == "1", "Y", "N")
+                                                    }
+                                                    else
+                                                    {
+                                                        if (column2.DisplayName == "入库单状态")
+                                                        {
+                                                            @(Model.OrderStatus.SingleOrDefault(m => m.Value == @o.ToString()).Text ?? "")
+                                                        }
+                                                        else
+                                                        {
+                                                            @o.ToString()
+                                                        }
+                                                    }
+                                                }
+                                                break;
+                                            case "DateTime":
+                                                if (o != null && o != "")
+                                                {
+                                                    @o.ObjectToDateTime()
+                                                }
+                                                else
+                                                {
+                                                }
+                                                break;
+                                            case "DateTimeWithTime":
+                                                if (o != null && o != "")
+                                                {
+                                                    var temp1 = (DateTime?)o;
+                                                    if (temp1.HasValue)
+                                                    {
+                                                        @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                    }
+                                                }
+                                                break;
+                                            case "TextBox":
+                                                if (o != null && o != "")
+                                                {
+                                                    @o.ToString()
+                                                }
+                                                else
+                                                { }
+                                                break;
+                                            default:
+                                                if (o != null && o != "")
+                                                {
+                                                    @o.ToString()
+                                                }
+                                                break;
+                                        }
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="状态回退" id="backButton" />
+        <input type="button" class="btn btn-success" value="打印" id="printButton" />
+
+        <input type="button" class="btn btn-success" value="拣货" id="pickButton" onclick="Pick()" />
+
+
+        <input type="button" class="btn btn-success" value="复检" id="repickButton" onclick="Confirm()" />
+
+
+        <input type="button" class="btn btn-success" value="包装" id="packageButton" onclick="Package()" />
+
+
+        @*<input type="button" class="btn btn-success" value="交接" id="deliverButton" onclick="Handover()" />*@
+
+
+        <input type="button" class="btn btn-success" value="出库" id="outButton" onclick="Outs()" />
+
+        <input type="button" class="btn btn-success" value="返回" id="returnButton" onclick="Returns()" />
+    </div>
+
+    <div id="statusBackDiv" style="display:none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">退回状态</td>
+
+                <td>@Html.DropDownList("backStatusid", Model.OrderStatus, "==请选择==", new { @class = "form-control", @style = "width:200px" })</td>
+                @*.Where(m=>m.Value.ObjectToInt32()<1*@
+            </tr>
+            <tr style="display:none"><td>@Html.TextBox("StatusbackID", "")</td></tr>
+
+        </table>
+        <br><br><br><br>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="statusBackOK" />
+            <input type="button" class="btn btn-success" value="返回" id="statusBackReturn" />
+        </div>
+    </div>
+}

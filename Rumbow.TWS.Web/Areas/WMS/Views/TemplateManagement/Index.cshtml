@@ -1,0 +1,76 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.TemplateManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+<fieldset>
+    <legend>模板查询条件</legend>
+    <table>
+        <tr>
+            @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var ProjectList = (IEnumerable<SelectListItem>)ViewBag.ProjectList;
+            }
+            <td class="TableColumnTitle">
+                <label>公司</label>
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.searchCondition.ProjectID, ProjectList, "==请选择==", new { @class = "form-control", style = "width:40%" })
+            </td>
+            <td class="TableColumnTitle">
+                <label>客户</label>
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.searchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:40%" })
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="查询" id="SearchButton" />
+        <input type="button" class="btn btn-success" value="返回" id="ReturnButton" />
+    </div>
+</fieldset>
+    <fieldset>
+        <legend>
+            模板列表
+            @if (Model.TemplateCollection != null && Model.TemplateCollection.Any())
+            {
+                @Html.Raw("(" + Model.TemplateCollection.Count() + ")");
+            }
+        </legend>
+        <div style="overflow-x: auto; overflow-y: auto; height: 600px; width:100%;">
+            <table id="resultTable" style=" height:700px; width:1700px;">
+                <thead>
+                    <tr>
+                        <th style="width:300px;">模板</th>
+                        <th style="width:300px;">模板名称</th>
+                        <th style="width:300px;">操作</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="editTable">
+
+                    @if (Model.TemplateCollection != null && Model.TemplateCollection.Any())
+                    {
+                        foreach (var item in Model.TemplateCollection)
+                        {
+                    <tr>
+                        <td>
+                            @item.TableName
+                        </td>
+                        <td>
+                            @item.TableNameCH
+                        </td>
+                        <td>
+                            <input type="button" class="btn btn-info" onclick="editTemplate('@Model.searchCondition.ProjectID','@Model.searchCondition.CustomerID','@item.TableName    ','@item.TableNameCH    ')" value="编辑" />
+                        </td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

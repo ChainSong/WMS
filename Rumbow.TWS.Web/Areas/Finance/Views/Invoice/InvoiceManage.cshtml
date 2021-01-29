@@ -1,0 +1,140 @@
+﻿@model Runbow.TWS.Web.Areas.Finance.Models.InvoiceManageViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.ID)
+    @Html.HiddenFor(m => m.SearchCondition.ProjectID)
+    @Html.HiddenFor(m => m.SearchCondition.Target)
+    @Html.HiddenFor(m => m.SearchCondition.EstimateDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndEstimateDate)
+    @Html.HiddenFor(m => m.ForReceiveOrPay)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">系统发票号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.SystemNumber,new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">发票号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.InvoiceNumber,new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.SearchCondition.Target == 0, "客户", "承运商")
+                </td>
+                <td>
+                    @if (Model.SearchCondition.Target == 0)
+                    {
+                        @Html.DropDownListFor(m => m.SearchCondition.CustomerOrShipperID, Model.Customers, "==请选择==");
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m=>m.SearchCondition.CustomerOrShipperName)
+                        @Html.HiddenFor(m => m.SearchCondition.CustomerOrShipperID)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">发票类型
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.InvoiceType, Model.InvoiceTypes, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.SearchCondition.Target == 0, "预计收款日期", "预计付款日期")
+                </td>
+                <td>
+                    @Html.CalendarRange("EstimateDate", "calendarRange")
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.SearchCondition.Target == 0, "是否收款完成", "是否付款完成")
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.IsComplete, Model.IsCompletes)
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>发票列表
+            @if (Model.Invoices != null && Model.Invoices.Any())
+            {
+                @Html.Raw("(" + Model.Invoices.Count() + ")");
+            }
+            @Model.Message
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>系统发票号</th>
+                    <th>发票号</th>
+                    <th>
+                        @Html.ChooseString(Model.SearchCondition.Target == 0, "客户", "承运商")
+                    </th>
+                    <th>发票类型</th>
+                    <th>发票金额</th>
+                    <th>@Html.ChooseString(Model.SearchCondition.Target == 0, "剩余收款金额", "剩余付款金额")</th>
+                    <th>@Html.ChooseString(Model.SearchCondition.Target == 0, "预计收款日期", "预计付款日期")</th>
+                    <th>@Html.ChooseString(Model.SearchCondition.Target==0,"收款完成","付款完成")</th>
+                    <th>操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Invoices != null && Model.Invoices.Any())
+                {
+                    foreach (var invoice in Model.Invoices)
+                    {
+                    <tr data-id="@invoice.ID">
+                        <td>
+                            <a href="/Finance/Invoice/ViewInvoice/@invoice.ID">@invoice.SystemNumber</a>
+                        </td>
+                        <td>@invoice.InvoiceNumber</td>
+                        <td>@invoice.CustomerOrShipperName</td>
+                        <td>@invoice.InvoiceTypeName</td>
+                        <td>￥@invoice.Sum</td>
+                        <td>￥@invoice.Remain</td>
+                        <td>@invoice.EstimateDate.Value.ToString("yyyy-MM-dd")</td>
+                        <td>@Html.ChooseString(invoice.IsComplete,"Y","N")</td>
+                        <td>                            
+                            @if(Model.ForReceiveOrPay)
+                            {
+                                <a id="ReceiveOrPay" class="ReceiveOrPay" href="/Finance/ReceiveOrPayOrders/ReceiveOrPay/@invoice.ID" data-Target="@invoice.Target" data-id="@invoice.ID">@Html.ChooseString(Model.SearchCondition.Target == 0, "收款/明细", "付款/明细")</a>
+                                @Html.Raw("&nbsp;&nbsp")
+                                <a id="CompleteOrCancel" class="CompleteOrCancel" href="#" data-currentCompleteState="@invoice.IsComplete" data-Target="@invoice.Target" data-id="@invoice.ID">@Html.ChooseString(invoice.IsComplete, "取消确认", "确认完成")</a>
+                            }
+                            else
+                            {
+                                <a id="editInvoiceNumber" class="editInvoiceNumber" data-id="@invoice.ID" href="#">编辑发票号</a>
+                                if (!Model.SearchCondition.IsComplete)
+                                {
+                                    @Html.Raw("&nbsp;&nbsp")
+                                    <a id="Delete" class="Delete" data-id="@invoice.ID" href="#">作废</a>
+                                }
+                            }
+                            
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+<div id="showInDialog" style="display: none">
+    <table>
+        <tr>
+            <td class="TableColumnTitle" style="width:30%">发票号
+            </td>
+            <td>
+                @Html.TextBox("InvoiceNumber")
+            </td>
+        </tr>
+    </table>
+</div>

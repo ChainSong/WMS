@@ -1,0 +1,23 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+<fieldset>
+    <legend>扫描数据导入说明
+    </legend>
+    <div id="importInstructionDiv">
+        在给定的Excel模板中编辑扫描数据，选择并导入<br  />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>选择Excel导入扫描数据
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />     
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

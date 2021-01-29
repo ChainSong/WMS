@@ -1,0 +1,91 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartReceiptDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndReceiptDate)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>入库日期</label>
+                </td>
+                <td>@Html.CalendarRange("ReceiptDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartReceiptDate, @Model.SearchCondition.EndReceiptDate)</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>门店代码</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.str3, new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            预检差异列表
+            @if (Model.ReceiptDetailCollection2 != null && Model.ReceiptDetailCollection2.Any())
+            {
+                @Html.Raw("(" + Model.ReceiptDetailCollection2.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-x: scroll; min-height: 150px;">
+            <table id="resultTable" style="width: 100%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th>预入库单号</th>
+                        <th>外部单号</th>
+                        <th>入库日期</th>
+                        <th>箱号</th>
+                        <th>SKU</th>
+                        <th>期望数量</th>
+                        <th>扫描数量</th>
+                        <th>差异数量</th>
+                        <th>门店代码</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ReceiptDetailCollection2 != null && Model.ReceiptDetailCollection2.Any())
+                    {
+                        foreach (var item in Model.ReceiptDetailCollection2)
+                        {
+                            var diffQty = @item.QtyReceived - @item.QtyExpected;
+                    <tr style="line-height:12px;">
+                        <td>@item.ASNNumber</td>
+                        <td>@item.ExternReceiptNumber</td>
+                        <td>@item.ReceiptDate</td>
+                        <td>@item.str2</td>
+                        <td>@item.SKU</td>
+                        <td>@item.QtyExpected</td>
+                        <td>@item.QtyReceived</td>
+                        <td>@diffQty</td>
+                        <td>@item.str3</td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

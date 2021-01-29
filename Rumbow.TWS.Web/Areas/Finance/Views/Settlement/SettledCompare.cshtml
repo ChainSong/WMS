@@ -1,0 +1,97 @@
+﻿@model Runbow.TWS.Web.Areas.Finance.Models.SettledCompareViewModel
+@using (Html.BeginForm("SettledCompare", "Settlement", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.SettledType)
+    @Html.HiddenFor(m => m.ShipperID)
+    <fieldset>
+        <legend>
+            @Model.DisplyMessage
+        </legend>
+        <table id="importTable">
+            <tr>
+                <td class="TableColumnTitle">结算客户</td>
+                <td>
+                    @Html.DropDownListFor(m => m.CustomerID, Model.Customers)
+                </td>
+                @if (Model.SettledType == 1)
+                {
+                    <td class="TableColumnTitle">承运商</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.ShipperName)
+                    </td>
+                }
+                <td class="TableColumnTitle">选择Excel</td>
+                <td>
+                    <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+                    <input type="submit" value="导入" class="fileImport"  onclick="return fileImportClick('@Model.SettledType    ');"  />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    
+                if (Model.SettledPodCompareCollection != null && Model.SettledPodCompareCollection.Any())
+                {
+    <fieldset>
+        <legend>比对结果(@Model.SettledPodCompareCollection.Count())
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>运单信息</th>
+                    <th>费用对比</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var settledPod in Model.SettledPodCompareCollection)
+                {
+                    string className = settledPod.TotalAmt == settledPod.CompareTotalAmt ? "" : "Red";
+                    <tr data-id="@settledPod.ID" class="@className">
+                        <td style="width: 40%">客户运单号:<a id="listCustomerOrderNumber" data-id="@settledPod.ID" href="/POD/POD/ViewPodAll/@settledPod.PodID?showEditRelated=false">@settledPod.CustomerOrderNumber</a><br />
+                            @Html.ChooseString(Model.SettledType == 0, "客户", "承运商")
+                            @Html.Raw(":")
+                            @settledPod.CustomerOrShipperName<br />
+                            运单类型:@settledPod.PODTypeName<br />
+                            运输类型:@settledPod.ShipperTypeName<br />
+                            整车零担:@settledPod.TtlOrTplName<br />
+                            起运城市:@settledPod.StartCityName<br />
+                            目的城市:@settledPod.EndCityName<br />
+                            实际发货日期:@Html.ChooseString(settledPod.ActualDeliveryDate != null, settledPod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd"), "")
+                            <br />
+                            箱数:@settledPod.BoxNumber<br />
+                            件数:@settledPod.GoodsNumber<br />
+                            重量(公斤):@settledPod.Weight<br />
+                            体积(立方):@settledPod.Volume<br />
+                        </td>
+                        <td style="width: 40%">
+                            <div style="height: 90%; width: 45%; float: right;">
+                                导入运费 : @Html.Label("CompareShipAmt", settledPod.CompareShipAmt.ToString())<br />
+                                导入点费 : @Html.Label("ComparePointAmt", settledPod.ComparePointAmt.ToString())<br />
+                                导入燃油附加费 : @Html.Label("CompareBAFAmt", settledPod.CompareBAFAmt.ToString())<br />
+                                导入其他费用 : @Html.Label("CompareOtherAmt", settledPod.CompareOtherAmt.ToString())<br />
+                                导入费用合计 : @Html.Label("CompareTotalAmt", settledPod.CompareTotalAmt.ToString())<br />
+                            </div>
+                            <div style="height: 90%; width: 45%;">
+                                系统运费 : @Html.TextBox("ShipAmt", settledPod.ShipAmt, new { style = "width:80px;" })
+                                <br />
+                                系统点费 : @Html.TextBox("PointAmt", settledPod.PointAmt, new { style = "width:80px;" })<br />
+                                系统燃油附加费 : @Html.TextBox("BAFAmt", settledPod.BAFAmt, new { style = "width:80px;" })<br />
+                                系统其他费用 : @Html.TextBox("OtherAmt", settledPod.OtherAmt, new { style = "width:80px;" })<br />
+                                系统费用合计  :@Html.Label("TotalAmt", settledPod.TotalAmt.ToString())<br />
+                            </div>
+                        </td>
+                        <td>
+                            @if (settledPod.ID != 0)
+                            {
+                                @Html.TextArea("Remark", settledPod.Remark, new { style = "width:95%;" })
+                                <input id="FollowTheImport" type="button" value="遵循导入费用" />
+                                <input id="FollowTheManual" type="button" value="手动调整费用" title="请输入调整备注" />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+                }
+}

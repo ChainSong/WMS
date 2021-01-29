@@ -1,0 +1,221 @@
+﻿<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/WMS/OrderManagement/PrintOrderNike.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+@Url.jsrender()
+@Url.Json2()
+@Html.Hidden("IDs", (string)ViewBag.IDs)
+@{
+    Layout = null;
+}
+
+<style media="print">
+    .bcTarget {
+        font-size: 25px;
+    }
+
+    .Noprint {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .atr {
+        border-bottom: 1px #ccc solid;
+    }
+</style>
+<script type="text/javascript">
+
+    function printWithAlert() {
+
+        UpdatePrintStatus();
+        document.all.WebBrowser.ExecWB(6, 1);
+        //  window.WebBrowser.ExecWB(45, 1);
+
+    }
+    function printWithoutAlert() {
+        document.all.WebBrowser.ExecWB(6, 6);
+    }
+    function printSetup() {
+        document.all.WebBrowser.ExecWB(8, 1);
+    }
+    function printPrieview() {
+
+    }
+    function printImmediately() {
+        document.all.WebBrowser.ExecWB(6, 6);
+        window.close();
+    }
+    function printReturn() {
+        // post('/POD/POD/QueryPod', { QueryPodViewModel: null, Action: '查询' });
+        window.location.href = '/WMS/OrderManagement/Index';
+    }
+    function post(URL, PARAMS) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            // alert(opt.name)
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+    function BarcodeC(obj, data) {
+
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 50, showHRI: false });
+
+    }
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+    })
+
+    //更新打印次数
+    function UpdatePrintStatus() {
+        var ids = "";
+        ids = $("#IDs").val();
+        $.ajax({
+            type: "POST",
+            url: "/WMS/OrderManagement/UpdatePrintStatus",
+            data: {
+                "IDs": ids,
+            },
+            async: "false",
+            success: function (data) {
+
+            },
+            error: function (msg) {
+                alert(msg.val);
+            }
+        });
+    }
+
+</script>
+<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none"></object>
+<table align="center" class="NOPRINT">
+    <tr>
+        <td align="center">
+            <button title="打印" onclick="printWithAlert()">打印</button>
+            @*<button onclick='printPrieview()' title='打印预览...'>打印预览</button>*@
+            <input type="button" value="打印设置" onclick="printSetup()">
+            <button title="返回" onclick="printReturn()">返回</button>
+        </td>
+        @*  <button title="直接打印" onclick="printWithoutAlert()">直接打印</button>*@
+    </tr>
+</table>
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+@if (Model.OrderDetailCollection != null && Model.OrderDetailCollection.Any())
+{
+    decimal counttotal = 0;
+    int number = 0;
+    <div class="" style="width: 90%; height: 100%;">
+        <div style="width: 100%; height: 100%;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 40%; font-weight: bolder; font-size: 30px; vertical-align: bottom; text-align: center;">
+                        <span style="margin-left: 40px;">拣货单</span>
+                    </td>
+                </tr>
+            </table>
+            <hr size="1" noshadow color="black" style="border: none; border-top: 2px solid #000;" />
+
+            <table border="1" cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 5px; border-collapse: collapse;">
+                <tr>
+                    <td style="font-weight: bold; font-size: 16px; width: 16%; text-align: left;" colspan="12">
+                        拣货明细&nbsp;&nbsp;
+                    </td>
+                </tr>
+                <tr style="height: 23px;">
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        行号
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        库位
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        SKU
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        批次
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        描述
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align :center;">
+                        PLNO
+                    </td>
+                    @*<td style="font-weight: bold; font-size: 14px; text-align: center;">BU
+                        </td>*@
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        重量
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        体积
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        是否扫描
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        备注
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        建捡数量
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">
+                        实捡数量
+                    </td>
+
+                </tr>
+                @foreach (var items in Model.OrderDetailCollection)
+                {
+                    counttotal += (decimal)items.Qty;
+                    number++;
+                    <tr style="height: 23px;">
+                        <td style="text-align: center; font-size: 14px;">@number</td>
+                        <td style="text-align: center; font-size: 18px;">@items.Location</td>
+                        <td style="text-align: center; font-size: 18px;">@items.SKU</td>
+                        <td style="text-align: center; font-size: 18px;">@items.BatchNumber</td>
+                        <td style="text-align: center; font-size: 14px;">@items.GoodsName</td>
+                        <td style="text-align: center; font-size: 18px;">@items.PLNO</td>
+                        @*<td style="text-align: center; font-size: 14px;">@items.BU</td>*@
+                        <td style="text-align: center; font-size: 14px;">@items.str13</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str14</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str12</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str11</td>
+                        <td style="text-align: center; font-size: 18px;">@items.Qty</td>
+                        <td style="text-align: center; font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                }
+                <tr>
+                    <td style="border-right: none; border-bottom: none;" colspan="10"></td>
+                    <td style="text-align: center; font-size: 14px; border-left: none; border-bottom: none;" colspan="1">总计 : @counttotal</td>
+                    <td style="border-bottom: none" colspan="1"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; font-size: 14px; border-right: none; border-top: none;" colspan="3">捡货人：</td>
+                    <td style="text-align: left; font-size: 14px; border-left: none; border-top: none;" colspan="8">捡货时间:</td>
+                    <td style="text-align: right; border-top: none;" colspan="1">1 / 1 页</td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+}
+
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

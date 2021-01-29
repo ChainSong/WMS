@@ -1,0 +1,338 @@
+﻿<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<div id="ProcessReportApp">
+    <div>
+        <el-card>
+            <strong slot="header">查询条件</strong>
+            <el-form :inline="true" :model="Model" label-width="100px" label-position="left" size="medium">
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <el-form-item label="客户：">
+                            <el-select v-model="Model.CustomerID" placeholder="请选择" id="CustomerID">
+                                <el-option v-for="item in CustomerList" :label="item.Text" :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="门店名称：">
+                            <el-select v-model="Model.StorerKey" placeholder="请选择" clearable>
+                                <el-option v-for="item in StoresList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="进程日期：">
+                            <el-date-picker v-model="Model.StartCreateTime"
+                                            type="date" :editable="false"
+                                            placeholder="开始日期">
+                            </el-date-picker>
+                            至
+                            <el-date-picker v-model="Model.EndCreateTime"
+                                            type="date" :editable="false"
+                                            placeholder="结束日期">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                @*<el-row :gutter="20">
+                        <el-col :span="6">
+                            <el-form-item label="类型：">
+                                <el-select v-model="Model.Type" placeholder="请选择">
+                                    <el-option v-for="item in TypeList" :label="item.Text" :value="item.Value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>*@
+                <div style="text-align:center">
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="ToSearch">查询</el-button>
+                        <el-button type="primary" v-on:click="ToExport">导出</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-card>
+    </div>
+    <div style="height:5px;"></div>
+    <div class="detaildiv" v-loading="loading">
+        <el-card>
+            <strong slot="header">列表({{count}})</strong>
+            <el-table :data="ProcessList"
+                      style="width: 100%" size="medium" border stripe>
+
+                <el-table-column label="客户"
+                                 prop="CustomerName" width="100">
+                </el-table-column>
+
+                <el-table-column label="门店代码" prop="StorerKey" width="100">
+                </el-table-column>
+                <el-table-column label="门店名称"
+                                 width="250" prop="Company">
+                </el-table-column>
+                <el-table-column label="类型"
+                                 width="80">
+                    <template slot-scope="scope">
+                        <span>{{GenType(scope.row.Type)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="待处理数量"
+                                 prop="Qty1" width="120">
+                </el-table-column>
+                <el-table-column label="未包装数量"
+                                 prop="Qty2" width="120">
+                </el-table-column>
+                <el-table-column label="已完成数量"
+                                 prop="Qty3" width="120">
+                </el-table-column>
+                <el-table-column label="订单总量"
+                                 prop="Qty4" width="120">
+                </el-table-column>
+                <el-table-column label="完成率"
+                                 prop="Proportion" width="130">
+                </el-table-column>
+                <el-table-column label="开始时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.StartTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="结束时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.EndTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="创建时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.CreateTime)}}</span>
+                    </template>
+                </el-table-column>
+
+                @*<el-table-column label="操作" fixed="left" width="230">
+                        <template slot-scope="scope">
+                            <el-button v-show="scope.row.Type==1" :disabled="scope.row.Status>1" size="mini" v-on:click="ToSendPrint(scope.row)" type="primary">发送打印</el-button>
+                            <el-button v-show="scope.row.Type==1" :disabled="scope.row.Status>2||scope.row.Status<2" size="mini" v-on:click="ToSendGoodsissue(scope.row)" type="primary">发送货物离场</el-button>
+                        </template>
+                    </el-table-column>*@
+            </el-table>
+            <br />
+            <div>
+                <el-pagination v-on:size-change="handleSizeChange"
+                               v-on:current-change="handleCurrentChange"
+                               :current-page.sync="page"
+                               :page-size="30"
+                               layout="total, prev, pager, next"
+                               :total="TotalCount">
+                </el-pagination>
+            </div>
+        </el-card>
+    </div>
+</div>
+
+<script>
+    var vue1 = new Vue({
+        el: '#ProcessReportApp',
+        data: {
+            CustomerList: [],//客户下拉
+            StoresList: [],//门店下拉
+            TypeList: [],//类型下拉
+            Model: {
+                CustomerID: '',
+                Type: '',
+                StorerKey: '',
+                StartCreateTime: '',
+                EndCreateTime: ''
+            },//查询条件
+
+            ProcessList: [],
+
+            limit: 30,
+            page: 1,
+            TotalCount: 0,
+            loading: false//遮罩层
+        },
+        created: function () {
+            let customerID = this.GetQueryString('customerID');
+
+            //console.log(customerID)
+            this.GetProcessWhere(customerID);
+        },
+        computed: {
+            //查询的列表条数
+            count: function () {
+                return this.ProcessList.length;
+            },
+        },
+        methods: {
+            GetProcessWhere: function (customerID) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/WMS/ReportManagement/GetProcessWhere",
+                    data: {
+                        customerID: customerID
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            vue1.CustomerList = data.data.CustomerList;
+                            vue1.TypeList = data.data.TypeList;
+                            vue1.StoresList = data.data.StoresList;
+                            vue1.Model.CustomerID = data.data.SearchCondition.CustomerID + '';
+                            vue1.Model.StartCreateTime = data.data.SearchCondition.StartCreateTime;
+                            vue1.Model.EndCreateTime = data.data.SearchCondition.EndCreateTime;
+                            vue1.ToSearch();
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                });
+            },
+            ToSearch: function () {
+                if (vue1.Model.CustomerID) {
+                    vue1.loading = true;
+                    $.ajax({
+                        type: "POST",
+                        url: "/WMS/ReportManagement/GetProcessTrackingList",
+                        data: {
+                            requestData: JSON.stringify(vue1.Model),
+                            page: vue1.page,
+                            limit: vue1.limit
+                        },
+                        success: function (data) {
+                            let res = JSON.parse(data)
+                            console.log(res)
+                            if (res.code == 0) {
+                                vue1.ProcessList = res.data;
+                                vue1.TotalCount = res.count;
+                                vue1.loading = false;
+                            }
+                            else {
+                                vue1.ProcessList = [];
+                                vue1.TotalCount = 0;
+                                vue1.loading = false;
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err)
+                            vue1.loading = false;
+                        }
+                    });
+                }
+                else {
+                    layer.tips('请先选择客户', '#CustomerID');
+                }
+
+            },
+
+            handleSizeChange: function (val) {
+                this.limit = val;
+                this.ToSearch();
+            },
+            handleCurrentChange: function (val) {
+                this.page = val;
+                this.ToSearch();
+            },
+            GetQueryString: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            },
+            //直接传字符串进来
+            ChangeDateStr: function (str) {
+                if (str == '' || str == null) {
+                    return '';
+                }
+                let jsondate = str.replace("/Date(", "").replace(")/", "");
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                } else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hour + ":" + minutes + ":" + second;
+            },
+            //出库/入库类型
+            GenType: function (row) {
+                let text = "";
+                for (var i = 0; i < vue1.TypeList.length; i++) {
+                    if (row == vue1.TypeList[i].Value) {
+                        text = vue1.TypeList[i].Text;
+                        break;
+                    }
+                }
+                return text;
+            },
+            //导出
+            ToExport: function () {
+                if (vue1.Model.CustomerID) {
+
+                    window.location.href = "/WMS/ReportManagement/ExportProcessTracking?Where=" + JSON.stringify(vue1.Model) + "";
+
+                    return false;
+                    //$.ajax({
+                    //    type: "POST",
+                    //    url: "/WMS/ReportManagement/ExportProcessTracking",
+                    //    data: {
+                    //        requestData: JSON.stringify(vue1.Model)
+                    //    },
+                    //    success: function () {
+                    //        alert(1111)
+                    //        //let res = JSON.parse(data)
+                    //        //console.log(res)
+                    //        //if (res.code == 0) {
+                    //        //    layer.msg('导出成功！', { icon: 1 });
+                    //        //    vue1.loading = false;
+                    //        //}
+                    //        //else {
+                    //        //    layer.msg(res.msg, { icon: 2 });
+                    //        //    vue1.loading = false;
+                    //        //}
+                    //    },
+                    //    error: function (err) {
+                    //        alert(222)
+                    //        console.log(err)
+                    //        //vue1.loading = false;
+                    //    }
+                    //});
+                }
+                else {
+                    layer.tips('请先选择客户', '#CustomerID');
+                }
+
+            }
+        }
+    });
+</script>
+
+<style scoped>
+    /*表头样式*/
+    .el-table__header tr,
+    .el-table__header th {
+        padding: 0;
+        height: 40px;
+        color: #333333;
+        font-family: 微软雅黑;
+    }
+    /*表体样式*/
+    .el-table__body tr td {
+        padding: 0;
+        height: 35px;
+        font-family: 微软雅黑
+    }
+
+    #OrderShipmentApp {
+        height: 100%;
+        overflow-y: auto;
+    }
+</style>

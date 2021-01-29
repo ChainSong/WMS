@@ -1,0 +1,634 @@
+﻿@{
+    ViewBag.Title = "盘点";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <script src="~/Assets/JS/Layer/layer.js"></script>
+    <link href="~/Assets/CSS/bootstrap.min.css" rel="stylesheet" />
+    @model Runbow.TWS.RFScan.Models.ReceiptViewModel
+    <title>盘点</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#location").focus();
+           
+        });
+        window.onload = function () {
+            var oInput = document.getElementById("location");
+            oInput.focus();
+        }
+        var AreaName = "";
+        var FromQty = 0;
+        var SKUTemp = "";
+        var LocationTemp = "";
+        function DeleteSKU(TempSKU) {
+            $.ajax({
+                type: "POST",
+                url: "/Receipt/DeleteSKUAndCheckLocationScaned",
+                data: {
+                    "PDNumber": $("#PDNumber").val(),
+                    "Location": $("#location").val(),
+                    "SKU": TempSKU
+                },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    if (data.Code == -1) {
+                        layer.msg(data.data);
+                    }
+                    else if (data.Code == 0) {
+                        layer.msg("未扫描产品");
+                    }
+                    else {
+                        var tablediffs = $("#checkzjtable");
+                        $('#checkzjtable tbody').html('');
+
+                        for (var i = 0; i < data.data.length; i++) {
+                            var tr = "<tr style='text-align: left'>" +
+                                "<td> " + data.data[i].SKU + "</td>" +
+                                "<td> " + data.data[i].ActualQty + "</td>" +
+                                "<td> <label style='cursor: pointer;' class='btn btn-danger btn-sm' onclick=DeleteSKU('" + data.data[i].SKU + "')>删除</label></td>" +
+                                "</tr > ";
+                            tablediffs.append(tr);
+                        }
+                     
+
+
+                    }
+                },
+                error: function (msg) {
+                    showMsg("检查差异失败！", 4000);
+                }
+            });
+        }
+        function CheckLocationScaned() {
+            if ($("#location").val() == "") {
+                layer.confirm('请扫描库位', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+                    $("#location").focus();
+                    layer.closeAll();
+                });
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/Receipt/CheckLocationScaned",
+                    data: {
+                        "PDNumber": $("#PDNumber").val(),
+                        "Location": $("#location").val()
+                    },
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Code == -1) {
+                            layer.msg(data.data);
+                        }
+                        else if (data.Code == 0) {
+                            layer.msg("未扫描产品");
+                        }
+                        else {
+                            var tablediffs = $("#checkzjtable");
+                            $('#checkzjtable tbody').html('');
+
+                            for (var i = 0; i < data.data.length; i++) {
+                                var tr = "<tr style='text-align: left'>" +
+                                    "<td> " + data.data[i].SKU + "</td>" +
+                                    "<td> " + data.data[i].ActualQty + "</td>" +
+                                    "<td> <label style='cursor: pointer;' class='btn btn-danger btn-sm' onclick=DeleteSKU('"+data.data[i].SKU+"')>删除</label></td>" +
+                                    "</tr > ";
+                                tablediffs.append(tr);
+                            }
+                            layer.open({
+                                type: 1,
+                                skin: 'layui-layer-rim', //加上边框
+                                area: ['320px', '400px'], //宽高
+                                content: $("#showzjdata"),
+                                end: function () {
+                                    $("#Scan").select();
+                                }
+                            });
+
+
+
+                        }
+                    },
+                    error: function (msg) {
+                        showMsg("检查差异失败！", 4000);
+                    }
+                });
+            }
+        }
+        function NextLocation() {
+            $("#location").val('');
+            $("#sku").val('');
+            $("#oldqty").val(0);
+            $("#location").focus();
+        }
+        function CompleteWarehouseCheck() {
+            layer.confirm('确认是否提交数据', {
+                icon: 3,
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/WarehouseCheckCompleteRF',
+                    data: { "PDNumber": $("#PDNumber").val() },
+                    async: false,
+                    success: function (data) {
+                        if (data == "1") {
+                            layer.confirm('提交完成', {
+                                icon: 1,
+                                btn: ['确定']
+                            }, function () {
+                                window.location.href = "/Receipt/ReceiptGetPDList?CustomerID=@ViewBag.CustomerID&WareHouseName=@ViewBag.WareHouseName&WareHouseID=@ViewBag.WareHouseID";
+
+                            });
+                        }
+                        else if (data == "0")
+                        {
+                            layer.confirm('没有需要提交的数据', {
+                                icon: 2,
+                                btn: ['确定']
+                            }, function () {
+                                layer.closeAll();
+                            });
+                        }
+                        else {
+                            layer.confirm('提交失败：' + data, {
+                                icon: 2,
+                                btn: ['确定']
+                            }, function () {
+                                layer.closeAll();
+                            });
+                        }
+
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+            });
+
+            //layer.msg("大家好", { icon:1 })
+        }
+        function ScanLocation(event) {
+            if (event.keyCode == 13) {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/CheckLocationRedisCheckWarehouse',
+                    data: { "PDNumber": $("#PDNumber").val(), "Location": $("#location").val() },
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Code != "1") {
+                            $("#Audio")[0].play();
+                            layer.confirm('请扫描盘点单中的库位', {icon:2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#location").select();
+                                layer.closeAll();
+                            });
+
+                        }
+                        else {
+                            $("#SuccessAudio")[0].play();
+                            $("#sku").focus();
+                            $("#sku").val('');
+                            $("#oldqty").val(data.data);
+
+                        }
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+            }
+        }
+        function ScanSku(event) {
+            if (event.keyCode == 13) {
+                $("#sku").val("00" + $("#sku").val());
+                if ($("#location").val() == "") {
+                    layer.confirm('库位不能为空', {
+                        icon: 2,
+                        btn: ['确定'] //按钮
+                    }, function () {
+                        $("#location").focus();
+                        layer.closeAll();
+                    });
+                    return;
+                }
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/CheckLocationRedisCheckWarehouse',
+                    data: { "PDNumber": $("#PDNumber").val(), "Location": $("#location").val() },
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Code != "1") {
+                            $("#Audio")[0].play();
+                            layer.confirm('请扫描盘点单中的库位', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#location").select();
+                                layer.closeAll();
+                            });
+
+                        }
+                        else {
+                            $.ajax({
+                                type: "Post",
+                                url: '/Receipt/CheckSKURedisCheckWarehouse',
+                                data: { "PDNumber": $("#PDNumber").val(), "SKU": $("#sku").val() },
+                                async: false,
+                                success: function (data) {
+                                    if (data != "1") {
+                                        $("#Audio")[0].play();
+                                        FromQty = 0;
+                                        layer.confirm('请扫描盘点单中的产品条码', {
+                                            icon: 2,
+                                            btn: ['确定'] //按钮
+                                        }, function () {
+                                            $("#sku").val('');
+                                            $("#sku").focus();
+                                            layer.closeAll();
+                                        });
+
+                                    }
+                                    else {
+
+                                        $.ajax({
+                                            type: "Post",
+                                            url: '/Receipt/UpdateQtyRedisWarehouseCheck',
+                                            data: { "PDNumber": $("#PDNumber").val(), "Location": $("#location").val(), "SKU": $("#sku").val() },
+                                            dataType: "json",
+                                            async: false,
+                                            success: function (data) {
+                                                if (data.Code == "1") {
+                                                    $("#SuccessAudio")[0].play();
+                                                    $("#sku").select();
+                                                    $("#oldqty").val(parseInt($("#oldqty").val()) + 1);
+                                                    $("#Qty")[0].innerText = data.data + "/";
+                                                }
+
+                                            },
+                                            error: function (msg) {
+                                                result = false;
+                                            }
+
+                                        });
+
+
+
+                                    }
+
+                                },
+                                error: function (msg) {
+                                    result = false;
+                                }
+
+                            });
+
+                        }
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+               
+            }
+        }
+        function ScanOldQty(event) {
+            if (event.keyCode == 13) {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/CheckLocationSKUAdjustMent',
+                    data: { "Location": $("#location").val(), "SKU": $("#sku").val() },
+                    async: false,
+                    success: function (data) {
+                        if (data == "") {
+                            $("#Audio")[0].play();
+                            layer.confirm('库位上该产品没有库存', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#sku").select();
+                                layer.closeAll();
+                            });
+
+                        }
+                        else {
+                            var nowqty = parseInt($("#oldqty").val());
+                            if (nowqty > parseInt(data)) {
+                                $("#Audio")[0].play();
+                                layer.confirm('数量超出', {
+                                    icon: 0,
+                                    btn: ['确定'] //按钮
+                                }, function () {
+                                    $("#oldqty").select();
+                                    layer.closeAll();
+                                });
+                            }
+                            else {
+                                $("#SuccessAudio")[0].play();
+                                $("#Newlocation").focus();
+
+                            }
+
+
+                        }
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+            }
+        }
+        function ScanNewLocation(event) {
+            if (event.keyCode == 13) {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/CheckLocationForAreaAdjustMent',
+                    data: { "Location": $("#location").val() },
+                    async: false,
+                    success: function (data) {
+                        if (data == "") {
+                            $("#Audio")[0].play();
+                            layer.confirm('原库位上没有库存', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#location").select();
+                                layer.closeAll();
+                            });
+
+                        }
+                        else {
+                            $.ajax({
+                                type: "Post",
+                                url: '/Receipt/CheckLocationSKUAdjustMent',
+                                data: { "Location": $("#location").val(), "SKU": $("#sku").val() },
+                                async: false,
+                                success: function (data) {
+                                    if (data == "") {
+                                        $("#Audio")[0].play();
+                                        FromQty = 0;
+                                        layer.confirm('原库位上该产品没有库存', {
+                                            icon: 2,
+                                            btn: ['确定'] //按钮
+                                        }, function () {
+                                            $("#sku").select();
+                                            layer.closeAll();
+                                        });
+
+                                    }
+                                    else {
+                                        var nowqty = parseInt($("#oldqty").val());
+                                        FromQty = parseInt(data);
+                                        if (nowqty > parseInt(data)) {
+                                            $("#Audio")[0].play();
+                                            layer.confirm('数量超出', {
+                                                icon: 0,
+                                                btn: ['确定'] //按钮
+                                            }, function () {
+                                                $("#sku").select();
+                                                layer.closeAll();
+                                            });
+                                        }
+
+                                        else {
+
+                                             $.ajax({
+                    type: "Post",
+                    url: '/Receipt/CheckLocationByNewLocationAdjustMent',
+                    data: { "Area": AreaName, "Location": $("#Newlocation").val() },
+                    async: false,
+                    success: function (data) {
+                        if (data == "") {
+                            $("#Audio")[0].play();
+                            layer.confirm('目标库位不正确', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#Newlocation").select();
+                                layer.closeAll();
+                            });
+
+                        }
+                        else {
+                            if ($("#location").val() == $("#Newlocation").val()) {
+                                $("#Audio")[0].play();
+                                layer.confirm('目标库位不能跟原库位一样', {
+                                    icon: 2,
+                                    btn: ['确定'] //按钮
+                                }, function () {
+                                    $("#Newlocation").select();
+                                    layer.closeAll();
+                                });
+                                $("#Audio")[0].play();
+                                return;
+                            }
+                            layer.confirm('确认是否移动到库位：' + $("#Newlocation").val(), {
+                                icon: 3,
+                                btn: ['确定','取消'] //按钮
+                            }, function () {
+                                $.ajax({
+                                    type: "Post",
+                                    url: '/Receipt/AddAdjustMentDetailRF',
+                                    data: {
+                                        "PDNumber": $("#PDNumber").val(),"Area": AreaName, "FromLocation": $("#location").val(), "ToLocation": $("#Newlocation").val(),
+                                        "SKU": $("#sku").val(), "FromQty": FromQty, "ToQty": $("#oldqty").val()
+                                    },
+                                    async: false,
+                                    success: function (data) {
+                                        if (data.Code != "1") {
+                                            layer.confirm('移动失败:' + data.data, {
+                                                icon: 2,
+                                                btn: ['确定']
+                                            }, function () {
+                                                $("#Newlocation").select();
+                                                layer.closeAll();
+                                            });
+                                            $("#Audio")[0].play();
+                                        }
+                                        else {
+                                            $("#SuccessAudio")[0].play();
+                                            var tables = $("#SkuLocationQty");
+                                            $('#SkuLocationQty tbody').html('');
+                                                $("#location").val('');
+                                                $("#sku").val('');
+                                                $("#oldqty").val('0');
+                                                $("#Newlocation").val('');
+                                            $("#location").focus();
+                                            layer.confirm('操作成功', {
+                                                icon: 1,
+                                                btn: ['确定']
+                                            }, function () {
+                                                window.location.href = "/Receipt/AddAdjustMent?adjustmentnumber=" + $("#PDNumber").val() +"&CustomerID=@ViewBag.CustomerID&WareHouseName=@ViewBag.WareHouseName&WareHouseID=@ViewBag.WareHouseID";
+                                                layer.closeAll();
+                                            });
+                                            //layer.closeAll();
+                                            //layer.msg("移动成功", { icon: 1 })
+                                        }
+
+                                    },
+                                    error: function (msg) {
+                                        result = false;
+                                    }
+
+                                });
+
+                            });
+                        }
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+
+
+                                        }
+
+
+                                    }
+
+                                },
+                                error: function (msg) {
+                                    result = false;
+                                }
+
+                            });
+
+
+                        }
+
+
+                    },
+                    error: function (msg) {
+
+                    }
+
+                });
+
+
+
+
+
+
+
+
+
+
+            }
+        }
+        function tdback() {
+            history.back(-1);
+        }
+        function AdjustMentDetailDelete(ID) {
+            layer.confirm('确认是否删除', {
+                icon: 3,
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/AdjustMentDetailDeleteRF',
+                    data: { "ID": ID },
+                    async: false,
+                    success: function (data) {
+                        if (data == "") {
+                            window.location.href = "/Receipt/AddAdjustMent?adjustmentnumber=" + $("#PDNumber").val() +"&CustomerID=@ViewBag.CustomerID&WareHouseName=@ViewBag.WareHouseName&WareHouseID=@ViewBag.WareHouseID";
+
+                        }
+                        else {
+                            layer.msg(data);
+                        }
+
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+            })
+        }
+    </script>
+
+</head>
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="height: 100%">
+    <div style="float:left">
+        <audio src="~/audio/1.mp3" id="Audio">
+            您的浏览器不支持 audio 标签。
+        </audio>
+        <audio src="~/audio/success.mp3" id="SuccessAudio">
+            您的浏览器不支持 audio 标签。
+        </audio>
+        <div>
+            <table style="text-align:left;">
+                <tr>
+                    <td>盘点单号</td>
+                    <td colspan="2">
+                        <input style="width:250px" id="PDNumber" class="form-control" value="@ViewBag.PDNumber" type="text" onkeydown="" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>库位条码</td>
+                    <td><input style="width:170px" id="location" class="form-control" type="text" onkeydown="ScanLocation(event)" />               
+                    </td>
+                    <td> <input style="width:70px;float:left;text-align:center" onclick="NextLocation()" type="button" class="btn btn-primary" value="下一库位"></td>
+   
+                </tr>
+                <tr>
+                    <td>产品条码</td>
+                    <td colspan="2"><input style="width:250px" id="sku" class="form-control" type="text" onkeydown="ScanSku(event)" /></td>
+                </tr>
+                <tr>
+                    <td>扫描数量</td>
+                    <td colspan="2"><input style="width:250px" id="oldqty" value="0" class="form-control" type="number" readonly="readonly" /></td>
+                </tr>
+            </table>
+        </div>
+        <div class="panel panel-info" style="width:315px;margin-top:10px">
+            <!-- Default panel contents -->
+            <div class="panel-heading"><font style="color:#ff0000;font-size:20px">当前已扫描总数/</font><font style="width:70px;color:#0026ff;font-size:20px">期望盘点总数</font></div>
+            <div class="panel-body">
+                <font style="color:#ff0000;font-size:30px" id="Qty">@ViewBag.ScanTotalQty/</font><font id="AllQty" style="width:70px;color:#0026ff;font-size:30px">@ViewBag.TotalQty</font>
+            </div>
+        </div>
+
+    </div>
+    <div style="text-align:center;margin-top:10px">
+        <input id="show" style="width:120px;margin-top:10px" onclick="CheckLocationScaned()" type="button" class="btn btn-primary" value="查看库位已扫明细">
+        <input id="show" style="width:90px;margin-top:10px" onclick="CompleteWarehouseCheck()" type="button" class="btn btn-danger" value="提交数据">
+    </div>
+
+
+    <div id="showzjdata" style="display:none;width:300px">
+        <table  class="table table-striped" id="checkzjtable" style="width:300px">
+            <thead>
+                <tr style="text-align:left">
+                    <th style="text-align:left">产品条码</th>
+                    <th style="text-align:left">已扫数量</th>
+                    <th style="text-align:left">操作</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+</body>
+</html>

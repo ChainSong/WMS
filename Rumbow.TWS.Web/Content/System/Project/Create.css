@@ -1,0 +1,45 @@
+﻿html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: Verdana, Helvetica, Sans-Serif;
+}
+
+
+
+#box {
+    width: 100%;
+    height: 100%;
+}
+
+
+
+#BoxDv {
+    width: 500px;
+    height: 400px;
+   background-color:white;/*
+    background-image: url('../../../Image/login.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;*/
+    text-align: left;
+}
+
+#ProjectDv {
+    text-align: left;
+    width: 400px;
+    height: 250px;
+    position: relative;
+    background-color:white;
+    left: 50px;
+    top: 50px;
+    float:left;
+}
+#btnDv {
+  text-align:left;
+}
+ul {
+    list-style-type: none;
+}
+ul li{
+    float:left;
+}

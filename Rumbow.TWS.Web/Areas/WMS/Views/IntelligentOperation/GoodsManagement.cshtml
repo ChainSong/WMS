@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "GoodsManagement";
+}
+
+
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@model Runbow.TWS.Web.Areas.WMS.Models.IntelligentOperation.IntelligentOperation
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件
+        </legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">客户</td>
+                <td>@Html.DropDownListFor(m => m.request.CustomerName, Model.CustomerList, "==请选择==", new { @class = "form-control", @style = "width:100%" })</td>
+                <td class="TableColumnTitle">仓库</td>
+                <td>@Html.DropDownListFor(m => m.request.Warehouse, Model.WarehouseList, "==请选择==", new { @class = "form-control", @style = "width:100%" })</td>
+                @*  <td class="TableColumnTitle">状态</td>
+                <td>@Html.DropDownListFor(m => m.request.Ststus, Model.StstusList, "==请选择==", new { @class = "form-control", @style = "width:100%" })</td>*@
+                <td class="TableColumnTitle">订单号</td>
+                <td>@Html.TextBox("d", "", new { @class = "form-control", @style = "width:100%" })</td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">状态</td>
+                <td>@Html.DropDownListFor(m => m.request.Ststus, Model.StstusList, "==请选择==", new { @class = "form-control", @style = "width:100%" })</td>
+                <td class="TableColumnTitle"></td>
+                <td></td>
+                <td class="TableColumnTitle"></td>
+                <td></td>
+
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-primary" value="查询" id="submitButton" />
+        </div>
+    </fieldset>
+    
+    <fieldset>
+        <legend>查询列表
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    <th>订单号</th>
+                    <th>客户</th>
+                    <th>SKU</th>
+                    <th>UPC</th>
+                    <th>产品名称</th>
+                    <th>状态</th>
+                    <th>完成时间</th>
+                    <th>操作台</th>
+                    <th>分配数量</th>
+                    <th>捡货数量</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.response.instructions != null && Model.response.instructions.Any())
+                {
+                    foreach (var instruction in Model.response.instructions)
+                    { 
+                    <tr>
+                        <td>@instruction.ReleatedNumber</td>
+                        <td>@instruction.CustomerName</td>
+                        <td>@instruction.SKU</td>
+                        <td>@instruction.UPC</td>
+                        <td>@instruction.GoodsName</td>
+                        <td>
+                            @if (instruction.QtyExcepted == instruction.QtyActual)
+                            {
+                                <div class="alert alert-success">正常</div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger">异常</div>
+                            }
+                        </td>
+                        <td>@instruction.InstructionTime</td>
+                        <td>@instruction.OperatingAreaName</td>
+                        <td>@instruction.QtyExcepted</td>
+                        <td>@instruction.QtyActual</td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </fieldset>
+   
+     
+} 

@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "运单查询";
+}
+@model Runbow.TWS.Web.Areas.Phone.Models.WeiChartUserConfigMode
+@Url.PhoneJs("iscroll.js")
+@Url.Json2()
+@Url.PopupJs()
+@using (Html.BeginForm())
+{  
+    <div id="wrapper">
+        <div id="scroller">
+            <div id="pullDown">
+                <span class="pullDownIcon"></span><span class="pullDownLabel"></span>
+            </div>
+            <ul id="thelist" data-role="listview" data-split-icon="gear" data-split-theme="d" data-filter="true">
+                @foreach (var Pod in Model.WeiQueryPod)
+                {
+                    
+                    <li id="@Pod.TransOrderNumber@Pod.CarrierCode@Pod.ArrTime">
+                        <div class="ui-block-a" style="width: 100%">
+                            <a href="javascript:void(0)">@Pod.CarrierCode
+                            </a>
+                            @if (Model.Type == "1")
+                            {
+                                <div class="shop-rating" style="width: 120px; float: right">
+                                    <ul class="rating-level">
+                                        <li><a class="one-star" onclick="pings(1,this)" star:value="1" href="javascript:void(0)">1</a></li>
+                                        <li><a class="two-stars" onclick="pings(2,this)" star:value="2" href="javascript:void(0)">2</a></li>
+                                        <li><a class="three-stars" onclick="pings(3,this)" star:value="3" href="javascript:void(0)">3</a></li>
+                                        <li><a class="four-stars" onclick="pings(4,this)" star:value="4" href="javascript:void(0)">4</a></li>
+                                        <li><a class="five-stars" onclick="pings(5,this)" star:value="5" href="javascript:void(0)">5</a></li>
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <span style="float: right">5</span>
+                            }
+                        </div>
+                        <div style="float: left; margin-top: -10px;">
+                            <h6>@Pod.TransOrderNumber | @Pod.ArrTime </h6>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <div id="pullUp">
+                <span class="pullUpIcon"></span><span class="pullUpLabel">上拉加载更多...</span>
+                <input type="hidden" id="PageIndex" name="PageIndex" value="1">
+                <input type="hidden" id="stars1-input" name="a" value="" size="2" />
+                 <input type="hidden" id="id" name="a" value="@Model.Id" />
+                <input type="hidden" id="Type" name="a" value="@Model.Type"  />
+            </div>
+        </div>
+    </div>
+    <div id="footer" data-theme="b">
+        <div data-role="navbar">
+            <ul>
+                @if (Model.Type == "2")
+                {
+                    <li><a href="#" data-icon="info" class="ui-btn-active">所有运单</a></li>
+                    <li><a href="/Phone/Pod/QueryPod?Id=8006752&Type=1" data-icon="info" data-theme="b" rel="external">未评价运单</a></li>
+                }
+                else
+                {
+                    <li><a href="/Phone/Pod/QueryPod?Id=8006752&Type=2" data-theme="b" data-icon="info" rel="external">所有运单</a></li>
+                    <li><a href="#" data-icon="info" class="ui-btn-active">未评价运单</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div id="divSetting" style="display: none;">
+        <textarea style="height: 60px;" id="ValFrom">
+
+        </textarea>
+        <a href="javascript:void(0)" data-role="button" onclick="del()" data-inline="true">提交</a>
+    </div>
+}
+
+

@@ -1,0 +1,42 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.UserWarehouse
+@using (Html.BeginForm())
+{
+ 
+    <fieldset>
+        <legend>选择用户</legend>
+        <table id="UserTable">
+            <tr>
+                <td class="TableColumnTitle">请选择用户
+                </td>
+                <td>
+                 
+                </td>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>客户列表</legend>
+        <table id="RoleTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>客户名称</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.ProjectCustomers)
+                {
+                    <tr>
+                        <td>
+                           
+                        </td>
+                       
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="actionButtonDiv">
+            <input id="submitProjectUserCustomer" type="button" value="提交" />
+        </div>
+    </fieldset>
+}

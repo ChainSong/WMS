@@ -1,0 +1,43 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.IndexViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+
+@using (Html.BeginForm())
+{
+
+    <fieldset>
+        <legend>导入待变更库位信息</legend>
+        <div id="importDiv">
+            @{
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+            }
+            @*客户列表与仓库列表*@
+            <label>客户：</label>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:200px;padding-bottom:1px" })
+            <label>仓库：</label>@Html.DropDownListFor(m => m.SearchCondition.ID, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:15%;padding-bottom:1px" })
+
+            @*按钮*@
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
+            <input type="submit" value="导入" @*class="btn btn-primary"*@ class="btn btn-primary" style="margin-top:-9px;" onclick="return fileImportClick();" name="Action" />
+            <input type="submit" value="下载库区变更模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
+
+        </div>
+    </fieldset>
+    <fieldset style="margin-top:50px;width:45%;">
+        <legend>导入结果</legend>
+        <div id="outPutResult">
+
+        </div>
+    </fieldset>
+
+
+
+
+
+
+
+}
+
+

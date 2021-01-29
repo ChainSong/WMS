@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Pod_For_Project>
+  <Pod_Nike>
+  <NewPodModel name="新POD模板" Project="Nike">
+    <ColumnName SerialNo="1">客户运单号</ColumnName>
+    <ColumnName SerialNo="2">客户</ColumnName>
+    <ColumnName SerialNo="3">运输类型</ColumnName>
+    <ColumnName SerialNo="4">起运城市</ColumnName>
+    <ColumnName SerialNo="5">目的城市</ColumnName>
+    <ColumnName SerialNo="6">整车/零担</ColumnName>
+    <ColumnName SerialNo="7">运单类型</ColumnName>
+    <ColumnName SerialNo="8">发货日期</ColumnName>
+    <ColumnName SerialNo="9">箱数</ColumnName>
+    <ColumnName SerialNo="10">件数</ColumnName>
+    <ColumnName SerialNo="11">重量(公斤)</ColumnName>
+    <ColumnName SerialNo="12">体积(立方)</ColumnName>
+    <ColumnName SerialNo="13">客户代码</ColumnName>
+    <ColumnName SerialNo="14">目的省份</ColumnName>
+    <ColumnName SerialNo="15">客户名称</ColumnName>
+    <ColumnName SerialNo="16">联系人</ColumnName>
+    <ColumnName SerialNo="17">联系人电话</ColumnName>
+    <ColumnName SerialNo="18">联系人手机</ColumnName>
+    <ColumnName SerialNo="19">卸货地点</ColumnName>
+    <ColumnName SerialNo="20">预计发货件数</ColumnName>
+    <ColumnName SerialNo="21">预计箱数</ColumnName>
+    <ColumnName SerialNo="22">仓库实际收货数量</ColumnName>
+    <ColumnName SerialNo="23">预计发货时间</ColumnName>
+    <ColumnName SerialNo="24">实际发货时间</ColumnName>
+    <ColumnName SerialNo="25">预计到货时间</ColumnName>
+    <ColumnName SerialNo="26">实际到货时间</ColumnName>
+    <ColumnName SerialNo="27">实际提货时间</ColumnName>
+    <ColumnName SerialNo="28">调出店</ColumnName>
+    <ColumnName SerialNo="29">调出店联系方式</ColumnName>
+    <ColumnName SerialNo="30">调入店</ColumnName>
+    <ColumnName SerialNo="31">调入店联系方式</ColumnName>
+    <ColumnName SerialNo="32">在途时限</ColumnName>
+    <ColumnName SerialNo="33">预计到达日期</ColumnName>
+    <ColumnName SerialNo="34">预计退仓时间</ColumnName>
+    <ColumnName SerialNo="35">提货是否及时</ColumnName>
+    <ColumnName SerialNo="36">返货是否及时</ColumnName>
+    <ColumnName SerialNo="37">责任归属</ColumnName>
+    <ColumnName SerialNo="38">起运省份</ColumnName>
+    <ColumnName SerialNo="39">起运客户代码</ColumnName>
+    <ColumnName SerialNo="40">起运客户名称</ColumnName>
+    <ColumnName SerialNo="41">起运地址</ColumnName>
+    <ColumnName SerialNo="42">产品代码</ColumnName>
+    <ColumnName SerialNo="43">Import VL B/L#  or AF HAWB#</ColumnName>
+    <ColumnName SerialNo="44">PO#</ColumnName>
+    <ColumnName SerialNo="45">PO ITEM#</ColumnName>
+    <ColumnName SerialNo="46">备注</ColumnName>
+    <ColumnName SerialNo="47">托运单备注</ColumnName>
+    <ColumnName SerialNo="48">Abnormal Issue</ColumnName>
+    <ColumnName SerialNo="48">退货类型</ColumnName>
+  </NewPodModel>
+
+  <WarehouseShipmentModel name="大仓出货订单导入模板" Project="Nike">
+    <ColumnName SerialNo="1" NewPodName="客户运单号" ModelName="发货单号"></ColumnName>
+    <ColumnName SerialNo="2" NewPodName="客户" ModelName="">Nike</ColumnName>
+    <ColumnName SerialNo="3" NewPodName="运输类型" ModelName="陆运/铁运/空运"></ColumnName>
+    <ColumnName SerialNo="4" NewPodName="起运城市" ModelName="">太仓</ColumnName>
+    <ColumnName SerialNo="5" NewPodName="目的城市" ModelName="目的城市"></ColumnName>
+    <ColumnName SerialNo="6" NewPodName="整车/零担" ModelName=""></ColumnName>
+    <ColumnName SerialNo="7" NewPodName="运单类型" ModelName="">大仓出货</ColumnName>
+    <ColumnName SerialNo="8" NewPodName="发货日期" ModelName="发货时间"></ColumnName>
+    <ColumnName SerialNo="9" NewPodName="箱数" ModelName="箱数"></ColumnName>
+    <ColumnName SerialNo="10" NewPodName="件数" ModelName="件数"></ColumnName>
+    <ColumnName SerialNo="11" NewPodName="重量(公斤)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="12" NewPodName="体积(立方)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="13" NewPodName="客户代码" ModelName="客户代码"></ColumnName>
+    <ColumnName SerialNo="14" NewPodName="目的省份" ModelName="目的省份"></ColumnName>
+    <ColumnName SerialNo="15" NewPodName="客户名称" ModelName="客户名称"></ColumnName>
+    <ColumnName SerialNo="16" NewPodName="联系人" ModelName="收货人"></ColumnName>
+    <ColumnName SerialNo="17" NewPodName="联系人电话" ModelName="联系方式"></ColumnName>
+    <ColumnName SerialNo="18" NewPodName="联系人手机" ModelName="联系人手机"></ColumnName>
+    <ColumnName SerialNo="19" NewPodName="卸货地点" ModelName="卸货地址"></ColumnName>
+    <ColumnName SerialNo="20" NewPodName="预计发货件数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="21" NewPodName="预计箱数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="22" NewPodName="仓库实际收货数量" ModelName=""></ColumnName>
+    <ColumnName SerialNo="23" NewPodName="预计发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="24" NewPodName="实际发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="25" NewPodName="预计到货时间" ModelName="预计到达时间"></ColumnName>
+    <ColumnName SerialNo="26" NewPodName="实际到货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="27" NewPodName="实际提货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="28" NewPodName="调出店" ModelName=""></ColumnName>
+    <ColumnName SerialNo="29" NewPodName="调出店联系方式" ModelName=""></ColumnName>
+    <ColumnName SerialNo="30" NewPodName="调入店" ModelName=""></ColumnName>
+    <ColumnName SerialNo="31" NewPodName="调入店联系方式" ModelName=""></ColumnName>
+    <ColumnName SerialNo="32" NewPodName="在途时限" ModelName="在途时间"></ColumnName>
+    <ColumnName SerialNo="33" NewPodName="预计到达日期" ModelName=""></ColumnName>
+    <ColumnName SerialNo="34" NewPodName="预计退仓时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="35" NewPodName="提货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="36" NewPodName="返货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="37" NewPodName="责任归属" ModelName=""></ColumnName>
+    <ColumnName SerialNo="38" NewPodName="起运省份" ModelName="起运省份"></ColumnName>
+    <ColumnName SerialNo="39" NewPodName="起运客户代码" ModelName="起运客户代码"></ColumnName>
+    <ColumnName SerialNo="40" NewPodName="起运客户名称" ModelName="起运客户名称"></ColumnName>
+    <ColumnName SerialNo="41" NewPodName="起运地址" ModelName="起运地址"></ColumnName>
+    <ColumnName SerialNo="42" NewPodName="产品代码" ModelName="产品代码"></ColumnName>
+    <ColumnName SerialNo="43" NewPodName="Import VL B/L#  or AF HAWB#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="44" NewPodName="PO#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="45" NewPodName="PO ITEM#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="46" NewPodName="备注" ModelName=""></ColumnName>
+    <ColumnName SerialNo="47" NewPodName="托运单备注" ModelName="托运单备注"></ColumnName>
+    <ColumnName SerialNo="48" NewPodName="Abnormal Issue" ModelName=""></ColumnName>
+    <ColumnName SerialNo="49" NewPodName="退货类型" ModelName=""></ColumnName>
+    
+  </WarehouseShipmentModel>
+
+  <FactoryStraightModel name="工厂直发订单导入模板" Project="Nike">
+    <ColumnName SerialNo="1" NewPodName="客户运单号" ModelName="发货号/DAMCO WMS Packing List#"></ColumnName>
+    <ColumnName SerialNo="2" NewPodName="客户" ModelName="">Nike</ColumnName>
+    <ColumnName SerialNo="3" NewPodName="运输类型" ModelName="陆运/铁运/空运"></ColumnName>
+    <ColumnName SerialNo="4" NewPodName="起运城市" ModelName="出发城市"></ColumnName>
+    <ColumnName SerialNo="5" NewPodName="目的城市" ModelName="目的城市"></ColumnName>
+    <ColumnName SerialNo="6" NewPodName="整车/零担" ModelName=""></ColumnName>
+    <ColumnName SerialNo="7" NewPodName="运单类型" ModelName="">工厂直发</ColumnName>
+    <ColumnName SerialNo="8" NewPodName="发货日期" ModelName="发货日期"></ColumnName>
+    <ColumnName SerialNo="9" NewPodName="箱数" ModelName="箱数"></ColumnName>
+    <ColumnName SerialNo="10" NewPodName="件数" ModelName="件数"></ColumnName>
+    <ColumnName SerialNo="11" NewPodName="重量(公斤)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="12" NewPodName="体积(立方)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="13" NewPodName="客户代码" ModelName="收货人代码"></ColumnName>
+    <ColumnName SerialNo="14" NewPodName="目的省份" ModelName="目的省份"></ColumnName>
+    <ColumnName SerialNo="15" NewPodName="客户名称" ModelName="收货人"></ColumnName>
+    <ColumnName SerialNo="16" NewPodName="联系人" ModelName="联系人"></ColumnName>
+    <ColumnName SerialNo="17" NewPodName="联系人电话" ModelName="联系方式"></ColumnName>
+    <ColumnName SerialNo="18" NewPodName="联系人手机" ModelName=""></ColumnName>
+    <ColumnName SerialNo="19" NewPodName="卸货地点" ModelName="送货地址"></ColumnName>supperadmin
+    <ColumnName SerialNo="20" NewPodName="预计发货件数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="21" NewPodName="预计箱数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="22" NewPodName="仓库实际收货数量" ModelName=""></ColumnName>
+    <ColumnName SerialNo="23" NewPodName="预计发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="24" NewPodName="实际发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="25" NewPodName="预计到货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="26" NewPodName="实际到货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="27" NewPodName="实际提货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="28" NewPodName="调出店" ModelName=""></ColumnName>
+    <ColumnName SerialNo="29" NewPodName="调出店联系方式" ModelName=""></ColumnName>
+    <ColumnName SerialNo="30" NewPodName="调入店" ModelName=""></ColumnName>
+    <ColumnName SerialNo="31" NewPodName="调入店联系方式" ModelName=""></ColumnName>
+    <ColumnName SerialNo="32" NewPodName="在途时限" ModelName="在途时间"></ColumnName>
+    <ColumnName SerialNo="33" NewPodName="预计到达日期" ModelName="预计到货日期"></ColumnName>
+    <ColumnName SerialNo="34" NewPodName="预计退仓时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="35" NewPodName="提货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="36" NewPodName="返货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="37" NewPodName="责任归属" ModelName=""></ColumnName>
+    <ColumnName SerialNo="38" NewPodName="起运省份" ModelName=""></ColumnName>
+    <ColumnName SerialNo="39" NewPodName="起运客户代码" ModelName=""></ColumnName>
+    <ColumnName SerialNo="40" NewPodName="起运客户名称" ModelName=""></ColumnName>
+    <ColumnName SerialNo="41" NewPodName="起运地址" ModelName=""></ColumnName>
+    <ColumnName SerialNo="42" NewPodName="产品代码" ModelName="产品类型"></ColumnName>
+    <ColumnName SerialNo="43" NewPodName="Import VL B/L#  or AF HAWB#" ModelName="Import VL B/L#  or AF HAWB# "></ColumnName>
+    <ColumnName SerialNo="44" NewPodName="PO#" ModelName="PO#"></ColumnName>
+    <ColumnName SerialNo="45" NewPodName="PO ITEM#" ModelName="PO ITEM#"></ColumnName>
+    <ColumnName SerialNo="46" NewPodName="备注" ModelName=""></ColumnName>
+    <ColumnName SerialNo="47" NewPodName="托运单备注" ModelName=""></ColumnName>
+    <ColumnName SerialNo="48" NewPodName="Abnormal Issue" ModelName=""></ColumnName>
+    <ColumnName SerialNo="49" NewPodName="退货类型" ModelName=""></ColumnName>
+  </FactoryStraightModel>
+
+  <StoreGoodsModel name="门店转货订单导入模板" Project="Nike">
+    <ColumnName SerialNo="1" NewPodName="客户运单号" ModelName="单号"></ColumnName>
+    <ColumnName SerialNo="2" NewPodName="客户" ModelName="">Nike</ColumnName>
+    <ColumnName SerialNo="3" NewPodName="运输类型" ModelName=""></ColumnName>
+    <ColumnName SerialNo="4" NewPodName="起运城市" ModelName="出发城市"></ColumnName>
+    <ColumnName SerialNo="5" NewPodName="目的城市" ModelName="目的城市"></ColumnName>
+    <ColumnName SerialNo="6" NewPodName="整车/零担" ModelName=""></ColumnName>
+    <ColumnName SerialNo="7" NewPodName="运单类型" ModelName="">门店调拨</ColumnName>
+    <ColumnName SerialNo="8" NewPodName="发货日期" ModelName="订单日期"></ColumnName>
+    <ColumnName SerialNo="9" NewPodName="箱数" ModelName="箱数"></ColumnName>
+    <ColumnName SerialNo="10" NewPodName="件数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="11" NewPodName="重量(公斤)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="12" NewPodName="体积(立方)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="13" NewPodName="客户代码" ModelName="目的城市客户代码"></ColumnName>
+    <ColumnName SerialNo="14" NewPodName="目的省份" ModelName=""></ColumnName>
+    <ColumnName SerialNo="15" NewPodName="客户名称" ModelName=""></ColumnName>
+    <ColumnName SerialNo="16" NewPodName="联系人" ModelName=""></ColumnName>
+    <ColumnName SerialNo="17" NewPodName="联系人电话" ModelName="调出店联系方式"></ColumnName>
+    <ColumnName SerialNo="18" NewPodName="联系人手机" ModelName=""></ColumnName>
+    <ColumnName SerialNo="19" NewPodName="卸货地点" ModelName="卸货地址"></ColumnName>
+    <ColumnName SerialNo="20" NewPodName="预计发货件数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="21" NewPodName="预计箱数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="22" NewPodName="仓库实际收货数量" ModelName=""></ColumnName>
+    <ColumnName SerialNo="23" NewPodName="预计发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="24" NewPodName="实际发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="25" NewPodName="预计到货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="26" NewPodName="实际到货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="27" NewPodName="实际提货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="28" NewPodName="调出店" ModelName="调出店"></ColumnName>
+    <ColumnName SerialNo="29" NewPodName="调出店联系方式" ModelName="调出店联系方式"></ColumnName>
+    <ColumnName SerialNo="30" NewPodName="调入店" ModelName="调入店"></ColumnName>
+    <ColumnName SerialNo="31" NewPodName="调入店联系方式" ModelName="调入店联系方式"></ColumnName>
+    <ColumnName SerialNo="32" NewPodName="在途时限" ModelName="在途时间"></ColumnName>
+    <ColumnName SerialNo="33" NewPodName="预计到达日期" ModelName="预计到达时间"></ColumnName>
+    <ColumnName SerialNo="34" NewPodName="预计退仓时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="35" NewPodName="提货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="36" NewPodName="返货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="37" NewPodName="责任归属" ModelName=""></ColumnName>
+    <ColumnName SerialNo="38" NewPodName="起运省份" ModelName=""></ColumnName>
+    <ColumnName SerialNo="39" NewPodName="起运客户代码" ModelName=""></ColumnName>
+    <ColumnName SerialNo="40" NewPodName="起运客户名称" ModelName=""></ColumnName>
+    <ColumnName SerialNo="41" NewPodName="起运地址" ModelName=""></ColumnName>
+    <ColumnName SerialNo="42" NewPodName="产品代码" ModelName=""></ColumnName>
+    <ColumnName SerialNo="43" NewPodName="Import VL B/L#  or AF HAWB#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="44" NewPodName="PO#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="45" NewPodName="PO ITEM#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="46" NewPodName="备注" ModelName="备注"></ColumnName>
+    <ColumnName SerialNo="47" NewPodName="托运单备注" ModelName=""></ColumnName>
+    <ColumnName SerialNo="48" NewPodName="Abnormal Issue" ModelName=""></ColumnName>
+    <ColumnName SerialNo="49" NewPodName="退货类型" ModelName=""></ColumnName>
+  </StoreGoodsModel>
+
+  <ReturnGoodsModel name="退货订单导入模板" Project="Nike">
+    <ColumnName SerialNo="1" NewPodName="客户运单号" ModelName="退货编号 "></ColumnName>
+    <ColumnName SerialNo="2" NewPodName="客户" ModelName="">Nike</ColumnName>
+    <ColumnName SerialNo="3" NewPodName="运输类型" ModelName=""></ColumnName>
+    <ColumnName SerialNo="4" NewPodName="起运城市" ModelName="提货城市"></ColumnName>
+    <ColumnName SerialNo="5" NewPodName="目的城市" ModelName="目的城市"></ColumnName>
+    <ColumnName SerialNo="6" NewPodName="整车/零担" ModelName=""></ColumnName>
+    <ColumnName SerialNo="7" NewPodName="运单类型" ModelName="">退货运单</ColumnName>
+    <ColumnName SerialNo="8" NewPodName="发货日期" ModelName="通知提货时间"></ColumnName>
+    <ColumnName SerialNo="9" NewPodName="箱数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="10" NewPodName="件数" ModelName=""></ColumnName>
+    <ColumnName SerialNo="11" NewPodName="重量(公斤)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="12" NewPodName="体积(立方)" ModelName=""></ColumnName>
+    <ColumnName SerialNo="13" NewPodName="客户代码" ModelName="客户代码"></ColumnName>
+    <ColumnName SerialNo="14" NewPodName="目的省份" ModelName=""></ColumnName>
+    <ColumnName SerialNo="15" NewPodName="客户名称" ModelName="客户名称 "></ColumnName>
+    <ColumnName SerialNo="16" NewPodName="联系人" ModelName="联系人"></ColumnName>
+    <ColumnName SerialNo="17" NewPodName="联系人电话" ModelName="联系电话"></ColumnName>
+    <ColumnName SerialNo="18" NewPodName="联系人手机" ModelName=""></ColumnName>
+    <ColumnName SerialNo="19" NewPodName="卸货地点" ModelName="提货地址"></ColumnName>
+    <ColumnName SerialNo="20" NewPodName="预计发货件数" ModelName="通知数量"></ColumnName>
+    <ColumnName SerialNo="21" NewPodName="预计箱数" ModelName="通知箱数"></ColumnName>
+    <ColumnName SerialNo="22" NewPodName="仓库实际收货数量" ModelName=""></ColumnName>
+    <ColumnName SerialNo="23" NewPodName="预计发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="24" NewPodName="实际发货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="25" NewPodName="预计到货时间" ModelName="要求退回时间"></ColumnName>
+    <ColumnName SerialNo="26" NewPodName="实际到货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="27" NewPodName="实际提货时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="28" NewPodName="调出店" ModelName=""></ColumnName>
+    <ColumnName SerialNo="29" NewPodName="调出店联系方式" ModelName=""></ColumnName>
+    <ColumnName SerialNo="30" NewPodName="调入店" ModelName=""></ColumnName>
+    <ColumnName SerialNo="31" NewPodName="调入店联系方式" ModelName=""></ColumnName>
+    <ColumnName SerialNo="32" NewPodName="在途时限" ModelName=""></ColumnName>
+    <ColumnName SerialNo="33" NewPodName="预计到达日期" ModelName=""></ColumnName>
+    <ColumnName SerialNo="34" NewPodName="预计退仓时间" ModelName=""></ColumnName>
+    <ColumnName SerialNo="35" NewPodName="提货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="36" NewPodName="返货是否及时" ModelName=""></ColumnName>
+    <ColumnName SerialNo="37" NewPodName="责任归属" ModelName=""></ColumnName>
+    <ColumnName SerialNo="38" NewPodName="起运省份" ModelName=""></ColumnName>
+    <ColumnName SerialNo="39" NewPodName="起运客户代码" ModelName=""></ColumnName>
+    <ColumnName SerialNo="40" NewPodName="起运客户名称" ModelName=""></ColumnName>
+    <ColumnName SerialNo="41" NewPodName="起运地址" ModelName=""></ColumnName>
+    <ColumnName SerialNo="42" NewPodName="产品代码" ModelName="货物性质"></ColumnName>
+    <ColumnName SerialNo="43" NewPodName="Import VL B/L#  or AF HAWB#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="44" NewPodName="PO#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="45" NewPodName="PO ITEM#" ModelName=""></ColumnName>
+    <ColumnName SerialNo="46" NewPodName="备注" ModelName=""></ColumnName>
+    <ColumnName SerialNo="47" NewPodName="托运单备注" ModelName="托运单备注"></ColumnName>
+    <ColumnName SerialNo="48" NewPodName="Abnormal Issue" ModelName=""></ColumnName>
+    <ColumnName SerialNo="49" NewPodName="退货类型" ModelName="退货类型"></ColumnName>
+  </ReturnGoodsModel>
+
+  <Report name="报表集合" Project="Nike">
+    <ReportName SerialNo="1">大仓出货-客服</ReportName>
+    <ReportName SerialNo="2">大仓出货-耐克</ReportName>
+    <ReportName SerialNo="3">退货运单-客服</ReportName>
+    <ReportName SerialNo="4">退货运单-耐克</ReportName>
+    <ReportName SerialNo="5">退货运单-召回</ReportName>
+    <ReportName SerialNo="6">工厂直发-客服</ReportName>
+    <ReportName SerialNo="7">工厂直发-耐克</ReportName>
+    <ReportName SerialNo="8">门店调拨-客服</ReportName>
+    <ReportName SerialNo="9">门店调拨-耐克</ReportName>
+  </Report>
+  </Pod_Nike>
+  <Pod_Hilti>
+    <PodInfoUpdate>
+      <ColumnName SerialNo="1"  Pod_ColumnName="CustomerOrderNumber" ModelName="订单编号"></ColumnName>
+      <ColumnName SerialNo="2"  Pod_ColumnName="OrderNoDate" ModelName="订单日期"></ColumnName>
+      <ColumnName SerialNo="3"  Pod_ColumnName="NotDeliverGoodsRemark" ModelName="未及时出货原因"></ColumnName>
+    </PodInfoUpdate>
+
+    <Pod103OrderNoUpdate>
+      <ColumnName SerialNo="1"  Pod_ColumnName="CustomerOrderNumber" ModelName="订单编号"></ColumnName>
+      <ColumnName SerialNo="2"  Pod_ColumnName="103OrderNO" ModelName="103单号"></ColumnName>
+      
+    </Pod103OrderNoUpdate>
+  </Pod_Hilti>
+</Pod_For_Project>
+
+

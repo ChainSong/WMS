@@ -1,0 +1,259 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodReplyDocumentAuditViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.CreateDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateDate)
+    @Html.HiddenFor(m => m.SearchCondition.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.OrderDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndOrderDate)
+    @Html.HiddenFor(m => m.IsInnerUser)
+    @Html.HiddenFor(m => m.ShipperID)
+    @Html.HiddenFor(m => m.StartTime)
+    @Html.HiddenFor(m => m.IsForExport)
+    @Html.HiddenFor(m => m.IsShowForHilti)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">系统运单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.SystemNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">客户运单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">承运商
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.SearchCondition.ShipperName)
+                    @Html.HiddenFor(m => m.SearchCondition.ShipperID)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">上传时间
+                </td>
+                <td>
+                    @Html.CalendarRange("CreateDate", "calendarRange")
+                </td>
+                <td class="TableColumnTitle">发货日期
+                </td>
+                <td>
+                    @Html.CalendarRange("ActualDeliveryDate", "calendarRange")
+                </td>
+                <td class="TableColumnTitle">是否有附件
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.HasAttachment, Model.TrueOrFalse, "==请选择==")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">运输类型
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.ShipperTypeID, Model.ShipperTypes, "==请选择==")
+                </td>
+
+                <td class="TableColumnTitle">运单类型
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.PODTypeID, Model.PODTypes, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">是否审核
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.IsAudit, Model.TrueOrFalse, "==请选择==")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">审核状态
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.AuditType, Model.AuditTypes, "==请选择==")
+                </td>
+
+                <td class="TableColumnTitle"></td>
+                <td></td>
+                <td class="TableColumnTitle"></td>
+                <td></td>
+            </tr>
+            @if (Model.IsShowForHilti)
+            {
+                <tr>
+                    <td class="TableColumnTitle">出发仓库
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.SearchCondition.StartWareHouse)
+                    </td>
+                    <td class="TableColumnTitle">销售单/非销售单
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.SearchCondition.SalesOrderOrNoneSalesOrder, Model.SalesOrderOrNoneSalesOrders, "==请选择==")
+                    </td>
+                    <td class="TableColumnTitle">运单归属
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.SearchCondition.PodRegion)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">订单日期
+                    </td>
+                    <td>
+                        @Html.CalendarRange("OrderDate", "calendarRange")
+                    </td>
+                    <td class="TableColumnTitle">103单号
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(m => m.SearchCondition.Number103s, new { style = "width:98%" })
+                    </td>
+                    <td class="TableColumnTitle">信控编号</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.SearchCondition.CreditNumber)
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+            @if (Model.IsInnerUser)
+            {
+                <input type="button" value="审核" id="auditButton" />
+            }
+            <input type="submit" value="导出" id="exportButton" />
+            @Html.Hidden("SelectedIDs")
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>回单列表
+             @Model.Tip
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>系统运单号
+                    </th>
+                    <th>客户运单号
+                    </th>
+                    @*  <th>原单/附件
+                    </th>*@
+                    <th>回单人
+                    </th>
+                    <th>回单时间
+                    </th>
+                    <th>附件名称
+                    </th>
+                    <th>上传时间
+                    </th>
+                    <th style ="width:10%;">出发仓库
+                    </th>
+                    <th>是否审核</th>
+                    <th>异常备注</th>
+                    <th>单条审核</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ReplyDocumentWithAttachments != null && Model.ReplyDocumentWithAttachments.Any())
+                {
+                    foreach (var rda in Model.ReplyDocumentWithAttachments)
+                    {
+                    <tr data-id="@rda.PodID" data-SystemNumber="@rda.SystemNumber">
+                        <td>
+                            @if ((rda.IsAudit.HasValue && rda.IsAudit.Value) || string.IsNullOrEmpty(rda.DisplayName))
+                            {
+                                @Html.CheckBox("check" + rda.PodID.ToString(), new { data_ID = rda.SystemNumber, @class = "checkForSelect, HasAudit", disabled = "disabled" })
+                            }
+                            else
+                            {
+                                @Html.CheckBox("check" + rda.PodID.ToString(), new { data_ID = rda.SystemNumber, @class = "checkForSelect, NotAudit" })
+                            }
+                        </td>
+                        <td>
+                            @if (Model.IsInnerUser)
+                            {
+                                <a id="listSystemNumber" data-id="@rda.PodID" href="/POD/POD/ViewPodAll/@rda.PodID?showEditRelated=false">@rda.SystemNumber</a>
+                            }
+                            else
+                            {
+                                <a id="listSystemNumber" data-id="@rda.PodID" href="/POD/POD/ViewPodAllForOuterUser/@rda.PodID">@rda.SystemNumber</a>
+                            }
+                        </td>
+                        <td>
+                            @if (Model.IsInnerUser)
+                            {
+                                <a id="listCustomerOrderNumber" data-id="@rda.PodID" href="/POD/POD/ViewPodAll/@rda.PodID?showEditRelated=false">@rda.CustomerOrderNumber</a>
+                            }
+                            else
+                            {
+                                <a id="listCustomerOrderNumber" data-id="@rda.PodID" href="/POD/POD/ViewPodAllForOuterUser/@rda.PodID">@rda.CustomerOrderNumber</a>
+                            }
+                        </td>
+                        @*  <td>
+                            @rda.Str1
+                        </td>*@
+                        <td>
+                            @rda.Replier
+                        </td>
+                        <td>
+                            @if (rda.ReplyTime.HasValue)
+                            {
+                                @Html.Raw(rda.ReplyTime.Value.ToString("yyyy-MM-dd"))
+                            }
+                        </td>
+                        <td>
+                            @{
+                            string url = string.Empty;
+                            if (!string.IsNullOrEmpty(rda.Url))
+                            {
+                                url = rda.Url.Substring(9).Replace('\\', '/');
+                            }
+                            }
+                            <a class="attachmentClass" href="http://www.runbow.com.cn:8080/Picture/@url" data-id="@rda.AttachmentID" target="_blank">@rda.DisplayName</a>
+                        </td>
+                        <td>
+                            @if (rda.CreateDate.HasValue)
+                            {
+                                @Html.Raw(rda.CreateDate.Value.ToString("yyyy-MM-dd"))
+                            }
+                        </td>
+                        <td>
+                            @if (Model.IsShowForHilti)
+                            {
+                                @rda.Warehouse
+                            }
+                        </td> 
+                        <td>
+                            @Html.ChooseString(rda.IsAudit.HasValue, (rda.IsAudit.Value ? "是" : "否"), "否")
+                        </td>
+                        <td>
+                            @if (rda.IsAudit.HasValue && !rda.IsAudit.Value && rda.AttachmentID != 0)
+                            {
+                                @Html.TextBox("Remark", rda.Remark)
+                                <label  id="AddRemark" data-id="@rda.AttachmentID" style="cursor:pointer;  color:#0033cc; border-bottom:#0033cc solid 1px; ">提交</label>
+                            }
+                            else
+                            {
+                                @Html.Raw(rda.Remark);
+                            }
+                        </td>
+                        <td>
+                            @if (rda.IsAudit.HasValue && !rda.IsAudit.Value && rda.AttachmentID != 0)
+                            {
+                                <a class="attachmentClass" href="/POD/POD/ImageAuditDetail/@rda.PodID" data-id="@rda.AttachmentID" >单条审核</a>
+                            }
+                            else if (rda.AttachmentID != 0 && rda.IsAudit.HasValue && rda.IsAudit.Value)
+                            {
+                                <label  id="cancelAudit" data-AttachmentID="@rda.AttachmentID" data-PodReplyDocumentID="@rda.PodID" style="cursor:pointer;  color:#0033cc; border-bottom:#0033cc solid 1px; ">取消审核</label> 
+                            }
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}

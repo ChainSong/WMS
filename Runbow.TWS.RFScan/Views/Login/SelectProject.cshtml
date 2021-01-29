@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <title>用户登录</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //$('#cancel').click(function () {
+            //    document.getElementById("txtuser").value == "";
+            //    document.getElementById("txtpwd").value == "";
+            //});
+
+            document.getElementById("sumbit").focus();
+        });
+        function tabpwd() {
+            if (event.keyCode == 13) {
+                GetProject();
+            }
+        }
+        function GetProject() {
+            var user = document.getElementById("txtuser").value;
+            if (user == "") {
+                alert("请输入用户名！");
+                document.getElementById("txtuser").select();
+                return;
+            }
+            $.ajax({
+                type: 'get',
+                url: '/Login/GetUserProjects',
+                data: { userName: user },
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    var isArray = $.isArray(data);
+                    if (!isArray) {
+                        document.getElementById("projectId").value = "";
+                        alert(data);
+                    }
+                    else {
+                        document.getElementById("projectId").value = data[0].ProjectID;
+                        document.getElementById("txtpwd").select();
+                        return;
+                    }
+                },
+                error: function () {
+                    document.getElementById("projectId").value = "";
+                    alert("请求出错！");
+                }
+            });
+            document.getElementById("txtuser").select();
+        }
+        function tdback() {
+            history.back(-1);
+        }
+        function DirMain() {
+                var customerid = $("#customer").val();
+                var customername = $('#customer option:selected').text();
+                //var warehouseid = $("#Warehouse").text();
+                //alert($("#Warehouse").text());
+                //alert($('#Warehouse option:selected').text());
+                //return;
+                var warehouseName = $('#Warehouse option:selected').text();
+                warehouseName =encodeURI(encodeURI(warehouseName));
+                var warehouseids = $("#Warehouse").val();
+                window.location.href = "/login/main?CustomerID=" + customerid + "&WareHouseName=" + warehouseName + "&WareHouseID=" + warehouseids;
+                //window.location.href = "/login/main?CustomerID=" + customerid + "&WareHouseName=" + warehouseid + "&WareHouseID=" + warehouseids;
+            }
+
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+        }
+
+            table tr:nth-child(2) {
+                font-size: 18px;
+            }
+
+            table tr:nth-child(n+3) td {
+                height: 50px;
+                line-height: 50px;
+            }
+
+            table tr select {
+                padding: 5px;
+                border-color: #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+            }
+
+        option {
+            outline: none;
+        }
+
+        table tr:nth-child(3) td {
+            padding-top: 20px;
+        }
+
+        #sumbit {
+            border: none;
+            background: #428BCA;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            padding: 10px 0;
+        }
+
+        table tr:last-child td {
+            padding-top: 20px;
+        }
+    </style>
+</head>
+    @using (Html.BeginForm())
+    
+{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+<body>
+        
+<table style="text-align:center;height:200px;width:100%" >
+      <tr>
+          <td style="text-align: left; font-weight: bold;    padding: 10px 5px;color: #428BCA;line-height: 40px;" onclick="tdback()">
+              <img src="~/img/right.png" style="width: 15px;height: 21px;vertical-align: middle;" />返回
+          </td>
+    </tr>
+    <tr><td colspan="2">选择项目和仓库</td></tr>
+    <tr><td style="width:30%" >项目:</td><td  style="width:70%">@Html.DropDownList("customer", CustomerList, new {  style = "width:100%"})</td></tr>
+    <tr><td  style="width:30%">仓库:</td ><td  style="width:70%">@Html.DropDownList("Warehouse", WarehouseList, new {  style = "width:100%"})</td></tr>
+
+     <tr><td colspan="2" style="text-align:center"> <input id="sumbit" type="button" value="确定" style="width:100%" onclick="return DirMain();" /></td></tr>
+</table>
+</body>
+    }
+</html>
+

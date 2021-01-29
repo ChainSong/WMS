@@ -1,0 +1,395 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel
+@using Runbow.TWS.Common;
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@{
+
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+    var notKeyColumns = Model.Config1.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PreAndDetail.SearchCondition.CustomerID)))
+    //       .Select(c =>
+    //       {
+    //           if (c.InnerColumns.Count == 0)
+    //           {
+    //               return c;
+    //           }
+    //           else
+    //           {
+    //               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PreAndDetail.SearchCondition.CustomerID))
+    //               {
+    //                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PreAndDetail.SearchCondition.CustomerID);
+    //               }
+    //               return c;
+    //           }
+    //    //       });
+    //if (Model.IsInnerUser)
+    //{
+    //    if (!(Model.PreAndDetail.SearchCondition.CustomerID).HasValue || (Model.PreAndDetail.SearchCondition.CustomerID) == 0)
+    //    {
+
+    //        tmpDynamicSearchColumns = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+    //    }
+    //    else
+    //    {
+    //        tmpDynamicSearchColumns = notKeyColumns.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+    //        tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config1.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+    //    }
+    //}
+    //else
+    //{
+    //    if (Model.PreAndDetail.SearchCondition.CustomerID == 0)
+    //    {
+    //        tmpDynamicSearchColumns = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+    //    }
+    //    else
+    //    {
+    tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition).ToList();
+    // tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).ToList();
+    // }
+    //  }
+    //dynamicSearchColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey)).OrderBy(c => c.SearchConditionOrder).ToList() : Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).OrderBy(c => c.SearchConditionOrder).ToList();
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+    var showColumns = Model.IsInnerUser ? Model.Config1.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns.Where(c => c.IsShowInList)) : Model.Config1.ColumnCollection.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)).Union(notKeyColumns.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)));
+
+    //---------------------------------------------------PreOrderDetail----------------------------------------------------------
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumnsOd;
+    var notKeyColumnsOd = Model.Config2.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PreAndDetail.SearchCondition.CustomerID)))
+    //       .Select(c =>
+    //       {
+    //           if (c.InnerColumns.Count == 0)
+    //           {
+    //               return c;
+    //           }
+    //           else
+    //           {
+    //               if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.PreAndDetail.SearchCondition.CustomerID))
+    //               {
+    //                   return c.InnerColumns.First(innerc => innerc.CustomerID == Model.PreAndDetail.SearchCondition.CustomerID);
+    //               }
+    //               return c;
+    //           }
+    //       });
+    //if (Model.IsInnerUser)
+    //{
+    //    if (!(Model.PreAndDetail.SearchCondition.CustomerID).HasValue || (Model.PreAndDetail.SearchCondition.CustomerID) == 0)
+    //    {
+    //        tmpDynamicSearchColumnsOd = Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+    //    }
+    //    else
+    //    {
+    //        tmpDynamicSearchColumnsOd = notKeyColumnsOd.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+    //        tmpDynamicSearchColumnsOd = tmpDynamicSearchColumnsOd.Union(Model.Config2.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+    //    }
+    //}
+    //else
+    //{
+    //    if (Model.PreAndDetail.SearchCondition.CustomerID == 0)
+    //    {
+    //        tmpDynamicSearchColumnsOd = Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+    //    }
+    //    else
+    //    {
+    tmpDynamicSearchColumnsOd = notKeyColumnsOd.Where(c => c.IsShowInList).ToList();
+    //   tmpDynamicSearchColumnsOd = tmpDynamicSearchColumnsOd.Union(Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).ToList();
+    //  }
+    // }
+    //dynamicSearchColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey)).OrderBy(c => c.SearchConditionOrder).ToList() : Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).OrderBy(c => c.SearchConditionOrder).ToList();
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumnsOd = tmpDynamicSearchColumnsOd.OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCountOd = dynamicSearchColumnsOd.Count % 3 > 0 ? dynamicSearchColumnsOd.Count / 3 + 1 : dynamicSearchColumnsOd.Count / 3;
+    var showColumnsOd = Model.IsInnerUser ? Model.Config2.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumnsOd.Where(c => c.IsShowInList)) : Model.Config2.ColumnCollection.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)).Union(notKeyColumnsOd.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)));
+}
+@using (Html.BeginForm())
+{
+
+    //Html.HiddenFor(m => m.PreAndDetail.SearchCondition.OrderTime)
+    //Html.HiddenFor(m => m.PreAndDetail.SearchCondition.EndOrderTime)
+    //Html.HiddenFor(m => m.PageIndex)
+    //Html.HiddenFor(m => m.ViewType)
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.ID)
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.Warehouse)
+
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.CustomerID)
+    <fieldset>
+        <legend>基本信息</legend>
+        <form>
+            <table id="conditionTable">
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">客户</td>
+                    <td style="width: 21%;">
+
+                        @Html.DropDownListFor(m => m.PreAndDetail.SearchCondition.CustomerID, Model.Customers, new { @class = "form-control", @style = "width:100%", @id = "CustomerID" })
+                        @*@Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.ExternOrderNumber, new { @class = "form-control", @style = "width:100%", @id = "ExternOrderNumber" })*@
+                        @*@Model.PreAndDetail.SearchCondition.PreOrderNumber*@
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">仓库</td>
+                    <td style="width: 21%;">
+                        @Html.DropDownListFor(m => m.PreAndDetail.SearchCondition.Warehouse, Model.WarehouseList, new { @class = "form-control", @style = "width:100%", @id = "Warehouse" })
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">出库单类型</td>
+                    <td style="width: 21%;">
+                        @Html.DropDownListFor(m => m.PreAndDetail.SearchCondition.OrderType, Model.OrderTypeList, new { @class = "form-control", @style = "width:100%", @id = "OrderType" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">预出库单编号</td>
+                    <td style="width: 21%;">
+                        <input class="form-control" id="PreOrderNumber" style="color: red; width: 100%;" disabled="disabled" value="系统自动生成" />
+                        @*  @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.PreOrderNumber, new
+                            {
+                                Readonly = "true",
+                                id = "PreOrderNumber",
+                                @class = "form-control",
+                                style = "width:100%;"
+                            })*@
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">外部单号</td>
+                    <td style="width: 21%;">
+
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.ExternOrderNumber, new { @class = "form-control", @style = "width:100%", @id = "ExternOrderNumber" })@*disabled = "disabled",*@
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">订单日期</td>
+                    <td style="width: 21%;">
+                        @Html.Calendar("OrderTime", "notKeyVal form-control", Model.PreAndDetail.SearchCondition.OrderTime)
+
+                    </td>
+                </tr>
+                <tr>
+
+
+                    <td class="TableColumnTitle" style="width: 11%;">省</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.Province, new { @class = "form-control", @style = "width:100%", @id = "Province" })
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">市</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.City, new { @class = "form-control", @style = "width:100%", @id = "City" })
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">区县</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.District, new { @class = "form-control", @style = "width:100%", @id = "District" })
+
+                    </td>
+                </tr>
+                <tr>
+
+                    <td class="TableColumnTitle" style="width: 11%;">收货联系人</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.Consignee, new { @class = "form-control", @style = "width:100%", @id = "Consignee" })
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">收货联系方式</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.Contact, new { @class = "form-control", @style = "width:100%", @id = "Contact" })
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">收货地址</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.PreAndDetail.SearchCondition.Address, new { @class = "form-control", @style = "width:100%", @id = "Address" })
+
+                    </td>
+                </tr>
+                <tr>
+
+                    <td class="TableColumnTitle" style="width: 11%;">快递公司</td>
+                    <td style="width: 21%;">
+                        @Html.DropDownListFor(m => m.PreAndDetail.SearchCondition.ExpressCompany, Model.ExpressCompany, "==请选择==", new { @class = "form-control", @style = "width:100%", @id = "ExpressCompany" })
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;"></td>
+                    <td style="width: 21%;"></td>
+                    <td class="TableColumnTitle" style="width: 11%;"></td>
+                    <td style="width: 21%;"></td>
+                </tr>
+                @for (int i = 0; i < dynamicSearchColumnRowCount; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < 3; j++)
+                        {
+                            var index = i * 3 + j;
+                            if (index >= dynamicSearchColumns.Count)
+                            {
+                                <td colspan="2"></td>
+                            }
+                            else
+                            {
+                                var column = dynamicSearchColumns[i * 3 + j];
+                                var o = typeof(Runbow.TWS.Entity.PreOrderSearchCondition).GetProperty(column.DbColumnName).GetValue(Model.PreAndDetail.SearchCondition);
+
+                                <td class="TableColumnTitle">
+                                    @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                                </td>
+                                <td>
+                                    @{
+                                        if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                        {
+                                            if (o != null && o != "")
+                                            {
+                                                if (Model.ViewType != 3 && Model.ViewType != 0)
+                                                {
+                                                    @Html.Calendar(column.DbColumnName, "form-control", o.ObjectToDateTime())
+                                                }
+                                                else
+                                                {
+                                                    @o.ObjectToDateTime().DateTimeToString()
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (Model.ViewType != 3 && Model.ViewType != 0)
+                                                {
+                                                    @Html.Calendar(column.DbColumnName, "form-control")
+                                                }
+                                                else
+                                                {
+                                                    @o
+                                                }
+                                            }
+                                            // @Html.Calendar(column.DbColumnName, "form-control")
+                                        }
+
+                                        else if (column.Type == "CheckBox")
+                                        {
+                                            if (o != null && o != "")
+                                            {
+                                                @Html.CheckBox(column.DbColumnName, (o.ToString() == "1" ? true : false), new { @class = "notKeyVal" });
+                                            }
+                                            else
+                                            {
+                                                @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                                            }
+                                        }
+                                        else if (column.Type == "DropDownList" && column.IsKey)
+                                        {
+                                            @Html.DropDownList(column.DbColumnName, (IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName.Substring(0, column.DbColumnName.Length - 4) + "s").GetValue(Model).ConvertSimpleType(typeof(IEnumerable<SelectListItem>)), "==请选择==", new { @class = "DropDownList" })
+                                        }
+                                        else if (column.Type == "DropDownList" && !column.IsKey)
+                                        {
+                                            @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                                        }
+                                        else if (column.Type == "RegionPicker")
+                                        {
+                                            if (column.DbColumnName == "StartCityName")
+                                            {
+                                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                                <a id="startCityClear" href="#">清空</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                                <a id="endCityClear" href="#">清空</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Model.ViewType != 0 && Model.ViewType != 3)
+                                            {
+                                                @Html.TextBox(column.DbColumnName, o, new { @class = "form-control", style = "width:100%;" })
+                                            }
+                                            else
+                                            {
+                                                @o.ToString()
+                                            }
+                                        }
+                                    }
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </table>
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend>出库单明细信息</legend>
+        <div style="overflow-X: scroll; width: 100%">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @*Html.CheckBox("selectAll", "onclick=selectAll")*@
+                            行号
+                        </th>
+                        <th>SKU</th>
+                        <th>UPC</th>
+                        <th>货品描述</th>
+                        <th>货品等级</th>
+                        <th>批次号</th>
+                        <th>托号</th>
+                        <th>期望数量</th>
+                        <th>已分配数量</th>
+                        <th>单位</th>
+                        <th>规格</th>
+                        <th>实际数量</th>
+                        @*<th></th>*@
+                        <th>(库区)库位</th>
+                        @*<th style="display: none">操作</th>*@
+                        <th style="display: none">POID</th>
+                        <th style="display: none">仓库</th>
+                        <th style="display: none">仓库ID</th>
+                        <th style="display: none">外部单号</th>
+                    </tr>
+                </thead>
+                <tbody id="content">
+                    @if (Model.PreAndDetail.PreOd != null && Model.PreAndDetail.PreOd.Any())
+                    {
+                        foreach (var item in Model.PreAndDetail.PreOd)
+                        {
+                            <tr>
+                                <td class="LineNumber">00001</td>
+                                <td class="SKU">@item.SKU</td>
+                                <td class="UPC">@item.UPC</td>
+                                <td class="GoodsName">@item.GoodsName</td>
+                                <td class="GoodsType">@item.GoodsType</td>
+                                <td class="BatchNumber">@item.BatchNumber</td>
+                                <td class="BoxNumber">@item.BoxNumber</td>
+
+                                <td class="OriginalQty">@item.OriginalQty</td>
+                                <td class="AllocatedQty">@item.AllocatedQty</td>
+                                <td class="Unit">@item.Unit</td>
+                                <td class="Specifications">@item.Specifications</td>
+                                <td class="OriginalQty">
+                                    <input type="text" class="AllocatedQty form-control" name="child" onblur='la(this)' style="width: 100%; " value="@item.OriginalQty" />
+                                </td>
+                                <td class="Location">
+                                    <input type="text" class="Location form-control" name="child" list="@item.SKU@item.GoodsType" style="width: 100%;" value="@item.Area|@item.Location" />
+                                </td>
+                                @* <td>
+                                        <input type="text" class="Location" style="width: 100%;" value="" />
+                                    </td>*@
+                                @* <td style="width: 150px; display: none">
+                                        <label class="label label-info" style="cursor: pointer; color: white;"  onclick="BreakUp(this,'@item.SKU')">拆分</label>
+                                    </td>*@
+                                <td style="display: none">@item.POID</td>
+                                <td style="display: none">@item.Warehouse</td>
+                                <td style="display: none">@item.WarehouseId</td>
+                                <td style="display: none">@item.ExternOrderNumber</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <div class="actionButtonDiv" id="actionButtonDiv">
+
+        <input type="submit" class="btn btn-success" value="提交" id="searchButton" name="Action" />
+        <input type="submit" class="btn btn-success" onclick="history.go(-1)" value="返回" name="Action" />
+    </div>
+}
+
+
+
+
+

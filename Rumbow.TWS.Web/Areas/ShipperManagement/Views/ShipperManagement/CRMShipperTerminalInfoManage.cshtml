@@ -1,0 +1,163 @@
+﻿@model Runbow.TWS.Web.Areas.ShipperManagement.Models.CRMShipperTerminalInfoManageViewModel
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>终端地址信息新增
+        </legend>
+        @Html.HiddenFor(m => m.CRMShipperID)
+        @Html.HiddenFor(m => m.ViewType)
+        <table id="CRMShipperTransportationLineTable">
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%;">终端地址</td>
+                <td style="width: 23%;">
+                    @Html.TextBoxFor(m => m.TerminalAddress)
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">联系人</td>
+                <td style="width: 23%;">
+                    @Html.TextBoxFor(m => m.Str1)
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">联系方式</td>
+                <td>
+                    @Html.TextBoxFor(m => m.Str2)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%;">是否自有</td>
+                <td style="width: 23%;">
+                    @Html.DropDownListFor(m => m.IsOwn, Model.TrueOrFalse)
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">办公面积(㎡)</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalOfficeArea)
+                </td>
+                <td class="TableColumnTitle">仓库面积(㎡)</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalWareHouseArea,new { style = "width:65px" })
+                    @Html.Raw("&nbsp;&nbsp")
+                    @Html.DropDownListFor(m => m.TerminalWareHouseAreaRange, Model.WarehouseArea)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">员工人数</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalNumberOfEmployees)
+                </td>
+                <td class="TableColumnTitle">客服人数</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalNumberOfCustomerService)
+                </td>
+                <td class="TableColumnTitle">装卸工人数</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalNumberOfStevedores)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">叉车数量</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalForkliftsUsage)
+                </td>
+                <td class="TableColumnTitle">装卸平台</td>
+                <td>
+                    @Html.DropDownListFor(m => m.TerminalLoadingPlatform, Model.HaveOrNone)
+                </td>
+                <td class="TableColumnTitle">配送车辆</td>
+                <td>
+                    @Html.TextBoxFor(m => m.TerminalDeliveryVehicles)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">备注</td>
+                <td colspan="5">
+                    @Html.TextAreaFor(m => m.Str1, new { style = "width:95%" })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align: center;">
+                    <input type="submit" value="新增" id="insertCRMShipperCooperation" />
+                    @Html.Raw("&nbsp;&nbsp")
+                    <input type="button" value="返回" id="return" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>终端地址信息列表
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>终端地址</th>
+                    <th>联系人</th>
+                    <th>联系方式</th>
+                    <th>是否自有</th>
+                    <th>办公面积(㎡)</th>
+                    <th>仓库面积(㎡)</th>
+                    <th>面积范围(㎡)</th>
+                    <th>员工人数</th>
+                    <th>客服人数</th>
+                    <th>装卸工人数</th>
+                    <th>叉车数量</th>
+                    <th>装卸平台</th>
+                    <th>配送车辆</th>
+                    <th>备注</th>
+                    <th>删除</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.CRMShipperTerminalInfoCollection != null && Model.CRMShipperTerminalInfoCollection.Any())
+                {
+                    foreach (var terminalInfo in Model.CRMShipperTerminalInfoCollection)
+                    {
+                    <tr data-id="@terminalInfo.ID">
+                        <td>
+                            @terminalInfo.TerminalAddress
+                        </td>
+                        <td>
+                            @terminalInfo.Str1
+                        </td>
+                        <td>
+                            @terminalInfo.Str2
+                        </td>
+                        <td>
+                            @terminalInfo.IsOwn
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalOfficeArea
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalWareHouseArea
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalWareHouseAreaRange
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalNumberOfEmployees
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalNumberOfCustomerService
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalNumberOfStevedores
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalForkliftsUsage
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalLoadingPlatform
+                        </td>
+                        <td>
+                            @terminalInfo.TerminalDeliveryVehicles
+                        </td>
+                        <td>
+                            @terminalInfo.Str1
+                        </td>
+                        <td>
+                            <a id="deleteCRMShipperTerminalInfo" class="deleteCRMShipperTerminalInfo" data-id="@terminalInfo.ID" href="#">删除</a>
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}

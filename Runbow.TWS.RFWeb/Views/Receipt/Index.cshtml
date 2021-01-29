@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<html>
+    <head>
+        
+<script src="//cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
+<title>Index</title>
+<script type="text/javascript" >
+    $(document).ready(function () {
+        document.getElementById("receiptnum").focus();
+    });
+    var receiptmodel;
+    var arrayLocation = new Array();
+    var arraySKU = new Array();
+    function checkRecNum() {
+            if (event.keyCode == 13) {
+                if (document.getElementById("receiptnum").value == "") {
+                    alert("入库单不能为空！");
+                    return;
+                }
+                //查询数据
+                    $.ajax({
+                        type: 'post',
+                        url: '/Receipt/GetReceiptDetail',
+                        data: { "ReceiptNumber": document.getElementById("receiptnum").value },
+                        cache: false,
+                        dataType: 'json',
+                        success: function (data) {
+                            receiptmodel = data;
+                            if (receiptmodel.length > 0) {
+                                alert(receiptmodel.length);
+                            }
+                            else {//入库单不存在
+                                showMsg("入库单不存在！", 2000);
+                                return;
+                            }
+                        },
+                        error: function () {
+                            //document.getElementById("projectId").value = "";
+                            showMsg("请求出错！", 2000);
+                            return;
+                        }
+                    });
+                    document.getElementById("receiptnum").readOnly = "true";
+                    document.getElementById("Scan").focus();
+               
+            }
+        }
+            function Scan() {
+                if (event.keyCode == 13) {
+                    if (document.getElementById("Scan").value == "") {
+                        alert("数据不能为空！");
+                        return;
+                    }
+                    if (document.getElementById("receiptnum").value == "") {
+                        alert("入库单不能为空！");
+                        return;
+                    }
+                    //check 数据是否为库位
+                    for (var i = 0; i < arrayLocation.length; i++) {
+                        //如果数据是库位
+                        if (document.getElementById("SCAN").value == arrayLocation[i]) {
+                            if (document.getElementById("location").value == "") {
+                                //库位为空时，直接更新数据到库位
+                                document.getElementById("location").value = arrayLocation[i];
+                                return;
+                            }
+                            else {
+                                //库位不为空是，如果sku为空，也直接更新数据到库位
+                                if (document.getElementById("sku").value == "") {
+                                    document.getElementById("location").value = arrayLocation[i];
+                                    return;
+                                }
+                                else {
+                                    //库位不为空是，如果sku也不为空,正常情况数量一定有数据的
+                                    if (document.getElementById("qty").value != "") {
+                                        //保存当前数据
+                                        //savedate()
+                                        //然后清空数据并给库位赋值
+                                        document.getElementById("sku").value = "";
+                                        document.getElementById("qty").value = "";
+                                        document.getElementById("location").value = arrayLocation[i];
+                                        return;
+                                    }
+                                    else {
+                                        //直接清空数据
+                                        document.getElementById("sku").value = "";
+                                        document.getElementById("qty").value = "";
+                                        document.getElementById("location").value = arrayLocation[i];
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // //check 数据是否为SKU
+                    for (var i = 0; i < arraySKU.length; i++) {
+                        if (document.getElementById("SCAN").value == arrayLocation[i]) {
+                            //如果数据是SKU
+                            if (document.getElementById("location").value == "") {
+                                //库位为空，提示
+                                alert("请先扫描库位");
+                                return;
+                            }
+                            else {
+                                //sku为空时候
+                                if (document.getElementById("sku").value == "") {
+                                    document.getElementById("sku").value = arrayLocation[i];
+                                    document.getElementById("qty").value = "1";
+                                    return;
+                                }
+                                else {
+                                    //sku不为空时，如果sku=扫描数据，则++数量
+                                    if (document.getElementById("sku").value == arrayLocation[i]) {
+                                        document.getElementById("qty").value = parseInt(document.getElementById("qty").value) + 1;
+                                        return;
+                                    }
+                                    else {
+                                        //库位不为空是，如果sku也不为空,正常情况数量一定有数据的
+                                        if (document.getElementById("qty").value != "") {
+                                            //保存当前数据
+                                            //savedate()
+                                            //然后清空数据并给库位赋值
+                                            document.getElementById("qty").value = parseInt(document.getElementById("qty").value) + 1;
+                                            document.getElementById("sku").value = arrayLocation[i];
+                                            return;
+                                        }
+                                        else {
+                                            //清空sku数据
+                                            document.getElementById("sku").value = arrayLocation[i];
+                                            document.getElementById("qty").value = "1";
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    document.getElementById("scan").focus();
+                }
+            }
+        
+    </script>
+        </head>
+    <body>
+<table style="text-align:center;width:100%;height:300px" >
+ <tr><td style="WIDTH:40%">入库单：</td><td><input id="receiptnum" type="text" style="width:100%" onkeydown="checkRecNum()" /></td></tr>
+    <tr><td style="WIDTH:40%">扫描：</td><td><input id="Scan" type="text" style="width:100%""  onclick="Scan()" /></td></tr>
+    <tr><td style="WIDTH:40%">库位：</td><td><input id="location" type="text" style="width:100%"" readonly="true" /></td></tr>
+    <tr><td style="WIDTH:40%">SKU：</td><td><input id="sku" type="text" style="width:100%"" readonly="true" /></td></tr>
+    <tr><td style="WIDTH:40%">数量：</td><td><input id="qty" type="text" style="width:100%"" /></td></tr>
+    <tr><td style="WIDTH:40%">批号：</td><td><input id="lot" type="text" style="width:100%"" /></td></tr>
+    <tr><td style="WIDTH:40%">LOT：</td><td><input id="lot2" type="text" style="width:100%"" /></td></tr>
+    <tr><td ><input style="width:80%" type="button" id="submit" value="提交"/></td><td ><input style="width:60%" type="button" id="show" value="取消"/></td></tr>
+</table>
+        
+    </body>
+    </html>

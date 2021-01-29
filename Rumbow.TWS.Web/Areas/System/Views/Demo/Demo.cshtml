@@ -1,0 +1,128 @@
+﻿@model Runbow.TWS.Web.Areas.System.Controllers.DemoViewModel
+<fieldset>
+    <legend>基本页面</legend>
+    <div>
+        Client端Server端数据交互，Biz/Dao 层调用，JS/CSS 文件的放置等，请参考 “菜单管理” 及 “项目管理->分配项目角色"
+        <br />
+        下面的几个通用控件，也有很多地方可以参考<br />
+        有很多Extension方法可以直接调用
+    </div>
+</fieldset>
+<fieldset>
+    <legend>日期Demo</legend>
+    <div>
+        @Html.CalendarFor(x => x.DateTime1)
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        @Html.CalendarFor(x => x.DateTime2)
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        @Html.Calendar("dateTime")
+    </div>
+</fieldset>
+<fieldset>
+    <legend>弹Dialog显示需要的内容，并返回值</legend>
+    <div>
+        <input type="text" id="returnValFromPopup" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="showDialog" value="弹出对话框" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>分页-已改进，支持同一个页面多次调用分页控件</legend>
+    <div>
+        @using (Html.BeginForm())
+        {
+            <table id="demoTable">
+                <thead>
+                    <tr>
+                        <th>编号
+                        </th>
+                        <th>名称
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vm in Model.DemoPagerViewModel)
+                    {
+                        <tr>
+                            <td>
+                                @vm.ID
+                            </td>
+                            <td>
+                                @vm.Name
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @Html.Pager((int)ViewBag.FirstPageIndex, (int)ViewBag.FirstPageCount, "First");
+
+            <table id="demoTable_Second">
+                <thead>
+                    <tr>
+                        <th>编号
+                        </th>
+                        <th>名称
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vm in Model.DemoPagerViewModel_Second)
+                    {
+                        <tr>
+                            <td>
+                                @vm.ID
+                            </td>
+                            <td>
+                                @vm.Name
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @Html.Pager((int)ViewBag.PageIndexSecond, (int)ViewBag.PageCountSecond, "Second");
+        }
+    </div>
+</fieldset>
+<fieldset>
+    <legend>批量文件上传</legend>
+    <div>
+        @Html.MultipleFileUpload("Multiple", "Hidden_Multiple_GroupID")
+    </div>
+</fieldset>
+<fieldset>
+    <legend>单个文件上传</legend>
+    <div>
+        @Html.SingleFileUpload("single", "Hidden_Signle_GroupID", "7f8fca61-062a-4b10-b76c-074f4328da7d")
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Select excel file，ajax call server action, then render json result in client/schema in Excel: ID, DisplayName, Name,Password</legend>
+    <div>
+        <input type="file" id="inputExcel" class="fileInput" name="inputExcel" />
+        <input type="submit" id="inputExcelButton" value="上传并读取" class="fileInput" onclick="return fileInputClick();" />
+    </div>
+    <div id="outputExcelDiv">
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>ReportViewer 报表/打印</legend>
+    <div>
+        <a href="http://stackoverflow.com/questions/6144513/how-can-i-use-a-reportviewer-control-in-an-asp-net-mvc-3-razor-view/7176529#7176529"
+            target="_blank">How can I use a reportviewer control in an asp.net mvc 3 razor view?</a>
+        <br />
+        <a href="http://stackoverflow.com/questions/8925077/mvc3-razor-vs2010-reportviewer-example" target="_blank">mvc3-razor-vs2010-reportviewer-example</a>
+        <br />
+        <a href="http://www.cnblogs.com/waxdoll/archive/2006/02/26/338074.html" target="_blank">博客园</a>
+        <br />
+        <a href="#">我这里有一些例子，可以参考</a>
+    </div>
+</fieldset>
+
+<div id="showInDialog" style="display: none">
+    @* 在此可以加载你想要显示的内容 *@
+    <select id="selectValues">
+        <option>选择1</option>
+        <option>选择2</option>
+        <option>选择3</option>
+    </select>
+</div>

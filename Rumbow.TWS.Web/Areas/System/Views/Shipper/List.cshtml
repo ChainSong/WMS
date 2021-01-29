@@ -1,0 +1,102 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ShipperListViewModel
+           <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Code)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.Name)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.EnglishName)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.EnglishName, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(m => m.State)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.State, Model.States, new {@style="width:180px; " })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" class="btn btn-success" id="searchButton" />
+            <input type="button" onclick="window.location.href = '/System/Shipper/Create'" value="新增"  class="btn btn-success" id="btnAdd" />
+            <input type="button" onclick="window.location.href = '/System/Shipper/ShipperRelatedInfo'" value="承运商信息配置"  class="btn btn-success" id="btnShipperInfoSet" />
+           @*  <input type="button" onclick="window.location.href = '/System/Shipper/ShiperSegment'" value="配置"  class="btn btn-success" id="btnShipper" />*@
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>承运商列表
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>代码</th>
+                    <th>名称</th>
+                    <th>英文名称</th>
+                    <th>联系人</th>
+                    <th>联系电话</th>
+                    <th>传真</th>
+                    <th>地址</th>
+                    <th>是否可用</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Shippers != null && Model.Shippers.Any())
+                {
+                    foreach (var shipper in Model.Shippers)
+                    {
+                    <tr>
+                        <td>@shipper.Code</td>
+                        <td>@shipper.Name</td>
+                        <td>@shipper.EnglishName</td>
+                        <td>@shipper.Contactor1</td>
+                        <td>@shipper.Phone1</td>
+                        <td>@shipper.Fax1</td>
+                        <td>@shipper.Address1</td>
+                        <td>@{
+                        if (shipper.State)
+                        {
+                            @Html.Raw("可用")
+                        }
+                        else
+                        {
+                            @Html.Raw("禁用")
+                        }
+                        }
+                        </td>
+                        <td>
+                            @Html.ActionLink("编辑", "Edit", new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })
+                          
+                            &nbsp;
+                             @Html.ActionLink("段位设置", "ShiperSegment", new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })
+                          
+                            &nbsp;
+                            @Html.ActionLink("车辆管理","VehicleManagement",  new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

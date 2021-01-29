@@ -1,0 +1,208 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.WarehouseCheckModel
+@Url.jsrender()
+@Url.Json2()
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{ 
+<fieldset>
+    <legend>库存盘点新增</legend>
+    <table id="UserTable">
+        <tr>
+            <td class="TableColumnTitle"><label>盘点单号</label>
+            </td>
+            <td>
+                <input class="form-control" id="PreOrderNumber" style="width: 100%;" disabled="disabled" value="系统自动生成" />  
+              @*@Html.TextBoxFor(m=>m.SearchCondition.CheckNumber, new { @class = "form-control" })*@
+            </td>
+            <td class="TableColumnTitle"><label>外部盘点单号</label><label style="color:red;">*</label>
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.SearchCondition.ExternNumber, new { @class = "form-control", style = "width:100%" })
+            </td>
+            <td class="TableColumnTitle"><label>创建日期</label>
+            </td>
+            <td>
+                @*@Html.CalendarDateTime("CustomerName", "form-control",null)*@
+                @Html.CalendarFor(m => m.SearchCondition.Checkdate, "form-control")
+            </td>
+        </tr>
+        @{
+            if (Model.ViewType == 0)
+            {
+        <tr>
+            @{
+              var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+              var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+              var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+            }
+            <td class="TableColumnTitle"><label>客户</label>
+            </td>
+            <td>
+              @Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, new { @class = "form-control" })
+            </td>
+            <td class="TableColumnTitle"><label>仓库</label>
+            </td>
+            <td>
+              @Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, new { @class = "form-control" })
+            </td>
+            <td class="TableColumnTitle"><label>区域</label>
+            </td>
+            <td>
+               @Html.DropDownListFor(m => m.SearchCondition.Area, AreaList, "==请选择==", new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle"><label>盘点类型</label>
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.SearchCondition.Type, Model.CheckType, new { @class = "form-control" })
+                <input type="hidden" id="vmtype"  name="vmtype" value="@Model.SearchCondition.Type"> 
+            </td>
+            <td class="TableColumnTitle"><label id="Cone" style="display:none;">条件1</label>
+            </td>
+            <td>
+                <div id="Tone" style="display:none;">@Html.TextBoxFor(m => m.SearchCondition.str1, new { @class = "form-control" })</div>
+                <div id="Tone5" style="display:none;"> @Html.CalendarFor(m => m.SearchCondition.str3, "form-control")</div>
+            </td>
+            <td class="TableColumnTitle"><label id="CTwo" style="display:none;">条件2</label>
+            </td>
+            <td>
+                 <div id="TTwo" style="display:none;">@Html.TextBoxFor(m => m.SearchCondition.str2, new { @class = "form-control" })</div>
+                 <div id="TTwo5" style="display:none;"> @Html.CalendarFor(m => m.SearchCondition.str4, "form-control")</div>
+            </td>
+        </tr>
+        <tr id="trOne" style="display:none;">
+            <td></td>
+            <td></td>
+            <td class="TableColumnTitle"><label id="CTthree">业务类型</label>
+            </td>
+            <td colspan="3">
+             @foreach (SelectListItem item in Model.Remark)
+             {
+                 var ischecked = "";
+                 if (Model.SearchCondition.str5 == "" || Model.SearchCondition.str5 == null)
+                 {
+                     if (item.Selected == true)
+                     {
+                         ischecked = "checked='checked'";
+                     }
+                    <input name="roles" type="checkbox" value="@item.Value" @ischecked />
+                    @item.Text 
+                 }
+                 else
+                 {
+                         if (Model.SearchCondition.str5.Split(',').Contains(item.Value))
+                         {
+                             ischecked = "checked='checked'";
+                            <input name="roles" type="checkbox" value="@item.Value" @ischecked />
+                            @item.Text 
+                         }
+                         else
+                         {
+                            <input name="roles" type="checkbox" value="@item.Value" @ischecked />
+                            @item.Text
+                         }
+                 }
+             }
+            </td>
+        </tr>
+        <!--空库位盘点类型-->
+        <tr id="trTwo" style="display:none">
+            <td></td>
+            <td></td>
+            <td class="TableColumnTitle"><label>业务类型</label>
+            </td>
+            <td colspan="3">
+                @foreach (var item in Model.EmptyLocationType)
+                {
+                    var ischecked = "";
+                    if (Model.SearchCondition.str5 == "" || Model.SearchCondition.str5 == null)
+                    {
+                        if (item.Selected)
+                        {
+                            ischecked = "checked='checked'";
+                        }
+                        <input name="emptylocationType" type="checkbox" value="@item.Value" @ischecked />@item.Text
+                    }
+                    else
+                    {
+                        if (Model.SearchCondition.str5.Split(',').Contains(item.Value))
+                        {
+                            ischecked = "checked='checked'";
+                            <input name="emptylocationType" type="checkbox" value="@item.Value" @ischecked />@item.Text
+                        }
+                        else
+                        {
+                            <input name="emptylocationType" type="checkbox" value="@item.Value" @ischecked />@item.Text
+                        }
+                    }
+                }
+
+            </td>
+        </tr>
+            }
+        }
+    </table>
+    <div class="actionButtonDiv">
+            <input type="submit" class ="btn btn-success" value="查询" id="searchButton" name="Action" />
+            &nbsp;
+        <input type="submit" class ="btn btn-success" value="保存" id="SaveButton" name="Action" />
+            &nbsp; 
+         <input type="button" class ="btn btn-success" value="返回" id="BackButton" onclick="history.go(-1)"  />
+            &nbsp;  
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>盘点列表
+        @if (Model.WarehouseCheckDetailCollection != null && Model.WarehouseCheckDetailCollection.Any())
+              {
+                  @Html.Raw("(" + Model.WarehouseCheckDetailCollection.Count() + ")");
+              }
+    </legend>
+    <div style="overflow-X: scroll; min-height: 180px">
+        <table id="RoleTable">
+            <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>区域</th>
+                    <th>库位</th>
+                    <th>SKU</th>
+                    <th>UPC</th>
+                    <th>批次号</th>
+                    <th>托号</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>品级</th>
+                    <th>盘点数量</th>
+                    <th>实际盘点数量</th>
+                </tr>
+            </thead>
+             <tbody>
+                    @if (Model.WarehouseCheckDetailCollection != null && Model.WarehouseCheckDetailCollection.Any())
+                    {
+                        foreach (var WarehouseCheck in Model.WarehouseCheckDetailCollection)
+                        {
+                            <tr>
+                                 <td>@WarehouseCheck.CustomerName</td>
+                                 <td>@WarehouseCheck.Area</td>
+                                 <td>@WarehouseCheck.Location</td>
+                                 <td>@WarehouseCheck.SKU</td>
+                                 <td>@WarehouseCheck.UPC</td>
+                                 <td>@WarehouseCheck.BatchNumber</td>
+                                 <td>@WarehouseCheck.BoxNumber</td>
+                                 <td>@WarehouseCheck.Unit</td>
+                                 <td>@WarehouseCheck.Specifications</td>
+                                 <td>@WarehouseCheck.GoodsType</td>
+                                 <td>@WarehouseCheck.CheckQty</td>
+                                <td><input type="text"  name="ActualQTY" value="0" ></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+        </table>
+    </div>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+}

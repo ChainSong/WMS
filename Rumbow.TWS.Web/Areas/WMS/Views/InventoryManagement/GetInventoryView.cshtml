@@ -1,0 +1,167 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+<fieldset>
+    <legend>库存信息</legend>
+    <table>
+        <thead>
+            <tr>
+                <th>客户</th>
+                <th>库区&nbsp;|&nbsp;库位</th>
+                <th>SKU</th>
+                <th>货品名称</th>
+                <th>货品等级</th>
+                <th>库存状态</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+ {
+                foreach (var inventory in Model.InventoryCollection)
+     {
+            <tr>
+                <td>@inventory.CustomerName</td>
+                <td>@inventory.Area@Html.Raw("&nbsp;")|@Html.Raw("&nbsp;") @inventory.Location</td>
+                <td>@inventory.SKU</td>
+                <td>@inventory.GoodsName</td>
+                <td>@inventory.GoodsType</td>
+                <td>
+                    @switch(inventory.InventoryType)
+                    {
+                        case 1:
+                            @Html.Raw("可用");
+                            break;
+                        case 2:
+                            @Html.Raw("操作中");
+                            break;
+                        case 3:
+                            @Html.Raw("冻结");
+                            break;
+                        case 9:
+                            @Html.Raw("已出库");
+                            break;
+                    }
+                </td>
+                <td>@inventory.Qty</td>
+            </tr>
+     }
+ }
+        </tbody>
+    </table>
+</fieldset>
+ 
+ 
+<fieldset>
+    <legend>入库信息</legend>
+    <table id="Receipt">
+        <thead>
+            <tr>
+                <th>入库单号</th>
+                <th>外部单号</th>
+                <th>ASN单号</th>
+                <th>客户</th>
+                <th>仓库</th>
+                <th>入库单类型</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ReceiptCollection != null && Model.ReceiptCollection.Any())
+            {
+                foreach (var receipt in Model.ReceiptCollection)
+                {
+            <tr>
+                <td><a href="/WMS/ReceiptManagement/ReceiptCreate/?ID=@receipt.ID&ViewType=3">@receipt.ReceiptNumber</a></td>
+                <td>@receipt.ExternReceiptNumber</td>
+                <td>@receipt.ASNNumber</td>
+                <td>@receipt.CustomerName</td>
+                <td>@receipt.WarehouseName</td>
+                <td>@receipt.ReceiptType</td>
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+ 
+        
+ 
+<fieldset>
+    <legend>出库信息</legend>
+    <table id="Order">
+        <thead>
+            <tr>
+                <th>出库单编号</th>
+                <th>外部单号</th>
+                <th>订单时间</th>
+                <th>客户</th>
+                <th>仓库</th>
+                <th>出库单类型</th>
+                <th>省市区</th>
+                <th>收货人信息</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.OrderCollection != null && Model.OrderCollection.Any())
+            { 
+                foreach (var order in Model.OrderCollection)
+                {
+            <tr>
+                <td><a href="/WMS/OrderManagement/OrderDetailView/?ID=@order.ID&ViewType=3">@order.OrderNumber</a></td>
+                <td>@order.ExternOrderNumber</td>
+                <td>@order.OrderTime</td>
+                <td>@order.CustomerName</td>
+                <td>@order.Warehouse</td>
+                <td>@order.OrderType</td>
+                <td>@order.Province@order.City</td>
+                <td>@order.Consignee@Html.Raw("&nbsp;")@order.Contact</td>
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+ 
+<fieldset>
+    <legend>库存调整信息</legend>
+    <table id="Adjust">
+        <thead>
+            <tr>
+                <th>调整单号</th>
+                <th>客户</th>
+                <th>调整日期</th>
+                <th>单据类型</th>
+                <th>冻结单状态</th>
+                <th>仓库</th>
+                <th>调整原因</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.AdjustmentCollection != null && Model.AdjustmentCollection.Any())
+            {
+                foreach (var adjust in Model.AdjustmentCollection)
+                {
+            <tr>
+                <td><a href="/WMS/InventoryManagement/AddorEditorViewAdjust/?ID=@adjust.ID&ViewType=0">@adjust.AdjustmentNumber</a></td>
+                <td>@adjust.CustomerName</td>
+                    <td>@adjust.AdjustmentTime.ToString("yyyy-MM-dd")</td>
+                <td>@adjust.AdjustmentType</td>
+                    <td>
+                        @if(@adjust.Status==1){
+                            @Html.Raw("新增")
+                        }
+                        @if(@adjust.Status==9){
+                            @Html.Raw("完成")
+                        }
+
+                    </td>
+                <td>@adjust.Warehouse</td>
+                <td>@adjust.AdjustmentReason</td>
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+        <div class="actionButtonDiv">
+         <input type="button" class="btn btn-success" value="返回" id="backButton" />
+        </div>
+</fieldset>

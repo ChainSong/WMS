@@ -1,0 +1,106 @@
+﻿@model  Runbow.TWS.Web.Areas.AMS.Models.GenBoxNumberViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StatUpLoadTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndUpLoadTime)
+    @Html.HiddenFor(m => m.Check, "SelectedIDs")
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">客户名称
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">装箱单状态
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.StateID, Model.States, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">上传时间
+                </td>
+                <td>
+                    @Html.CalendarRange("UpLoadTime", "calendarRange")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">装箱单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.BoxNumber)
+                </td>
+                <td class="TableColumnTitle">编号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.Numbers, new { style = "width:95%" })
+                </td>
+                <td class="TableColumnTitle"></td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="btnSave" />
+            <input type="button" value="生成装箱单" id="birth" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>运单列表 
+         @if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
+         {
+             @Html.Raw("(" + Model.AMSUploadCollection.Count() + ")");
+         }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.CheckBox("selectAll", "onclick=selectAll")
+                    编号</th>
+                <th>类型
+                </th>
+                <th>上传人
+                </th>
+                <th>上传的时间
+                </th>
+                <th>状态</th>
+                <th>装箱单号
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
+            {
+                foreach (var ams in Model.AMSUploadCollection)
+                {
+                <tr>
+                    <td>
+                        @Html.CheckBox("check" + ams.ID.ToString(), new { data_ID = ams.ID, @class = "checkForSelect" })
+                        <a class="attachmentClass" href="GetAttachment/@ams.ID" target="_blank">@ams.FileName</a>
+                    </td>
+                    <td>
+                        @ams.FileType
+                    </td>
+                    <td>
+                        @ams.Creator
+                    </td>
+                    <td>
+                        @ams.CreateTime
+                    </td>
+                    @if (ams.Status.ToString() == "True")
+                    {
+                        <td>已验证</td>
+                    }
+                    else
+                    {
+                        <td>未验证</td>
+                    }
+                    <td id="@ams.ID.ToString()">
+                        @ams.OrderNo
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>

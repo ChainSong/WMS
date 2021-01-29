@@ -1,0 +1,211 @@
+﻿@model Runbow.TWS.Web.Areas.Reports.Models.TransOrderModel
+@Url.LoadHighchartsJS()
+@Url.Json2()
+@Url.jsrender()
+@Html.HiddenFor(m => m.transOrderRequest.StartTime)
+@Html.HiddenFor(m => m.transOrderRequest.EndTime)
+@using (Html.BeginForm())
+{
+ 
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">订单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.transOrderRequest.ID)
+                </td>
+                <td class="TableColumnTitle">客户
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers)
+                </td>
+                <td class="TableColumnTitle">承运商
+                </td>
+                <td>
+                    @Html.TextBox("ShipperName")
+                    @Html.Hidden("ShipperID")
+                </td>
+
+                @* <td class="TableColumnTitle">最新状态
+            </td>
+            <td>
+                  @Html.DropDownListFor(m=>m.TrueOrFalse,Model.transOrderRequest.state)
+            </td>*@
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">起运城市
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                    <a id="startCityClear" href="#">清空</a>
+                </td>
+                <td class="TableColumnTitle">目的城市
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                    <a id="endCityClear" href="#">清空</a>
+                </td>
+                <td class="TableColumnTitle">实际发货时间
+                </td>
+                <td>
+                    @Html.CalendarRange("ActualDeliveryDate", "calendarRange")
+                </td>
+                @* <td class="TableColumnTitle">位置
+            </td>
+            <td>
+                  @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                <a id="startCityClear" href="#">清空</a>
+            </td>*@
+                @*  <td class="TableColumnTitle">货物数量  
+            </td>
+            <td>
+                  @Html.TextBoxFor(m =>m.transOrderRequest.GoodsNum)
+            </td>*@
+
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="Button" value="查询" id="searchButton" />
+        </div>
+    </fieldset>
+
+    <fieldset id="GraphicalReports">
+        <legend>图形报表</legend>
+        <div id="container" style="min-width: 700px; height: 500px"></div>
+        <div id="containers" style="min-width: 700px; height: 500px; display: none"></div>
+
+    </fieldset>
+    <fieldset id="QueryList" style="display: none">
+        <legend>结果列表 (<label id="sum"></label>)</legend>
+        <table>
+            <thead>
+                <tr>
+                    <th>运单号
+                    </th>
+                    <th>客户
+                    </th>
+                    <th>承运商
+                    </th>
+                    <th>运单状态
+                    </th>
+                    <th>实际发货时间</th>
+                    <th>箱数
+                    </th>
+                    <th>件数
+                    </th>
+                    <th>重量
+                    </th>
+                    <th>体积
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="data">
+            </tbody>
+            <tbody id="datas" style="display: none">
+            </tbody>
+        </table>
+        <div id="PageAll">
+            <div id="_pager" class="Pager">
+                <span class="first clickable pagerSpan" id="_first">首页</span>
+                <span class="prev clickable pagerSpan" id="_prev">上一页</span>
+                <span class="current">当前第<label id="_pager_pageIndex"></label>页，共<label id="_pager_pageCount"></label>页，跳转到第
+                </span>
+                <input type="text" id="_customNumber" class="customInupt" />页
+        <span class="next clickable pagerSpan" id="_next">下一页</span>
+                <span class="last clickable pagerSpan" id="_last">末页</span>
+            </div>
+            <input data-val="true" data-val-number="字段 PageIndex 必须是一个数字。" data-val-required="PageIndex 字段是必需的。" id="PageIndex" name="PageIndex" type="hidden" value="0" />
+            <input data-val="true" data-val-number="字段 PageCount 必须是一个数字。" data-val-required="PageCount 字段是必需的。" id="PageCount" name="PageCount " type="hidden" value="0" />
+        </div>
+        <div id="Page" style="display: none">
+            <div id="_pagers" class="Pager">
+                <span class="first clickable pagerSpan" id="_firsts">首页</span>
+                <span class="prev clickable pagerSpan" id="_prevs">上一页</span>
+                <span class="current">当前第<label id="_pager_pageIndexs"></label>页，共<label id="_pager_pageCounts"></label>页，跳转到第
+                </span>
+                <input type="text" id="_customNumbers" class="customInupt" />页
+        <span class="next clickable pagerSpan" id="_nexts">下一页</span>
+                <span class="last clickable pagerSpan" id="_lasts">末页</span>
+            </div>
+            <input data-val="true" data-val-number="字段 PageIndex 必须是一个数字。" data-val-required="PageIndex 字段是必需的。" id="PageIndexs" name="PageIndex" type="hidden" value="0" />
+            <input data-val="true" data-val-number="字段 PageCount 必须是一个数字。" data-val-required="PageCount 字段是必需的。" id="PageCounts" name="PageCount " type="hidden" value="0" />
+        </div>
+    </fieldset>
+    
+
+}
+<script id="Evaluation" type="text/x-jsrender">
+    {{for }}
+     <tr>
+         <td>
+             <a href="/POD/POD/ViewPodAll/{{:ID}}?showEditRelated=True">{{:CustomerOrderNumber}}</a>
+         </td>
+         <td>{{:CustomerName}}
+         </td>
+         <td>{{:ShipperName}}
+         </td>
+         <td>{{:Str2}}
+         </td>
+         <td>{{:ActualDeliveryDate}}
+         </td>
+         <td>{{:BoxNumber}}
+         </td>
+         <td>{{:GoodsNumber}}
+         </td>
+         <td>{{:Weight}}
+         </td>
+         <td>{{:Volume}}
+         </td>
+     </tr>
+    {{/for}}
+         
+            @* <a>
+                <h4><strong>运单号 ：</strong></h4>
+            </a>
+            <div class="td_lt"><strong> 客户：</strong><span class="text-danger"></span></div>
+
+            <div class="td_lt"><strong>承运商：</strong></div>
+            <div class="td_lt"><strong>订单运输状态：</strong>{{:Str2}}</div>
+            <div class="td_lt"><strong>发货时间：</strong></div>
+            <div class="td_lt"><strong>箱数：</strong></div>
+        </li>
+
+    </ul>*@
+
+
+</script>
+@*<script id="Evaluations" type="text/x-jsrender">
+        {{for }}
+     <tr>
+         <td>
+          <a href="/POD/POD/ViewPodAll/{{:ID}}?showEditRelated=True"> {{:CustomerOrderNumber}}</a>
+             </td>
+         <td>
+             {{:CustomerName}}
+         </td>
+         <td>
+             {{:ShipperName}}
+         </td>
+         <td>
+             {{:Str2}}
+         </td>
+         <td>
+             {{:ActualDeliveryDate}}
+         </td>
+         <td>
+             {{:BoxNumber}}
+         </td>
+          <td>
+             {{:GoodsNumber}}
+         </td>
+          <td>
+             {{:Weight}}
+         </td>
+          <td>
+             {{:Volume}}
+         </td>
+     </tr>
+       {{/for}}
+</script>*@

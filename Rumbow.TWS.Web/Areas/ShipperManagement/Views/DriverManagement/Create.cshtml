@@ -1,0 +1,418 @@
+﻿@model Runbow.TWS.Web.Areas.ShipperManagement.Models.DriverManagement.QueryCRMDriverViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    
+    <fieldset>
+        <legend>基础信息
+        </legend>
+        <table id="BasicInfo">
+            @*第一行*@
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">司机姓名
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 21%;">
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverName)
+                   // @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverName
+                    }
+                        @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">出生日期
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 21%;">
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.CalendarFor(m=>m.CreateDriver.DriverBirthday)
+                    //@Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverBirthday.ToString("yyyy-MM-dd")
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">联系电话
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 21%;">
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverPhone)
+                    //@Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverPhone
+                    }
+                    @*<input type="tel" class="form-control" placeholder="">*@
+                </td>
+            </tr>
+            
+            @*第二行*@
+            <tr>
+                <td class="TableColumnTitle">开始为服务日期
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.CalendarFor(m=>m.CreateDriver.DriverStartServeForRunbowDate)
+                    //@Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverStartServeForRunbowDate.ToString("yyyy-MM-dd")
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                <td class="TableColumnTitle">身份证号码
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverIDCard)
+                   // @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverIDCard
+                    }
+                    @*<input type="number" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle">驾驶证档案号
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverCardNo)
+                  //  @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverCardNo
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+            </tr>
+            
+            @*第三行*@
+            <tr>
+                <td class="TableColumnTitle">物流公司
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverLogisticsCompany)
+                  //  @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverLogisticsCompany
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle">物流公司联系人
+                    @Html.NecessaryFlag()
+                </td>                
+                <td>    
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverLogisticsContactPerson)
+                    //@Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverLogisticsContactPerson
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle">物流公司联系电话
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverLogisticsCompanyContactPhone)
+                 //   @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverLogisticsCompanyContactPhone
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>        
+                
+              </tr>
+              
+            @*第四行*@
+            <tr> 
+                <td class="TableColumnTitle">驾照类型
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.DropDownListFor(m=>m.CreateDriver.DriverCardType, Model.DriverCardTypes) 
+                 //   @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverCardType
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle">是否在服务中
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    //@Html.DropDownListFor(m=>m.CreateDriver.DriverIsServing, Model.DriverIsServings)
+                      @Html.CheckBoxFor(m=>m.CreateDriver.DriverIsServing)
+                      @Html.Raw("&nbsp是")
+                     //@Html.Raw("&nbsp&nbsp&nbsp&nbsp&nbsp")
+                     //@Html.CheckBoxFor(m=>m.CreateDriver.DriverIsServing)  
+                     //@Html.Raw("&nbsp否") 
+                     // @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        if (Model.CreateDriver.DriverIsServing == true)
+                        {
+                            <label>是</label> 
+                        }
+                        else
+                        {
+                            <label>否</label>
+                        }
+                    }
+                    @*<label>
+                      <input type="checkbox"> 是
+                    </label>*@
+                </td>
+                <td class="TableColumnTitle">驾驶车辆牌号
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverCarNo)
+                  //  @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverCarNo
+                    }                    
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                
+            </tr>
+            
+            @*第五行*@
+            <tr>
+                <td class="TableColumnTitle">司机登记号
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverRegistrationNo)
+                 //   @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverRegistrationNo
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle">登记证签发地
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverRegistrationCardSignedAddress)
+                //    @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverRegistrationCardSignedAddress
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>  
+                         
+                <td class="TableColumnTitle">下次年审日期
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.CalendarFor(m=>m.CreateDriver.DriverNextYearCheckDate)
+                  //  @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverNextYearCheckDate.ToString("yyyy-MM-dd")
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>           
+                
+            </tr>
+            
+            @*第六行*@
+            <tr>
+                <td class="TableColumnTitle">初次驾照领证日期
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.CalendarFor(m=>m.CreateDriver.DriverFirstTimeGetCardDate)
+                   // @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverFirstTimeGetCardDate.ToString("yyyy-MM-dd")
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+                <td class="TableColumnTitle">下次体检日期
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.CalendarFor(m=>m.CreateDriver.DriverNextYearCheckBodyDate)
+                  //  @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverNextYearCheckBodyDate.ToString("yyyy-MM-dd")
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+               
+                
+                 <td class="TableColumnTitle">服务区域
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextBoxFor(m=>m.CreateDriver.DriverServiceArea)
+                   // @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverServiceArea
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+            </tr>
+          
+            
+             
+            <tr>
+                <td class="TableColumnTitle">驾驶证照片</td>
+                 <td>
+                     @Html.HiddenFor(m => m.CreateDriver.Str4)
+                     @if(Model.ViewType==0)
+                     {                     
+                     @Html.SingleFileUpload("fileAttachmentGroupID_DrivingLicensePhoto", "Hidden_AttachmentGroupID_DrivingLicensePhoto", Model.CreateDriver.Str4, false, true, false, false)
+                     @*<input type="file" id="headphoto">*@
+                     }
+                    else
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_DrivingLicensePhoto", "Hidden_AttachmentGroupID_DrivingLicensePhoto", Model.CreateDriver.Str4, true, true, false, false)    
+                     }
+                </td>
+                <td class="TableColumnTitle">头像照片</td>
+                <td>
+                     @Html.HiddenFor(m => m.CreateDriver.Str1)
+                     @if(Model.ViewType==0)
+                     {                     
+                     @Html.SingleFileUpload("fileAttachmentGroupID_HeadPhoto", "Hidden_AttachmentGroupID_HeadPhoto", Model.CreateDriver.Str1, false, true, false, false)
+                     @*<input type="file" id="headphoto">*@
+                     }
+                    else
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_HeadPhoto", "Hidden_AttachmentGroupID_HeadPhoto", Model.CreateDriver.Str1, true, true, false, false)    
+                     }
+                </td>
+                <td class="TableColumnTitle">年度体检证明影印件</td>
+                <td>
+                     @Html.HiddenFor(m => m.CreateDriver.Str2)
+                     @if(Model.ViewType==0)
+                     {                     
+                     @Html.SingleFileUpload("fileAttachmentGroupID_YearCheckBodyPhotoCopy", "Hidden_AttachmentGroupID_YearCheckBodyPhotoCopy", Model.CreateDriver.Str2, false, true, false, false)
+                    @*<input type="file" id="checkbodyphotocopy">*@
+                    }
+                    else
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_YearCheckBodyPhotoCopy", "Hidden_AttachmentGroupID_YearCheckBodyPhotoCopy", Model.CreateDriver.Str2, true, true, false, false)
+                     }
+                </td>
+                </tr>
+            <tr>
+                <td class="TableColumnTitle">身份证照片</td>
+                <td>
+                      @Html.HiddenFor(m => m.CreateDriver.Str3)
+                      @if(Model.ViewType==0)
+                      { 
+                      @Html.SingleFileUpload("fileAttachmentGroupID_IDPhoto", "Hidden_AttachmentGroupID_IDPhoto", Model.CreateDriver.Str3, false, true, false, false)
+                    @*<input type="file" id="idphoto">*@
+                    }
+                    else
+                    {
+                          @Html.SingleFileUpload("fileAttachmentGroupID_IDPhoto", "Hidden_AttachmentGroupID_IDPhoto", Model.CreateDriver.Str3, true, true, false, false)
+                      }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">主要行驶路线
+                    @Html.NecessaryFlag()
+                </td>
+                <td colspan="5">
+                    @if(Model.ViewType==0)
+                    {
+                    @Html.TextAreaFor(m=>m.CreateDriver.DriverMainRoute, new { style = "width:95%" })
+                   // @Html.NecessaryFlag()
+                    }
+                    else
+                    {
+                        @Model.CreateDriver.DriverMainRoute
+                    }
+                    @*<input type="text" class="form-control" placeholder="">*@
+                </td>
+               </tr>
+        </table>
+    </fieldset>
+    
+
+    <div class="actionButtonDiv">
+        @{
+                    if (Model.ViewType == 0)
+                    {
+            <input type="submit" class="btn btn-success" value="提交" id="submitButton" />
+            @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+            <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+                    }
+                    if (Model.ViewType != 0)
+                    {
+            @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;");
+            <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+                    }
+        }
+    </div>
+}

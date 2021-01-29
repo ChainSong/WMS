@@ -1,0 +1,337 @@
+﻿@model Runbow.TWS.Web.Areas.Finance.Models.InvoiceViewModel
+<fieldset>
+    <legend>结算单列表
+         @if (Model.SettledPods != null && Model.SettledPods.Any())
+            {
+                @Html.Raw("(" + Model.SettledPods.Count() + ")");
+            }
+    </legend>
+    <table id="settledPodsTable">
+        <thead>
+            <tr>
+                <th>系统<br />
+                    运单号
+                </th>
+                <th>
+                    @if (Model.Invoice.Target == 0)
+                    {
+                        @Html.Raw("客户") 
+                    }
+                    else
+                    {
+                        @Html.Raw("承运商")
+                    }
+                </th>
+                <th>运单<br />
+                    类型
+                </th>
+                <th>运输<br />
+                    类型
+                </th>
+                <th>整车<br />
+                    零担
+                </th>
+                <th>起运<br />
+                    城市
+                </th>
+                <th>目的<br />
+                    城市
+                </th>
+                <th>发货<br />
+                    日期
+                </th>
+                <th>运费
+                </th>
+                <th>燃油<br />
+                    附加费
+                </th>
+                <th>点费
+                </th>
+                <th>其他<br />
+                    费用
+                </th>
+                <th>
+                    @Html.ChooseString(Model.Invoice.Target == 0, "应收金额", "应付金额")
+                </th>
+                <th>
+                    @Html.ChooseString(Model.Invoice.Target == 0, "实收金额", "实付金额")
+                </th>
+                <th>差异值
+                </th>
+                <th>差异原因
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.SettledPods != null && Model.SettledPods.Any())
+            {
+                foreach (var settledPod in Model.SettledPods)
+                {
+                <tr data-id="@settledPod.ID" data-ShouldMoney="@settledPod.TotalAmt">
+                    <td>
+                        <a id="listSystemNumber" data-id="@settledPod.PodID" href="/POD/POD/ViewPodAll/@settledPod.PodID?showEditRelated=false">@settledPod.SystemNumber</a>
+                    </td>
+                    <td>@settledPod.CustomerOrShipperName</td>
+                    <td>
+                        @settledPod.PODTypeName
+                    </td>
+                    <td>
+                        @settledPod.ShipperTypeName
+                    </td>
+                    <td>
+                        @settledPod.TtlOrTplName
+                    </td>
+                    <td>
+                        @settledPod.StartCityName
+                    </td>
+                    <td>
+                        @settledPod.EndCityName
+                    </td>
+                    <td>
+                        @Html.ChooseString(settledPod.ActualDeliveryDate.HasValue, settledPod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd"), "")
+                    </td>
+                    <td>￥@settledPod.ShipAmt
+                    </td>
+                    <td>￥@settledPod.BAFAmt
+                    </td>
+                    <td>￥@settledPod.PointAmt
+                    </td>
+                    <td>￥@settledPod.OtherAmt
+                    </td>
+                    <td>￥@settledPod.TotalAmt
+                    </td>
+                    <td>
+                        @if (Model.IsViewModel)
+                        {
+                            @Html.Raw("￥" + settledPod.Amt5);
+                        }
+                        else
+                        {
+                            @Html.Raw("￥")
+                            @Html.TextBox("actualTotal", settledPod.TotalAmt, new { style = "width:80px", @class = "actualTotal" })
+                        }
+                    </td>
+                    <td id="difference">￥
+                        @if (Model.IsViewModel)
+                        {
+                            @Html.Raw((settledPod.TotalAmt - settledPod.Amt5).ToString())
+                        }
+                        else
+                        {
+                            @Html.Raw("0.00")
+                        }
+                    </td>
+                    <td>
+                        @if (Model.IsViewModel)
+                        {
+                            @Html.Raw(settledPod.Str5);
+                        }
+                        else
+                        {
+                            @Html.TextBox("Reason", settledPod.Str5, new { style = "width:95%x", @class = "Reason" })
+                        }
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Invoice.ProjectID)
+    @Html.HiddenFor(m => m.Invoice.Target)
+    @Html.HiddenFor(m => m.Invoice.IsComplete)
+    @Html.HiddenFor(m => m.Invoice.State)
+    @Html.HiddenFor(m => m.IsViewModel)
+    @Html.HiddenFor(m => m.ServerValues)
+    @Html.HiddenFor(m => m.Invoice.RelatedCustomerID)
+    <fieldset>
+        <legend>发票信息</legend>
+        <table id="invoiceTable">
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%;">系统发票号
+                </td>
+                <td style="width: 23%;">
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.SystemNumber
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.SystemNumber, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Invoice.SystemNumber)
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">发票号
+                </td>
+                <td style="width: 23%;">
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.InvoiceNumber
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.InvoiceNumber)
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">发票种类
+                </td>
+                <td style="width: 23%;">
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.InvoiceTypeName
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.Invoice.InvoiceType, Model.InvoiceTypes)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">发票金额
+                @Html.NecessaryFlag()
+                    <span style="float: right;">￥</span>
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.Sum
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.Sum, new { @readonly = "readonly" })
+                        @Html.HiddenFor(m => m.Invoice.Sum)
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.Invoice.Target == 0, "预计收款时间", "预计付款时间")
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.EstimateDate.Value.ToString("yyyy-MM-dd") 
+                    }
+                    else
+                    {
+                        @Html.CalendarFor(m => m.Invoice.EstimateDate)
+                    }
+                </td>
+                <td class="TableColumnTitle"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.ChooseString(Model.Invoice.Target == 0, "收款单位", "付款单位")
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.CustomerOrShipperName
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.Invoice.CustomerOrShipperID)
+                        @Html.TextBoxFor(m => m.Invoice.CustomerOrShipperName)
+                    }
+                </td>
+                <td class="TableColumnTitle">税号
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.TaxID
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.TaxID)
+                    }
+                </td>
+                <td class="TableColumnTitle">地址
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.Address
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.Address)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">电话
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.Tel
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.Tel)
+                    }
+                </td>
+                <td class="TableColumnTitle">开户行
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.Bank
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.Bank)
+                    }
+                </td>
+                <td class="TableColumnTitle">银行帐号
+                </td>
+                <td>
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.BankAccount
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(m => m.Invoice.BankAccount)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">摘要/备注
+                </td>
+                <td colspan="5">
+                    @if (Model.IsViewModel)
+                    {
+                        @Model.Invoice.Remark
+                    }
+                    else
+                    {
+                        @Html.TextAreaFor(m => m.Invoice.Remark, new { style = "width:95%" })
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        @if (Model.IsViewModel)
+        {
+            if (Model.ReturnType == 2)
+            {
+                <input type="button" value="返回" onclick="window.location.href='/Finance/Settlement/SettledPodManage/?SettledType=' + @Model.Invoice.Target + '&ShowActionButton=false&ShowSelectCheckBox=true'" />
+            }
+            else
+            {
+                <input type="button" value="返回" onclick="window.history.back();" />
+            }
+        }
+        else
+        {
+            <input type="submit" value="提交" id="submitButton" />
+            @Html.Raw("&nbsp;&nbsp;")
+            <input type="button" value="返回" onclick="window.history.back();" />
+        }
+    </div>
+}

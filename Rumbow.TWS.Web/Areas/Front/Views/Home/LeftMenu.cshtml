@@ -1,0 +1,90 @@
+﻿<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../../../../Scripts/Front/Home/layout.js"></script>
+@{
+    var ms = ViewData["menu"] as IEnumerable<Runbow.TWS.Entity.Menu>;
+}
+
+@if (ms != null && ms.Count() > 0)
+{
+    var firstMenus = ms.Where(m => m.SuperID == 0).OrderBy(m => m.DisplayOrder);
+    if (firstMenus.Count() > 0)
+    {
+        foreach (var itemFirst in firstMenus)
+        {
+            var secondMenus = ms.Where(p => p.SuperID == itemFirst.ID).OrderBy(m => m.DisplayOrder);
+            var submenu = secondMenus.Count() > 0 ? "submenu" : "";
+            <li class="@submenu">
+                <a id="First_@itemFirst.ID" href="javascript:void(0)"><i class="glyphicon @itemFirst.Glyphicon"></i><span>@itemFirst.Name</span></a>
+                @{
+                    if (secondMenus.Count() > 0)
+                    {
+                        <ul>
+                            @foreach (var itemSecond in secondMenus)
+                            {
+                                var thirdMenus = ms.Where(p => p.SuperID == itemSecond.ID).OrderBy(m => m.DisplayOrder);
+                                if (itemFirst.Name != "系统管理")
+                                {
+                                    <li id="Second_@itemSecond.ID" class="@submenu">
+                                        <a href="javascript:void(0)" style="padding-left: 40px;"><span>@itemSecond.Name</span></a>
+                                        @{
+                                            if (thirdMenus.Count() > 0)
+                                            {
+                                                <ul style="display: none;">
+                                                    @foreach (var itemThird in thirdMenus)
+                                                    {
+                                                        <li id="Third_@itemThird.ID"><a href="javascript:AddTab('Third_@itemThird.ID','@itemThird.Name','@itemThird.Link')" style="padding-left:60px"><span>@itemThird.Name</span></a></li>
+                                                    }
+                                                </ul>
+                                            }
+                                        }
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li id="Second_@itemSecond.ID"><a href="javascript:AddTab('Second_@itemSecond.ID','@itemSecond.Name','@itemSecond.Link')" style="padding-left:60px"><span>@itemSecond.Name</span></a></li>
+                                }
+                            }
+                        </ul>
+                    }
+                }
+            </li>
+        }
+    }
+}
+
+
+
+<script type="text/javascript">
+    function AddTab(id, name, link) {
+        $("#myTab").show();
+        var h = 403 + $("#myTab").height();
+        if ($("#tab_" + id).length == 0) {
+            $("#myTabContent").append("<div style='' class='tab-pane fade in active' id='tab_" + id + "'><iframe name='src_'" + id + " id='src_" + id + "' src='" + link + "' style='width: 100%;height:90%;' frameborder='no' scrolling='yes' /></div>");
+            $("#myTab").append("<li id='li_tab_" + id + "' class='close_tab' onclick='ChangeTab(\"" + id + "\",\"" + name + "\")'><a id='tab_a_" + id + "' href='#tab_" + id + "' data-toggle='tab'>" + name + "&nbsp;&nbsp;<span onclick='CloseTab(\"" + id + "\")'>&times;</span></a></li>");
+            var h_tab = $("#myTabContent").height();
+            var h_mytab = $("#myTab").height();
+            $("#src_" + id).height("95%");
+            $('#myTab a:last').tab('show');
+        } else {
+            $("#src_" + id).attr("src", link);
+            $("#tab_a_" + id).tab('show');
+        }
+        //解决二级菜单切换无效果
+        $('li .active').removeAttr("Class");
+        $('#' + id).attr("Class", "active");
+    }
+
+    function CloseTab(id) {
+        $("#tab_" + id).remove();
+        $("#li_tab_" + id).remove();
+        $('#myTab a:last').tab('show');
+    }
+
+    function ChangeTab(id, name) {
+        $('li .active').removeAttr("Class");
+        $('#' + id).attr("Class", "active");
+    }
+</script>

@@ -1,0 +1,86 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.CustomerModel
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+@using (Html.BeginForm())
+{
+      @Html.HiddenFor(m => m.ID)   
+   <table>
+       <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Code)</td>
+           <td>@Html.TextBoxFor(model => model.Code)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Name)</td>
+           <td>@Html.TextBoxFor(model => model.Name)</td>
+       </tr>
+        <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.State)  
+                 @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.CheckBoxFor(model => model.State)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Email)</td>            <td>@Html.TextBoxFor(model => model.Email)</td>
+       </tr>
+        <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.LawPerson)</td>
+           <td>@Html.TextBoxFor(model => model.LawPerson)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.PostCode)</td>
+           <td>@Html.TextBoxFor(model => model.PostCode)</td>
+       </tr>
+        <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Address1)</td>
+           <td>@Html.TextBoxFor(model => model.Address1)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Address2)</td>
+           <td>@Html.TextBoxFor(model => model.Address2)</td>
+       </tr>
+        <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Bank)</td>
+           <td>@Html.TextBoxFor(model => model.Bank)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Account)</td>
+           <td>@Html.TextBoxFor(model => model.Account)</td>
+       </tr>
+        <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.TaxID)</td>
+           <td>@Html.TextBoxFor(model => model.TaxID)</td>
+          <td class="TableColumnTitle"> @Html.LabelFor(model => model.RegistAdd)</td>
+           <td>@Html.TextBoxFor(model => model.RegistAdd)</td>
+       </tr>
+        <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.InvoiceTitle)</td>
+           <td>@Html.TextBoxFor(model => model.InvoiceTitle)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Contactor1)</td>
+           <td>@Html.TextBoxFor(model => model.Contactor1)</td>
+            </tr>
+             <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Title1)</td>
+           <td>@Html.TextBoxFor(model => model.Title1)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Phone1)</td>
+           <td>@Html.TextBoxFor(model => model.Phone1)</td>
+       </tr>
+             <tr>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Fax1)</td>
+           <td>@Html.TextBoxFor(model => model.Fax1)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Contactor2)</td>
+           <td>@Html.TextBoxFor(model => model.Contactor2)</td>
+       </tr>
+             <tr>
+                  <td class="TableColumnTitle"> @Html.LabelFor(model => model.Title2)</td>
+           <td>@Html.TextBoxFor(model => model.Title2)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.Phone2)</td>
+           <td>@Html.TextBoxFor(model => model.Phone2)</td>
+          
+       </tr>
+             <tr>
+                  <td class="TableColumnTitle"> @Html.LabelFor(model => model.Fax2)</td>
+           <td>@Html.TextBoxFor(model => model.Fax2)</td>
+           <td class="TableColumnTitle"> @Html.LabelFor(model => model.WebSite)</td>
+           <td>@Html.TextBoxFor(model => model.WebSite)</td>
+           
+       </tr>
+            
+
+     
+
+   </table>
+     <div class="actionButtonDiv">
+            <input type="submit" value="保存" id="btnCreate" />
+         </div>
+}

@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "RoleManage";
+}
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+@model Runbow.TWS.Web.Areas.System.Models.RoleManageListViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="/Scripts/System/Layer/layer.js"></script>
+<script src="../../../../Scripts/Role/RoleManage.js"></script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>角色名称</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Role.Name, new { @class = "form-control", style = "width:40%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>角色描述</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Role.Description, new { @class = "form-control", style = "width:40%" })
+                </td>
+                </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>是否可用</label>
+                </td>
+               <td>
+                    @Html.DropDownListFor(model => model.Satate,Model.States, new { @class = "form-control", style = "width:40%" })
+               </td>
+            </tr>
+                
+        </table>
+        <div class="actionButtonDiv">
+             <input type="submit" class="btn btn-success" value="查询" id="btnSave" />
+             <input class="btn btn-success"  type="button" onclick="window.location.href = '/System/Role/RoleAdd'" value="新增" id="btnAdd"  />
+            <input class="btn btn-success" type="button" value="批量删除" id="btnDelete"  />
+        </div>
+    </fieldset>
+    <fieldset>
+
+        <legend>角色列表</legend>
+
+        @if (Model != null)
+        {
+            <table id="RoleInfoTable">
+                <thead>
+                <tr>
+                    <th style=" width:50px;text-align:center;">@Html.CheckBox("chdAll", false) </th>
+                    <th>角色名称</th>
+                    <th>角色描述</th>
+                    <th>创建时间</th>
+                    <th>是否可用</th>
+                    <th style="width:250px;">操作</th>
+                </tr>
+
+                </thead>
+                @if (Model.IEnumerableRole != null)
+                {
+                    foreach (var role in Model.IEnumerableRole)
+                    {
+                    <tr>
+                        <td style=" width:50px;text-align:center;">@Html.CheckBox(role.ID.ToString(), false, new { @data_id=role.ID })</td>
+                        <td>
+
+                            <a href="@Url.Action("RoleDetail", "Role", new { Name = role.Name, Description = role.Description, State = role.State })"  style="text-decoration:none;cursor:pointer;" title="查看角色详细">@role.Name</a> </td>
+                        <td>@role.Description</td>
+                        <td>@role.CreateDate</td>
+                        <td>@{
+                        if (role.State)
+                        {
+                            @Html.Raw("可用")
+                        }
+                        else
+                        {
+                            @Html.Raw("禁用")
+                        }
+                        }</td>
+                        <td>
+                            <a id="updaterloe" class=" btn btn-info btn-sm" href="#" data-id="@role.ID" style="color:#fff;" onclick="EditRole('@role.ID');">编辑</a>
+                            <a id="deleterloe" class=" btn btn-info btn-sm" href="#" data-id="@role.ID" style="color:#fff;" onclick="DeleteRole('@role.ID');" >删除</a>
+                            @if (role.State)
+                            {<a id="menuId" class=" btn btn-info btn-sm" href="#"  style="color:#fff;" onclick="DoMenu('@role.ProjectRoleID');" >菜单分配</a>}
+                        </td>
+                    </tr>
+                    }
+
+                }
+            </table>
+            @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        }
+
+    </fieldset>
+    
+}   

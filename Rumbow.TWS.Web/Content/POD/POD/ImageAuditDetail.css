@@ -1,0 +1,58 @@
+﻿#waitingImg
+{
+    position:absolute;
+    left: 300px;
+    top: 300px;
+}
+
+.imgBox
+{
+    position: relative;
+    float: left;
+}
+
+    .imgBox div
+    {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 50%;
+        height: 98%;
+        background: #fff;
+        opacity: 0.0;
+        filter: alpha(opacity=0);
+    }
+
+    .imgBox .left
+    {
+        cursor: pointer;
+    }
+
+    .imgBox .right
+    {
+        left: 50%;
+        cursor: pointer;
+    }
+
+#ImageDiv
+{
+    width: 800px;
+    float: left;
+}
+
+.PointCursor
+{
+    cursor: pointer;
+}
+
+#ActionDiv
+{
+    left: 850px;
+    position: absolute;
+    width: 500px;
+}
+
+#ImgFieldset
+{
+    height: 1200px;
+}

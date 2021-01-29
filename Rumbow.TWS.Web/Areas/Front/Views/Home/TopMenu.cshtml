@@ -1,0 +1,20 @@
+﻿@model IEnumerable<Runbow.TWS.Entity.Menu>
+@*@if (Model != null)
+{
+    foreach (var m in this.Model)
+    {
+    <span class="menu_item"><span class='menu_item_content menu_trigger'>@m.Name</span>
+        @if (m.Children.Count() > 0)
+        {
+            <div class="menu_item_group">
+                @foreach (var c in m.Children)
+                {
+                    <a class="menu_item_content_wrapper" href='Front/Home/Content/@m.ID/@c.ID' target='content'>
+                        <span class='menu_item_content'>@c.Name</span>
+                    </a>
+                }
+            </div>
+        }
+    </span>
+    }
+}*@

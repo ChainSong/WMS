@@ -1,0 +1,233 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodStatusLogManageViewModel
+@using Runbow.TWS.Common;
+
+@{
+    var ColumnCollection = Model.Config.ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.CustomerID);
+                }
+
+                return c;
+            }
+        });
+}
+<fieldset>
+    <legend>提示</legend>
+     <span>1. 增加运单车辆信息，可以为运单全程可视化提供帮助
+            <br />
+            2. 车辆类型(提/干/配) 不能为空且只能为 干线车辆/提货车辆/配送车辆  
+            <br />
+            3. 车牌号不能为空
+            <br />
+            3. 当新增 车辆类型(提/干/配) 和 车牌号 信息和列表中已有信息相同时，新增的信息将覆盖原来的车辆信息，如果有一个不相同，则在列表中增加一条新的车辆信息
+            <br />
+            4. 实际发车时间 不能为空
+            <br />
+            5. 预计到达时间 不能为空
+            <br />
+            6. 后续更新车辆实际到达时间，以便GPS能够准确定位车辆的情况
+        </span>
+</fieldset>
+<fieldset>
+    <legend>车辆信息</legend>
+    <table id="PodStatusLogTable">
+        <thead>
+            <tr>
+                @foreach (var column in ColumnCollection.OrderBy(t => t.Order))
+                {
+                    if (column.IsHide)
+                    {
+                    <th style="display: none">
+                        @column.DisplayName
+                    </th>
+                    }
+                    else
+                    {
+                    <th>
+                        @column.DisplayName
+                    </th>
+                    }
+                }
+                <th style="align-content: center">删除
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.PodStatusLogs != null)
+            {
+                foreach (var row in Model.PodStatusLogs)
+                {
+                <tr>
+                    @foreach (var column in ColumnCollection.OrderBy(t => t.Order))
+                    {
+                        object o = typeof(Runbow.TWS.Entity.PodStatusLog).GetProperty(column.DbColumnName).GetValue(row);
+                        if (column.IsHide)
+                        {
+                        <td style="display: none">
+                            @if (o != null)
+                            {
+                                @o.ToString()
+                            }
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            @if (o != null)
+                            {
+                                if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var time = (DateTime?)o;
+                                    if (time != null && time.HasValue)
+                                    {
+                                @time.Value.DateTimeToString()
+                                    }
+                                }
+                                else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var time = (DateTime?)o;
+                                    if (time != null && time.HasValue)
+                                    {
+                                @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                    }
+                                }
+                                else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                {
+                                @Html.ChooseString(o.ToString() == "1", "Y", "N")
+                                }
+                                else if (string.Equals(column.Type, "FileUpload", StringComparison.OrdinalIgnoreCase))
+                                {
+                                @Html.SingleFileUpload("fileAttachmentGroupID" + o.ToString(), "Hidden_AttachmentGroupID" + o.ToString(), o.ToString(), true)
+                                }
+                                else
+                                {
+                                @o.ToString()
+                                }
+                            }
+                        </td>
+                        }
+                    }
+                    <td>
+                        <a href="#" data-action="Delete" data-id="@row.ID">删除</a>
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+
+@{
+    var notKeyColumns = ColumnCollection.Where(c => c.IsKey == false && c.IsHide == false);
+    var notKeyTextBoxColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "FileUpload", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextAreaColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumnsCount = notKeyTextBoxColumns.Count;
+    int notKeyTextBoxRowCount = notKeyTextBoxColumnsCount % 3 > 0 ? notKeyTextBoxColumnsCount / 3 + 1 : notKeyTextBoxColumnsCount / 3;
+    int notKeyTextAreaRowCount = notKeyTextAreaColumns.Count;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.PodStatusLog.ID)
+    @Html.HiddenFor(m => m.PodStatusLog.PodID)
+    @Html.HiddenFor(m => m.PodStatusLog.SystemNumber)
+    @Html.HiddenFor(m => m.PodStatusLog.CustomerOrderNumber)
+    @Html.HiddenFor(m => m.PodStatusLog.Creator)
+    @Html.HiddenFor(m => m.PodStatusLog.CreateTime)
+    @Html.HiddenFor(m => m.PodStatusLog.Str1)
+    @Html.HiddenFor(m => m.PodStatusLog.Str2)
+    @Html.HiddenFor(m => m.PodStatusLog.Str3)
+    @Html.HiddenFor(m => m.PodStatusLog.Str4)
+    @Html.HiddenFor(m => m.PodStatusLog.Str5)
+    @Html.HiddenFor(m => m.PodStatusLog.Str6)
+    @Html.HiddenFor(m => m.PodStatusLog.Str7)
+    @Html.HiddenFor(m => m.PodStatusLog.Str8)
+    @Html.HiddenFor(m => m.PodStatusLog.Str9)
+    @Html.HiddenFor(m => m.PodStatusLog.Str10)
+    @Html.HiddenFor(m => m.PodStatusLog.DateTime1)
+    @Html.HiddenFor(m => m.PodStatusLog.DateTime2)
+    @Html.HiddenFor(m => m.PodStatusLog.DateTime3)
+    @Html.HiddenFor(m => m.CustomerID)
+    @Html.HiddenFor(m => m.IsOuterUser)
+    <script>
+        var podID = '@Model.PodStatusLog.PodID';
+    </script>
+    <fieldset>
+        <legend>新增车辆信息</legend>
+        <table>
+            @for (int i = 0; i < notKeyTextBoxRowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= notKeyTextBoxColumnsCount)
+                        {
+                        <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = notKeyTextBoxColumns[i * 3 + j];
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td>
+                            @{
+                            switch (column.Type)
+                            {
+                                case "TextBox":
+                                @Html.TextBox(column.DbColumnName, null, new { @class = "notKeyVal" });
+                                                                                                      break;
+                                case "DateTime":
+                                @Html.Calendar(column.DbColumnName, "notKeyVal");
+                                                                                break;
+                                case "DateTimeWithTime":
+                                @Html.CalendarDateTime(column.DbColumnName,"notKeyVal dateAndtimeval");
+                                                                                                    break;  
+                                case "CheckBox":
+                                @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                                                                                                 break;
+                                case "DropDownList":
+                                @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                                                                                                                                               break;
+                                case "FileUpload":
+                                @Html.SingleFileUpload("FileUpload" + column.DbColumnName, column.DbColumnName, typeof(Runbow.TWS.Entity.PodStatusLog).GetProperty(column.DbColumnName).GetValue(Model.PodStatusLog).ToString(), false,true,false,true);
+                                                                                                                                                                                                                                                       break;
+                                default:
+                                                                                                                                               break;
+                            }
+                            }
+                        </td>
+                        }
+                    }
+                </tr>
+            }
+            @for (int i = 0; i < notKeyTextAreaRowCount; i++)
+            {
+                <tr>
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + notKeyTextAreaColumns[i].DbColumnName, notKeyTextAreaColumns[i].DisplayName)
+                    </td>
+                    <td colspan="5">
+                        @Html.TextArea(notKeyTextAreaColumns[i].DbColumnName, new { style = "width:95%", @class = "notKeyVal" })
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="actionButtonDiv">
+            <input type="submit" value="提交" id="submitButton" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="button" value="返回" id="returnButton" />
+        </div>
+    </fieldset>
+}

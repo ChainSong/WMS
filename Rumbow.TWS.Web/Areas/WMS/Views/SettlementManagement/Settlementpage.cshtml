@@ -1,0 +1,239 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.SettlementManagement.HabaModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script type="text/javascript">
+    //文本框只能输入数字和小数点
+    $(function () {
+    /*JQuery 限制文本框只能输入数字和小数点*/
+        $(".inputstyle").keyup(function () {
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+    }).bind("paste", function () {  //CTRL+V事件处理
+        $(this).val($(this).val().replace(/[^0-9.]/g, ''));
+    }).css("ime-mode", "disabled"); //CSS设置输入法不可用
+        });
+   //仓租
+    function Warehouserent(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        $(obj).parent().siblings('td.WareTotal').children('input').val(sum.toFixed(2));
+    }
+    //入库管理费
+    function RKmanagementfee(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        $(obj).parent().siblings('td.RKTotal').children('input').val(sum.toFixed(2));
+    }
+    //出库收入(电商)
+    function OutsourcingrevenueDS(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        $(obj).parent().siblings('td.OutTotal').children('input').val(sum.toFixed(2));
+    }
+    //出库收入(经销商)
+    function OutsourcingrevenueJXS(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        $(obj).parent().siblings('td.OutJXSTotal').children('input').val(sum.toFixed(2));
+    }
+    //门店出库管理费
+    function CKmanagementfee(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        if (sum<40) {
+            sum = 40;
+        }
+        $(obj).parent().siblings('td.CKTotal').children('input').val(sum.toFixed(2));
+    }
+    //门店出库理货费
+    function Tallyfee(obj) {
+        var number = Number($(obj).val());
+        var price = Number($(obj).parent().next('td').children('input').val());
+        var sum = number * price;
+        $(obj).parent().siblings('td.TallyTotal').children('input').val(sum.toFixed(2));
+    }
+    //返回
+    function Returns() {
+        var url = $(window.parent.document).find(".active a").attr('href');
+        url = url.toString().split(',')[2];
+        url = url.substring(1, url.length - 2);
+        location.href = url;
+    }
+
+</script>
+
+<style media="print">
+    .inputstyle {
+        width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;
+    }
+    td {
+        width: 16%;
+    }
+    
+</style>
+@using (Html.BeginForm())
+{
+
+
+<div>
+    <fieldset>
+        <legend>仓租</legend>
+        <table>
+            <tr>
+                <th class="TableColumnTitle"><label>仓库面积</label> </th>
+                <th class="TableColumnTitle">  <label>单价/天</label> </th>
+                <th class="TableColumnTitle"><label>仓储收入</label> </th>
+            </tr>
+            <tr>
+                <td>
+                    @Html.TextBoxFor(m => m.CzMj, new { @class = "inputstyle", onblur = "Warehouserent(this)" })
+                </td>
+                <td>
+                    @*@Html.TextBoxFor(m => m.Price1, new { @class = "form-control", value = "1", onblur = "Warehouserent(this)" })*@
+                    <input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="1" />
+                </td>
+                <td class="WareTotal">
+                    @Html.TextBoxFor(m => m.CzSr, new { @class = "inputstyle", @readonly = "true" })
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>入库管理费</legend>
+        <table>
+            <tr>
+                <th class="TableColumnTitle"> <label>入库体积</label> </th>
+                <th class="TableColumnTitle"><label>单价/立方</label> </th>
+                <th class="TableColumnTitle"><label>入库管理费</label> </th>
+            </tr>
+            <tr>
+
+                <td>
+                    @*取当天所有订单体积之和*@
+                    @Html.TextBoxFor(m => m.vo1, new { @class = "inputstyle", @readonly = "true", onblur = "RKmanagementfee(this)" })
+                </td>
+                <td>
+                    @*@Html.TextBoxFor(m => m.Price2, new { @class = "form-control", value = "12", @readonly = "true", onblur = "RKmanagementfee(this)" })*@
+                    <input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="12" />
+                </td>
+                <td class="RKTotal">
+                    @Html.TextBoxFor(m => m.vo1Cost, new { @class = "inputstyle", @readonly = "true" })
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>门店出库管理费</legend>
+        <table>
+
+            <tr>
+                <th class="TableColumnTitle"> <label>经销商出库体积</label> </th>
+                <th class="TableColumnTitle"> <label>单价/单</label> </th>
+                <th class="TableColumnTitle"> <label>门店出库管理费</label> </th>
+            </tr>
+            <tr>
+                @*当天经销商出库订单体积之和*@
+                <td>
+                    @Html.TextBoxFor(m => m.sum3, new { @class = "inputstyle", @readonly = "true", onblur = "CKmanagementfee(this)" })
+                </td>
+                <td>
+                    @*@Html.TextBoxFor(m => m.Price3, new { @class = "form-control", value = "12", @readonly = "true", onblur = "CKmanagementfee(this)" })*@
+                    <input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="12" />
+                </td>
+                <td class="CKTotal">
+                    @Html.TextBoxFor(m => m.sumCost1, new { @class = "inputstyle", @readonly = "true" })
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>出库收入(电商)</legend>
+        <table>
+
+            <tr>
+                <th class="TableColumnTitle"> <label>电商出库单数</label></th>
+                <th class="TableColumnTitle"> <label>单价/单</label></th>
+                <th class="TableColumnTitle"> <label>电商出货拣货费</label></th>
+            </tr>
+            <tr>
+
+                <td>
+                    @*当天电商出库总单数*@
+                    @Html.TextBoxFor(m => m.sum1, new { @class = "inputstyle", @readonly = "true", onblur = "OutsourcingrevenueDS(this)" })
+                </td>
+                <td>
+                    @*@Html.TextBoxFor(m => m.Price4, new { @class = "form-control", value = "3", @readonly = "true", onblur = "OutsourcingrevenueDS(this)" })*@
+                    <input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="3" />
+                </td>
+                <td class="OutTotal">
+                    @Html.TextBoxFor(m => m.sumCost3, new { @class = "inputstyle", @readonly = "true" })
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>出库收入(经销商)</legend>
+        <table>
+
+            <tr>
+                <th class="TableColumnTitle"> <label>经销商出库单数</label> </th>
+                <th class="TableColumnTitle"> <label>单价/单</label></th>
+                <th class="TableColumnTitle"><label>门店出库拣货费</label> </th>
+            </tr>
+
+            <tr>
+                <td>
+                    @*当天经销商出库总单数*@
+                    @Html.TextBoxFor(m => m.sum2, new { @class = "inputstyle", @readonly = "true", onblur = "OutsourcingrevenueJXS(this)" })
+                </td>
+                <td>
+                    @*@Html.TextBoxFor(m => m.Price5, new { @class = "form-control", value = "20", @readonly = "true", onblur = "OutsourcingrevenueJXS(this)" })*@
+                    <input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="20" />
+                </td>
+                <td class="OutJXSTotal">
+                    @Html.TextBoxFor(m => m.sumCost4, new { @class = "inputstyle", @readonly = "true" })
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>门店出库理货费</legend>
+        <table>
+            <tr>
+                <th class="TableColumnTitle"> <label>经销商出库体积</label> </th>
+                <th class="TableColumnTitle"> <label>单价/单</label> </th>
+                <th class="TableColumnTitle"> <label>门店出库理货费</label> </th>
+            </tr>
+            <tr>
+                @*当天经销商出库订单体积之和*@
+                <td>
+                    @Html.TextBoxFor(m => m.sum3, new { @class = "inputstyle", @readonly = "true", onblur = "Tallyfee(this)" })
+                </td>
+                <td>
+                    @*@Html.TextBoxFor(m => m.Price6, new { @class = "form-control", value = "18", @readonly = "true", onblur = "Tallyfee(this)" })*@
+                    <input type="text" readonly="true" style="width :100%;height:100%;outline:none;border:none;line-height:100%;vertical-align:middle;" value="18" />
+                </td>
+                <td class="TallyTotal">
+                    @Html.TextBoxFor(m => m.sumCost2, new { @class = "inputstyle", @readonly = "true" })
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <div class="actionButtonDiv">
+        <input type="submit" value="提交" class="btn btn-success" />
+        <input type="button" value="返回" id="returnButton" class="btn btn-success" onclick="Returns();" />
+    </div>
+</div>
+}

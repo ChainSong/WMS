@@ -1,0 +1,200 @@
+﻿@model Runbow.TWS.Web.Areas.CRM.Models.CrmBaseViewModel
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@*承运商、经销商和客户 基础信息新增页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm("CrmBase", "Crm"))
+{
+
+    //style="color:#fff; border :0px none #fff;
+    @Html.HiddenFor(m => m.CRMInfo.ID)
+    @Html.HiddenFor(m => m.ID)     
+    @Html.HiddenFor(m => m.CRMtype)
+  
+    <fieldset>
+        <legend>基础信息  &nbsp;&nbsp;@ViewBag.Message</legend>
+        <table style="width: 100%">
+
+            @*<tr style="border: 1px  solid  #ff6a00;">
+
+                    <td colspan="6" size="15px" >
+                     
+                    </td>
+                </tr>*@
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%">
+                    @Html.LabelFor(model => model.CustomerName)
+                </td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.CustomerName)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Sex)</td>
+                <td style="width: 30%">
+                    @Html.DropDownListFor(m => m.Sex, Model.issex)</td>
+
+                <td style="width: 10%" class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Date0fBirth)
+
+
+                </td>
+
+                <td style="width: 30%">@Html.CalendarFor(model => model.Date0fBirth)</td>
+
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Phone)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.Phone)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.IsMarry) </td>
+                <td style="width: 30%">@Html.DropDownListFor(m => m.IsMarry, Model.IsMarried)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.EducationalBackground)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.EducationalBackground)</td>
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.NativePlace)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.NativePlace)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Age)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.Age)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WorkUnit)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.WorkUnit)</td>
+
+
+            </tr>
+            <tr>
+
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.City)</td>
+                <td style="width: 30%">
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey = Guid.NewGuid().ToString() })
+                    <a id="CityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.City)
+                    @Html.Hidden("CityID")
+                @*    @Html.Raw(ViewBag.js)*@
+                </td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.OnTime)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.OnTime)</td>
+
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WorkingLife)
+                <td style="width: 30%">@Html.TextBoxFor(model => model.WorkingLife)</td>
+
+            </tr>
+            <tr>
+
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.ProjectName)
+                <td style="width: 30%">@Html.TextBoxFor(model => model.ProjectName)</td>
+
+                @*  <td style="width:20%" class="TableColumnTitle">@Html.LabelFor(model=>model.Age)</td>
+                  <td style="width:20%">@Html.TextBoxFor(model=>model.Age)</td>*@
+            </tr>
+
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WorkExperience)</td>
+                <td style="width: 30%" colspan="5">@Html.TextAreaFor(model => model.WorkExperience, new { style = "width:95%" })</td>
+            </tr>
+            @*   <tr>
+                 <td style="width:20%" class="TableColumnTitle">@Html.LabelFor(model=>model.Age)</td>
+                  <td style="width:20%">@Html.TextBoxFor(model=>model.Age)</td>
+                     <td style="width:20%" class="TableColumnTitle">@Html.LabelFor(model=>model.ProjectName)</td>
+                  <td style="width:20%">@Html.TextBoxFor(model=>model.ProjectName)</td>
+
+             </tr>*@
+
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>家庭信息 family information</legend>
+        <table>
+
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.FamilyComposition)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.FamilyComposition)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.HomeAddress)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.HomeAddress)</td>
+
+
+
+            </tr>
+            <tr>
+                <td style="width:10%" class="TableColumnTitle">@Html.LabelFor(model => model.FamilyInformation)</td>
+                <td style="width:30%" colspan="5">@Html.TextAreaFor(model => model.FamilyInformation, new { style = "width:95%" })</td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>需求信息 special needs information</legend>
+        <table>
+
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.PersonalHobbies)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.PersonalHobbies)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Foodpreferences)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.Foodpreferences)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Dress)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.Dress)</td>
+
+
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Hobby)</td>
+                <td style="width: 30%" colspan="5">@Html.TextAreaFor(model => model.Hobby, new { style = "width:95%" })</td>
+
+
+
+            </tr>
+
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>与AD/Nike的关系信息 the relationship with AD or Nike</legend>
+        <table>
+
+            <tr>
+
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.TakeOfficeCompany)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.TakeOfficeCompany)</td>
+                <td style="width:10%" class="TableColumnTitle">@Html.LabelFor(model => model.SectionResponsibleFor)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.SectionResponsibleFor)</td>
+                <td style="width:10%" class="TableColumnTitle">@Html.LabelFor(model => model.Directsupervisor)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.Directsupervisor)</td>
+
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.Team)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.Team)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.salarytreatment)</td>
+                <td style="width:30%">@Html.TextBoxFor(model => model.salarytreatment)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.PersonalReputation)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.PersonalReputation)</td>
+
+
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WithRunbowContactTime)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.WithRunbowContactTime)</td>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WithProjectsupplierContactTime)</td>
+                <td style="width: 30%">@Html.TextBoxFor(model => model.WithProjectsupplierContactTime)</td>
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.TheCurrentJobSatisfaction)</td>
+                <td style="width: 20%" colspan="5">@Html.TextAreaFor(model => model.TheCurrentJobSatisfaction, new { style = "width:95%" })</td>
+
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WithRunbowContactExperience)</td>
+                <td style="width: 20%" colspan="5">@Html.TextAreaFor(model => model.WithRunbowContactExperience, new { style = "width:95%" })</td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td style="width: 10%" class="TableColumnTitle">@Html.LabelFor(model => model.WithOther3PLContact)</td>
+                <td style="width: 20%" colspan="5">@Html.TextAreaFor(model => model.WithOther3PLContact, new { style = "width:95%" })</td>
+
+            </tr>
+
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+
+        <input type="submit" value="保存" id="btnSave" />
+    </div>
+       
+
+}

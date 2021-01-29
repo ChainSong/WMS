@@ -1,0 +1,141 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ShipperRelatedInfoViewModel
+             <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.ProjectID)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    关联客户
+                </td>
+                <td style="width:40%">
+                    @Html.DropDownListFor(m => m.RelatedCustomerID, Model.Customers)
+                </td>
+                <td class="TableColumnTitle">
+                    承运商
+                </td>
+                <td  style="width:40%">
+                     @Html.TextBoxFor(m => m.ShipperName, new { @class = "form-control" })
+                     @Html.HiddenFor(m =>m.ShipperID)
+                     <input type="submit" value="查询" id="btnSearch" style="display:none;"/>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>承运商地区配置</legend>
+        <table>
+        </table>
+        <table id="ShipperRegionCoveredTable">
+            <thead>
+                <tr>
+                    <th>
+                        起运城市
+                    </th>
+                    <th>
+                        目的城市
+                    </th>
+                    <th>
+                        删除
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ShipperRegionCoveredCollection != null && Model.ShipperRegionCoveredCollection.Any())
+                {
+                    foreach (var ShipperRegionCovered in Model.ShipperRegionCoveredCollection)
+                    {
+                        <tr>
+                            <td>
+                                @ShipperRegionCovered.StartCityName
+                            </td>
+                            <td>
+                                @ShipperRegionCovered.EndCityName
+                            </td>
+                            <td>
+                                <label id="deleteShipperRegionCovered" class="labelPointer"  data-ProjectID="@ShipperRegionCovered.ProjectID" data-RelatedCustomerID="@ShipperRegionCovered.RelatedCustomerID" data-ShipperID="@ShipperRegionCovered.ShipperID" data-StartCityID="@ShipperRegionCovered.StartCityID" data-EndCityID="@ShipperRegionCovered.EndCityID"  >删除</label>
+                            </td>
+                        </tr>
+                    }
+                   
+                }
+            </tbody>
+        </table>
+        <table>
+            <tr>
+                <td  class="TableColumnTitle">
+                    起运城市
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                    <a id="startCityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.StartCityID)
+                    @Html.HiddenFor(m => m.StartCityName)
+                </td>
+                <td  class="TableColumnTitle">
+                    目的城市
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                    <a id="endCityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.EndCityID)
+                    @Html.HiddenFor(m => m.EndCityName)
+                </td>
+                <td>
+                     <input type="button" value="提交" id="submitRegion" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>发送预报邮件信息配置</legend>
+        <table>
+            <tr>
+                <td  class="TableColumnTitle">
+                    收件人(,间隔)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.ShipperRelatedInfo.Str1,new { style = "width:95%;height:95%",@class = "form-control"  })
+                </td>
+            </tr>
+            <tr>
+                <td  class="TableColumnTitle">
+                    邮件内容
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.ShipperRelatedInfo.Str6, new { style = "width:95%;height:95%",@class = "form-control"  })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="button" value="提交" class="btn btn-success" id="submitForecast" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>发送清单邮件信息配置</legend>
+        <table>
+            <tr>
+                <td  class="TableColumnTitle">
+                    收件人(,间隔)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.ShipperRelatedInfo.Str2,new { style = "width:95%;height:95%",@class = "form-control"  })
+                </td>
+            </tr>
+            <tr>
+                <td  class="TableColumnTitle">
+                    邮件内容
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.ShipperRelatedInfo.Str7, new { style = "width:95%;height:95%",@class = "form-control"  })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="button" value="提交" class="btn btn-success" id="submitSendList" />
+              <input type="button" class="btn btn-success" value="返回" onclick="window.location.href = '/System/Shipper/List'" id="btnReturn" />
+        </div>
+    </fieldset>
+}

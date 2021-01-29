@@ -1,0 +1,299 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.NikePODForBSModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Condition.StartDeliveryTime)
+    @Html.HiddenFor(m => m.Condition.EndDeliveryTime)
+    @Html.HiddenFor(m => m.Condition.ShipperID)
+    @Html.HiddenFor(m => m.PageIndex)
+    <fieldset>
+        <legend>查询条件</legend>
+        <form>
+            <table id="conditionTable">
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">系统运单号</td>
+                    <td style="width: 21%;">
+                        @Html.TextAreaFor(m => m.Condition.SystemNumber, new { style = "width:98%", @class = "form-control" })
+                        @*  <input type="text" class="form-control" placeholder="">*@
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">客户运单号</td>
+                    <td style="width: 21%;">
+                        @Html.TextAreaFor(m => m.Condition.CustomerOrderNumber, new { style = "width:98%", @class = "form-control" })
+                        @*<input type="text" class="form-control" placeholder="">*@
+                    </td>
+                    <td class="TableColumnTitle">客户代码</td>
+                    <td>
+                        @Html.TextAreaFor(m => m.Condition.Str1, new { style = "width:98%", @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">承运商</td>
+                    <td style="width: 21%;">
+                        @Html.TextBoxFor(m => m.Condition.ShipperName, new { @class = "form-control", style = "width:98%" })
+                        @*@Html.DropDownListFor(m => m.Condition.StorerID, Model.StorerIDs, "==全部==", new { @class = "form-control", @style = "width:40%" })*@
+                    </td>
+
+                    <td class="TableColumnTitle" style="width: 11%;">整车/零担</td>
+                    <td style="width: 21%;">
+
+                        @Html.DropDownListFor(m => m.Condition.TtlOrTplName, Model.TtlOrTpl, new { @class = "form-control" })
+
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">起运城市</td>
+                    <td style="width: 21%;">
+                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                        <a id="startCityClear" href="#">清空</a>
+                        @Html.HiddenFor(m => m.Condition.StartCityID)
+                        @Html.HiddenFor(m => m.Condition.StartCityName)
+                        @Html.HiddenFor(m => m.Condition.StartCities)
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width: 11%;">目的城市</td>
+                    <td style="width: 21%;">
+                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                        <a id="endCityClear" href="#">清空</a>
+                        @Html.HiddenFor(m => m.Condition.EndCityName)
+                        @Html.HiddenFor(m => m.Condition.EndCityID)
+                        @Html.HiddenFor(m => m.Condition.EndCities)
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">发货日期</td>
+                    <td style="width: 21%;">
+                        @Html.CalendarRange("DeliveryTime", "calendarRange form-control")
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">车辆状态</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.Condition.PODCarState, Model.SelectPODType, "==请选择==", new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">运单状态</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.Condition.PodStateName, Model.PodState, new { @class = "form-control" })
+                        @*   @Html.CalendarRange("ShelvesTime", "calendarRange form-control")*@
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </form>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            @if (Model.Condition.IsConversion == 1)
+            {
+                @Html.DropDownListFor(m => m.SearchCondition.podDistributionVehicle.PODType, Model.PODType, new { style = "width:200px", @class = "form-control", @id = "CancelType" })
+                <input type="button" class="btn btn-success" value="取消分配" id="Cancel" title="" data-container="body" data-toggle="popover" data-placement="bottom" data-content="<font color='red'>请勾选转单号!</font>" data-html="true" />
+
+            }
+            else
+            {
+
+                <input type="button" class="btn btn-success" value="分配车辆" id="IsPODDistributionVehicles" title="" data-container="body" data-toggle="popover" data-placement="bottom" data-content="<font color='red'>请勾选转单号!</font>" data-html="true" />
+
+            }
+
+        </div>
+    </fieldset>
+    <fieldset>
+        @if (Model.PodCollection != null)
+        {
+            <legend>运单列表(@Model.PodCollection.Count())</legend>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>@Html.CheckBox("selectAll", "onclick=selectAll")系统运单号</th>
+                        <th>客户运单号</th>
+                        <th>客户</th>
+                        <th>承运商</th>
+                        <th>运单状态</th>
+                        <th>运输类型</th>
+                        <th>起运城市</th>
+                        <th>目的城市</th>
+                        <th>客户代码</th>
+                        <th>发货日期</th>
+                        <th>状态</th>
+                        <th style="display: none">ID</th>
+                        <th style="display: none">客户ID</th>
+                        <th style="display: none">承运商ID</th>
+                        @*<th style="display: none">箱数</th>
+                            <th style="display: none">重量</th>
+                            <th style="display: none">件数</th>
+                            <th style="display: none">体积</th>
+                            <th style="display: none">ShipperTypeID</th>
+                            <th style="display: none">Str1</th>
+                            <th style="display: none">Str2</th>
+                            <th style="display: none">Str3</th>
+                            <th style="display: none">Str4</th>
+                            <th style="display: none">Str5</th>
+                            <th style="display: none">Str6</th>
+                            <th style="display: none">Str7</th>
+                            <th style="display: none">Str8</th>
+                            <th style="display: none">Str9</th>
+                            <th style="display: none">PODTypeID</th>
+                            <th style="display: none">PODTypeName</th>
+                            <th style="display: none">TtlOrTplID</th>
+                            <th style="display: none">TtlOrTplName</th>*@
+
+                    </tr>
+                </thead>
+                <tbody id="BodyTable">
+                    @if (Model.PodCollection != null && Model.PodCollection.Any())
+                    {
+                        foreach (var crminfo in Model.PodCollection)
+                        {
+                            <tr id="@crminfo.ID.ToString()">
+                                @*  <td>@crminfo.SKU</td>*@
+                                <td>
+                                    @* @if (crminfo.Str10 == "1")
+                                        {
+                                            @Html.CheckBox(crminfo.ID.ToString(), new { data_ID = crminfo.ID, id = crminfo.ID, @class = "checkForSelect", disabled = "true" })
+                                        }
+                                        else
+                                        { }*@
+                                    @Html.CheckBox(crminfo.ID.ToString(), new { data_ID = crminfo.ID, id = "SB_" + crminfo.ID, @class = "checkForSelect" })
+
+                                    <a href="/POD/POD/ViewPodAll/@crminfo.ID?showEditRelated=false">@crminfo.SystemNumber</a>
+                                </td>
+                                <td>@crminfo.CustomerOrderNumber</td>
+                                <td>@crminfo.CustomerName</td>
+                                <td>@crminfo.ShipperName</td>
+                                <td>@crminfo.PODStateName</td>
+                                <td>@crminfo.ShipperTypeName</td>
+                                <td>@crminfo.StartCityName</td>
+                                <td>@crminfo.EndCityName</td>
+                                <td>@crminfo.Str1</td>
+                                <td>@crminfo.ActualDeliveryDate</td>
+                                <td>@crminfo.Str50</td>
+                                @*  <a id="" class="" href="*">编辑</a>
+                                    <label id="deleteSettledPod" class="deleteSettledPod labelPointer">删除</label>*@
+
+                                <td style="display: none">@crminfo.ID</td>
+                                <td style="display: none">@crminfo.CustomerID</td>
+                                <td style="display: none">@crminfo.ShipperID</td>
+                                @*<td style="display: none">@crminfo.BoxNumber</td>
+                                    <td style="display: none">@crminfo.Weight</td>
+                                    <td style="display: none">@crminfo.GoodsNumber</td>
+                                    <td style="display: none">@crminfo.Volume</td>
+                                    <td style="display: none">@crminfo.ShipperTypeID</td>
+                                    <td style="display: none">@crminfo.Str1</td>
+                                    <td style="display: none">@crminfo.Str2</td>
+                                    <td style="display: none">@crminfo.Str3</td>
+                                    <td style="display: none">@crminfo.Str4</td>
+                                    <td style="display: none">@crminfo.Str5</td>
+                                    <td style="display: none">@crminfo.Str6</td>
+                                    <td style="display: none">@crminfo.Str7</td>
+                                    <td style="display: none">@crminfo.Str8</td>
+                                    <td style="display: none">@crminfo.Str9</td>
+                                    <td style="display: none">@crminfo.PODTypeID</td>
+                                    <td style="display: none">@crminfo.PODTypeName</td>
+                                    <td style="display: none">@crminfo.TtlOrTplID</td>
+                                    <td style="display: none">@crminfo.TtlOrTplName</td>*@
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        }
+    </fieldset>
+}
+
+<div id="Popu" style="display: none">
+    <div>
+        <table style="border: 0">
+            <tr>
+                <td>
+                    @Html.DropDownListFor(m => m.Condition.Carriers, Model.Carriers)
+                </td>
+                @*    <td style="display:none">
+
+                    </td>*@
+            </tr>
+            <tr id="Condition_Carriersdrop_down" style="display: none">
+                <td>
+                    @Html.TextBox("allocateShipperAutoComplete", null, new { @style = "width:60%;display:none", @class = "form-control" })
+                    @Html.Hidden("allocateShipperID")
+                </td>
+            </tr>
+            @* <tr style="top:10%">
+                    <td><input type="button" class="btn btn-success" value="沿用原承运商" id="Carriers" title="" data-container="body" data-toggle="popover" data-placement="bottom" data-content="<font color='red'>沿用原承运商!</font>" data-html="true" /></td>
+                    <td><input type="button" class="btn btn-success" value="更改承运商" id="ChangesCarriers" title="" data-container="body" data-toggle="popover" data-placement="bottom" data-content="<font color='red'>请勾选转单号!</font>" data-html="true" /></td>
+                <td><input type="button" class="btn btn-success" value="承运商后期分配" id="DistributionLater" title="" data-container="body" data-toggle="popover" data-placement="bottom" data-content="<font color='red'>承运商后期分配!</font>" data-html="true" /></td>
+            *@
+        </table>
+    </div>
+    <div style="display: block; margin: auto; padding-top: 50px;" align="center">
+        <input type="button" style="text-align: center; margin-right: 20px;" class="btn btn-success" value="提交" id="OKsubmit" />
+        <input type="button" style="text-align: center" class="btn btn-success" value="取消" id="NOsubmit" />
+    </div>
+</div>
+
+<div id="Evaluation" style="display: none">
+    <table style="width: 380px">
+        <tr>
+            <td style="width: 20%" class="TableColumnTitle">
+                车牌:
+            </td>
+            <td style="width: 75%">
+                @Html.TextBoxFor(m => m.SearchCondition.podDistributionVehicle.CarNo)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                司机姓名:
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.SearchCondition.podDistributionVehicle.DriverName)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                GPS编号:
+            </td>
+            <td>
+                @Html.TextBox("GPSCode")
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                电话号码:
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.SearchCondition.podDistributionVehicle.DriverPhone)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                到货类型:
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.SearchCondition.podDistributionVehicle.PODType, Model.PODType, new { style = "width:200px", @id = "PODType" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                开始时间:
+            </td>
+            <td>
+                @Html.CalendarDateTime("StartTime", "notKeyVal datetimeval", DateTime.Now)
+            </td>
+
+        </tr>
+    </table>
+    <div class="actionButtonDiv" style="margin-top: 20px">
+        <input type="button" class="btn btn-success" id="confirm" value="确认" />
+        <input type="button" class="btn btn-success" value="取消" id="cancelPapup" />
+    </div>
+</div>

@@ -1,0 +1,168 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@model  Runbow.TWS.Web.Areas.POD.QueryTYscanViewModel
+
+<script type="text/javascript">
+        function checkvalues() {
+            var customerOrderNumber = $("#SearchCondition_CustomerOrderNumber").val().trim();
+            if (customerOrderNumber != "" && customerOrderNumber.length) {
+                window.location.href = "TYscanDetail?PODID=" + customerOrderNumber;
+                return false;
+            }
+
+            var startTime = $("#start_CreateTime").val();
+            var endesTime = $("#end_CreateTime").val();
+            if (startTime != "" && endesTime == "") {
+                Runbow.TWS.Alert("请选择发货截止日期");
+                return false;
+            }
+            if (startTime == "" && endesTime != "") {
+                Runbow.TWS.Alert("请选择发货开始日期");
+                return false;
+            }
+            if (startTime != "" && endesTime != "" && startTime > endesTime) {
+                Runbow.TWS.Alert("请选择正确的日期范围");
+                return false;
+            }
+
+            $('#PageIndex').val('0');
+            $('#IsExport').val('False');
+            return true;
+        }
+
+
+        function LookDetail(statuss) {
+            var startTime = $("#start_CreateTime").val();
+            var endesTime = $("#end_CreateTime").val();
+
+            var types = "0";
+            if (statuss == "已扫描") {
+                types = "1";
+            }
+            window.location.href = "TYscan?st=" + startTime + "&et=" + endesTime + "&type=" + types;
+        }
+
+        String.prototype.trim = function () {
+            return this.replace(/(^\s*)|(\s*$)/g, '');
+        }
+
+        function ExortExecl() {
+            $('#IsExport').val('True');
+            return true;
+        }
+</script>
+<fieldset>
+    <legend>查询说明</legend>
+    输入客户运单号点查询结果为其明细(多个运单号请用英文逗号分隔，如：006649905,006649960)<br />
+    输入发货日期点查询为该日期范围扫描情况汇总<br />
+    如果2个条件都输入了值，则为查询客户运单号明细
+</fieldset>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StatCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    @Html.HiddenFor(m => m.IsExport)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">客户运单号</td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber)</td>
+               <td class="TableColumnTitle">发货日期</td>
+                <td>@Html.CalendarRange("CreateTime", "calendarRange")</td>
+            </tr>
+            <tr>                
+               <td>&nbsp;</td>
+               <td>&nbsp;</td>
+               <td class="TableColumnTitle">扫描状态</td>
+               <td>@Html.DropDownListFor(m => m.SearchCondition.type, Model.type, "==请选择==")</td>
+             </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" name="action" id="btnSave" onclick="return checkvalues()"/>
+            <input type="submit" value="导出报表" name="action" id="btnExport" onclick="return ExortExecl()" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>运单列表
+         @if (Model.TYscanCollection != null && Model.TYscanCollection.Any())
+         {
+             @Html.Raw("(" + Model.TYscanCollection.Count() + ")");
+         }
+    </legend>
+    <table id="resultTable">
+       <thead>
+        @if (Model.TYscanCollection != null && Model.TYscanCollection.Any())
+        {
+            <tr>
+                <th class="TableColumnTitle">客户运单号</th>
+                <th class="TableColumnTitle">运单状态</th>                
+                <th class="TableColumnTitle">起运城市</th>
+                <th class="TableColumnTitle">目的城市</th>
+
+                <th class="TableColumnTitle">运单类型</th>
+                <th class="TableColumnTitle">发货日期</th>
+                @*<th class="TableColumnTitle">订单日期</th>
+                <th class="TableColumnTitle">是否异常</th>*@
+                <th class="TableColumnTitle">收货人</th>
+                <th class="TableColumnTitle">操作</th>
+            </tr>
+        }
+         @if (Model.TYscanCollectionGroupBy != null && Model.TYscanCollectionGroupBy.Any())
+         { 
+            <tr>
+                <th class="TableColumnTitle">扫描状态</th>
+                <th class="TableColumnTitle">扫描数量</th>
+                <th class="TableColumnTitle">操作</th>
+            </tr>
+         }
+        </thead>
+        <tbody>
+            @if (Model.TYscanCollection != null && Model.TYscanCollection.Any())
+            {
+                foreach (var ams in Model.TYscanCollection)
+                {
+                <tr>
+                    <td>                 
+                      <a class="attachmentClass" href="../POD/ViewPodAll/@ams.PODID?showEditRelated=True">@ams.CustomerOrderNumber</a>
+                    </td>
+                    @*<td>@ams.Str5</td>*@
+                    <td>@ams.PODStateName</td>
+                    <td>@ams.StartCityName</td>                     
+                    <td>@ams.EndCityName</td>
+                    <td>@ams.PODTypeName</td>
+                    <td>@ams.ActualDeliveryDate</td>  
+                    @*<td>@ams.CreateTime</td>  
+                    <td>
+                        @if(ams.Str42=="1")
+                        {
+                            <span>正常</span>
+                        }
+                        else
+                        {
+                            <span>异常</span>
+                        }
+                    </td>    *@
+                    <td>@ams.Str7</td>           
+                    <td><a id="updateWXCustomer" class="attachmentClass" href="TYscanDetail?PODID=@ams.CustomerOrderNumber">订单明细</a></td>
+                </tr>
+                }
+            }
+
+            @if (Model.TYscanCollectionGroupBy != null && Model.TYscanCollectionGroupBy.Any())
+            {
+                foreach (var ams in Model.TYscanCollectionGroupBy)
+                {
+                 <tr>
+                    <td>@ams.ScanStatus</td>
+                    <td>@ams.ScanCount</td>
+                    <td><a class="attachmentClass" href="javascript:" onclick="LookDetail('@ams.ScanStatus')">
+                        查看详情</a></td>
+                  </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>

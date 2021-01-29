@@ -1,0 +1,127 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.TemplateManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.searchCondition.ProjectID)
+    @Html.HiddenFor(m => m.searchCondition.CustomerID)
+    @Html.HiddenFor(m => m.searchCondition.TableName)
+    @Html.HiddenFor(m => m.searchCondition.TableNameCH)
+    @Html.HiddenFor(m => m.searchCondition.CustomerName)
+    @Html.HiddenFor(m => m.searchCondition.ProjectName)
+<fieldset>
+    <legend>模板信息</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">
+                <label>公司</label>
+            </td>
+            <td style="width:20%">
+                @Model.searchCondition.ProjectName
+            </td>
+            <td class="TableColumnTitle">
+                <label>客户</label>
+            </td>
+            <td style="width:20%">
+                @Model.searchCondition.CustomerName
+            </td>
+            <td class="TableColumnTitle">
+                <label>模板名称</label>
+            </td>
+            <td style="width:20%">
+                @Model.searchCondition.TableNameCH
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="提交" id="UpdateButton" />
+        <input type="button" class="btn btn-success" value="返回" id="ReturnButton" />
+    </div>
+</fieldset>
+    <fieldset>
+        <legend>
+            模板列表
+            @if (Model.TemplateCollection != null && Model.TemplateCollection.Any())
+            {
+                @Html.Raw("(" + Model.TemplateCollection.Count() + ")");
+            }
+
+        </legend>
+        <div style="overflow-x: auto; overflow-y: auto; height: 500px; width:100%;">
+            <table id="resultTable" style=" height: 700px; width:1700px;">
+                <thead>
+                    <tr>
+                        <th>字段</th>
+                        <th>显示名称</th>
+                        <th>是否关键字段</th>
+                        <th>是否隐藏</th>
+                        <th>是否显示在列表</th>
+                        <th>是否是导入列</th>
+                        <th>是否是查询字段</th>
+                        <th>是否显示</th>
+                        <th>字段类型</th>
+                        <th>显示顺序</th>
+                        <th style="display:none">ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (Model.TemplateCollection != null && Model.TemplateCollection.Any())
+                    {
+
+                        foreach (var item in Model.TemplateCollection)
+                        {
+
+                            Model.searchCondition.Type = @item.Type;
+                            <tr>
+                                <td>
+                                    @item.DbColumnName
+                                </td>
+                                <td>
+                                    @if (item.IsKey == true)
+                                    {
+                                        @item.DisplayName
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("DisplayName", @item.DisplayName, new { @class = "form-control" })
+                                    }
+                                </td>
+                                <td>
+                                    @Html.CheckBox("IsKey", @item.IsKey, new { @class = "notKeyVal" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("IsHide", @item.IsHide, new { @class = "notKeyVal" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("IsShowInList", @item.IsShowInList, new { @class = "notKeyVal" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("IsImportColumn", @item.IsImportColumn, new { @class = "notKeyVal" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("IsSearchCondition", @item.IsSearchCondition, new { @class = "notKeyVal" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("ForView", @item.ForView, new { @class = "notKeyVal" })
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.searchCondition.Type, @Model.TemplateType, "==请选择==", new { @class = "form-control", })
+                                </td>
+                                <td>
+                                    @Html.TextBox("Orders", @item.Order, new { @class = "form-control", @style = "width:60px" })
+
+                                </td>
+                                <td style="display:none">
+                                    @item.ID
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </fieldset>
+}

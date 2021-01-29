@@ -1,0 +1,275 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@using Runbow.TWS.Common;
+<link href="../../../../Content/BaiduMap/PODTrackingMap/Index.css" rel="stylesheet" />
+<link href="../../../../Content/Common/Common.css" rel="stylesheet" />
+<link href="../../../../Assets/CSS/style_Common.css" rel="stylesheet" />
+<link rel="stylesheet" href="../../../../Assets/css/loader-style.css" />
+<link rel="stylesheet" href="../../../../Assets/css/mail.css">
+@*<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">*@
+<link href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css" rel="stylesheet" />
+@*<link rel="stylesheet" href="../../../../Assets/js/datepicker/datepicker.css">
+    <link href="../../../../Assets/JS/datepicker/clockface.css" rel="stylesheet" />*@
+<script src="../../../../Scripts/Common/Framework/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=lLg3HiX0fyNrXjRq1VOhHNee"></script>
+<script src="~/Assets/JS/bootstrap-datepicker.js"></script>
+@*<script type="text/javascript" src="../../../../Assets/js/datepicker/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="../../../../Assets/js/datepicker/bootstrap-datetimepicker.js"></script>*@
+
+@Url.PopupJs()
+@Url.jsrender()
+@Url.FrameworkJs("ajaxfileupload.js")
+
+@Html.Partial("MsgMask")
+<style type="text/css">
+    html, body {
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .dialog {
+        width: 120px;
+        height: 150px;
+        background: #c8c2c2;
+        margin-left: 90%;
+        margin-top: 100px;
+        float: left;
+        position: absolute;
+        z-index: 4;
+        /*-moz-box-shadow: 10px 10px 5px #888888; /* 老的 Firefox */
+        /*box-shadow: 10px 10px 5px #888888;*/
+        position: absolute;
+        background-color: #ccc;
+        -webkit-box-shadow: 1px 1px 3px #292929;
+        -moz-box-shadow: 1px 1px 3px #292929;
+        box-shadow: 1px 1px 3px #292929;
+        margin: 10px;
+        display: none;
+    }
+
+    .ConditionsPanel {
+        width: 280px;
+        /*height: 60%;*/
+        right: 30px;
+        float: right;
+        position: absolute;
+        z-index: 5;
+        /*padding-left: -7px;*/
+        padding-top: 10px;
+        margin-top: 10px;
+        -moz-box-shadow: 10px 10px 5px #888888;
+    }
+
+    .dialog-title {
+        color: #fff;
+        background-color: #404040;
+        font-size: 12pt;
+        font-weight: bold;
+        padding: 4px 6px;
+        cursor: move;
+        display: none;
+    }
+
+    .div2 {
+        background: yellow;
+        z-index: 3;
+    }
+
+    .ConditionsPanel ul li {
+        list-style: none;
+        margin-left: -18px;
+    }
+
+    h3 {
+        font-size: 18px;
+        padding: 5px,0,0,5px;
+        display: inline;
+    }
+
+    h4 {
+        font-size: 15px;
+        padding: 5px,0,0,5px;
+        display: inline;
+    }
+
+    .dialog-content {
+        padding: 4px;
+    }
+</style>
+
+@*<script src="https://npmcdn.com/draggabilly@2.1/dist/draggabilly.pkgd.min.js"></script>*@
+<script src="~/Assets/JS/draggabilly.pkgd.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var elem = document.querySelector('.nest'); //要拖动的元素
+        var draggie = new Draggabilly(elem, {
+            containment: '#allmap' //限制在那个容器中拖动
+        });
+    });
+
+
+</script>
+
+@using (Html.BeginForm())
+{
+
+    <div class="dialog" id="dlgTest">
+        <div class="dialog-title">---------</div>
+        <div class="dialog-content">
+            <h3>提货:<strong id="TH">0</strong></h3>
+            <img src="../../../../Image/BaiduMap/red.png" /><br>
+            <h3>干线:<strong id="GX">0</strong></h3>
+            <img src="../../../../Image/BaiduMap/blue.png" /><br>
+            <h3>配送:<strong id="PS">0</strong></h3>
+            <img src="../../../../Image/BaiduMap/green.png" /><br>
+            <h3>Hub:<strong id="WD">0</strong></h3>
+            <img src="../../../../Image/BaiduMap/WD.png" /><br>
+        </div>
+    </div>
+    <div class="row ConditionsPanel" id="ConditionsPanel">
+        <div class="col-sm-12">
+            <div class="nest" id="asdlose">
+                <div class="title-alt">
+                    <h6>
+                        <span class="icon-calendar"></span>&nbsp;&nbsp;查询信息列表
+                    </h6>
+                    <div class="titleClose">
+                        <a class="gone" href="#asdlose"></a>
+                    </div>
+                    <div class="titleToggle">
+                        <a class="nav-toggle-alt" href="#asd">
+                            <span class="entypo-down-open"></span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="body-nest" id="asd" style="border-image: none; overflow: hidden; display: none;">
+                    <section id="flip-scroll">
+                        @* <ul>
+                                <li>运单号：
+                                </li>
+                                <li>
+                                    <input type="text" class="form-control " id="CustomerOrderNumer" />
+                                </li>
+                                <li>收货客户：
+                                </li>
+                                <li>
+                                    <input type="text" class="form-control " id="EndCustomer" />
+                                </li>
+                                <li>目的地：
+                                </li>
+                                <li>
+                                    <input type="text" class="form-control " id="Destination" />
+                                </li>
+                                <li>发货日期：
+                                </li>
+                                <li>
+                                    @Html.CalendarRange("DeliveryDate", "calendarRange form-control calendarRangeReWrite")
+                                </li>
+                                <li>预计到达日期：
+                                </li>
+                                <li>
+                                    @Html.CalendarRange("PlanArrive", "calendarRange form-control calendarRangeReWrite")
+                                </li>
+                            </ul>*@
+                        <div class="well" style="padding: 0px;">
+                            <div class="input-group ">
+                                <span class="input-group-addon btn-success">
+                                    <i class="icon icon-attachment"></i>
+                                </span>
+                                <input type="text" class="form-control" style="font-size: small; text-align: center; color: gray;" placeholder="运单号" id="CustomerOrderNumer">
+                            </div>
+                        </div>
+
+
+                        <div class="well" style="padding: 0px;">
+                            <div class="input-group " style="margin-top: 5px;">
+                                <span class="input-group-addon btn-success">
+                                    <i class="icon icon-user-group"></i>
+                                </span>
+                                <input type="text" class="form-control" style="font-size: small; text-align: center; color: gray;" placeholder="收货客户" id="EndCustomer">
+                            </div>
+                        </div>
+
+
+                        <div class="well" style="padding: 0px;">
+                            <div class="input-group " style="margin-top: 5px;">
+                                <span class="input-group-addon btn-success">
+                                    <i class="icon icon-location"></i>
+                                </span>
+                                <input type="text" class="form-control" style="font-size: small; text-align: center; color: gray;" placeholder="目的地" id="Destination">
+                            </div>
+                        </div>
+
+
+                        <div class="well" style="padding: 0px; width: 80px;">
+                            <div class="input-group " style="margin-top: 5px;">
+                                <span class="input-group-addon btn-success">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                                <input type="text" style="font-size: small; width: 80px; color: gray;" class="form-control" id="StartDeliveryDate" placeholder="发货日期">
+                            </div>
+                        </div>
+
+                        <div class="well" style="padding: 0px; width: 100px; position: relative; float: right; top: -54px;">
+                            <input type="text" style="font-size: small; width: 100px; color: gray;" class="form-control" id="EndDeliveryDate">
+                        </div>
+
+
+                        <div class="well" style="padding: 0px; width: 80px;">
+                            <div class="input-group " style="margin-top: 5px;">
+                                <span class="input-group-addon btn-success">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                                <input type="text" style="font-size: small; width: 80px; color: gray;" class="form-control" id="StartPlanArrive" placeholder="预计到达日期">
+                            </div>
+                        </div>
+
+                        <div class="well" style="padding: 0px; width: 100px; position: relative; float: right; top: -54px;">
+                            <input type="text" style="font-size: small; width: 100px; color: gray;" class="form-control" id="EndPlanArrive">
+                        </div>
+
+
+                        <div></div>
+                        <div style="display: block; margin: auto; padding-top: 50px;" align="center">
+                            <a href="javascript:void(0);" id="Ok" style="width: 100px; margin-left: 20px; margin-right: 10px; margin-top: -35px;" class="btn btn-success">查询</a>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="allmap" class="div2"></div>
+    <script src="../../../../Scripts/BaiduMap/PODTrackingMap/Index.js"></script>
+    <script src="../../../../Scripts/System/Layer/layer.js"></script>
+    <script type="text/javascript">
+        $('#StartDeliveryDate').datepicker();
+        $('#EndDeliveryDate').datepicker();
+        $('#StartPlanArrive').datepicker();
+        $('#EndPlanArrive').datepicker();
+
+        function PartialView(obj) {
+            var carno = $(obj)[0].dataset.carno;
+            var type = $(obj)[0].dataset.type;
+
+            layer.open({
+                type: 2,
+                title: '轨迹回放',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['893px', '600px'],
+                content: '/BaiduMap/PODTrackingMap/PODtrajectory/?type=' + type + "&CarNo=" + carno
+            });
+        }
+    </script>
+
+}
+

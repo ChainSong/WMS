@@ -1,0 +1,398 @@
+﻿<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.MachiningManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.Hidden("IDS", (string)ViewBag.IDS)
+    @Html.Hidden("CustomerID", (long)ViewBag.CustomerID)
+    @Html.Hidden("CustomerName", (string)ViewBag.CustomerName)
+    @Html.Hidden("ViewType", Model.ViewType)
+    @Html.Hidden("MachiningType", "库内加工单")
+    <fieldset>
+        <legend>库内余料跟冲洗</legend>
+        <table id="YuLiaoTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>客户</th>
+                    <th>品名</th>
+                    <th>SKU</th>
+                    <th>数量</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>批次</th>
+                    <th>托号</th>
+                    <th>库位</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+                {
+                    foreach (var asn in Model.InventoryCollection)
+                    {
+
+                        <tr>
+                            <td>
+                                @if (Model.ViewType == 2 || Model.ViewType == 3)
+                                {
+                                    if (Model.MachiningCollection.Select(c => c.IDDS).FirstOrDefault() != "" && Model.MachiningCollection.Select(c => c.IDDS).FirstOrDefault() != null)
+                                    {
+                                        var IDDS = Model.MachiningCollection.Select(c => c.IDDS).FirstOrDefault().Substring(0, Model.MachiningCollection.Select(c => c.IDDS).FirstOrDefault().Length - 1);
+                                        if (IDDS.Contains(','))
+                                        {
+                                            string[] strs = IDDS.Split(',');
+                                            foreach (var str in strs)
+                                            {
+                                                if (@asn.ID.ToString() == str)
+                                                {
+                                                    @Html.CheckBox("check" + @asn.ID.ToString(), new { data_ID = @asn.ID, @class = "checkForSelect", @checked = "checked" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.CheckBox("check" + @asn.ID.ToString(), new { data_ID = @asn.ID, @class = "checkForSelect" })
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (@asn.ID.ToString() == IDDS)
+                                            {
+                                                @Html.CheckBox("check" + @asn.ID.ToString(), new { data_ID = @asn.ID, @class = "checkForSelect", @checked = "checked" })
+                                            }
+                                            else
+                                            {
+                                                @Html.CheckBox("check" + @asn.ID.ToString(), new { data_ID = @asn.ID, @class = "checkForSelect" })
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBox("check" + @asn.ID.ToString(), new { data_ID = @asn.ID, @class = "checkForSelect" })
+                                    }
+                                }
+                                else
+                                {
+                                    @Html.CheckBox("check" + @asn.ID.ToString(), new { data_ID = @asn.ID, @class = "checkForSelect" })
+                                }
+                            </td>
+                            <td>
+                                @asn.CustomerName
+                            </td>
+                            <td>
+                                @asn.GoodsName
+                            </td>
+                            <td>
+                                @asn.SKU
+                            </td>
+                            <td>
+                                @asn.Qty
+                            </td>
+                            <td>
+                                @asn.Unit
+                            </td>
+                            <td>
+                                @asn.Specifications
+                            </td>
+                            <td>
+                                @asn.BatchNumber
+                            </td>
+                            <td>
+                                @asn.BoxNumber
+                            </td>
+                            <td>
+                                @asn.Location
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+
+
+    <fieldset>
+        <legend>加工单信息 </legend>
+        <table id="BasicInfo">
+            <tr>
+                <td class="TableColumnTitle"><label>加工单号</label></td>
+                <td>
+                    @if (Model.ViewType == 1)
+                    {
+                        @Html.TextBoxFor(m => m.searchCondition.MachiningNumber, new { style = "width:90%", @class = "form-control" })
+                    }
+                    else if (Model.ViewType == 2)
+                    {
+                        @Model.MachiningCollection.Select(c => c.MachiningNumber).FirstOrDefault()
+                    }
+                    else if (Model.ViewType == 3)
+                    {
+                        @Html.TextBox("searchCondition_MachiningNumber", Model.MachiningCollection.Select(c => c.MachiningNumber).FirstOrDefault(), new { style = "width:90%", @class = "form-control", @readonly = true })
+                    }
+            </td>
+            <td class="TableColumnTitle" style="width: 13%;"><label>储罐位号</label></td>
+            <td>
+                @if (Model.ViewType == 1)
+                {
+                    @Html.TextBoxFor(m => m.searchCondition.CarOrBoxNumber, new { style = "width:90%", @class = "form-control" })
+                }
+                else if (Model.ViewType == 2)
+                {
+                    @Model.MachiningCollection.Select(c => c.CarOrBoxNumber).FirstOrDefault()
+                }
+                else
+                {
+                    @Html.TextBox("searchCondition_CarOrBoxNumber", Model.MachiningCollection.Select(c => c.CarOrBoxNumber).FirstOrDefault(), new { style = "width:90%", @class = "form-control" })
+                }
+            </td>
+            <td class="TableColumnTitle" style="width: 13%;"><label>预计日期</label></td>
+            <td>
+                @if (Model.ViewType == 1)
+                {
+                    @Html.CalendarFor(m => m.searchCondition.ExpectDate, "ExpectDate form-control")
+                }
+                else if (Model.ViewType == 2)
+                {
+                    @Model.MachiningCollection.Select(c => c.ExpectDate).FirstOrDefault()
+                }
+                else
+                {
+                    @Html.Calendar("searchCondition_ExpectDate", "ExpectDate form-control", Model.MachiningCollection.Select(c => c.ExpectDate).FirstOrDefault())
+                }
+
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                <label>联系方式</label>
+            </td>
+            <td>
+                @if (Model.ViewType == 1)
+                {
+                    @Html.TextBoxFor(m => m.searchCondition.Tel, new { style = "width:90%", @class = "form-control" })
+                }
+                else if (Model.ViewType == 2)
+                {
+                    @Model.MachiningCollection.Select(c => c.Tel).FirstOrDefault()
+                }
+                else
+                {
+                    @Html.TextBox("searchCondition_Tel", Model.MachiningCollection.Select(c => c.Tel).FirstOrDefault(), new { style = "width:90%", @class = "form-control" })
+                }
+
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>加工单明细</legend>
+    <div id="tables" style="overflow-X: scroll; width: 100%;min-height:180px">
+        <table id="resultTable" style="width: 120%;">
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>品名</th>
+                    <th>批号</th>
+                    <th>货物类别</th>
+                    <th>要求完工时间</th>
+                    <th>铅封号</th>
+                    <th>预计重量（吨）</th>
+                    <th style="color:#f00">实收重量（吨）</th>
+                    <th style="color:#f00">冲洗数量（吨）</th>
+                    <th style="color:#f00">冲洗桶规格</th>
+                    <th style="color:#f00">冲洗放置库位</th>
+                    <th>库存出库其他转入（吨）</th>
+                    <th>包装规格</th>
+                    <th>灌装规格（吨）</th>
+                    <th>预计灌装桶数</th>
+                    <th style="color:#f00">实际灌装桶数</th>
+                    <th style="color:#f00">灌装桶规格</th>
+                    <th style="color:#f00">灌装放置库位</th>
+                    <th style="color:#f00">余料（吨）</th>
+                    <th style="color:#f00">余料桶规格</th>
+                    <th style="color:#f00">余料放置库位</th>
+                    <th>灌装后合计重量（吨）</th>
+                    <th>灌装后合计桶数</th>
+                    <th>配比后SKU</th>
+                    <th>实际损耗（吨）</th>
+                    <th>实际损耗率</th>
+                    <th>备注</th>
+                    @if (Model.ViewType == 1 || Model.ViewType == 3)
+                    {
+                        <th>操作</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ViewType == 1)
+                {
+                    <tr>
+
+                        <td>@Html.TextBox("SKU", (string)ViewBag.SKU, new { style = "width:200px", @class = "form-control SKU" })</td>
+                        <td>@Html.TextBox("GoodsName", (string)ViewBag.GoodsName, new { style = "width:200px", @class = "form-control" })</td>
+                        <td>@Html.TextBox("BatchNumber", null, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>@Html.DropDownList("SKUType", Model.SKUTypeMachiningList, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>@Html.CalendarDateTime("ExpectCompleteTime", "form-control")</td>
+                        <td>@Html.TextBox("QianFengNumber", null, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>@Html.TextBox("ExpectWeight", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("ActualWeight", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("WashWeight", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.DropDownList("WashSpecifications", (IEnumerable<SelectListItem>)ViewBag.WashSpecificationsList, new { @class = "form-control", style = "width:100px" })</td>
+                        <td>@Html.TextBox("WashLocation", "冲洗01号库位", new { style = "width:140px", @class = "form-control Location" })</td>
+                        <td>@Html.TextBox("OtherWeight", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("PackageType", null, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>@Html.TextBox("FillingType", null, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>@Html.TextBox("EstimateFillingCount", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("ActualFillingBucket", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.DropDownList("Specifications", (IEnumerable<SelectListItem>)ViewBag.SpecificationsList, new { @class = "form-control", style = "width:100px" })</td>
+                        <td>@Html.TextBox("Location", null, new { style = "width:140px", @class = "form-control Location" })</td>
+                        <td>@Html.TextBox("MoreThanExpected", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.DropDownList("MoreThanSpecifications", (IEnumerable<SelectListItem>)ViewBag.MoreThanSpecificationsList, new { @class = "form-control", style = "width:100px" })</td>
+                        <td>@Html.TextBox("MoreThanLocation", "余料01号库位", new { style = "width:140px", @class = "form-control" })</td>
+                        <td>@Html.TextBox("FillingWeightSUM", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("FillingBucketSUM", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("ProportioningSKU", null, new { style = "width:100px", @class = "form-control SKUU" })</td>
+                        <td>@Html.TextBox("ActualLossWeight", null, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                        <td>@Html.TextBox("ActualLossRate", null, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>@Html.TextBox("Remark", null, new { style = "width:100px", @class = "form-control" })</td>
+                        <td>
+                            <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de" onclick="AddRow(this)">新增一行</div>
+                            <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de" onclick="DeleteRow(this)">删除本行</div>
+                        </td>
+                    </tr>
+                }
+                @if (Model.ViewType == 2)
+                {
+                    foreach (var item in Model.MachiningCollection)
+                    {
+                        <tr>
+                            <td>@item.GoodsName</td>
+                            <td>@item.SKU</td>
+                            <td>@item.BatchNumber</td>
+                            <td>@item.SKUType</td>
+                            <td>@item.ExpectCompleteTime</td>
+                            <td>@item.QianFengNumber</td>
+                            <td>@item.ExpectWeight</td>
+                            <td>@item.ActualWeight</td>
+                            <td>@item.WashWeight</td>
+                            <td>@item.WashSpecifications</td>
+                            <td>@item.WashLocation</td>
+                            <td>@item.OtherWeight</td>
+                            <td>@item.PackageType</td>
+                            <td>@item.FillingType</td>
+                            <td>@item.EstimateFillingCount</td>
+                            <td>@item.ActualFillingBucket</td>
+                            <td>@item.Specifications</td>
+                            <td>@item.Location</td>
+                            <td>@item.MoreThanExpected</td>
+                            <td>@item.MoreThanSpecifications</td>
+                            <td>@item.MoreThanLocation</td>
+                            <td>@item.FillingWeightSUM</td>
+                            <td>@item.FillingBucketSUM</td>
+                            <td>@item.ProportioningSKU</td>
+                            <td>@item.ActualLossWeight</td>
+                            <td>@item.ActualLossRate</td>
+                            <td>@item.Remark</td>
+                        </tr>
+                    }
+                }
+                @if (Model.ViewType == 3)
+                {
+                    foreach (var item in Model.MachiningCollection)
+                    {
+                        <tr>
+                            <td>@Html.TextBox("SKU", @item.SKU, new { style = "width:200px", @class = "form-control SKU" })</td>
+                            <td>@Html.TextBox("GoodsName", @item.GoodsName, new { style = "width:200px", @class = "form-control" })</td>
+                            <td>@Html.TextBox("BatchNumber", @item.BatchNumber, new { style = "width:100px", @class = "form-control" })</td>
+                            @{ var listt = Model.SKUTypeMachiningList.ToList();
+                                for (int i = 0; i < listt.Count(); i++)
+                                {
+                                    if (listt[i].Text == item.SKUType)
+                                    {
+                                        listt[i].Selected = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            <td>@Html.DropDownList("SKUType", listt, new { style = "width:100px", @class = "form-control" })</td>
+                            <td>@Html.CalendarDateTime("ExpectCompleteTime", "form-control", @item.ExpectCompleteTime)</td>
+                            <td>@Html.TextBox("QianFengNumber", @item.QianFengNumber, new { style = "width:100px", @class = "form-control" })</td>
+                            <td>@Html.TextBox("ExpectWeight", @item.ExpectWeight, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("ActualWeight", @item.ActualWeight, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("WashWeight", @item.WashWeight, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            @{ var list = ((IEnumerable<SelectListItem>)ViewBag.WashSpecificationsList).ToList();
+                                for (int i = 0; i < list.Count(); i++)
+                                {
+                                    if (list[i].Text == item.WashSpecifications)
+                                    {
+                                        list[i].Selected = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            <td>@Html.DropDownList("WashSpecifications", list, new { @class = "form-control", style = "width:100px", type = "DropDownList" })</td>
+                            <td>@Html.TextBox("WashLocation", @item.WashLocation, new { style = "width:140px", @class = "form-control Location" })</td>
+                            <td>@Html.TextBox("OtherWeight", @item.OtherWeight, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("PackageType", @item.PackageType, new { style = "width:100px", @class = "form-control" })</td>
+                            <td>@Html.TextBox("FillingType", @item.FillingType, new { style = "width:100px", @class = "form-control" })</td>
+                            <td>@Html.TextBox("EstimateFillingCount", @item.EstimateFillingCount, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("ActualFillingBucket", @item.ActualFillingBucket, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            @{ var list2 = ((IEnumerable<SelectListItem>)ViewBag.SpecificationsList).ToList();
+                                for (int i = 0; i < list2.Count(); i++)
+                                {
+                                    if (list2[i].Text == item.Specifications)
+                                    {
+                                        list2[i].Selected = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            <td>@Html.DropDownList("Specifications", list2, new { @class = "form-control", style = "width:100px", type = "DropDownList" })</td>
+
+
+                            <td>@Html.TextBox("Location", @item.Location, new { style = "width:140px", @class = "form-control Location" })</td>
+                            <td>@Html.TextBox("MoreThanExpected", @item.MoreThanExpected, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            @{ var list3 = ((IEnumerable<SelectListItem>)ViewBag.MoreThanSpecificationsList).ToList();
+                                for (int i = 0; i < list3.Count(); i++)
+                                {
+                                    if (list3[i].Text == item.MoreThanSpecifications)
+                                    {
+                                        list3[i].Selected = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            <td>@Html.DropDownList("MoreThanSpecifications", list3, new { @class = "form-control", style = "width:100px", type = "DropDownList" })</td>
+                            <td>@Html.TextBox("MoreThanLocation", @item.MoreThanLocation, new { style = "width:140px", @class = "form-control" })</td>
+                            <td>@Html.TextBox("FillingWeightSUM", @item.FillingWeightSUM, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("FillingBucketSUM", @item.FillingBucketSUM, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("ProportioningSKU", @item.ProportioningSKU, new { style = "width:100px", @class = "form-control SKUU" })</td>
+                            <td>@Html.TextBox("ActualLossWeight", @item.ActualLossWeight, new { style = "width:100px", @class = "form-control numberCheck" })</td>
+                            <td>@Html.TextBox("ActualLossRate", @item.ActualLossRate, new { style = "width:100px", @class = "form-control" })</td>
+                            <td>@Html.TextBox("Remark", @item.Remark, new { style = "width:100px", @class = "form-control" })</td>
+                            <td>
+                                <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de" onclick="AddRow(this)">新增一行</div>
+                                <div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de" onclick="DeleteRow(this)">删除本行</div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+<div class="actionButtonDiv">
+    @if (Model.ViewType == 1 || Model.ViewType == 3)
+    {
+        <input type="button" class="btn btn-success" value="保存" id="saveButton" />
+        if (Model.ShowSubmit != "false")
+        {
+            <input type="button" class="btn btn-success" value="提交" id="submitButton" />
+        }
+    }
+    <input type="button" class="btn btn-success" value="返回" id="returnButton" onclick="" />
+</div>
+}

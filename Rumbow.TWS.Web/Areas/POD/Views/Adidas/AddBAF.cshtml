@@ -1,0 +1,29 @@
+﻿@model  Runbow.TWS.Web.Areas.POD.Models.GetBAFMobile
+@using (Html.BeginForm())
+{
+        <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+            <td class="TableColumnTitle">油费费率</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.abfRiceInfo.BAFPrice)
+                    </td>
+                <td class="TableColumnTitle">开始使用时间</td>
+                    <td>
+                        @Html.CalendarDateTimeFor(m => m.abfRiceInfo.BAFStartTime)
+                    </td>
+                <td class="TableColumnTitle">结束使用时间</td>
+                    <td>
+                        @Html.CalendarDateTimeFor(m => m.abfRiceInfo.BAFEndTime)
+                    </td>
+            
+                </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="添加" id="addButton" />
+             <input type="button"  value="返回" id="retu" />
+        </div>
+    </fieldset>
+
+}

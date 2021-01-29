@@ -1,0 +1,106 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.CreateSegmentDetailViewModel
+@Html.ValidationSummary(true, "")
+
+<fieldset>
+    <legend>段位主信息</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">段位名称
+            </td>
+            <td style="width: 40%">
+                @Model.Segment.Name
+                @Html.HiddenFor(model => model.Segment.ID)
+            </td>
+            <td class="TableColumnTitle">是否可用
+            </td>
+            <td style="width: 40%">
+                @if (Model.Segment.State)
+                {
+                    @Html.Raw("Y")
+                }
+                else
+                {
+                    @Html.Raw("N")
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">描述
+            </td>
+            <td colspan="3">
+                @Html.TextAreaFor(model => model.Segment.Description, new { style = "width:95%", @readonly = "readonly" })
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>段位明细</legend>
+    <table id="segmentDetailTable">
+        <thead>
+            <tr>
+                <th>段位起始值
+                </th>
+                <th>段位结束值
+                </th>
+                <th>备注
+                </th>
+                <th>操作
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.SegmentDetailCollection != null && Model.SegmentDetailCollection.Any())
+            {
+                foreach (var detail in Model.SegmentDetailCollection)
+                {
+                <tr data-id="@detail.ID">
+                    <td>
+                        @detail.StartVal
+                    </td>
+                    <td>
+                        @detail.EndVal
+                    </td>
+                    <td>
+                        @detail.Description
+                    </td>
+                    <td>
+                        <a id="edit"+@detail.ID data-id="@detail.ID" href="#" class="editSegmentDetail">编辑</a>
+                        <a id="del"+@detail.ID data-id="@detail.ID" href="#" class="delSegmentDetail">删除</a>
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <table class="addSegmentDetailTable">
+        <tr>
+            <td class="TableColumnTitle">段位起始值
+               @Html.NecessaryFlag()
+            </td>
+            <td>
+                @Html.TextBox("startVal")
+            </td>
+            <td class="TableColumnTitle">段位结束值
+                @Html.NecessaryFlag()
+            </td>
+            <td>
+                @Html.TextBox("endVal")
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">备注
+            </td>
+            <td colspan="3">
+                @Html.TextArea("description", new { style = "width:95%" })
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        @Html.Hidden("isEdit", "0")
+        @Html.Hidden("detailID")
+        <input type="button" value="新增" id="btnCreate" />
+        <input type="button" value="取消" id="btnCancel" style="display: none" />
+        &nbsp;&nbsp;
+        <input type="button" value="返回" id="btnReturn" />
+    </div>
+</fieldset>

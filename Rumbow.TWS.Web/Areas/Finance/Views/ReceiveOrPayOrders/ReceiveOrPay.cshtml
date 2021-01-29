@@ -1,0 +1,166 @@
+﻿@model Runbow.TWS.Web.Areas.Finance.Models.ReceiveOrPayViewModel
+<fieldset>
+    <legend>发票信息</legend>
+    @Html.HiddenFor(m => m.Invoice.ID)
+    @Html.HiddenFor(m => m.Invoice.InvoiceNumber)
+    @Html.HiddenFor(m => m.Invoice.Target)
+    @Html.HiddenFor(m => m.Invoice.CustomerOrShipperID)
+    @Html.HiddenFor(m => m.Invoice.CustomerOrShipperName)
+    @Html.HiddenFor(m => m.Invoice.RelatedCustomerID)
+    <table id="invoiceTable">
+        <tr>
+            <td class="TableColumnTitle" style="width: 10%;">系统发票号
+            </td>
+            <td style="width: 23%;">
+                @Model.Invoice.SystemNumber
+            </td>
+            <td class="TableColumnTitle" style="width: 10%;">发票号
+            </td>
+            <td style="width: 23%;">
+                @Model.Invoice.InvoiceNumber
+            </td>
+            <td class="TableColumnTitle" style="width: 10%;">发票种类
+            </td>
+            <td style="width: 23%;">
+                @Model.Invoice.InvoiceTypeName
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">发票金额
+                <span style="float: right;">￥</span>
+            </td>
+            <td>
+                @Model.Invoice.Sum
+            </td>
+            <td class="TableColumnTitle">
+                @Html.ChooseString(Model.Invoice.Target == 0, "剩余收款金额", "剩余付款金额")
+                <span style="float: right;">￥</span>
+            </td>
+            <td>
+                @Model.Invoice.Remain
+            </td>
+            <td class="TableColumnTitle">@Html.ChooseString(Model.Invoice.Target == 0, "预计收款时间", "预计付款时间")</td>
+            <td>
+                @Html.ChooseString(Model.Invoice.EstimateDate.HasValue, Model.Invoice.EstimateDate.Value.ToString("yyyy-MM-dd"), "")
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.ChooseString(Model.Invoice.Target == 0, "收款单位", "付款单位")
+            </td>
+            <td>
+                @Model.Invoice.CustomerOrShipperName
+            </td>
+            <td class="TableColumnTitle">税号
+            </td>
+            <td>
+                @Model.Invoice.TaxID
+            </td>
+            <td class="TableColumnTitle">地址
+            </td>
+            <td>
+                @Model.Invoice.Address
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">电话
+            </td>
+            <td>
+                @Model.Invoice.Tel
+            </td>
+            <td class="TableColumnTitle">开户行
+            </td>
+            <td>
+                @Model.Invoice.Bank
+            </td>
+            <td class="TableColumnTitle">银行帐号
+            </td>
+            <td>
+                @Model.Invoice.BankAccount
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">摘要/备注
+            </td>
+            <td colspan="5">
+                @Model.Invoice.Remark
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>@Html.ChooseString(Model.Invoice.Target == 0, "历史收款信息", "历史付款信息")</legend>
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>@Html.ChooseString(Model.Invoice.Target == 0, "收款日期", "付款日期")</th>
+                <th>@Html.ChooseString(Model.Invoice.Target == 0, "收款金额", "付款金额")</th>
+                <th>备注
+                </th>
+                @if (!Model.Invoice.IsComplete)
+                {
+                    <th>操作
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.ReceiveOrPayOrders != null && Model.ReceiveOrPayOrders.Any())
+            {
+                foreach (var receiveOrPayOrder in Model.ReceiveOrPayOrders)
+                {
+                <tr>
+                    <td>
+                        @receiveOrPayOrder.Date.ToString("yyyy-MM-dd")
+                    </td>
+                    <td>￥@receiveOrPayOrder.AMT
+                    </td>
+                    <td>
+                        @receiveOrPayOrder.Remark
+                    </td>
+                    @if (!Model.Invoice.IsComplete)
+                    {
+                        <td>
+                            <a href="#" id="deleteReceiveOrPay" class="deleteReceiveOrPay" data-id="@receiveOrPayOrder.ID">删除</a>
+                        </td>
+                    }
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+@if (!Model.Invoice.IsComplete)
+{
+    <fieldset id="ReceiveOrPayAction">
+        <legend>@Html.ChooseString(Model.Invoice.Target == 0, "收款操作", "付款操作")</legend>
+        <table id="actionTable">
+            <tr>
+                <td class="TableColumnTitle" style="width: 10%;">
+                    @Html.ChooseString(Model.Invoice.Target == 0, "收款金额", "付款金额")
+                </td>
+                <td style="width: 23%;">
+                    @Html.TextBox("ReceiveOrPayAmt")
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">
+                    @Html.ChooseString(Model.Invoice.Target == 0, "收款日期", "付款日期")
+                </td>
+                <td style="width: 23%;">
+                    @Html.Calendar("ReceiveOrPayDate")
+                </td>
+                <td class="TableColumnTitle" style="width: 10%;">备注
+                </td>
+                <td style="width: 23%;">
+                    @Html.TextBox("ReceiveOrPayRemark")
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <input type="button" value="确定" id="submitButton" />
+        &nbsp;&nbsp;
+        <input type="button" value="返回" onclick="window.history.back();" />
+        &nbsp;&nbsp;
+        <input type="button" value="确认完成" id="confirmButton" />
+    </div>
+}

@@ -1,0 +1,30 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@using Runbow.TWS.Common;
+@{
+    ViewBag.Title = "InventoryStatistics";
+}
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.PopupJs()
+@Url.jsrender()
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+<fieldset>
+    <legend>Select Excel to import inventory information</legend>
+
+    <div id="importDiv">
+        <label>Warehouse：</label>
+        @Html.DropDownListFor(m => m.WarehouseList, ViewBag.WarehouseList as SelectList, new { @id = "StorerID", @class = "form-control", @style = "width:160px;padding-bottom:1px" })
+        <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
+        <input type="submit" value="Import and contrast" style="margin-top: -9px" class="btn btn-primary" onclick="return fileImportClick();" />
+        @*<input type="submit" value="Export the comparison results" style="margin-top: -9px" class="btn btn-primary" onclick="return fileExportClick();" />*@
+        <a class="btn btn-primary" id="portButtonTemplet" style="margin-top: -9px; text-decoration: none; color: white" onclick="javascript:void(0);">Download the template</a>
+    </div>
+</fieldset>
+<fieldset style="margin-top: 20px;">
+    @*<legend>Message</legend>*@
+    <div id="outPutResult">
+    </div>
+</fieldset>

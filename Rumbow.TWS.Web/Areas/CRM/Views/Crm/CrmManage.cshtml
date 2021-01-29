@@ -1,0 +1,91 @@
+﻿@model Runbow.TWS.Web.Areas.CRM.Models.CrmManageViewModel
+
+
+@using (Html.BeginForm()){
+    @Html.HiddenFor(m=>m.crmtype)
+    @Html.HiddenFor(m => m.crmtype)
+<fieldset>
+    <legend>查询条件</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(m => m.CustomerName)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.CRMInfo.CustomerName)
+            </td>
+            <td class="TableColumnTitle">
+                 @Html.LabelFor(m => m.ProjectName)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.CRMInfo.ProjectName)
+            </td>
+        </tr>
+         <tr>
+            <td class="TableColumnTitle">
+               @Html.LabelFor(m => m.City)
+            </td>
+            <td>
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey = Guid.NewGuid().ToString() })
+                      <a id="CityClear" href="#">清空</a>
+                     @Html.HiddenFor(m => m.CRMInfo.City)
+     
+             @* @Html.TextBoxFor(m => m.CRMInfo.City, new { style = "width:98%" })*@
+            </td>
+            <td class="TableColumnTitle">
+                 @Html.LabelFor(m => m.WorkUnit)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.CRMInfo.WorkUnit)
+            </td>
+        </tr>
+        
+    </table>
+    <div class="actionButtonDiv">
+                <input type="submit" value="查询" id="query" />
+        <a href="/CRM/Crm/Excel?type=@Model.crmtype&">导出Excel</a>
+    </div>
+</fieldset>
+    if(Model !=null){
+    <fieldset>
+        <legend>@Model.Message</legend>
+        @if(Model.IEnumerableCRMInfo !=null){
+        <table id="CrmInfoTable">
+             <thead>
+            <tr>
+            <th class="TableColumnTitle">项目名称</th>
+            <th class="TableColumnTitle">姓名</th>
+            <th class="TableColumnTitle">性别</th>
+            <th class="TableColumnTitle">年龄</th>
+            <th class="TableColumnTitle">手机</th>
+            <th class="TableColumnTitle">所在城市</th>
+            <th class="TableColumnTitle">创建时间</th>
+            <th class="TableColumnTitle">操作</th></tr>
+           </thead>
+                @foreach (var crminfo in Model.IEnumerableCRMInfo)
+                {
+                   <tr>
+                       
+                       <td>@crminfo.ProjectName</td>
+                       <td>@crminfo.CustomerName</td>
+                       <td>@crminfo.Sex</td>
+                       <td>@crminfo.Age</td>
+                       <td>@crminfo.Phone</td>
+                       <td>@crminfo.City</td>
+                       <td>@crminfo.CreateTime</td>
+                       <td>
+                           <a id="AddCrmTrack" class="" href="/CRM/Crm/CrmTrack/?id=@crminfo.ID&typeid=@Model.TypeID" data-id="@crminfo.ID" data-typeid="@Model.TypeID">新增跟踪信息</a>
+                           <a id="QueryCrm" class="" href="/CRM/Crm/CrmViewInfo/?id=@crminfo.ID&typeid=@Model.TypeID" data-id="@crminfo.ID">查看</a>
+                           <a id="UpdateCrm" class="" href="#" data-id="@crminfo.ID">编辑</a>
+                           <a id="DeleteCrm" class="DeleteCrm" href="#" data-id="@crminfo.ID" >删除</a>
+                       </td>
+                   </tr>
+                }
+            
+        </table>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        }
+        
+    </fieldset>
+    }
+}

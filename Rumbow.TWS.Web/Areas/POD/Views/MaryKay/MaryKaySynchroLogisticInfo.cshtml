@@ -1,0 +1,65 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+
+<script type="text/javascript">
+
+    var fileImportClick = function () {
+        if ($('#importExcel').val() === '') {
+            Runbow.TWS.Alert("请选择要导入的Excel");
+            return false;
+        }
+        
+        var exp = /.xls$|.xlsx$/;
+        var fileImport = $('#fileImport').clone();
+        if (exp.exec($('#importExcel').val()) == null) {
+            Runbow.TWS.Alert("请选择Excel格式的文件");
+            $('#importExcel').remove();
+            $(this).before(fileImport);
+            return false;
+        };
+       
+
+        $.ajaxFileUpload({
+            url: '/POD/MaryKay/MaryKaySynchroLogisticInfo',
+            secureuri: false,
+            fileElementId: 'importExcel',
+            dataType: 'json',
+            data: {},
+            success: function (data, status) {
+                $("#span").html(data.count);
+                $('#outPutResult').html(data.result);
+            },
+            error: function (data, status, e) {
+                Runbow.TWS.Alert('导入跟踪失败');
+                WebPortal.MessageMask.Close();
+            }
+        });
+    };
+
+</script>
+
+<fieldset>
+    <legend>玫琳凯运单信息导入说明
+    </legend>
+    <div id="importInstructionDiv">
+        1.由于只需要将韵达运单号与玫琳凯对应的订单号数据同步到数据库，所以这两列必不可少<br />
+        2.请确认运单号和订单号在Excel表的列头分别为<span style="color: red;"> 运单号(注：韵达快递运单号)，订单号(注：MK订单号)</span>
+        <br />
+        3.如果一个Excel文件有多个sheet 请确保别个sheet的头不变
+
+    </div>
+</fieldset>
+<fieldset>
+    <legend>选择Excel导入运单信息
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果【成功导入<span style="color:red;" id="span" ></span>条数据】
+    </legend>
+    <div id="outPutResult">
+      
+    </div>
+</fieldset>

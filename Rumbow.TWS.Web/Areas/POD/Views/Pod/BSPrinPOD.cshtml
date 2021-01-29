@@ -1,0 +1,564 @@
+﻿<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/Common/Phone/jquery.PrintArea.js"></script>
+@Url.jsrender()
+@Url.Json2()
+@{
+    Layout = null;
+ 
+}
+
+
+<script type="text/javascript">
+
+    function printWithAlert() {
+        $.ajax({
+            type: 'post',
+            url: "/Pod/Pod/BSPrinPOD",
+            data: { Ids: "@ViewBag.Id", type: "1" },
+            cache: false,
+
+            success: function (datasss) {
+                //
+                //bdhtml = window.document.body.innerHTML;
+                //sprnstr = "<!--startprint-->";
+                //eprnstr = "<!--endprint-->";
+                //prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+                //prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr));
+                //window.document.body.innerHTML += prnhtml;
+                var a = JSON.parse(datasss);
+                var html = $("#Evaluation").render(a);
+                $("#s")["empty"]();
+                $("#s").append(html);
+                // window.print();
+                document.all.WebBrowser.ExecWB(6, 1);
+                //  window.WebBrowser.ExecWB(45, 1);
+                //  }
+            }, error: function (err) {
+                alert("asd");
+            }
+        });
+    }
+    function printWithoutAlert() {
+        document.all.WebBrowser.ExecWB(6, 6);
+    }
+    function printSetup() {
+        document.all.WebBrowser.ExecWB(8, 1);
+    }
+    function printPrieview() {
+        // document.all.WebBrowser.ExecWB(7, 1);
+        $.ajax({
+            type: 'post',
+            url: "/Pod/Pod/BSPrinPOD",
+            data: { Ids: "@ViewBag.Id", type: "1" },
+            cache: false,
+
+            success: function (datasss) {
+                //
+                //bdhtml = window.document.body.innerHTML;
+                //sprnstr = "<!--startprint-->";
+                //eprnstr = "<!--endprint-->";
+                //prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+                //prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr));
+                //window.document.body.innerHTML += prnhtml;
+                var a = JSON.parse(datasss);
+                var html = $("#Evaluation").render(a);
+                $("#s")["empty"]();
+                $("#s").append(html);
+                // window.print();
+
+                //  window.WebBrowser.ExecWB(45, 1);
+                //  }
+            }, error: function (err) {
+                alert("asd");
+            }
+        });
+    }
+    function printImmediately() {
+        document.all.WebBrowser.ExecWB(6, 6);
+        window.close();
+    }
+    function printReturn() {
+        // post('/POD/POD/QueryPod', { QueryPodViewModel: null, Action: '查询' });
+        window.location.href = '/POD/POD/QueryPod';
+    }
+    function post(URL, PARAMS) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            // alert(opt.name)        
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+</script>
+<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none">
+</object>
+<style media="print">
+    .Noprint
+    {
+        display: none;
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+
+    .atr
+    {
+        border-bottom: 1px #ccc solid;
+    }
+</style>
+<table align="center" class="NOPRINT">
+    <tr>
+        <td align="center">
+            <button title="打印" onclick="printWithAlert()">打印</button>
+            <button onclick='printPrieview()' title='打印预览...'>打印预览</button>
+            <input type="button" value="打印设置" onclick="printSetup()">
+            <button title="返回" onclick="printReturn()">返回</button>
+        </td>
+        @*  <button title="直接打印" onclick="printWithoutAlert()">直接打印</button>*@
+    </tr>
+</table>
+<div class="NOPRINT">
+    以下为打印区:<br>
+</div>
+
+<hr size="1" noshadow color="black" class="NOPRINT">
+<div class="PageNexta" id="s">
+
+    <!--startprint-->
+    <div class="PageNext">
+        <h2 style="color: red">@ViewBag.Msg</h2>
+        <table style="width: 700px; margin-top: 50px;">
+            <tr>
+                <td>
+                    <img width="200px" heigh="100px" src="../../../../Image/BSReport.png" />
+                </td>
+                <td>
+                    <h2>上海物流科技有限公司</h2>
+                </td>
+                <td>
+                    <img width="100px" heigh="100px" src=" " /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <h5>单号:</h5>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <hr />
+        <div style="width: auto; border: 1px solid #000">
+            <table style="margin-bottom: 0; width: 700px;" border="1" cellpadding="0" cellspacing="0">
+                <tbody>
+                    <tr style="height: 30px;">
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>发<br>
+                                货<br>
+                                方</h5>
+                        </td>
+                        <td style="width: 80px;">
+                            <h5>发货代码：</h5>
+                        </td>
+                        <td style="width: 21%;"></td>
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>承<br>
+                                运<br>
+                                商</h5>
+                        </td>
+                        <td style="width: 18%">
+                            <h5>上海物流</h5>
+                        </td>
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>收<br>
+                                货<br>
+                                方</h5>
+                        </td>
+                        <td style="width: 80px;">
+                            <h5>收货代码</h5>
+                        </td>
+                        <td style="width: 24%"></td>
+                    </tr>
+                    <tr style="height: 30px; border: 1px solid #000">
+                        <td>
+                            <h5>单位名称：</h5>
+                        </td>
+                        <td></td>
+                        <td>
+                            <h5>项目团队:耐克项目</h5>
+                        </td>
+                        <td>
+                            <h5>单位名称：</h5>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr style="height: 30px; border: 1px solid #000">
+                        <td>
+                            <h5>单位地址：</h5>
+                        </td>
+                        <td width="21%" style="word-break: break-all"></td>
+                        <td></td>
+                        <td>
+                            <h5>单位地址：</h5>
+                        </td>
+                        <td width="21%" style="word-break: break-all"></td>
+                    </tr>
+                    <tr style="height: 30px;">
+                        <td>
+                            <h5>联系方式：</h5>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <h5>联系方式：</h5>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td rowspan="2" colspan="2">
+                            <h5>货物属性：</h5>
+                        </td>
+                        <td rowspan="2" colspan="3"></td>
+                        <td colspan="3">
+                            <h5>备注</h5>
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="4">
+                            <h5>货物箱数：</h5>
+                        </td>
+                        <td colspan="4">
+                            <h5>货物总件数：</h5>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <table border="1" border="1" cellpadding="0" cellspacing="0" style="margin-top: 0; width: 700px;">
+                        <tr>
+                            <td rowspan="2" style="width: 25px;">
+                                <h5>运<br>
+                                    输<br>
+                                    要<br>
+                                    求</h5>
+                            </td>
+                            <td>
+                                <h5>预计发货日期：</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>预计到货日期：</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>运输方式： √汽运  □铁路  □空运</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>包装方式：□纸箱 □编织袋</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>支付方式：□预付 □货到付款</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>特殊要求：□紧急运输 □整车运输</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>发<br>
+                                    货<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td></td>
+                            <td style="width: 25px;">
+                                <h5>承<br>
+                                    运<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td></td>
+                            <td style="width: 25px;">
+                                <h5>收<br>
+                                    货<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td>
+                                <br>
+                                <br>
+                                <br>
+                                <h5>收货人姓名：
+                    <br>
+                                    收货人身份证号：
+                    <br>
+                                    签收日期：&nbsp;&nbsp;   年 &nbsp;&nbsp;  月 &nbsp;&nbsp;   日</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>发<br>
+                                    货<br>
+                                    方<br>
+                                    记<br>
+                                    事</h5>
+                            </td>
+                            <td></td>
+                            <td>
+                                <h5>承<br>
+                                    运<br>
+                                    方<br>
+                                    记<br>
+                                    事</h5>
+                            </td>
+                            <td></td>
+                            <td>
+                                <h5>收<br>
+                                    货<br>
+                                    方<br>
+                                    情<br>
+                                    况</h5>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </tfoot>
+            </table>
+
+
+        </div>
+
+    </div>
+    <hr size="1" noshadow color="black" class="NOPRINT">
+    <!--endprint-->
+
+</div>
+
+
+<script id="Evaluation" type="text/x-jsrender">
+    <div class="PageNext">
+        <table style="width: 700px; margin-top: 50px;">
+            <tr>
+                <td>
+                    <img width="200px" heigh="100px" src="../../../../Image/BSReport.png" />
+                </td>
+                <td>
+                    <h2>上海物流科技有限公司</h2>
+                </td>
+                <td>
+                    <img width="100px" heigh="100px" src="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={{:Url}}" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <h5>单号:{{:CustomerOrderNumber}}</h5>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <hr />
+        <div style="width: auto; border: 1px solid #000">
+            <table style="margin-bottom: 0; width: 700px;" border="1" cellpadding="0" cellspacing="0">
+                <tbody>
+                    <tr style="height: 30px;">
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>发<br>
+                                货<br>
+                                方</h5>
+                        </td>
+                        <td style="width: 80px;">
+                            <h5>发货代码：</h5>
+                        </td>
+                        <td style="width: 21%;"></td>
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>承<br>
+                                运<br>
+                                商</h5>
+                        </td>
+                        <td style="width: 18%">
+                            <h5>上海物流</h5>
+                        </td>
+                        <td rowspan="4" style="width: 25px;">
+                            <h5>收<br>
+                                货<br>
+                                方</h5>
+                        </td>
+                        <td style="width: 80px;">
+                            <h5>收货代码</h5>
+                        </td>
+                        <td style="width: 24%">{{:Str1}}</td>
+                    </tr>
+                    <tr style="height: 30px; border: 1px solid #000">
+                        <td>
+                            <h5>单位名称：</h5>
+                        </td>
+                        <td>{{:Str3}}</td>
+                        <td>
+                            <h5>项目团队:耐克项目</h5>
+                        </td>
+                        <td>
+                            <h5>单位名称：</h5>
+                        </td>
+                        <td>{{:Str20}}</td>
+                    </tr>
+                    <tr style="height: 30px; border: 1px solid #000">
+                        <td>
+                            <h5>单位地址：</h5>
+                        </td>
+                        <td width="21%" style="word-break: break-all">{{:Str7}}</td>
+                        <td></td>
+                        <td>
+                            <h5>单位地址：</h5>
+                        </td>
+                        <td width="21%" style="word-break: break-all">{{:Str21}}</td>
+                    </tr>
+                    <tr style="height: 30px;">
+                        <td>
+                            <h5>联系方式：</h5>
+                        </td>
+                        <td>{{:Str6}}</td>
+                        <td></td>
+                        <td>
+                            <h5>联系方式：</h5>
+                        </td>
+                        <td>{{:Str22}}</td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td rowspan="2" colspan="2">
+                            <h5>货物属性：</h5>
+                        </td>
+                        <td rowspan="2" colspan="3">{{:Str23}}</td>
+                        <td colspan="3">
+                            <h5>备注</h5>
+                        </td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="3"></td>
+                    </tr>
+                    <tr style="height: 50px;">
+                        <td colspan="4">
+                            <h5>货物箱数： {{:BoxNumber}}</h5>
+                        </td>
+                        <td colspan="4">
+                            <h5>货物总件数：{{:GoodsNumber}}</h5>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <table border="1" border="1" cellpadding="0" cellspacing="0" style="margin-top: 0; width: 700px;">
+                        <tr>
+                            <td rowspan="2" style="width: 25px;">
+                                <h5>运<br>
+                                    输<br>
+                                    要<br>
+                                    求</h5>
+                         
+                            </td>
+                            <td>
+                                <h5>预计发货日期：{{:DateTime1}}</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>预计到货日期：{{:DateTime6}}</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>运输方式： √汽运  □铁路  □空运</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>包装方式：□纸箱 □编织袋</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>支付方式：□预付 □货到付款</h5>
+                            </td>
+                            <td colspan="2">
+                                <h5>特殊要求：□紧急运输 □整车运输</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>发<br>
+                                    货<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td></td>
+                            <td style="width: 25px;">
+                                <h5>承<br>
+                                    运<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td></td>
+                            <td style="width: 25px;">
+                                <h5>收<br>
+                                    货<br>
+                                    方<br>
+                                    签<br>
+                                    章</h5>
+                            </td>
+                            <td>
+                                <br>
+                                <br>
+                                <br>
+                                <h5>收货人姓名：
+                    <br>
+                                    收货人身份证号：
+                    <br>
+                                    签收日期：&nbsp;&nbsp;   年 &nbsp;&nbsp;  月 &nbsp;&nbsp;   日</h5>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>发<br>
+                                    货<br>
+                                    方<br>
+                                    记<br>
+                                    事</h5>
+                            </td>
+                            <td></td>
+                            <td>
+                                <h5>承<br>
+                                    运<br>
+                                    方<br>
+                                    记<br>
+                                    事</h5>
+                            </td>
+                            <td></td>
+                            <td>
+                                <h5>收<br>
+                                    货<br>
+                                    方<br>
+                                    情<br>
+                                    况</h5>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </tfoot>
+            </table>
+
+
+        </div>
+
+    </div>
+    <hr size="1" noshadow color="black" class="NOPRINT">
+</script>
+
+

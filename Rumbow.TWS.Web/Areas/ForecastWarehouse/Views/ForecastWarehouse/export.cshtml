@@ -1,0 +1,82 @@
+﻿@model Runbow.TWS.Web.Areas.ForecastWarehouse.Models.ForecastOrdersModel
+ @Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@*预报订单查询页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+        @Html.HiddenFor(m => m.WaveReleaseTime3)
+        @Html.HiddenFor(m => m.WaveReleaseTime4)
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        <tr>
+           
+            <td class="TableColumnTitle">
+             完成发货时间:
+            </td>
+            <td>
+           @Html.CalendarFor(model => model.WaveReleaseTime)-@Html.CalendarFor(model => model.WaveReleaseTime2)
+                   @*@Html.TextBoxFor(m => m.WaveReleaseTime)-  @Html.TextBoxFor(m => m.WaveReleaseTime2)*@
+            </td>  
+             
+             <td colspan="2">
+                 <input type="submit" value="查询" id="query" />
+                   <a href="/ForecastWarehouse/ForecastWarehouse/Excel">导出Excel</a>
+             </td>
+        </tr>
+        
+        
+    </table>
+   @* <div class="actionButtonDiv">
+                <input type="submit" value="查询" id="query" />
+
+    </div>*@
+</fieldset>
+    @Model.Message
+       if(Model !=null){ 
+    <fieldset>
+        <legend></legend>
+        @if (Model.IEnumerableForecastOrders != null)
+        {
+        <table id="CrmInfoTable">
+             <thead>
+            <tr>
+                 <th class="TableColumnTitle">Shipment</th>
+            <th class="TableColumnTitle">ThreePL</th>
+            <th class="TableColumnTitle">ShipToCode</th>
+            <th class="TableColumnTitle">ShipToName</th>
+            <th class="TableColumnTitle">Pieces</th>
+            <th class="TableColumnTitle">ShipToSity </th>
+            <th class="TableColumnTitle">Cartons </th>
+            <th class="TableColumnTitle">完成发货时间 </th>
+
+            </tr>
+                 
+           </thead>
+                @foreach (var info in Model.IEnumerableForecastOrders)
+                {
+                   <tr>
+                        <td>@info.Shipment</td>
+                       <td>@info.ThreePL</td>
+                       <td>@info.Shiptocode</td>
+                            <td>@info.Shiptoname</td>
+                       <td>@info.Pieces</td>
+                  
+                       <td>@info.ShipToSity</td>
+                      
+             
+                       <td>
+                           @info.Cartons
+                       </td>
+                       <td>
+                           @info.shipments
+                       </td>
+                   </tr>
+                }
+            
+        </table>
+        }
+    </fieldset>
+    }
+}

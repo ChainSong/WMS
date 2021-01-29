@@ -1,0 +1,105 @@
+﻿@*NIKE退货仓-*@
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.ASNNewBoxLabelViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+<script src="~/Scripts/Print/jquery.jqprint-0.3.js"></script>
+@*<script src="~/Scripts/Print/print.min.js"></script>*@
+<link href="~/Content/WMS/AsnManagement/PrintBoxnumber.css" rel="stylesheet" />
+@Html.Hidden("SearchCondition_CustomerID", (string)ViewBag.CustomerID)
+@Html.Hidden("SearchCondition_WarehouseID", (string)ViewBag.WarehouseID)
+<script src="~/Scripts/Common/jquery-barcode.js"></script>
+<style>
+    .bcTarget {
+        font-size: 25px;
+    }
+</style>
+<script type="text/javascript">
+    function BarcodeC(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 50, showHRI: false });
+    }
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+    })
+</script>
+
+<div style="text-align:center">
+    <input type="button" value="打印" class="btn btn-success" onclick="Print()">
+</div>
+<br />
+<h3>打印区：</h3>
+<div>
+    @if (Model.ASNNewBoxLabelList != null && Model.ASNNewBoxLabelList.Any())
+    {
+        var i = 1;
+        <div id="printdiv">
+
+            @foreach (var item in Model.ASNNewBoxLabelList)
+            {
+                <div style="page-break-after:always;text-align:center;width:280px;height:140px;">
+                    <table class="printtable" style="width:95%;height:95%">
+                        <tr>
+                            <td style="font:700 12px arial;text-align:right;">外部单号：</td>
+                            <td style="text-align:left;" colspan="2"><b>@item.str1</b></td>
+                        </tr>
+                        <tr>
+                            <td style="font:700 12px arial;text-align:right;">品级：</td>
+                            <td style="text-align:left;" colspan="2"><b>@item.str2</b></td>
+                        </tr>
+                        <tr>
+                            <td style="font:700 12px arial;text-align:right;">序号：</td>
+                            <td style="text-align:left;" colspan="2"><b>@item.Int2</b></td>
+                        </tr>
+                        <tr>
+                            <td style="font:700 12px arial;text-align:right;">箱号：</td>
+                            <td style="text-align:left;" colspan="2"><b>@item.BoxNumber</b></td>
+                        </tr>
+                        <tr>
+                            <td style="font:700 12px arial;text-align:right;">箱号条码：</td>
+                            <td style="text-align:left;"><div class="bcTarget">@item.BoxNumber.ToString()</div></td>
+                            <td style="text-align:left;"><a><input type="hidden" class="BoxIDForSelect" name="" value="@item.ID" /> </a></td>
+                        </tr>
+                    </table>
+                </div>
+            }
+        </div>
+    }
+</div>
+<script type="text/javascript">
+    function Print() {
+        $("#printdiv").jqprint({
+            debug: false,
+            importCSS: true,
+            printContainer: true,
+            operaSupport: false
+        });
+        var txt = '';
+        var checkBoxs = $(".BoxIDForSelect");
+        for (var i = 0; i < checkBoxs.length; i++) {
+            txt += checkBoxs[i].value + ",";
+        }
+        txt = txt.substring(0, txt.length - 1);
+        $.ajax({
+            url: "/WMS/ASNManagement/UDnewboxPrintedTimes",
+            type: "POST",
+            dataType: "json",
+            data: {
+                customerid: $('#SearchCondition_CustomerID').val(),
+                warehouseid: $('#SearchCondition_WarehouseID').val(),
+                boxids: txt
+            },
+            success: function (data) {
+                if (data.Result != 0) {
+                    if (data.Result == txt.split(',').length) {
+                        //更新次数成功
+                    }
+                }
+            },
+            error: function (data) {
+                layer.alert('<font color="red">更新次数失败！</font>')
+            }
+        });
+    }
+</script>

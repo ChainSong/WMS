@@ -1,0 +1,482 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel
+@using Runbow.TWS.Common;
+@using Runbow.TWS.Web.Areas.WMS.Models.PreOrders;
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.PopupJs()
+@Url.jsrender()
+
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@{
+    var shipmentprinttype1 = "未发送";
+    var shipmentprinttype2 = "已发送";
+
+    int columnRows = 4;
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition).OrderBy(c => c.SearchConditionOrder).Union(Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition).OrderBy(c => c.SearchConditionOrder)).ToList();
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumnsOd = Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition).OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % columnRows > 0 ? dynamicSearchColumns.Count / columnRows + 1 : dynamicSearchColumns.Count / columnRows;
+    int dynamicSearchColumnRowCountOd = (dynamicSearchColumns.Count + dynamicSearchColumnsOd.Count) % columnRows > 0 ? (dynamicSearchColumns.Count + dynamicSearchColumnsOd.Count) / columnRows + 1 : (dynamicSearchColumns.Count + dynamicSearchColumnsOd.Count) / columnRows;
+
+    var Columns = Model.Config1.ColumnCollection.Where(c => (c.IsShowInList == true));
+    var ColumnsOd = Model.Config2.ColumnCollection.Where(c => (c.IsShowInList == true));
+    var showColumns = Model.IsInnerUser ? Columns.Union(ColumnsOd) : Columns.Union(ColumnsOd);//保留可能
+    var showColumnsOd = Model.IsInnerUser ? ColumnsOd : ColumnsOd;//保留可能
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.OrderTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndOrderTime)
+    @Html.HiddenFor(m => m.SearchCondition.CreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    @Html.Hidden("ShowSubmit", ViewBag.ShowSubmit == true ? "true" : "false")
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>预出库查询条件</legend>
+        <table id="conditionTable">
+            @for (int i = 0; i < dynamicSearchColumnRowCountOd; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < columnRows; j++)
+                    {
+                        var index = i * columnRows + j;
+                        if (index >= dynamicSearchColumns.Count)
+                        {
+                            <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = dynamicSearchColumns[index];
+                            //查询条件默认值 独木不成林
+                            var o = typeof(Runbow.TWS.Entity.PreOrderSearchCondition).GetProperty(column.DbColumnName).GetValue(Model.SearchCondition);
+                            //查询条件类别名 读书百遍，其义自见
+                            var scName = typeof(PreOrderViewModel).GetProperties().Where(p => p.PropertyType == typeof(Runbow.TWS.Entity.PreOrderSearchCondition)).Select(pp => pp.Name).FirstOrDefault();
+                            <td class="TableColumnTitle">
+                                @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                            </td>
+                            <td>
+                                @{
+                                    if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                    {
+                                        @Html.CalendarRange(column.DbColumnName, "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.CreateTime, @Model.SearchCondition.EndCreateTime)
+                                        @*@Html.CalendarRange(scName + "." + column.DbColumnName, "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.CreateTime, @Model.SearchCondition.EndCreateTime)*@
+                                    }
+                                    else if (column.Type == "CheckBox")
+                                    {
+                                        @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal form-control", @style = "width:60%", @Name = scName + "." + column.DbColumnName });
+                                    }
+                                    else if (column.Type == "DropDownList" && column.IsKey)
+                                    {
+                                        var list = ((IEnumerable<SelectListItem>)typeof(PreOrderViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                        if (o != null && !string.IsNullOrEmpty(o.ToString()))
+                                        {
+                                            foreach (var l in list)
+                                            {
+                                                if (l.Text == o.ToString() || l.Value == o.ToString())
+                                                {
+                                                    l.Selected = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (column.DbColumnName == "CustomerName")
+                                        {
+                                            @Html.DropDownList(column.DbColumnName, list, "==请选择==", new { @class = "form-control", @Name = scName + "." + column.DbColumnName, id = scName + "_CustomerID" })
+
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList(scName + "." + column.DbColumnName, list, "==请选择==", new { @class = "form-control" })
+
+                                        }
+                                    }
+                                    else if (column.Type == "DropDownList" && !column.IsKey)
+                                    {
+                                        @Html.DropDownList(scName + "." + column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal form-control", type = "DropDownList", @style = "width:60%" });
+                                    }
+                                    else if (column.Type == "RegionPicker")
+                                    {
+                                        if (column.DbColumnName == "StartCityName")
+                                        {
+                                            @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                            <a id="startCityClear" href="#">清空</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                            <a id="endCityClear" href="#">清空</a>
+                                        }
+                                    }
+                                    else if (column.Type == "TextArea")
+                                    {
+                                        @Html.TextArea(scName + "." + column.DbColumnName, o == null ? "" : o.ToString(), new { @class = "notKeyVal form-control", @style = "width:100%" });
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox(scName + "." + column.DbColumnName, o, new { @class = "notKeyVal form-control", @style = "width:100%" })
+                                    }
+                                }
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增" id="AddPreOrder" />
+            <input type="submit" class="btn btn-success" value="导出" id="Export" name="Action" />
+            <input style="display: none;" type="button" class="btn btn-success" value="批量取消" id="Cancel" />
+            <input type="button" class="btn btn-success" value="批量自动分配" id="Automate" />
+            <input style="display: none;" type="button" class="btn btn-success" value="批量完成" id="CompleteProOrder" />
+            @*<input type="button" class="btn btn-success" value="批量打印" id="printButton" />*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            预出库信息列表
+            @if (Model.SearchConditionResponse != null && Model.SearchConditionResponse.Any())
+            {
+                @Html.Raw("(" + Model.SearchConditionResponse.Count() + ")");
+            }
+        </legend>
+        <div id="Newdiv" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable" style="width: 130%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="width: 50px; word-wrap: break-word;">
+                            操作
+                        </th>
+                        <th class="checkBoxHead">
+                            @Html.CheckBox("selectAll", "onclick=selectAll")
+                        </th>
+                        @foreach (var column in showColumns)
+                        {
+                            string width = string.Empty;
+                            switch (column.DisplayName)
+                            {
+                                case "外部单号":
+                                    width = "200px";
+                                    break;
+                                case "地址":
+                                    width = "600px";
+                                    break;
+                                case "预出库单类型":
+                                    width = "200px";
+                                    break;
+                                default:
+                                    width = "150px";
+                                    break;
+                            }
+                            <th style="word-wrap: break-word;width:@width">
+                                @column.DisplayName
+                            </th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody id="resultTbody">
+                    @if (Model.SearchConditionResponse != null & Model.SearchConditionResponse.Any())
+                    {
+                        foreach (var item in Model.SearchConditionResponse)
+                        {
+                            var tdd = "operateTD" + @item.ID;
+                            <tr>
+                                <td style="position: relative">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        @if (@item.Status == 9)
+                                        { }
+                                        @*<label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs"onclick="print(@item.ID)">打印</label>*@
+                                        @*<div  style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white; "  >打印</div>*@
+                                        @if (@item.Status != -1)
+                                        {
+                                            if (@item.Status != 9)
+                                            {
+                                                if (@item.Status == 1 || @item.Status == 3)
+                                                {
+                                                    @*<label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="Edits(@item.ID)">编辑</label>*@
+                                                }
+                                                <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="Cancel(@item.ID,@item.CustomerID)">取消</label>
+                                                @*<label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="Complete(@item.ID,this)">完成</label>*@
+                                                <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="Automatedoutbound('@item.ID',this)">自动分配</label>
+                                                <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="ManuAlloctions(@item.ID)">手动分配</label>
+                                                @*<label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="AssignedAllocation(@item.ID)">指定分配</label>*@
+                                                @*<div  style="text-align:center; width:75px; float:left; border:solid 1px ;background-color:#f0ad4e;border-radius:3px;cursor:pointer;color:white;" onclick="WorkersAlloctions('@item.ID',this)">现场分配</div>*@
+                                            }
+                                            if (@item.Status > 3)
+                                            {
+                                                <label data-id="@item.ID" style="cursor: pointer;" class="btn btn-primary btn-xs CheckOutboundOrder" onclick="ViewOrderDetail(@item.ID,@item.CustomerID)">查看出库单</label>
+                                            }
+                                        }
+                                    </div>
+                                    @if (@item.Status == -1)
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs  " disabled="disabled">操作</label>
+                                    }
+                                    else
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    }
+                                </td>
+                                <td class="checkBox">
+                                    @Html.CheckBox("check" + item.ID.ToString(), new { data_ID = @item.ID, data_CustomerID = @item.CustomerID, data_Warehouse = @item.Warehouse, data_Status = @item.Status, @class = "checkForSelect" })
+                                </td>
+                                @foreach (var column2 in showColumns)
+                                {
+                                    if (column2.DbColumnName == "Status")
+                                    {
+                                        var o = typeof(Runbow.TWS.Entity.PreOrderSearchCondition).GetProperty(column2.DbColumnName).GetValue(item);
+                                        switch (o.ToString())
+                                        {
+                                            case "1":
+                                                <td style="width: auto; word-wrap: break-word;">新增</td>
+                                                break;
+                                            case "3":
+                                                <td style="width: auto; word-wrap: break-word;">库存不足</td>
+                                                break;
+                                            case "5":
+                                                <td style="width: auto; word-wrap: break-word;">已完成出库单</td>
+                                                break;
+                                            case "9":
+                                                <td style="width: auto; word-wrap: break-word;">完成</td>
+                                                break;
+                                            case "-1":
+                                                <td style="width: auto; word-wrap: break-word;">取消</td>
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    else if (column2.DbColumnName == "PreOrderNumber")
+                                    {
+                                        <td class="PreOrderNumber" style="width: 150px">
+                                            <a href="/WMS/PreOrder/PreOrderCreateOrEdit/?ID=@item.ID&ViewType=0&customerID=@item.CustomerID">@item.PreOrderNumber</a>
+                                        </td>
+                                    }
+                                    else if (column2.DbColumnName == "ExternOrderNumber")
+                                    {
+                                        <td style="width: 130px; word-wrap: break-word;">
+                                            @item.ExternOrderNumber
+                                        </td>
+                                    }
+                                    else if (column2.DbColumnName == "Int3")
+                                    {
+                                        <td style="width: 130px">
+                                            @{
+                                                var o = typeof(Runbow.TWS.Entity.PreOrderSearchCondition).GetProperty(column2.DbColumnName).GetValue(item);
+
+                                                if (o == null || o.ToString() == "0")
+                                                {
+                                                    @shipmentprinttype1;
+                                                }
+                                                else
+                                                {
+                                                    @shipmentprinttype2;
+                                                }
+                                            }
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width: auto;word-wrap :break-word;" class="@column2.DbColumnName">
+                                            @{
+                                                var o = typeof(Runbow.TWS.Entity.PreOrderSearchCondition).GetProperty(column2.DbColumnName).GetValue(item);
+                                                if (o != null)
+                                                {
+                                                    switch (column2.Type)
+                                                    {
+                                                        case "DateTime":
+                                                            var temp = (DateTime?)o;
+                                                            if (temp.HasValue)
+                                                            {
+                                                                @temp.Value//@temp.Value.DateTimeToString()
+                                                            }
+                                                            break;
+                                                        case "DateTimeWithTime":
+                                                            var temp1 = (DateTime?)o;
+                                                            if (temp1.HasValue)
+                                                            {
+                                                                @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                            }
+                                                            break;
+                                                        default:
+                                                            if (column2.DisplayName == "预收数量")
+                                                            {
+                                                                @o.ToString()
+                                                            }
+                                                            else
+                                                            {
+                                                                if (column2.IsKey == false)
+                                                                {
+                                                                    @o.ToString()
+                                                                }
+                                                                else
+                                                                {
+                                                                    @o.ToString()
+                                                                }
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                            }
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}
+
+<fieldset style="margin-top: 100px;">
+    <legend>预出库信息导入说明</legend>
+    <div id="importInstructionDiv">
+        1.模板中有模拟数据，请按照demo填写<br />
+        2.尽量不要长时间段的导入,减轻服务器压力
+        @*<a class="btn btn-primary" href="C:\Users\Administrator\Desktop\上架导入模板.xlsx" onclick="javascript:void(0);">导出</a>*@
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>
+        选择Excel导入预出库单信息
+    </legend>
+
+    <div id="importDiv">
+        <label>客户：</label>
+        @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.CustomerNames, new { @id = "StorerID", @class = "form-control", @style = "width:120px;padding-bottom:1px" })
+        @Html.DropDownListFor(m => m.SearchCondition.WarehouseId, Model.Warehouses, new { @id = "warehouseID", @class = "form-control", @style = "width:200px;padding-bottom:1px" })
+        <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
+        <input type="submit" value="导入" style="margin-top: -9px" class="btn btn-primary" onclick="return fileImportClick();" />
+        <a class="btn btn-primary" id="portButtonTemplet" style="margin-top: -9px; text-decoration: none; color: white" onclick="javascript:void(0);">下载模板</a>
+        <a class="btn btn-primary" id="" style="margin-top: -9px; text-decoration: none; color: white" href="~/JatoolsPrinter/setup.exe" download="setup.exe">下载打印插件</a>
+    </div>
+</fieldset>
+<fieldset style="margin-top: 20px;">
+    <legend>
+        导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>
+
+<div id="DisInfo" style="display: none">
+    <table>
+        <thead>
+            <tr>
+                @*<th>ID</th>*@
+                <th>外部单号</th>
+                <th>客户</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody id="DisInfoBody">
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="DisInfo2" style="display: none">
+    <table>
+        <thead>
+            <tr>
+                @*<th>ID</th>*@
+                <th>外部单号</th>
+                <th>SKU</th>
+                <th>Article</th>
+                <th>Size</th>
+                <th>缺货数量</th>
+            </tr>
+        </thead>
+        <tbody id="DisInfoBody2">
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script id="Evaluation" type="text/x-jsrender">
+    <tr>
+        @*<td>{{:POID}}</td>*@
+        <td>{{:ExternOrderNumber}}</td>
+        <td>{{:Customer}}</td>
+        <td>{{:Message}}</td>
+    </tr>
+</script>
+
+<script id="Evaluation2" type="text/x-jsrender">
+    <tr>
+        @*<td>{{:POID}}</td>*@
+        <td>{{:ExternOrderNumber}}</td>
+        <td>{{:SKU}}</td>
+        <td>{{:Article}}</td>
+        <td>{{:Size}}</td>
+        <td>{{:QTY}}</td>
+    </tr>
+</script>
+
+<div id="CheckOutboundOrder" style="display: none">
+    <table>
+        <thead>
+            <tr>
+                @*<th>ID</th>*@
+                <th>出库单号</th>
+                <th>客户</th>
+                <th>明细数量</th>
+            </tr>
+        </thead>
+        <tbody id="CheckOutboundOrderBody">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script id="CheckOutboundOrderList" type="text/x-jsrender">
+    <tr>
+        @*<td>{{:POID}}</td>*@
+        <td><a href="/WMS/OrderManagement/OrderDetailView/?ID={{:ID}}&ViewType=3">{{:OrderNumber}}</a></td>
+        <td>{{:CustomerName}}</td>
+        <td>{{:DetailCount}}</td>
+    </tr>
+</script>
+
+<!--用于选择取消原因-->
+<div id="OrderCancelDiv" style="display:none">
+    <table>
+        <tr>
+            <td class="TableColumnTitle" style="width:100px;font-weight:bold">取消原因：</td>
+            <td style="font-weight:bold">@Html.DropDownList("ReasonID", Model.OrderCancelReasonList, new { @class = "form-control", @style = "width:200px" })</td>
+        </tr>
+        <tr id="tr_remark">
+            <td class="TableColumnTitle" style="width:100px;font-weight:bold">取消备注：</td>
+            <td>
+                @*<input  style="width:100%" class="form-control" id="ResaonRemark" maxlength="100" />*@
+                <textarea rows="2" cols="1" id="ReasonRemark" maxlength="200" style="width:100%" class="form-control"></textarea>
+            </td>
+        </tr>
+        <tr style="display:none">
+            <td colspan="2"><input type="hidden" id="CancelIDs" /></td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <div style="text-align:center">
+        <input type="button" class="btn btn-success" value="确定" id="btnCancelOK" />
+        <input type="button" class="btn btn-success" value="返回" id="btnCancelReturn" />
+    </div>
+</div>

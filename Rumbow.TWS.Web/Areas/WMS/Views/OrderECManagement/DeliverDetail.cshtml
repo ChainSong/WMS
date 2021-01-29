@@ -1,0 +1,423 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@Url.FrameworkJs("ajaxfileupload.js")
+@Url.jsrender()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderECManagement.DeliveryConfirmModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@*tab页样式*@
+<style type="text/css">
+    ul.easytabs {
+        margin: 16px 0;
+        padding: 0 0 0 1px;
+    }
+
+        ul.easytabs li {
+            list-style: none;
+            display: inline;
+        }
+
+            ul.easytabs li a {
+                color: #464c54;
+                padding: 5px 5px;
+                font-size: 14px;
+                height: 30px;
+                width: 60px;
+                font-family: Microsoft YaHei;
+                font-weight: bold;
+            }
+
+                ul.easytabs li a.easytab_active {
+                    background-color: #e1bd12;
+                    color: #282e32;
+                    /*border: 1px solid;*/
+                    border-bottom: 2px solid #ffffff;
+                }
+
+    .easytab_content {
+        background-color: white;
+        padding: 10px;
+        height: 200px;
+    }
+</style>
+
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    @Html.Hidden("CustomerID", (long)ViewBag.CustomerID)
+    @Html.Hidden("CustomerName", (string)ViewBag.CustomerName)
+    @Html.Hidden("Warehouse", (string)ViewBag.Warehouse)
+
+    <fieldset>
+        <legend>交接单主信息</legend>
+
+        <table id="table_body">
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>交接单号</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        <input type="hidden" id="hdHeaderID" value="@Model.DeliverHeaderConnection.First().ID" />
+                        <input type="hidden" id="hdHeaderKey" value="@Model.DeliverHeaderConnection.First().DeliverKey" />
+                        @Model.DeliverHeaderConnection.First().DeliverKey
+                    }
+                    else
+                    {
+                        <input type="hidden" id="hdHeaderID" value="0" />
+                        <input type="hidden" id="hdHeaderKey" value="自动生成编号" />
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        @Model.DeliverHeaderConnection.First().CustomerName
+                    }
+                    else
+                    {
+                        @((string)ViewBag.CustomerName);
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        @Model.DeliverHeaderConnection.First().WarehouseName
+                    }
+                    else
+                    {
+                        @((string)ViewBag.Warehouse)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>快递公司</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        Model.Express = Model.DeliverHeaderConnection.FirstOrDefault().ExpressCompany;
+                        if (Model.DeliverHeaderConnection.FirstOrDefault().Status == "9")
+                        {
+                            @Model.DeliverHeaderConnection.FirstOrDefault().ExpressCompany
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.Express, Model.ExpressCompany, new { @class = "form-control", style = "width:100%" })
+                        }
+                        //@Model.DeliverHeaderConnection.First().ExpressCompany}
+                    }
+                    else
+                    {
+                        @Html.DropDownList("Express", Model.ExpressCompany, new { @class = "form-control", style = "width:100%" })
+                    }
+
+                </td>
+                <td class="TableColumnTitle">
+                    <label>状态</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        <input type="hidden" id="hdStatus" value="@Model.DeliverHeaderConnection.First().Status" />
+                        @Model.DeliverHeaderConnection.First().Status
+                    }
+                    else
+                    {
+                        <input type="hidden" id="hdStatus" value="0" />
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>交接明细总数</label>
+                </td>
+                <td style="width: 20%;font-size:18px;font-weight:bold">
+                    @if (Model.DeliverExpressNoConnection != null && Model.DeliverExpressNoConnection.Any())
+                    {
+
+                        @Model.DeliverExpressNoConnection.Count().ToString();
+                    }
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>创建人</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        @Model.DeliverHeaderConnection.First().Creator
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label>创建时间</label>
+                </td>
+                <td style="width: 20%;">
+                    @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                    {
+                        @Model.DeliverHeaderConnection.First().CreateTime
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    <label></label>
+                </td>
+                <td style="width: 20%;"></td>
+            </tr>
+
+        </table>
+
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="保存" id="btnSave" />
+            @*<input type="button" class="btn btn-success" value="交接称重" id="btnAddOrder" />*@
+            <input type="button" class="btn btn-success" value="打印交接清单" id="btnPrintDeliver" />
+            <input type="button" class="btn btn-success" value="提交出库" id="btnSubmitOut" />
+
+
+            <input type="button" class="btn btn-success" value="返回" id="returnButton" onclick="window.location.href = '/WMS/OrderECManagement/DeliveryConfirm'" />
+
+        </div>
+
+    </fieldset>
+
+    <audio src="/Areas/WMS/1.mp3" id="Audio">
+        您的浏览器不支持 audio 标签。
+    </audio>
+    <fieldset>
+        <legend>交接称重</legend>
+
+        <div id="tables" style="overflow-x: no-display; overflow-y: no-display; border: 0; float: left; width: 38%; ">
+            <table style="border: 0">
+                <tr>
+                    <td style="width: 160px; border: 0">
+                        <label style="font-size: 25px">快递单号：</label>
+                    </td>
+                    <td style="border: 0">
+                        <input class="form-control" style="width: 100%; font-size:30px; height: 45px; vertical-align: middle" type="text" id="ScanExpress" />
+
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 160px; border: 0; height: 40px; vertical-align: top">
+                        <label style="font-size: 20px">重量： </label>
+                    </td>
+                    <td style="border: 0; vertical-align: middle">
+                        @if (Model.DeliverHeaderConnection != null && Model.DeliverHeaderConnection.Any())
+                        {
+                            var status = "";
+                            status = Model.DeliverHeaderConnection.FirstOrDefault().Status;
+                            if (status == "9")
+                            {
+                                <input class="form-control" style="width: 30%; font-size: 30px; height: 35px; vertical-align: middle;" readonly type="text" />
+                            }
+                            else
+                            {
+                                <input class="form-control" style="width: 30%; font-size: 30px; height: 35px; vertical-align: middle" type="text" id="deliverweight" value="1.0" />
+                                <span id="weightmsg" style="font-size:20px;margin-left:10px;height:25px;line-height:25px;"></span>
+                                @*<object id="yyzq" classid="clsid:218849AF-1B2C-457B-ACD5-B42AC8D17EB7"
+                                    width="200"
+                                    height="40"
+                                    codebase="Setup1.msi"></object>*@
+                            }
+                        }
+                        else
+                        {
+                            @*<object id="yyzq" classid="clsid:218849AF-1B2C-457B-ACD5-B42AC8D17EB7"
+                                width="200"
+                                height="40"
+                                codebase="Setup1.msi"></object>*@
+                            <input class="form-control" style="width: 30%; font-size: 30px; height: 35px; vertical-align: middle" type="text" id="deliverweight" value="1.0" />
+                            <span id="weightmsg" style="font-size:20px;margin-left:10px;height:25px;line-height:25px;vertical-align:central"></span>
+                        }
+
+                        <input type="button" class="btn btn-success" value="确定" id="btnConfrim" style="float: right; vertical-align: top;display:none" />
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @*<h4>待上传信息</h4>*@
+        <div id="Div1" style="height: 150px; border: 0px  solid #bdb9b9; float: right; width: 61%; margin-top: 5px /*display: none*/">
+            <table style="width: 100%; margin: 0 auto">
+                <thead>
+                    <tr>
+                        <th style="display:none">系统订单号</th>
+                        <th>客户订单号</th>
+                        <th>上传</th>
+                        <th>发货反馈</th>
+                    </tr>
+                </thead>
+                <tbody id="tbList"></tbody>
+            </table>
+
+        </div>
+
+    </fieldset>
+
+
+    <fieldset>
+        <legend>
+            交接单明细信息
+        </legend>
+
+
+        <div style="overflow: scroll; height: 50%; margin: 0 auto">
+            <table id="resultTable" @*style="table-layout: fixed;"*@>
+                <thead>
+                    <tr>
+                        <th style="width: 8%; font-weight: bold">操作</th>
+                        <th>序号</th>
+                        <th>快递单号</th>
+                        <th>重量</th>
+                        <th>系统订单号</th>
+                        <th>外部单号</th>
+                        <th>箱数</th>
+                    </tr>
+                </thead>
+                <tbody id="Newtbody">
+                    @if (Model.DeliverExpressNoConnection != null && Model.DeliverExpressNoConnection.Any())
+                    {
+                        foreach (var detail in Model.DeliverExpressNoConnection)
+                        {
+                            <tr>
+                                <td>
+                                    @if (Model.DeliverHeaderConnection.FirstOrDefault().Status == "0")
+                                    {
+                                        <div class="Adiv" style="position: absolute; display: none; width: 100px; left: 100px; height: 31px;">
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs SearchDetail" onclick="DeleteRow(@detail.DeliverDetailKey,this)">删除此行</label>
+                                        </div>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    }
+                                    else
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs" disabled="disabled">操作</label>
+                                    }
+                                </td>
+                                <td>@detail.DeliverDetailKey</td>
+                                <td>@detail.ExpressNumber</td>
+                                <td>@detail.BoxWeight</td>
+                                <td>@detail.OrderNumber</td>
+                                <td>@detail.str1</td>
+                                <td>@detail.PackBoxKey</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+        @*<div class="easytab_area">
+                <ul class="easytabs">
+                    <li><a name="easytab" class="easytab_active" onclick="tabSwitch2(this,'easytab_content_',0);">快递单列表</a></li>
+                    <li><a name="easytab" onclick="tabSwitch2(this,'easytab_content_',1);">交接单明细</a></li>
+                </ul>
+            </div>
+
+            <div id="easytab_content_0" class="easytab_content" style="overflow: scroll; height: 40%; margin: 0 auto">
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%; font-weight: bold">操作</th>
+                            <th>序号</th>
+                            <th>快递单号</th>
+                            <th>重量</th>
+                            <th>系统订单号</th>
+                            <th>外部单号</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Newtbody">
+                        @if (Model.DeliverExpressNoConnection != null && Model.DeliverExpressNoConnection.Any())
+                        {
+                            foreach (var detail in Model.DeliverExpressNoConnection)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (Model.DeliverHeaderConnection.FirstOrDefault().Status == "0")
+                                        {
+                                            <div class="Adiv" style="position: absolute; display: none; width: 100px; left: 100px; height: 31px;">
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs SearchDetail" onclick="DeleteRow(@detail.DeliverDetailKey,this)">删除此行</label>
+                                            </div>
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                        }
+                                        else
+                                        {
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs" disabled="disabled">操作</label>
+                                        }
+                                    </td>
+                                    <td>@detail.DeliverDetailKey</td>
+                                    <td>@detail.ExpressNumber</td>
+                                    <td>@detail.BoxWeight</td>
+                                    <td>@detail.OrderNumber</td>
+                                    <td>@detail.str1</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="easytab_content_1" class="easytab_content" style="overflow: scroll; height: 40%; margin: 0 auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>交接单号</th>
+                            <th>出货交接单行号</th>
+                            <th>出货单号</th>
+                            <th>快递单号</th>
+                            <th>箱号</th>
+                            <th>重量</th>
+                            <th>业务单号</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Newtbody2">
+                        @if (Model.DeliverDetailConnection != null && Model.DeliverDetailConnection.Any())
+                        {
+                            foreach (var item2 in Model.DeliverDetailConnection)
+                            {
+                                <tr>
+                                    <td>@item2.DeliverKey</td>
+                                    <td>@item2.DeliverDetailKey</td>
+                                    <td>@item2.OrderNumber</td>
+                                    <td>@item2.ExpressNumber</td>
+                                    <td>@item2.PackBoxKey</td>
+                                    <td>@item2.BoxWeight</td>
+                                    <td>@item2.str18</td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>*@
+
+    </fieldset>
+
+}
+
+<script type="text/javascript">
+                    //document.getElementsByName("easytab")[0].click();//页面加载完成后，点击第一个标签
+</script>
+
+
+<div style="color:red;font-size:16px;"></div>
+
+<script id="CheckDifference" type="text/x-jsrender">
+    <tr>
+        <td>{{:OrderNumber}}</td>
+        <td>{{:ExternOrderNumber}}</td>
+        <td>{{:ExpressNumber}}</td>
+    </tr>
+</script>
+

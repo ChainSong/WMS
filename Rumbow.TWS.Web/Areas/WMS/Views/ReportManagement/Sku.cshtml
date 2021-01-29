@@ -1,0 +1,86 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.SkuViewModel
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartExpectDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndExpectDate)
+     <fieldset>
+        <legend>查询条件</legend>
+         <table>
+            <tr>
+                @{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+                <td class="TableColumnTitle"><label>客户</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>业务类型</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.SkuReportType, Model.SkuReportTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                </tr>
+             <tr>
+                 <td class="TableColumnTitle"><label>SKU</label></td>
+                 <td>@Html.TextAreaFor(m=>m.SearchCondition.SKU, new { @class = "form-control" })</td>
+                 <td class="TableColumnTitle"><label>日期</label></td>
+                 <td>@Html.CalendarRange("ExpectDate", "calendarRange form-control calendarRangeReWrite", Model.SearchCondition.StartExpectDate, Model.SearchCondition.EndExpectDate)</td>
+                 <td class="TableColumnTitle"><label>打托类型</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.SkuReportType, Model.DaTuoTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+             </tr>
+            </table>
+          <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+      </fieldset>
+    
+     
+    <fieldset>
+        <legend>SKU列表
+            @if (Model.ReportSkuCollection != null && Model.ReportSkuCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReportSkuCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>仓库</th>
+                    <th>业务类型</th>
+                    <th>日期</th>
+                    <th>SKU</th>
+                    <th>品名</th>                    
+                    <th>数量</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>批次</th>
+                    <th>托号</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ReportSkuCollection != null && Model.ReportSkuCollection.Any())
+                {
+                    foreach (var item in Model.ReportSkuCollection)
+                    { 
+                    <tr>
+                        <td>@item.CustomerName</td>
+                        <td>@item.WarehouseName</td>
+                        <td>@item.Types</td>
+                        <td>@item.Dates</td>
+                        <td>@item.SKU</td>
+                        <td>@item.GoodsName</td>
+                        <td>@item.Qty</td>
+                        <td>@item.Unit</td>
+                        <td>@item.Specifications</td>
+                        <td>@item.BatchNumber</td>
+                        <td>@item.BoxNumber</td>
+                    </tr>
+                    }
+                }
+                </tbody>
+            </table>
+           @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        </fieldset>
+}

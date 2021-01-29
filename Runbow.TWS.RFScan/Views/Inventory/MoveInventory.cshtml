@@ -1,0 +1,525 @@
+﻿@{
+    ViewBag.Title = "退货上架";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <script src="~/Assets/JS/Layer/layer.js"></script>
+    <link href="~/Assets/CSS/bootstrap.min.css" rel="stylesheet" />
+    @model Runbow.TWS.RFScan.Models.ReceiptViewModel
+    <title>退货上架</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            pushHistory();
+            window.addEventListener("popstate", function (e) {
+                if (lastSKUobj.length > 0) {
+                    //layer.msg("请扫描库位保存当前数据");
+                    alert("请扫描库位保存当前数据");
+                    pushHistory();
+                }
+                //根据自己的需求实现自己的功能
+                //window.location.href = 'https://www.baidu.com'
+            }, false);
+            window.addEventListener("beforeunload", listenClose, false);
+            $("#boxnumber").focus();
+
+
+        });
+        var layerindex;
+        var ScanUPC = "";
+        var ScanSKU = "";
+        var recnumber = "";
+        var receiptmodel;//入库明细
+        var AreaName = "";
+        var NewAreaName = "";
+        var NewLocation = "";
+        var BoxSkuQty = 0;
+        var BoxNumberLast = "";
+        var recidArray = new Array();//如果扫描的是sku，则把receiptmodel的id保存下来，用来加载批次单位，规格等数据
+        //var arrayLocation = new Array();
+        //var arraySKU = new Array();
+        var objtemp = new Array();//每次sku有变更的时候往这里插数据
+        var objtotal = new Array();//每次扫描有效库位的时候，把objtemp合并后保存到这里，并清空objtemp
+        var lastSKUobj = new Array();//每次扫描后，更新这个数组，保存上次扫描数据
+        var ScanDataObj = new Array();//保存当前扫描的所有记录
+
+
+        //function ScanAgain(event) {
+        //    if (event.keyCode == 13) {
+        //        var scanval = $("#skuagain").val();
+        //        if (checkLocation(scanval)) {
+        //            $.ajax({
+        //                type: "Post",
+        //                url: '/Receipt/UpdateReceiptReceivingByLocationAgainBack',
+        //                data: { "ReceiptNumber": $("#receiptnum").val(), "Area": AreaName, "Location": scanval, "BoxNumber": $("#boxnumber").val() },
+        //                async: false,
+        //                dataType: "text",
+        //                success: function (data) {
+        //                    if (data == "") {
+        //                        $("#Audio")[0].play();
+        //                        alert("请扫描SKU");
+        //                        return;
+        //                    }
+        //                    else if (data == "-1") {
+        //                        $("#Audio")[0].play();
+        //                        alert("扫描异常");
+        //                        return;
+        //                    }
+        //                    else if (data == "11") //当前箱已完成
+        //                    {
+        //                        $("#SuccessAudio")[0].play();
+        //                        $("#Scan").focus();
+        //                        $("#Scan").val("");
+        //                        lastSKUobj.length = 0;
+        //                        $("#boxnumber").val('');
+        //                        layer.alert('当前箱已完成，请扫描下一箱', {
+        //                            skin: 'layui-layer-lan'
+        //                            , icon: 1
+        //                            , closeBtn: 0
+        //                            , btn: ['确定'] //单击按钮
+        //                            , btn1: function (index, layero) {
+        //                                layer.closeAll();
+        //                                $("#Scan").focus();
+        //                            },
+        //                            success: function (layero) {
+        //                                var btn = layero[0].getElementsByClassName('layui-layer-btn')[0].getElementsByTagName('A')[0];
+        //                                btn.href = 'javascript:void(0)';
+        //                                btn.focus();
+        //                            }
+        //                        })
+        //                        checkcomplete();
+        //                    }
+        //                    else {
+        //                        layer.close(layerindex);
+        //                        //chechboxnumberoverclearboxnumber();
+
+        //                        $("#Scan").focus();
+        //                    }
+
+        //                },
+        //                error: function (msg) {
+        //                    alert(msg);
+        //                }
+
+        //            });
+
+        //        }
+        //        else {
+        //            $("#Audio")[0].play();
+        //            //alert("扫描的数据有误");
+        //            //$("#skuagain").focus();
+        //            //document.getElementById("skuagain").select();
+
+
+        //            layer.alert('扫描的数据有误', {
+        //                skin: 'layui-layer-lan' //样式类名
+        //                , icon: 2
+        //                , closeBtn: 0
+        //                , btn: ['确定'] //单击按钮
+        //                , btn1: function (index, layero) {
+        //                    layer.close(index);
+        //                    $("#skuagain").focus();
+        //                    document.getElementById("skuagain").select();
+        //                },
+        //                success: function (layero) {
+        //                    var btn = layero[0].getElementsByClassName('layui-layer-btn')[0].getElementsByTagName('A')[0];
+        //                    btn.href = 'javascript:void(0)';
+        //                    btn.focus();
+        //                }
+        //            })
+        //        }
+        //    }
+        //}
+
+        //扫描箱号
+        //function ScanBox(event) {
+        //    if (event.keyCode == 13) {
+        //        if ($("#boxnumber").val() == "") {
+        //            $("#Audio")[0].play();
+        //            layer.alert('箱号不能为空', {
+        //                skin: 'layui-layer-lan' //样式类名
+        //                , icon: 2
+        //                , closeBtn: 0
+        //                , btn: ['确定'] //单击按钮
+        //                , btn1: function (index, layero) {
+        //                    layer.close(index);
+        //                    $("#boxnumber").focus();
+        //                    document.getElementById("boxnumber").select();
+        //                },
+        //                success: function (layero) {
+        //                    var btn = layero[0].getElementsByClassName('layui-layer-btn')[0].getElementsByTagName('A')[0];
+        //                    btn.href = 'javascript:void(0)';
+        //                    btn.focus();
+        //                }
+        //            })
+        //            return;
+        //        }
+        //        if (!checkBoxNumber($("#receiptnum").val(), $("#boxnumber").val())) {
+        //            $("#Audio")[0].play();
+        //            layer.alert('箱号不正确', {
+        //                skin: 'layui-layer-lan' //样式类名
+        //                , icon: 2
+        //                , closeBtn: 0
+        //                , btn: ['确定'] //单击按钮
+        //                , btn1: function (index, layero) {
+        //                    layer.close(index);
+        //                    $("#boxnumber").focus();
+        //                    document.getElementById("boxnumber").select();
+        //                },
+        //                success: function (layero) {
+        //                    var btn = layero[0].getElementsByClassName('layui-layer-btn')[0].getElementsByTagName('A')[0];
+        //                    btn.href = 'javascript:void(0)';
+        //                    btn.focus();
+        //                }
+        //            })
+        //            return;
+        //        }
+
+        //    }
+        //}
+
+        //function checkRecNumScan() {
+        //    var scanreceipt = "";
+        //    if ($("#receiptnum").val() == "") {
+        //        $("#Audio")[0].play();
+        //        alert("入库单不能为空！");
+        //        $("#receiptnum").focus();
+        //        return;
+        //    }
+        //    scanreceipt = $("#receiptnum").val();
+        //    if (objtotal.length > 0) {
+        //        if (confirm('有未保存数据，是否保存？')) { SaveRecdata(); }
+
+        //    }
+        //    //清理界面
+        //    //清空界面数据
+        //    $("#NewLocation").val("");
+        //    $("#Scan").val("")
+        //    objtemp.length = 0;
+        //    objtotal.length = 0;
+        //    ScanDataObj.length = 0;
+        //    lastSKUobj.length = 0;
+        //    recidArray.length = 0;
+        //    recnumber = scanreceipt;
+        //}
+
+        function listenClose(e) {
+            var confirmationMessage = '确认离开吗？';
+            (e || window.event).returnValue = confirmationMessage;
+            return confirmationMessage;
+
+        }
+        function pushHistory() {
+            var state = {
+                title: "title",
+                url: "#"
+            };
+            window.history.pushState(state, "title", "#");
+        }
+
+        function checkRecNum(event) {
+            if (event.keyCode == 13) {
+                checkRecNumScan();
+                //$("#receiptnum").readOnly = "true";
+
+
+            }
+        }
+
+        //扫描框回车
+        //function Scan(event) {
+        //    if (event.keyCode == 13) {
+
+        //        var scanval = $("#Scan").val();
+        //        if (scanval == "") {
+        //            $("#Audio")[0].play();
+        //            alert("扫描数据不能为空");
+        //            $("#Scan").focus();
+        //            return;
+        //        }
+        //        if (CheckBoxNumber()) {
+        //            return;
+        //        }
+        //        SubmitMove();
+        //    }
+        //}
+
+        function CheckBoxNumber() {
+            if (event.keyCode == 13) {
+                if ($("#boxnumber").val() != "") {
+                    $.ajax({
+                        type: "Post",
+                        url: '/Inventory/CheckBoxNumber',
+                        data: { "BoxNumber": $("#boxnumber").val() },
+                        async: false,
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.Code == 0) {
+                                $("#Audio")[0].play();
+                                layer.msg('该库位没有货物');
+                            } else if (data.Code == 3) {
+                                $("#Audio")[0].play();
+                                layer.msg('该库位没有货物');
+                            }
+                            else if (data.Code == 1) {
+                                $("#NewLocation").focus();
+
+                            } else if (data.Code == 2) {
+                                $("#Audio")[0].play();
+                                layer.msg('该库位被占用');
+                            }
+                        },
+                        error: function (msg) {
+                            alert(msg);
+                        }
+                    });
+                } else {
+                    layer.msg('请先扫描原库位');
+                    $("#boxnumber").focus();
+                }
+            }
+        }
+
+        function SubmitMove() {
+            if (event.keyCode == 13) {
+                if ($("#boxnumber").val() != "") {
+                    if ($("#boxnumber").val() == $("#NewLocation").val()) {
+                        $("#Audio")[0].play();
+                        layer.msg('新库位不能和原库位一样');
+                        return;
+                    }
+
+                    if ($("#NewLocation").val().trim() == "") {
+                        $("#Audio")[0].play();
+                        layer.msg('新库位不能为空');
+                        return;
+                    }
+                    layer.confirm('确认提交？', {
+                        btn: ['提交'] //按钮
+                    }, function () {
+                            $.ajax({
+                                type: "Post",
+                                url: '/Inventory/MoveLocation',
+                                data: { "BoxNumber": $("#boxnumber").val(), "NewLocation": $("#NewLocation").val() },
+                                async: false,
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data.Code == 0) {
+                                        $("#Audio")[0].play();
+                                        //alert("该库位已被占用");
+                                        layer.msg('该库位已被占用');
+                                    }
+                                    else if (data.Code == "1") {
+                                        layer.msg('移库完成');
+                                        CleanControls();
+                                        $("#boxnumber").focus();
+                                    } else if (data.Code == "2") {
+                                        layer.msg('库位不存在');
+                                        $("#Audio")[0].play();
+                                        //CleanControls();
+                                        //$("#boxnumber").focus();
+                                    }
+                                },
+                                error: function (msg) {
+                                    alert(msg);
+                                }
+                            });
+                    });
+                  
+                } else {
+                    layer.msg('请先扫描原库位');
+                    $("#Audio")[0].play();
+                    CleanControls();
+                    $("#boxnumber").focus();
+                }
+            }
+        }
+        function CleanControls() {
+            $("#boxnumber").val("");
+            $("#NewLocation").val("");
+        }
+
+        function checkLeave() {
+            alert("离开吗");
+            event.returnValue = "确定离开当前页面吗？";
+        }
+        function tdback() {
+            history.back(-1);
+        }
+
+        function ScanFocus() {
+            $("#Scan").select();
+
+        }
+        function ScanBlur() {
+            $("#Scan").focus();
+
+        }
+
+        function RefreshLocation() {
+
+        }
+
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+            margin: 0 auto;
+        }
+
+            table tbody tr td {
+                height: 10px;
+                line-height: 40px;
+            }
+
+            table tr input {
+                border: 1px solid #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+                padding: 5px 0;
+            }
+
+            table tr select {
+                padding: 5px;
+                border-color: #428BCA;
+                border-radius: 7px;
+                outline: none;
+                background: none;
+            }
+            /*#table tr:nth-child(n+2){
+             width: 90%!important;
+        }*/
+            table img {
+                width: 15px;
+                height: 21px;
+                vertical-align: middle;
+            }
+
+        input[type=checkbox], input[type=button] {
+            cursor: pointer !important
+        }
+
+        input[type=button] {
+            background: #428BCA;
+            border: none;
+            outline: none;
+            padding: 5px 0;
+            color: white;
+            width: 65%;
+            border-radius: 15px;
+            margin: 0 auto;
+            margin-left: 7%;
+        }
+
+        #checknumber {
+            width: 48%;
+            margin-left: 10%;
+        }
+
+        .mklo {
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+            text-align: left;
+            width: 95%;
+            margin: 0 auto;
+            margin-top: 0px;
+        }
+
+            .mklo td {
+                border-left: 1px solid #428BCA;
+                border-top: 1px solid #428BCA;
+                line-height: 25px;
+            }
+
+        #showdata {
+            font-size: 16px;
+        }
+
+        #showdatas {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+        }
+
+            #showdatas input {
+                margin-top: 20px;
+            }
+
+        #showtable {
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+            width: 100%;
+            text-align: center;
+        }
+
+            #showtable tbody tr td {
+                line-height: 25px !important;
+                height: 25px !important;
+            }
+
+            #showtable td {
+                border-left: 1px solid #428BCA;
+                border-top: 1px solid #428BCA
+            }
+    </style>
+</head>
+
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="height: 100%">
+    <div class="container body-content" id="trayDiv">
+        <div class="row">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        推荐库位
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table id="resultTable" style="width:100%;font-size:medium;">
+                        <tr>
+                            <td style="text-align:right;font-weight:bold;font-size:24px">
+                                <audio src="~/audio/1.mp3" id="Audio">
+                                    您的浏览器不支持 audio 标签。
+                                </audio>
+                                <audio src="~/audio/success.mp3" id="SuccessAudio">
+                                    您的浏览器不支持 audio 标签。
+                                </audio>
+                            </td>
+                        </tr>
+                        <tr style="height:10px">
+                            <td>原库位</td>
+                            <td>
+                                <input style="width:250px" id="boxnumber" type="text" onkeydown="CheckBoxNumber()" />
+                            </td>
+                        </tr>
+                        <tr style="height:10px">
+                            <td>新库位</td> 
+                            <td><input style="width:250px" id="NewLocation" type="text" onkeydown="SubmitMove()" /></td>
+                            
+                        </tr>
+                    </table>
+                </div>
+                @*<div class="row">
+                        <div class="col-sm-12 col-xs-12">
+                            <label for="" style="color:#d200ff;margin-left:15px;font-size:30px;">推荐库位：<span id="txtLocation"></span></label>
+                        </div>
+                    </div>*@ 
+            </div>
+        </div>
+    </div>
+
+     
+
+
+</body>
+</html>

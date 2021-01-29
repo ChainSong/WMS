@@ -1,0 +1,123 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.NikeReportExportViewModel
+@Html.Partial("MsgMask")
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.BeginExpectedDeliveryTime)
+    @Html.HiddenFor(m => m.EndExpectedDeliveryTime)
+    @Html.HiddenFor(m => m.BeginActualCompleteTime)
+    @Html.HiddenFor(m => m.EndActualCompleteTime)
+    @Html.HiddenFor(m => m.BeginActualShipTime)
+    @Html.HiddenFor(m => m.EndActualShipTime)
+    @Html.HiddenFor(m => m.IsExport)
+    
+@* <fieldset>
+    <legend>请选择Excel
+    </legend>
+    <div id="importDiv">
+         <label for="file">Upload File:</label>
+         <input type="file" name="fileToUpload" id="importExcel"  class="fileImport" />
+         <input type="submit" value="生成运单" class="fileImport" name="action" onclick="return fileImportClick();"/>
+    </div>
+</fieldset>
+    <fieldset>
+    <legend>导入结果
+    </legend>
+    <div>
+       @Html.Raw(Model.HtmlStr)
+    </div>
+</fieldset>*@
+    <fieldset>
+        <legend>导出报表
+        </legend>
+        <div id="ExportResult">
+            <table>
+                <tr>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.CustomerOrderNumber)</td>
+                    <td style="width: 24%">@Html.TextAreaFor(model => model.CustomerOrderNumber,new { style = "width:95%" })</td>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.ShipperName)</td>
+                    <td style="width: 24%">
+                        @Html.TextBoxFor(model => model.ShipperName)
+                        @Html.HiddenFor(model => model.ShipperID)
+                    </td>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.ShipperTypeName)</td>
+                    <td style="width: 24%">@Html.DropDownListFor(model => model.SelectedShipperTypeID, Model.ShipperTypes, "==请选择==")</td>
+                </tr>
+                <tr>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.CustomerCode)</td>
+                    <td style="width: 24%">@Html.TextBoxFor(model => model.CustomerCode)</td>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.ActualShipTime)</td>
+                    <td style="width: 24%">@Html.CalendarRange("ActualShipTime", "calendarRange")<a id="ActualShipTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.ActualCompleteTime)</td>
+                    <td style="width: 24%">@Html.CalendarRange("ActualCompleteTime", "calendarRange")<a id="ActualCompleteTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+                </tr>
+                <tr>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.ExpectedDeliveryTime)</td>
+                    <td style="width: 24%">@Html.CalendarRange("ExpectedDeliveryTime", "calendarRange")<a id="ExpectedDeliveryTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.PodStateName)</td>
+                    <td style="width: 24%">@Html.DropDownListFor(model => model.SelectedPodStatesID, Model.PodStates, "==请选择==")</td>
+                    <td style="width: 9%" class="TableColumnTitle">@Html.LabelFor(model => model.ReportName)</td>
+                    <td style="width: 24%">@Html.DropDownListFor(model => model.SelectedReportID, Model.ReportNames)</td>
+
+                </tr>
+            </table>
+
+            <input type="submit" value="导出报表" name="action" id="ExportButton" />
+            <input type="submit" value="查询" name="action" id="QueryButton" />
+        </div>
+    </fieldset>
+    if (Model.NikeReport != null)
+    {
+    
+    <fieldset>
+        <legend>数据信息(@Model.RowCount)</legend>
+        <div style="width: 100%;">
+            <div style="overflow-x: scroll; width: 100%;">
+                <table style="width: 300%; text-align: center">
+
+                    <tr>
+                        @foreach (var columnsnames in Model.NikeReport.Columns)
+                        {
+                            if (columnsnames.ToString() == "ID")
+                            {
+                                continue;
+                            }
+                            <td class="TableColumnTitle" style="width: 50px;">@columnsnames.ToString()</td>
+                        }
+                    </tr>
+
+                    @for (int i = 0; i < Model.NikeReport.Rows.Count; i++)
+                    {
+                        <tr>
+                            @for (int j = 0; j < Model.NikeReport.Columns.Count; j++)
+                            {
+
+                                if (Model.NikeReport.Columns[j].ToString() == "ID")
+                                {
+                                    continue;
+                                }
+
+                                if (Model.NikeReport.Columns[j].ToString() == "发货单号")
+                                {
+                                <td><a id="listSystemNumber" data-id="@Model.NikeReport.Rows[i]["ID"].ToString()" href="/POD/POD/ViewPodAll/@Model.NikeReport.Rows[i]["ID"].ToString()">@Model.NikeReport.Rows[i]["发货单号"].ToString()</a></td>
+                                }
+                                else
+                                {
+                                <td>@Model.NikeReport.Rows[i][j].ToString()</td>
+                                }
+
+
+                            }
+                        </tr>
+                    }
+                </table>
+                @Html.Pager(Model.PageIndex, Model.PageCount, "")
+            </div>
+        </div>
+        
+    </fieldset>
+    
+    }
+}
+
+
+

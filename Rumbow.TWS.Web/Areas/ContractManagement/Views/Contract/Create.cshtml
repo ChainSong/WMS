@@ -1,0 +1,336 @@
+﻿@model Runbow.TWS.Web.Areas.ContractManagement.Models.ContractOperationViewModel
+@{ var yes="是";
+   var no="否"; }
+@Url.RateStarResource()
+@using(Html.BeginForm()){
+@Html.HiddenFor(m => m.ViewType)  @*存放视图类型*@
+<div>
+     <fieldset>
+        <legend>基础信息
+        </legend>
+        <table id="BasicInfo">
+          <tr>
+              <td class="TableColumnTitle" style="width: 13%;">所属公司</td>
+                <td style="width: 27%;">
+                    @if (Model.ViewType!=0)
+                    {
+                       @Html.HiddenFor(o=>o.Contract.CompanyName)
+                       @Html.DropDownListFor(o=>o.Contract.CompanyCode,Model.CompanyList,new { style = "width:95%"})
+                    }
+                    else
+                    {
+                        @Model.Contract.CompanyName
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;">业务大类</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                       @Html.HiddenFor(o=>o.Contract.BusinessName)
+                       @Html.DropDownListFor(o=>o.Contract.BusinessCode,Model.BusinessList)
+                    }
+                    else
+                    {
+                        @Model.Contract.BusinessName
+                    }
+                        
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;">部门名称</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                       @Html.HiddenFor(o=>o.Contract.DepartmentName)
+                       @Html.DropDownListFor(o=>o.Contract.DepartmentCode,Model.DepartmentList)  
+                    }
+                    else
+                    {
+                        @Model.Contract.DepartmentName
+                    }
+                </td>
+          </tr>
+            <tr>
+              <td class="TableColumnTitle" >合同种类</td>
+                <td style="width: 21%;">
+                   @if (Model.ViewType!=0)
+                    {
+                       @Html.HiddenFor(o=>o.Contract.ContractTypeName)
+                       @Html.HiddenFor(o=>o.Contract.ID)   //隐藏ID字段
+                       @Html.DropDownListFor(o=>o.Contract.ContractTypeCode,Model.ContractTypeList)
+                    }
+                   else
+                   {
+                       @Model.Contract.ContractTypeName
+                   }
+                    
+                </td>
+                
+                <td class="TableColumnTitle" >合同起始日期</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                        @Html.CalendarFor(o=>o.Contract.ContractStartDate)  
+                    }
+                    else
+                    {
+                        if (Model.Contract.ContractStartDate == new DateTime(0001, 1, 1) || Model.Contract.ContractStartDate == new DateTime(1753, 1, 1))
+                        {
+
+                        }
+                        else
+                        {
+                            @Model.Contract.ContractStartDate.ToShortDateString();
+                        }
+                    }
+                </td>
+
+                 <td class="TableColumnTitle">实际到期日期</td>
+                <td style="width: 21%;">
+                     @if (Model.ViewType!=0)
+                    {
+                     @Html.CalendarFor(o=>o.Contract.ContractExpireDate)  
+                     }
+                     else
+                     {
+                         if (Model.Contract.ContractExpireDate == new DateTime(0001, 1, 1) || Model.Contract.ContractExpireDate == new DateTime(1753, 1, 1))
+                         {
+
+                         }
+                         else
+                         {
+                             @Model.Contract.ContractExpireDate.ToShortDateString();
+                         }
+                     }
+                </td>
+
+          </tr>
+            <tr>
+                 <td class="TableColumnTitle">合同编号</td>
+                <td style="width:21%">
+                    @if (Model.ViewType==1)
+                    {
+                        @Html.TextBox("Contract","系统自动生成", new { disabled="disabled",style="width:80%"})    @*隐藏合同号*@
+                        
+                    }
+                    else if(Model.ViewType==2)
+                    {
+                        @Html.TextBoxFor(o => o.Contract.ContractNumber, new {readOnly="readonly" ,style = "width:80%" });
+                    }
+                    else
+                    {
+                        @Model.Contract.ContractNumber
+                     
+                    }
+                    
+                </td>
+
+                <td class="TableColumnTitle">老合同编号</td>
+                <td style="width:21%">
+                     @if (Model.ViewType!=0)
+                     {
+                        @Html.TextBoxFor(o=>o.Contract.OldContractNumber)
+                     }
+                     else
+                     {
+                         @Model.Contract.OldContractNumber
+                     }
+                </td>
+
+                  <td class="TableColumnTitle" >业务对方名称</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                        @Html.TextBoxFor(o=>o.Contract.BusinessPartnerName)
+                    }
+                    else
+                    {
+                        @Model.Contract.BusinessPartnerName
+                    }
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TableColumnTitle">资质证书图片</td>
+                <td colspan="5">
+                    @Html.HiddenFor(m => m.Contract.AttachmentGroupID)
+                    @if (Model.ViewType == 0)
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_QualificationCertificate", "Hidden_AttachmentGroupID_QualificationCertificate", Model.Contract.AttachmentGroupID, true, true, false, false)
+                    }
+                    else
+                    {
+                        @Html.SingleFileUpload("fileAttachmentGroupID_QualificationCertificate", "Hidden_AttachmentGroupID_QualificationCertificate", Model.Contract.AttachmentGroupID, false, true, false, false)
+                    }
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TableColumnTitle">资质证件</td>
+                <td colspan="5">
+                     @if (Model.ViewType!=0)
+                    {
+                        @Html.CheckBoxListFor(
+                        o=>o.CertificateCodes,
+                        o=>o.AvaliableCertificates,
+                        o=>o.Value,
+                        o=>o.Text,
+                        o=>o.SelectedCertificates)       
+                     }
+                     else
+                     {
+                         @Model.Contract.QualificationCertificate
+                     }
+                        
+                </td>
+            </tr>
+
+           <tr>
+
+                <td class="TableColumnTitle">是否顺延</td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                       @Html.DropDownListFor(o=>o.Contract.IsContractExtension,Model.YesNOList)
+                    }
+                    else
+                    {
+                         if (Model.Contract.IsContractExtension == "Y") 
+                         {
+                             @yes
+                         }
+                         else
+                         {
+                             @no
+                         }  
+                        
+
+                     }
+                </td>
+
+              <td class="TableColumnTitle">是否含印花税</td>
+                <td style="width: 21%;">
+                     @if (Model.ViewType!=0)
+                     {
+                        @Html.DropDownListFor(o=>o.Contract.StampTax,Model.YesNOList)  
+                     }
+                     else
+                     {
+                         if (Model.Contract.StampTax == "Y") 
+                         {
+                             @yes
+                         }
+                         else
+                         {
+                             @no
+                         }  
+                         
+                     }
+                </td>
+               
+                @*<td class="TableColumnTitle" >是否过期</td>
+                <td >
+                     @if (Model.ViewType!=0)
+                    {
+                       @Html.DropDownListFor(o=>o.Contract.IsContractExpired,Model.YesNOList)  
+                     }
+                     else
+                     {
+                         if (Model.Contract.IsContractExpired == "Y") 
+                         {
+                             @yes
+                         }
+                         else
+                         {
+                             @no
+                         }  
+                     }
+                </td>*@
+          </tr>
+
+              <tr>
+            
+
+                <td class="TableColumnTitle">保单起始日期</td>
+                <td >
+                     @if (Model.ViewType!=0)
+                    {
+                      @Html.CalendarFor(o=>o.Contract.PolStartDate)
+                    }
+                     else
+                     {
+                        if (Model.Contract.PolStartDate == new DateTime(0001, 1, 1) || Model.Contract.PolStartDate == new DateTime(1753, 1, 1))
+                        {
+                                 
+                        }
+                        else
+                        {
+                            @Model.Contract.PolStartDate.ToString("yyyy-MM-dd"); 
+                        }
+                     }
+                </td>
+                <td class="TableColumnTitle" >保单终止日期</td>
+                <td >
+                     @if (Model.ViewType!=0)
+                    {
+                        @Html.CalendarFor(o=>o.Contract.PolEndDate)  
+                    }
+                     else
+                     {
+                         if (Model.Contract.PolEndDate == new DateTime(0001, 1, 1) || Model.Contract.PolEndDate == new DateTime(1753, 1, 1))
+                         {
+
+                         }
+                         else
+                         {
+                             @Model.Contract.PolEndDate.ToString("yyyy-MM-dd");
+                         }
+                     }
+                </td>
+
+          </tr>
+
+              <tr>
+              <td class="TableColumnTitle" >合同内容</td>
+                <td colspan="3">
+                    @if (Model.ViewType!=0)
+                    {
+                        @Html.TextAreaFor(o => o.Contract.ContractContent, new {style="width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Contract.ContractContent
+                    }
+                </td>
+                </tr>
+
+                <tr>
+
+                <td class="TableColumnTitle" >备注</td>
+                <td colspan="3" >
+                     @if (Model.ViewType!=0)
+                    {
+                        @Html.TextAreaFor(o=>o.Contract.Remark, new {style="width:100%" })  
+                    }
+                    else
+                     { 
+                         @Model.Contract.Remark  
+                     }
+                </td>
+                 </tr>
+
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        @{
+                    if (Model.ViewType != 0)
+                    {
+            <input type="submit" value="提交" id="submitButton" />
+                    }
+                    if (Model.ViewType != 1)
+                    {
+            @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;");
+            <input type="button" value="返回" id="returnButton" />
+                     }
+        }
+     </div>
+    </div>
+}

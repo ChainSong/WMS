@@ -1,0 +1,54 @@
+﻿@model  Runbow.TWS.Web.Areas.POD.Models.GetBAFMobile
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.PageIndex)
+    @Html.HiddenFor(m => m.BAFStartTime)
+    @Html.HiddenFor(m => m.BAFEndTime)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+            <td class="TableColumnTitle">报价所在时间
+            </td>
+            <td>
+                @Html.CalendarRange("Time", "calendarRange")
+            </td>
+                </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+             <input type="button"  value="添加" id="addButton" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>用户列表
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>油价费率</th>
+                    <th>开始使用时间</th>
+                    <th>结束使用时间</th>
+                     <th>操作</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.abfRiceInfos != null && Model.abfRiceInfos.Any())
+                {
+                    foreach (var abf in Model.abfRiceInfos)
+                    {
+                    <tr>
+                        <td>@abf.BAFPrice</td>
+                        <td>@abf.BAFStartTime</td>
+                        <td>@abf.BAFEndTime</td>
+                        <td> <a id="@abf.ID"  href="javascript:void(0)" onclick="del(this)">删除</a></td> 
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

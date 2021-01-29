@@ -1,0 +1,2494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Rectangle Name="Rectangle5">
+        <ReportItems>
+          <Image Name="Image2">
+            <Source>Embedded</Source>
+            <Value>BSReport</Value>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.635cm</Top>
+            <Left>0.20428cm</Left>
+            <Height>1.35819cm</Height>
+            <Width>3.69cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
+          <Textbox Name="Textbox36">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>上海物流科技有限公司运单</Value>
+                    <Style>
+                      <FontSize>16pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox34</rd:DefaultName>
+            <Top>0.635cm</Top>
+            <Left>5.62824cm</Left>
+            <Height>0.82903cm</Height>
+            <Width>8.55896cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox37">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>单号：</Value>
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox35</rd:DefaultName>
+            <Top>2.18311cm</Top>
+            <Left>9.85793cm</Left>
+            <Height>0.42333cm</Height>
+            <Width>1.38875cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Rectangle Name="Rectangle6">
+            <ReportItems>
+              <Line Name="Line203">
+                <Top>0.13518cm</Top>
+                <Left>0.20428cm</Left>
+                <Height>18.60566cm</Height>
+                <Width>0cm</Width>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line120">
+                <Top>0.13518cm</Top>
+                <Left>0.20428cm</Left>
+                <Height>0cm</Height>
+                <Width>18.56922cm</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line140">
+                <Top>5.93481cm</Top>
+                <Left>0.20428cm</Left>
+                <Height>0cm</Height>
+                <Width>18.56922cm</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line142">
+                <Top>7.8203cm</Top>
+                <Left>0.28269cm</Left>
+                <Height>0cm</Height>
+                <Width>18.56651cm</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox236">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>货物属性：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>6.67566cm</Top>
+                <Left>0.4885cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>4</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox237">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>货物总件数：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>8.22572cm</Top>
+                <Left>9.00512cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>5</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line143">
+                <Top>8.93155cm</Top>
+                <Left>1.17641cm</Left>
+                <Height>8.06304cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>6</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line144">
+                <Top>11.84111cm</Top>
+                <Left>0.20428cm</Left>
+                <Height>0cm</Height>
+                <Width>18.51cm</Width>
+                <ZIndex>7</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line145">
+                <Top>15.08312cm</Top>
+                <Left>0.20427cm</Left>
+                <Height>0cm</Height>
+                <Width>18.56652cm</Width>
+                <ZIndex>8</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox238">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>运输要求</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>10.06384cm</Top>
+                <Left>0.43558cm</Left>
+                <Height>1.57191cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>9</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox239">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>发货方签章</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>12.38342cm</Top>
+                <Left>0.34539cm</Left>
+                <Height>1.95012cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>10</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox240">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>发货方记事</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>15.67183cm</Top>
+                <Left>0.46204cm</Left>
+                <Height>1.95012cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>11</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line204">
+                <Top>8.93155cm</Top>
+                <Left>6.51022cm</Left>
+                <Height>8.6904cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>12</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line205">
+                <Top>8.93155cm</Top>
+                <Left>12.04064cm</Left>
+                <Height>8.06304cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>13</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line206">
+                <Top>11.84111cm</Top>
+                <Left>7.4939cm</Left>
+                <Height>5.15348cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>14</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line207">
+                <Top>11.84111cm</Top>
+                <Left>13.08401cm</Left>
+                <Height>5.15348cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>15</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox323">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>承运方签章</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>12.38342cm</Top>
+                <Left>6.65134cm</Left>
+                <Height>1.95012cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>16</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox324">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>承运方记事</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>15.67183cm</Top>
+                <Left>6.65134cm</Left>
+                <Height>1.95012cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>17</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox325">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>收货方签章</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>12.38342cm</Top>
+                <Left>12.33167cm</Left>
+                <Height>1.95012cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>18</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox326">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>货物签收情况</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>15.67183cm</Top>
+                <Left>12.35814cm</Left>
+                <Height>1.95012cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>19</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox327">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>包装方式：□纸箱 □编织袋</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>10.86234cm</Top>
+                <Left>1.18862cm</Left>
+                <Height>0.6cm</Height>
+                <Width>4.9077cm</Width>
+                <ZIndex>20</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox328">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>支付方式：□预付□货到付款</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>10.83458cm</Top>
+                <Left>6.5455cm</Left>
+                <Height>0.6cm</Height>
+                <Width>5.02452cm</Width>
+                <ZIndex>21</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox329">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>特殊要求：□紧急运输 □整车运输</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>10.90513cm</Top>
+                <Left>12.1112cm</Left>
+                <Height>0.6cm</Height>
+                <Width>6.6623cm</Width>
+                <ZIndex>22</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox330">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>收货人姓名：</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>13.45104cm</Top>
+                <Left>13.18983cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.52645cm</Width>
+                <ZIndex>23</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox331">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>收货人身份证号：</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>14.05104cm</Top>
+                <Left>13.15457cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.24083cm</Width>
+                <ZIndex>24</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox332">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>签收日期：</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>14.56521cm</Top>
+                <Left>13.18983cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.08548cm</Width>
+                <ZIndex>25</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox333">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>年</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>14.56521cm</Top>
+                <Left>15.43817cm</Left>
+                <Height>0.6cm</Height>
+                <Width>0.52444cm</Width>
+                <ZIndex>26</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox334">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>月</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>14.56521cm</Top>
+                <Left>16.37161cm</Left>
+                <Height>0.6cm</Height>
+                <Width>0.52444cm</Width>
+                <ZIndex>27</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox335">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>日</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>14.56521cm</Top>
+                <Left>17.31671cm</Left>
+                <Height>0.6cm</Height>
+                <Width>0.52444cm</Width>
+                <ZIndex>28</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line208">
+                <Top>10.58763cm</Top>
+                <Left>1.17371cm</Left>
+                <Height>0cm</Height>
+                <Width>17.59708cm</Width>
+                <ZIndex>29</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox336">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>预计发货日期：</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>9.00211cm</Top>
+                <Left>1.17641cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.94035cm</Width>
+                <ZIndex>30</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox337">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>预计到货日期：</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>9.00211cm</Top>
+                <Left>6.58077cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.94035cm</Width>
+                <ZIndex>31</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox338">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>运输方式： √汽运  □铁路  □空运</Value>
+                        <Style>
+                          <FontStyle>Normal</FontStyle>
+                          <FontFamily>宋体</FontFamily>
+                          <FontWeight>Normal</FontWeight>
+                          <TextDecoration>None</TextDecoration>
+                          <Color>#000000</Color>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>9.48944cm</Top>
+                <Left>12.19574cm</Left>
+                <Height>0.6cm</Height>
+                <Width>6.43394cm</Width>
+                <ZIndex>32</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line138">
+                <Top>5.1937cm</Top>
+                <Left>7.417cm</Left>
+                <Height>0cm</Height>
+                <Width>4.08812cm</Width>
+                <ZIndex>33</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox235">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>联系方式：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox197</rd:DefaultName>
+                <Top>4.9112cm</Top>
+                <Left>12.5899cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.36156cm</Width>
+                <ZIndex>34</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox229">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>联系方式：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>4.5937cm</Top>
+                <Left>0.86476cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.43826cm</Width>
+                <ZIndex>35</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line121">
+                <Top>2.4244cm</Top>
+                <Left>0.90005cm</Left>
+                <Height>0cm</Height>
+                <Width>5.74493cm</Width>
+                <ZIndex>36</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line124">
+                <Top>0.13518cm</Top>
+                <Left>3.04162cm</Left>
+                <Height>5.37602cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>37</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line193">
+                <Top>0.13518cm</Top>
+                <Left>18.77079cm</Left>
+                <Height>18.60566cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>38</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line130">
+                <Top>0.13518cm</Top>
+                <Left>12.44879cm</Left>
+                <Height>5.37602cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>39</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line125">
+                <Top>4.1442cm</Top>
+                <Left>0.86477cm</Left>
+                <Height>0cm</Height>
+                <Width>5.78021cm</Width>
+                <ZIndex>40</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line133">
+                <Top>5.1937cm</Top>
+                <Left>14.80153cm</Left>
+                <Height>0cm</Height>
+                <Width>3.97197cm</Width>
+                <ZIndex>41</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox226">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>发货代码：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>0.30718cm</Top>
+                <Left>0.93533cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.40298cm</Width>
+                <ZIndex>42</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line139">
+                <Top>0.13518cm</Top>
+                <Left>7.45227cm</Left>
+                <Height>5.37602cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>43</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line135">
+                <Top>0.13518cm</Top>
+                <Left>11.54039cm</Left>
+                <Height>5.78866cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>44</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line134">
+                <Top>2.4244cm</Top>
+                <Left>7.45227cm</Left>
+                <Height>0cm</Height>
+                <Width>4.08812cm</Width>
+                <ZIndex>45</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox231">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>项目团队：耐克项目</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox196</rd:DefaultName>
+                <Top>1.22977cm</Top>
+                <Left>7.5581cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.69442cm</Width>
+                <ZIndex>46</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line128">
+                <Top>2.32366cm</Top>
+                <Left>12.44879cm</Left>
+                <Height>0cm</Height>
+                <Width>6.32471cm</Width>
+                <ZIndex>47</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox227">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>单位名称：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>1.11885cm</Top>
+                <Left>1.00588cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.40299cm</Width>
+                <ZIndex>48</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line123">
+                <Top>0.13518cm</Top>
+                <Left>0.86477cm</Left>
+                <Height>5.37602cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>49</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox228">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>单位地址：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>2.97093cm</Top>
+                <Left>0.90005cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.47355cm</Width>
+                <ZIndex>50</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox224">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>承运商</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>1.49258cm</Top>
+                <Left>6.93664cm</Left>
+                <Height>1.57191cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>51</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox225">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>收货方</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value />
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox187</rd:DefaultName>
+                <Top>1.49258cm</Top>
+                <Left>11.83143cm</Left>
+                <Height>1.57191cm</Height>
+                <Width>0.47625cm</Width>
+                <ZIndex>52</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line137">
+                <Top>4.1442cm</Top>
+                <Left>7.45226cm</Left>
+                <Height>0cm</Height>
+                <Width>4.08813cm</Width>
+                <ZIndex>53</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line122">
+                <Top>1.06248cm</Top>
+                <Left>0.90005cm</Left>
+                <Height>0cm</Height>
+                <Width>5.78021cm</Width>
+                <ZIndex>54</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox230">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>上海物流有限公司</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>0.31157cm</Top>
+                <Left>7.59338cm</Left>
+                <Height>0.78423cm</Height>
+                <Width>3.91174cm</Width>
+                <ZIndex>55</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line132">
+                <Top>4.1442cm</Top>
+                <Left>12.44879cm</Left>
+                <Height>0cm</Height>
+                <Width>6.32471cm</Width>
+                <ZIndex>56</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox234">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>单位地址：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox197</rd:DefaultName>
+                <Top>2.97093cm</Top>
+                <Left>12.46912cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.22658cm</Width>
+                <ZIndex>57</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox233">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>单位名称：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox197</rd:DefaultName>
+                <Top>1.49258cm</Top>
+                <Left>12.64795cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.37406cm</Width>
+                <ZIndex>58</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox232">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>收货代码：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox197</rd:DefaultName>
+                <Top>0.4272cm</Top>
+                <Left>12.5899cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.40934cm</Width>
+                <ZIndex>59</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line126">
+                <Top>0.13518cm</Top>
+                <Left>6.64498cm</Left>
+                <Height>5.37602cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>60</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line146">
+                <Top>18.74084cm</Top>
+                <Left>0.20427cm</Left>
+                <Height>0cm</Height>
+                <Width>18.56651cm</Width>
+                <ZIndex>61</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line131">
+                <Top>0.22903cm</Top>
+                <Left>14.80153cm</Left>
+                <Height>5.28217cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>62</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Str23">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str23.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str23</rd:DefaultName>
+                <Top>6.42028cm</Top>
+                <Left>3.14745cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>63</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="GoodsNumber">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=Sum(Fields!GoodsNumber.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>GoodsNumber</rd:DefaultName>
+                <Top>8.15517cm</Top>
+                <Left>10.95058cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>64</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="BoxNumber">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=Sum(Fields!BoxNumber.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>BoxNumber</rd:DefaultName>
+                <Top>8.261cm</Top>
+                <Left>3.59632cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>65</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Str1">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str1.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str1</rd:DefaultName>
+                <Top>0.22903cm</Top>
+                <Left>15.23683cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.21082cm</Width>
+                <ZIndex>66</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Str3">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str3.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str3</rd:DefaultName>
+                <Top>1.20359cm</Top>
+                <Left>3.18273cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.24925cm</Width>
+                <ZIndex>67</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Str7">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str7.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str7</rd:DefaultName>
+                <Top>2.4244cm</Top>
+                <Left>3.04162cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.35508cm</Width>
+                <ZIndex>68</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Str6">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str6.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str6</rd:DefaultName>
+                <Top>4.25003cm</Top>
+                <Left>3.0769cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.44895cm</Width>
+                <ZIndex>69</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line147">
+                <Top>8.93155cm</Top>
+                <Left>0.20427cm</Left>
+                <Height>0cm</Height>
+                <Width>18.56651cm</Width>
+                <ZIndex>70</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line141">
+                <Top>6.67566cm</Top>
+                <Left>11.54039cm</Left>
+                <Height>0cm</Height>
+                <Width>7.23311cm</Width>
+                <ZIndex>71</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Textbox241">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>货物总箱数：</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>8.19044cm</Top>
+                <Left>0.93533cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>72</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox242">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>备注</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox190</rd:DefaultName>
+                <Top>6.07566cm</Top>
+                <Left>13.8954cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>73</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Line Name="Line148">
+                <Top>5.29981cm</Top>
+                <Left>3.04162cm</Left>
+                <Height>2.52049cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>74</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line149">
+                <Top>5.29981cm</Top>
+                <Left>11.54039cm</Left>
+                <Height>2.52049cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>75</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line150">
+                <Top>4.15517cm</Top>
+                <Left>14.81035cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>76</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line151">
+                <Top>4.15517cm</Top>
+                <Left>11.54039cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>77</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line152">
+                <Top>4.15517cm</Top>
+                <Left>7.45227cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>78</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line153">
+                <Top>4.15517cm</Top>
+                <Left>6.64498cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>79</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line154">
+                <Top>4.1442cm</Top>
+                <Left>0.86476cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>80</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line155">
+                <Top>4.15517cm</Top>
+                <Left>12.44879cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>81</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line156">
+                <Top>4.15517cm</Top>
+                <Left>3.04162cm</Left>
+                <Height>1.77964cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>82</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line209">
+                <Top>15.08312cm</Top>
+                <Left>13.08401cm</Left>
+                <Height>3.65772cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>83</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line210">
+                <Top>15.08312cm</Top>
+                <Left>12.04064cm</Left>
+                <Height>3.65772cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>84</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line211">
+                <Top>15.08312cm</Top>
+                <Left>7.4939cm</Left>
+                <Height>3.65772cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>85</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line212">
+                <Top>15.08312cm</Top>
+                <Left>6.51022cm</Left>
+                <Height>3.65772cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>86</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Line Name="Line213">
+                <Top>15.08312cm</Top>
+                <Left>1.18862cm</Left>
+                <Height>3.65772cm</Height>
+                <Width>0cm</Width>
+                <ZIndex>87</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>Solid</Style>
+                  </Border>
+                </Style>
+              </Line>
+              <Textbox Name="Str20">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str20.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str20</rd:DefaultName>
+                <Top>1.20359cm</Top>
+                <Left>15.1984cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>88</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Str21">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str21.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str21</rd:DefaultName>
+                <Top>2.50005cm</Top>
+                <Left>14.83681cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>89</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Str22">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!Str22.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Str22</rd:DefaultName>
+                <Top>4.33007cm</Top>
+                <Left>15.05729cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>90</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="DateTime6">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!DateTime6.Value, "DataSet1")</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>DateTime6</rd:DefaultName>
+                <Top>9.70794cm</Top>
+                <Left>6.65134cm</Left>
+                <Height>0.6cm</Height>
+                <Width>2.5cm</Width>
+                <ZIndex>91</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Top>2.91634cm</Top>
+            <Height>18.74084cm</Height>
+            <Width>18.8492cm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Image Name="Image3">
+            <Source>Database</Source>
+            <Value>=First(Fields!BSImage.Value, "DataSet2")</Value>
+            <MIMEType>image/gif</MIMEType>
+            <Sizing>FitProportional</Sizing>
+            <Top>0.21167cm</Top>
+            <Left>14.80153cm</Left>
+            <Height>2.39477cm</Height>
+            <Width>2.90229cm</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
+          <Textbox Name="CustomerOrderNumber">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!CustomerOrderNumber.Value, "DataSet1")</Value>
+                    <Style>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>Red</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>CustomerOrderNumber</rd:DefaultName>
+            <Top>2.13995cm</Top>
+            <Left>10.95058cm</Left>
+            <Height>0.6cm</Height>
+            <Width>3.67456cm</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <PageBreak>
+          <BreakLocation>End</BreakLocation>
+        </PageBreak>
+        <Height>21.65718cm</Height>
+        <Width>18.8492cm</Width>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Rectangle>
+      <Line Name="Line129">
+        <Top>3.97882cm</Top>
+        <Left>12.44879cm</Left>
+        <Height>0cm</Height>
+        <Width>6.32471cm</Width>
+        <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Line>
+      <Line Name="Line136">
+        <Top>3.97882cm</Top>
+        <Left>7.45227cm</Left>
+        <Height>0cm</Height>
+        <Width>4.08812cm</Width>
+        <ZIndex>2</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Line>
+      <Textbox Name="Textbox223">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>发</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>货</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>方</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox187</rd:DefaultName>
+        <Top>4.40892cm</Top>
+        <Left>0.28269cm</Left>
+        <Height>1.57191cm</Height>
+        <Width>0.47625cm</Width>
+        <ZIndex>3</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <Height>8.52645in</Height>
+    <Style />
+  </Body>
+  <Width>7.42094in</Width>
+  <Page>
+    <PageHeight>28cm</PageHeight>
+    <PageWidth>21.8cm</PageWidth>
+    <LeftMargin>0.5cm</LeftMargin>
+    <RightMargin>0.5cm</RightMargin>
+    <TopMargin>0cm</TopMargin>
+    <BottomMargin>0cm</BottomMargin>
+    <ColumnSpacing>0.13cm</ColumnSpacing>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="TWSDataSetBS">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>1c7b8cd4-2997-44a4-9961-029d1457a760</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="DataSetBS">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>449bb8c9-e972-4e0d-97f3-61307d75676d</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>TWSDataSetBS</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ID">
+          <DataField>ID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="ProjectID">
+          <DataField>ProjectID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="SystemNumber">
+          <DataField>SystemNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CustomerOrderNumber">
+          <DataField>CustomerOrderNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CustomerName">
+          <DataField>CustomerName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ShipperName">
+          <DataField>ShipperName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ActualDeliveryDate">
+          <DataField>ActualDeliveryDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="StartCityName">
+          <DataField>StartCityName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PODStateName">
+          <DataField>PODStateName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ShipperTypeName">
+          <DataField>ShipperTypeName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BoxNumber">
+          <DataField>BoxNumber</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Weight">
+          <DataField>Weight</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="GoodsNumber">
+          <DataField>GoodsNumber</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Volume">
+          <DataField>Volume</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="Creator">
+          <DataField>Creator</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str1">
+          <DataField>Str1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str2">
+          <DataField>Str2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str3">
+          <DataField>Str3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str4">
+          <DataField>Str4</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str5">
+          <DataField>Str5</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str6">
+          <DataField>Str6</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str7">
+          <DataField>Str7</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str20">
+          <DataField>Str20</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str21">
+          <DataField>Str21</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Str22">
+          <DataField>Str22</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Expr1">
+          <DataField>Expr1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DateTime1">
+          <DataField>DateTime1</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="DateTime6">
+          <DataField>DateTime6</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Str23">
+          <DataField>Str23</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>TWSDataSetBS</rd:DataSetName>
+        <rd:SchemaPath>E:\TWS\Runbow.TWS\Rumbow.TWS.Web\TWSDataSetBS.xsd</rd:SchemaPath>
+        <rd:TableName>QueryBSPod</rd:TableName>
+        <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
+        <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
+        <rd:TableAdapterName>QueryBSPodTableAdapter</rd:TableAdapterName>
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="DataSet2">
+      <Query>
+        <DataSourceName>DataSetBS</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="BSImage">
+          <DataField>BSImage</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+        <Field Name="BSURL">
+          <DataField>BSURL</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>DataSetBS</rd:DataSetName>
+        <rd:SchemaPath>E:\TWS\Runbow.TWS\Rumbow.TWS.Web\Rpts\DataSetBS.xsd</rd:SchemaPath>
+        <rd:TableName>dataBS</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <EmbeddedImages>
+    <EmbeddedImage Name="BSReport">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>36c21892-c499-4969-be25-70164a80d829</rd:ReportID>
+</Report>

@@ -1,0 +1,147 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.SettlementManagement.SettlementListViewModel
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/Common/Phone/jquery.PrintArea.js"></script>
+@*<script src="../../../../Scripts/WMS/Warehouse/PrintWareHouseCheck.js"></script>*@
+@{
+    Layout = null;
+
+}
+
+<script type="text/javascript">
+    function Print() {
+        document.all.WebBrowser.ExecWB(6, 1);
+    }
+    function Printsetup() {
+        document.all.WebBrowser.ExecWB(8, 1);
+    }
+    function Printpreview() {
+        document.all.WebBrowser.ExecWB(7, 1);
+    }
+</script>
+
+<style media="print">
+    .Noprint {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+</style>
+
+
+<div class="Noprint" style="text-align: center; height: 10px;">
+    <object id="WebBrowser" width="0" height="0" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2"></object>
+    <input type="button" name="button-print" value="打印" onclick="Print()" />
+    <input type="button" name="button_setup" value="打印页面设置" onclick="Printsetup()" />
+    <input type="button" name="button_show" value="打印预览" onclick="Printpreview()" />
+    <input type="button" name="button_return" value="返回" onclick="history.go(-1)" />
+</div>
+
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+
+<hr size="1" noshadow color="black" class="Noprint">
+<div id="PrintArea">
+    <!--startprint-->
+    <div class="PageNext" style="width: auto;">
+        <table id="Print" border="1" cellspacing="0" cellpadding="0">
+            <tr style="height: 30px;">
+                <td style="width: 4%; text-align: center;">结算单号：</td>
+                <td style="width: 4%; text-align: center;">@ViewBag.SettlementNumber.</td>
+                <td style="width: 4%; text-align: center;">外部单号：</td>
+                <td style="width: 4%; text-align: center;">@ViewBag.ExternNumber</td>
+                <td style="width: 4%; text-align: center;"></td>
+                <td colspan="7" style="width: 20%; text-align: center;">创建日期：@ViewBag.CreateTime</td>
+
+            </tr>
+            <tr style="height: 30px;">
+                <td colspan="12" style="text-align: center;">结算列表</td>
+            </tr>
+            <tr style="height: 30px;">
+                <td style="text-align: center;">库位</td>
+                <td style="text-align: center;">SKU</td>
+                <td style="text-align: center;">Article</td>
+                <td style="text-align: center;">Size</td>
+                <td style="text-align: center;">BU</td>
+                <td style="text-align: center;">批次号</td>
+                <td style="text-align: center;">托号</td>
+                <td style="text-align: center;">单位</td>
+                <td style="text-align: center;">规格</td>
+                <td style="text-align: center;">结算数量</td>
+                <td style="text-align: center;">实际数量</td>
+                <td style="text-align: center;">备注</td>
+            </tr>
+            @foreach (var item in Model.SettlementDetailCollection)
+            {
+                <tr style="height: 30px;">
+                    <td style="text-align: center;">@item.Location</td>
+                    <td style="text-align: center;">@item.SKU</td>
+                    <td style="text-align: center;">@item.str10</td>
+                    <td style="text-align: center;">@item.str9</td>
+                    <td style="text-align: center;">@item.str8</td>
+                    <td style="text-align: center;">@item.BatchNumber</td>
+                    <td style="text-align: center;">@item.BoxNumber</td>
+                    <td style="text-align: center;">@item.Unit</td>
+                    <td style="text-align: center;">@item.Specifications</td>
+                    <td style="text-align: center;">@item.CheckQty</td>
+                    <td style="text-align: center;"></td>
+                    <td style="text-align: center;">@item.Remark</td>
+                </tr>
+            }
+            <tr style="height: 30px;">
+                <td colspan="1" style="text-align: center;">结算人</td>
+                <td colspan="2">&nbsp;</td>
+                <td colspan="1" style="text-align: center;">结算日期</td>
+                <td colspan="8">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+    <hr size="1" noshadow color="black" class="Noprint">
+    <!--endprint-->
+</div>
+
+
+
+<script id="Evaluation" type="text/x-jsrender">
+    <div class="PageNext" style="width: auto;">
+        <table border="1" cellspacing="0" cellpadding="0">
+            <tr id="Settlement" style="height: 30px;">
+                <td style="text-align: center;">结算单号：</td>
+                <td style="width: 20%">{{:SettlementNumber}}</td>
+                <td style="text-align: center;">外部结算单号：</td>
+                <td style="width: 20%">{{:ExternNumber}}</td>
+                <td style="text-align: center;">创建日期：</td>
+                <td colspan="2" style="width: 20%">{{:CreateTime}}</td>
+
+            </tr>
+            <tr style="height: 30px;">
+                <td colspan="7">结算列表</td>
+            </tr>
+            <tr style="height: 30px;">
+                <td style="text-align: center;">客户</td>
+                <td style="text-align: center;">仓库丨区域</td>
+                <td style="text-align: center;">库位</td>
+                <td style="text-align: center;">SKU</td>
+                <td style="text-align: center;">结算数量</td>
+                <td style="text-align: center;">备注</td>
+            </tr>
+            <tr id="SettlementDetail" style="height: 30px;">
+                <td>{{:CustomerName}}</td>
+                <td>{{:WarehouseName}}丨{{:AreaName}}</td>
+                <td>{{:Location}}</td>
+                <td>{{:SKU}}</td>
+                <td>{{:SettlementQty}}</td>
+                <td>{{:Remark}}</td>
+            </tr>
+            <tr style="height: 30px;">
+                <td colspan="1" style="text-align: center;">结算人</td>
+                <td colspan="2">&nbsp;</td>
+                <td colspan="2" style="text-align: center;">结算日期</td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
+    <hr size="1" noshadow color="black" class="Noprint">
+</script>

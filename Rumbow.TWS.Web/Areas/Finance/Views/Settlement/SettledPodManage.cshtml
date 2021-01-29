@@ -1,0 +1,529 @@
+﻿@model Runbow.TWS.Web.Areas.Finance.Models.SettledPodManageViewModel
+@Url.CommonJs("accounting.min.js")
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.ID)
+    @Html.HiddenFor(m => m.SearchCondition.ProjectID)
+    @Html.HiddenFor(m => m.SearchCondition.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.UserType)
+    @Html.HiddenFor(m => m.SearchCondition.IsForAudit)
+    @Html.HiddenFor(m => m.IsForInvoice)
+    @Html.HiddenFor(m => m.ShowActionButton)
+    @Html.HiddenFor(m => m.ProjectRoleID)
+    @Html.HiddenFor(m => m.ShowSelectCheckBox)
+    @Html.HiddenFor(m => m.SelectedIDs)
+    @Html.HiddenFor(m => m.IsInnerUser)
+    @Html.HiddenFor(m => m.SearchCondition.SettledType)
+    @Html.HiddenFor(m => m.SearchCondition.IsAudit)
+    @Html.HiddenFor(m => m.SearchCondition.SystemNumberSufixx)
+    @Html.HiddenFor(m => m.IsForAudit)
+    @Html.HiddenFor(m => m.AuditType)
+    @Html.HiddenFor(m => m.FinalAudit)
+    @Html.HiddenFor(m => m.Name)
+    @Html.HiddenFor(m => m.SearchCondition.IsManualSettled)
+    @Html.HiddenFor(m => m.IsBatchAdjust)
+    @Html.HiddenFor(m => m.IsExport)
+    if (Model.IsForAudit || Model.IsBatchAdjust)
+    {
+    @Html.HiddenFor(m => m.IsInvoiced)
+    }
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">系统运单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.SystemNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">客户运单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">客户
+                   @* @if (Model.IsInnerUser)
+                    {
+                        
+                        @Html.ChooseString(Model.SearchCondition.SettledType == 0, "客户", "承运商")
+                    }*@
+                </td>
+                <td>
+                   
+                      @*  //if (Model.SearchCondition.SettledType == 0)
+                        //{*@
+                        
+                      @*  @Html.DropDownListFor(m => m.SearchCondition.CustomerOrShipperID, Model.Customers)
+                        }
+                        else
+                        {*@
+                        @Html.DropDownListFor(m => m.SearchCondition.CustomerOrShipperID, Model.Customers, "==请选择==")
+                      @*  }*@
+                    
+                   @*   //else if (Model.SearchCondition.SettledType == 1)
+                        //{
+                      
+                           
+                        //}
+                    }*@
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">运单类型
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.PODTypeID, Model.PODTypes, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">运输类型
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.ShipperTypeID, Model.ShipperTypes, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">整车/零担
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.TtlOrTplID, Model.TtlOrTpls, "==请选择==")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">起运城市
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                    <a id="startCityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.SearchCondition.StartCityID)
+                    @Html.HiddenFor(m => m.SearchCondition.StartCityName)
+                    @Html.HiddenFor(m => m.SearchCondition.StartCities)
+                </td>
+                <td class="TableColumnTitle">目的城市
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                    <a id="endCityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.SearchCondition.EndCityID)
+                    @Html.HiddenFor(m => m.SearchCondition.EndCityName)
+                    @Html.HiddenFor(m => m.SearchCondition.EndCities)
+                </td>
+                <td class="TableColumnTitle">发货日期
+                </td>
+                <td>
+                    @Html.CalendarRange("ActualDeliveryDate", "calendarRange")
+                </td>
+            </tr>
+            @if (!Model.IsForAudit && !Model.IsBatchAdjust)
+            {
+                <tr>
+                    <td class="TableColumnTitle">是否开票
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.IsInvoiced, Model.IsInvoiceds)
+                    </td>
+                    <td class="TableColumnTitle">承运商</td>
+                    <td>@Html.TextBoxFor(m => m.SearchCondition.CustomerOrShipperName)
+                        @Html.HiddenFor(m => m.SearchCondition.CustomerOrShipperID)</td>
+                    <td class="TableColumnTitle"></td>
+                    <td></td>
+                </tr>
+            }
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+            <input type="submit" value="导出" id="ExportButton" />
+            @if (Model.ShowSelectCheckBox && !Model.IsForAudit)
+            {
+                @Html.Raw("&nbsp;&nbsp;");
+                <input type="button" value="开票" id="InvoiceButton" />
+            }
+            @if (Model.IsForAudit)
+            {
+                @Html.Raw("&nbsp;&nbsp;");
+                <input type="button" value="审核" id="AuditButton" />
+            }
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>运单列表
+             @if (Model.SettledPods != null && Model.SettledPods.Any())
+             {
+                 @Html.Raw("(" + Model.SettledPods.Count() + ")");
+             }
+            @Model.Message
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    @if (Model.ShowSelectCheckBox)
+                    {
+                        <th>
+                            @Html.CheckBox("selectAll")
+                        </th>
+                    }
+                    @if (Model.IsInnerUser)
+                    {
+                        <th>客户运单号
+                        </th>
+                        <th>
+                            @Html.ChooseString(Model.SearchCondition.SettledType == 0, "客户", "承运商")
+                        </th>
+                    }
+                    else
+                    {
+                        if (Model.SearchCondition.UserType == 0)
+                        {
+                        <th>客户
+                        </th>
+                        <th>客户运单号
+                        </th>
+                            
+                        }
+                        else if (Model.SearchCondition.UserType == 1)
+                        {
+                        <th>承运商
+                        </th>
+                        <th>系统运单号
+                        </th>
+                        }
+                    }
+                    <th>运单信息</th>
+                    @* <th>运单<br />
+                        类型
+                    </th>
+                    <th>运输<br />
+                        类型
+                    </th>
+                    <th>整车<br />
+                        零担
+                    </th>
+                    <th>起运<br />
+                        城市
+                    </th>
+                    <th>目的<br />
+                        城市
+                    </th>
+                    <th>发货<br />
+                        日期
+                    </th>
+                    <th>箱数
+                    </th>
+                    <th>重量<br />
+                        (公斤)
+                    </th>
+                    <th>件数
+                    </th>
+                    <th>体积<br />
+                        (立方)
+                    </th>*@
+                    <th>
+                        @if (!Model.IsForAudit)
+                        {
+                            @Html.Raw("运费")
+                        }
+                        else
+                        {
+                            if (Model.AuditType == 1)
+                            {
+                            @Html.Raw("短拨费")
+                            }
+                            else if (Model.AuditType == 2)
+                            {
+                            @Html.Raw("配送费")
+                            }
+                            else if (Model.AuditType == 3)
+                            {
+                            @Html.Raw("快递费")
+                            }
+                            else if (Model.AuditType == 4)
+                            {
+                            @Html.Raw("手动结算运费")
+                            }
+                            else
+                            {
+                            @Html.Raw("运费")
+                            }
+                        }
+                    </th>
+                    @if (!Model.IsForAudit)
+                    {
+                        <th>燃油<br />
+                            附加费
+                        </th>
+                        <th>点费
+                        </th>
+                        <th>其他<br />
+                            费用
+                        </th>
+                    }
+                    @if (!Model.IsForAudit)
+                    {
+                      
+                        <th>合计
+                        </th>
+                    }
+                    <th style="width: 50px;">备注
+                    </th>
+                    @if (!Model.IsForAudit && !Model.IsBatchAdjust)
+                    {
+                        <th>是否<br />
+                            开票
+                        </th>
+                    }
+                    @if (Model.IsForAudit)
+                    {
+                        <th style="width: 18%;">审核历史</th>
+                    }
+                    @if (Model.ShowActionButton || Model.IsBatchAdjust)
+                    {
+                        
+                        <th>操作
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SettledPods != null && Model.SettledPods.Any())
+                {
+                    foreach (var settledPod in Model.SettledPods)
+                    {
+                    <tr data-id="@settledPod.ID">
+                        @if (Model.ShowSelectCheckBox)
+                        {
+                            <td>
+                                @Html.CheckBox("check" + settledPod.ID.ToString(), new { data_ID = settledPod.ID, @class = "checkForSelect" })
+                            </td>
+                        }
+                        @if (Model.IsInnerUser)
+                        {
+                            <td>
+                                <a id="listCustomerOrderNumber" data-id="@settledPod.ID" href="/POD/POD/ViewPodAll/@settledPod.PodID?showEditRelated=false">@settledPod.CustomerOrderNumber</a>
+                            </td>
+                            <td>@settledPod.CustomerOrShipperName</td>
+                        }
+                        else
+                        {
+                            if (Model.SearchCondition.UserType == 0)
+                            {
+                            <td>@settledPod.CustomerOrShipperName</td>
+                            <td>
+                                <a id="listSystemNumber" data-id="@settledPod.ID" href="/POD/POD/ViewPodAllForOuterUser/@settledPod.ID?showEditRelated=false">@settledPod.SystemNumber</a>
+
+                            </td>
+                            }
+                            else if (Model.SearchCondition.UserType == 1)
+                            {
+                            <td>@settledPod.CustomerOrShipperName</td>
+                            <td>
+                                <a id="listCustomerOrderNumber" data-id="@settledPod.ID" href="/POD/POD/ViewPodAllForOuterUser/@settledPod.ID?showEditRelated=false">@settledPod.CustomerOrderNumber</a>
+                            </td>
+                            }
+                        }
+                        <td>运单类型:@settledPod.PODTypeName<br />
+                            运输类型:@settledPod.ShipperTypeName<br />
+                            整车零担:@settledPod.TtlOrTplName<br />
+                            起运城市:@settledPod.StartCityName<br />
+                            目的城市:@settledPod.EndCityName<br />
+                            实际发货日期:@Html.ChooseString(settledPod.ActualDeliveryDate.HasValue, settledPod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd"), "")<br />
+                            箱数:@settledPod.BoxNumber<br />
+                            件数:@settledPod.GoodsNumber<br />
+                            重量(公斤):@settledPod.Weight<br />
+                            体积(立方):@settledPod.Volume<br />
+                        </td>
+                        @*<td>
+                                @settledPod.PODTypeName
+                            </td>
+                            <td>
+                                @settledPod.ShipperTypeName
+                            </td>
+                            <td>
+                                @settledPod.TtlOrTplName
+                            </td>
+                            <td>
+                                @settledPod.StartCityName
+                            </td>
+                            <td>
+                                @settledPod.EndCityName
+                            </td>
+                            <td>
+                                @Html.ChooseString(settledPod.ActualDeliveryDate.HasValue, settledPod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd"),"")
+                            </td>
+                            <td>
+                                @settledPod.BoxNumber
+                            </td>
+                            <td>
+                                @settledPod.Weight
+                            </td>
+                            <td>
+                                @settledPod.GoodsNumber
+                            </td>
+                            <td>
+                                @settledPod.Volume
+                            </td>*@
+                        <td>
+                            @if (Model.IsBatchAdjust)
+                            {
+                                @Html.Raw("￥")
+                                @Html.TextBox("txtShipAmt", settledPod.ShipAmt, new { style = "width:80px", @class = "txtShipAmt" });
+                            }
+                            else
+                            {
+                                
+                                @Html.Raw("￥" + settledPod.ShipAmt);
+                            }
+                        </td>
+                        @if (!Model.IsForAudit)
+                        {
+                            <td>
+                                @if (Model.IsBatchAdjust)
+                                {
+                                    @Html.Raw("￥")
+                                    @Html.TextBox("txtBafAmt", settledPod.BAFAmt, new { style = "width:50px", @class = "txtBafAmt" });
+                                }
+                                else
+                                {
+                                    @Html.Raw("￥" + settledPod.BAFAmt);
+                                }
+                            </td>
+                            <td>
+                                @if (Model.IsBatchAdjust)
+                                {
+                                    @Html.Raw("￥")
+                                    @Html.TextBox("txtPointAmt", settledPod.PointAmt, new { style = "width:50px", @class = "txtPointAmt" });
+                                }
+                                else
+                                {
+                                    @Html.Raw("￥" + settledPod.PointAmt);
+                                }
+                            </td>
+                            <td>@if (Model.IsBatchAdjust)
+                                {
+                                @Html.TextBox("txtOtherAmt", settledPod.OtherAmt, new { style = "width:60px", @class = "txtOtherAmt" });
+                                }
+                                else
+                                {
+                                @Html.Raw("￥" + settledPod.OtherAmt);
+                                }
+                            </td>
+                        }
+                        @if (!Model.IsForAudit)
+                        {
+                            <td>￥@settledPod.TotalAmt
+                            </td>
+                        }
+                        <td style="width: 50px; overflow: hidden;">
+                            @if (Model.IsBatchAdjust)
+                            {
+                                @Html.TextArea("txtRemark", settledPod.Remark, new { style = "width:120px;min-height:140px;", @class = "txtRemark" });
+                            }
+                            else
+                            {
+                                @settledPod.Remark
+                            }
+                        </td>
+                        @if (!Model.IsForAudit && !Model.IsBatchAdjust)
+                        {
+                            <td>
+                                @Html.ChooseString(settledPod.InvoiceID.HasValue && settledPod.InvoiceID.Value > 0, "Y", "N")
+                            </td>
+                        }
+                        @if (Model.IsForAudit)
+                        {
+                            <td>
+                                @{
+                            if (Model.SettledPodAuditHistoryCollection != null)
+                            {
+                                var auditHistory = Model.SettledPodAuditHistoryCollection.Where(s => s.SettledPodID == settledPod.ID);
+                                if (auditHistory != null && auditHistory.Any())
+                                {
+                                    auditHistory = auditHistory.OrderBy(s => s.AuditTime);
+                                    foreach (var history in auditHistory)
+                                    {
+                                        string msg = history.Auditor + "于" + history.AuditTime.ToString("yyyy-MM-dd") + history.Str1 + "此运单费用,审核备注为:" + history.AuditRemark;
+                                    @msg<br /> 
+                                    }
+                                }
+                            }
+                                }
+                            </td>
+                        }
+                        @if (Model.ShowActionButton)
+                        {
+                                
+                            <td>
+                                @if (settledPod.InvoiceID.HasValue && settledPod.InvoiceID.Value == 0)
+                                {
+                                    <a id="editSettledPod" class="editSettledPod" href="/Finance/Settlement/EditSettledPod/@settledPod.ID" data-id="@settledPod.ID">编辑</a>
+                                    <label id="deleteSettledPod" class="deleteSettledPod labelPointer"  data-id="@settledPod.ID" >删除</label>
+                                    if (settledPod.SettledType == 1)
+                                    {
+                                    <br />
+                                    <br />
+                                    <label id="cashPay" class="cashPay labelPointer"  data-id="@settledPod.ID" data-CustomerOrderNumber="@settledPod.CustomerOrderNumber" data-TotalAmt="@settledPod.TotalAmt">现金支付</label>
+                                           
+                                    }
+                                }
+                            </td>
+                        }
+                        @if (Model.IsBatchAdjust)
+                        {
+                            <td>
+                                <label id="batchAdjust" class="batchAdjust labelPointer" data-id="@settledPod.ID">确定修改</label>
+                            </td>
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+
+<div id="showInDialog" style="display: none">
+    <table>
+        <tr>
+            <td class="TableColumnTitle" style="width: 30%">实际支付金额
+            </td>
+            <td>
+                @Html.TextBox("AMT")
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">支付日期
+            </td>
+            <td>
+                @Html.TextBox("payDate", DateTime.Now.ToString("yyyy-MM-dd"))
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">备注
+            </td>
+            <td>
+                @Html.TextArea("payRemark", new { style = "width:95%" })
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="showAuditDialog" style="display: none">
+    <table>
+        <tr>
+            <td class="TableColumnTitle" style="width: 30%">审核日期
+            </td>
+            <td>
+                @Html.TextBox("AuditDate", DateTime.Now.ToString("yyyy-MM-dd"))
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">审核意见
+            </td>
+            <td>
+                @Html.TextArea("AuditRemark", new { style = "width:95%" })
+            </td>
+        </tr>
+    </table>
+</div>
+
+@if (Model.SettledPods != null && Model.SettledPods.Any())
+{
+    <div class="actionButtonDiv fixedInBottom">
+        费用总计:￥@Model.SettledPods.Sum(s => s.TotalAmt)
+    </div>
+}

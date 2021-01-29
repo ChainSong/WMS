@@ -1,0 +1,154 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.InventoryViewModel
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                }
+                <td class="TableColumnTitle" style="display:none"><label>客户</label></td>
+                <td style="display:none">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>门店</label></td>
+                @if (AreaList.Count() > 1)
+                {
+                    <td>@Html.DropDownListFor(m => m.SearchCondition.Area, AreaList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                }
+                else
+                {
+                    <td>@Html.DropDownListFor(m => m.SearchCondition.Area, AreaList, new { @style = "width:100%", @class = "form-control" })</td>
+                }
+                @*<td class="TableColumnTitle">
+                    <label>门店名称：</label>
+                </td>
+                <td><strong>@Html.TextBoxFor(m => m.SearchCondition.str1, new { @style = "width:100%", @readonly="readonly", @class = "form-control" })</strong></td>*@
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>UPC</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>SKU</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.Article, new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>Size</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.Size, new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+        </table>
+        @*<input type="hidden" id="mapstr" value="@Model.SearchCondition.str20" />*@
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+
+        <legend>
+            库存列表
+            @if (Model.ReportInventoryCollection != null && Model.ReportInventoryCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReportInventoryCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>仓库</th>
+                    <th>库区</th>
+                    <th>UPC</th>
+                    <th>SKU</th>
+                    <th>尺码</th>
+                    <th>BU</th>
+                    <th>库存数量</th>
+                    <th>可用数量</th>
+                    <th>Gender</th>
+                    <th>Category</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (Model.ReportInventoryCollection != null && Model.ReportInventoryCollection.Any())
+                {
+                    foreach (var item in Model.ReportInventoryCollection)
+                    {
+                        <tr>
+                            <td>@item.CustomerName</td>
+                            <td>@item.Warehouse</td>
+                            <td>@item.Area</td>
+                            <td>@item.SKU</td>
+                            <td>@item.Article</td>
+                            <td>@item.Size</td>
+                            <td>@item.BU</td>
+                            <td>@item.Qty</td>
+                            <td>@item.InventoryQty</td>
+
+                            <td>@item.Gender</td>
+                            <td>@item.str4</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}
+
+<script>
+    $(function () {
+        $("#searchButton").on('click', function () {
+            if ($("#SearchCondition_CustomerID").val() == '') {
+                showMsg('请先选择客户，谢谢', 3000)
+                return false;
+            }
+            if ($("#SearchCondition_Warehouse").val() == '') {
+                showMsg('请先选择仓库，谢谢', 3000)
+                return false;
+            }
+            //if ($("#SearchCondition_Area").val() == '') {
+            //    showMsg('请先选择库区，谢谢', 3000)
+            //    return false;
+            //}
+        });
+        //库区改变
+        //$("#SearchCondition_Area").change(function () {
+        //    let areanme = $("#SearchCondition_Area").val();
+        //    //门店名称赋值
+        //    let mapstr = $("#mapstr").val();
+        //    if (mapstr != "") {
+        //        let maplist = JSON.parse(mapstr);
+        //        for (var i = 0; i < maplist.length; i++) {
+        //            if (maplist[i].AreaName == areanme) {
+        //                $("#SearchCondition_str1").val(maplist[i].Company);
+        //                break;
+        //            } else {
+        //                $("#SearchCondition_str1").val("");
+        //            }
+        //        }
+
+        //    }
+
+        //});
+
+    })
+
+
+
+
+
+</script>
+

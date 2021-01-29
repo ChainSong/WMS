@@ -1,0 +1,74 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@Url.PopupJs()
+@using (Html.BeginForm())
+{ 
+    <fieldset>
+        <legend>库存列表
+            @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+            {
+                @Html.Raw("(" + Model.InventoryCollection.Count() + ")");
+            }
+
+
+        </legend>
+        <div id="tables">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        @*<th class="checkBoxHead">@Html.CheckBox("selectAll")</th>*@
+                        <th>系统单号</th>
+                        <th>客户</th>
+                        @*<th>仓库</th>*@
+                        @*<th>库区&nbsp;|&nbsp;库位</th>*@
+                        @*<th>SKU</th>*@
+                         
+                        <th>品牌</th>
+                        <th>规格</th>
+                        <th>货品名称</th>
+                        <th>批次号</th>
+                        <th>数量</th>
+                        <th>单价</th>
+                        <th>指导价格</th>
+                        <th>总价</th>
+                        <th>操作</th>
+                        @*<th>批次号</th>*@
+                        @*<th>托号</th>*@
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.directAddInventory != null && Model.directAddInventory.Any())
+                    {
+
+                        foreach (var item in Model.directAddInventory)
+                        {
+                             
+                        <tr>
+                            <td>@item.InventoryId</td>
+                            <td>@item.Customer</td>
+                            <td>@item.Brand</td>
+                            <td>@item.Specifications</td>
+                            <td>@item.SKUName</td>
+                            <td>@item.BatchNumber</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price</td>
+                            <td>@item.GuidePrice</td>
+                            <td>@item.TotalPrice</td>
+                            <td>
+                                <input type="button" data-id="@item.Id" class="btn Butdel btn-success" value="删除"/></td>
+                        </tr> 
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="返回" style="margin-top: 50px" id="searchButton" onclick="window.history.go(-1)" name="Action" />
+
+
+        </div>
+    </fieldset>
+ 
+}

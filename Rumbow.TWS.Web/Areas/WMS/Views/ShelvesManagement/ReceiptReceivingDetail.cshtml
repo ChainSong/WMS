@@ -1,0 +1,305 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.ShelvesManagement.ShelvesModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@Html.Partial("MsgMask")
+@using (Html.BeginForm())
+{
+
+    @Html.Hidden("WarehouseName", Model.storesByGetReceipt.WarehouseName);
+    @Html.Hidden("WarehouseID", Model.storesByGetReceipt.WarehouseID);
+    @Html.Hidden("CustomerID", Model.storesByGetReceipt.CustomerID);
+    @Html.Hidden("RID", (long)ViewBag.RID);
+    <fieldset>
+        <legend>上架基本信息</legend>
+        <form>
+            <table id="conditionTable">
+                <tr>
+
+                    <td class="TableColumnTitle" style="width: 11%;">入库单号</td>
+                    <td id="storesByGetReceipt_ReceiptNumber" style="width: 21%;">
+                        @Model.storesByGetReceipt.ReceiptNumber
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">外部单号</td>
+                    <td style="width: 21%;">
+                        @Model.storesByGetReceipt.ExternReceiptNumber
+                    </td>
+                    <td class="TableColumnTitle">入库时间</td>
+                    <td>
+                        @Model.storesByGetReceipt.ReceiptDate
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">仓库名称</td>
+                    <td>@Model.storesByGetReceipt.WarehouseName</td>
+                    <td class="TableColumnTitle">客户名称</td>
+                    <td id="storesByGetReceipt_CustomerName">@Model.storesByGetReceipt.CustomerName</td>
+                    <td class="TableColumnTitle">上架状态</td>
+                    @switch (@Model.storesByGetReceipt.Status)
+                    {
+                        case 1:
+                            <td id="storesByGetReceipt_Status">待上架</td>
+                            break;
+                        case 5:
+                            <td id="storesByGetReceipt_Status">已上架</td>
+                            break;
+                        case 9:
+                            <td id="storesByGetReceipt_Status">已入库</td>
+                            break;
+                        case -1:
+                            <td id="storesByGetReceipt_Status">取消</td>
+                            break;
+                        default:
+                            <td id="storesByGetReceipt_Status"></td>
+                            break;
+                    }
+                </tr>
+            </table>
+        </form>
+        <div class="actionButtonDiv">
+            @*   <input type="button" class="btn btn-success" value="导出差异" id="Abnormal" />*@
+            <input type="button" class="btn btn-success" value="保存" id="SubmitOK" />
+            @if (ViewBag.Project != 9)
+            {
+                @*<input type="button" class="btn btn-success" value="加入库存" id="AddInventory" />*@
+            }
+            @*<input type="button" class="btn btn-success" value="智能入库" id="intelligentDispatch" />*@
+            <input type="button" class="btn btn-success" id="Ret" value="返回" onclick="history.go(-1)">
+
+        </div>
+    </fieldset>
+
+    <div id="intelligentDispatchPanel" style="display: none">
+        <table>
+            <tr>
+                @{
+                    var WorkStation = (IEnumerable<SelectListItem>)ViewBag.WorkStation;
+                }
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">分配操作台</td>
+                <td>
+                    @Html.DropDownList("WorkStation", WorkStation, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">优先级</td>
+                <td>
+                    <select class="form-control" id="priority">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </td>
+
+            </tr>
+        </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="intelligentDispatchOK" />
+            <input type="button" class="btn btn-success" value="取消" id="intelligentDispatchRT" />
+        </div>
+    </div>
+
+
+    <fieldset>
+        <legend>上架列表信息</legend>
+        <div id="NewDiv" style="overflow-X: scroll;">
+            <table id="resultTable" style="width: 180%; table-layout: fixed;">
+                @*class="table table-striped"*@
+            <thead>
+                <tr>
+                    <th style="width: 50px">操作</th>
+
+                    <th style="width: 100px">收货单行号</th>
+                    <th style="width: 150px">SKU</th>
+                    <th style="width: 80px">SKU行号</th>
+                    <th>货品名称</th>
+                    <th>货品等级</th>
+                    @*<th>分级标准</th>*@
+                    <th>UPC</th>
+                    <th>期望数量</th>
+                    <th>实际数量</th>
+
+                    <th>单位</th>
+                    <th>规格</th>
+                    @*<th>库区</th>*@
+
+                    <th>(区)库位</th>
+                    <th>库位剩余量</th>
+                    <th>批次号</th>
+                    <th>托号</th>
+                    @*<th>生产日期</th>*@
+                    <th>备注</th>
+                    <th style="display: none">客户ID</th>
+                    <th style="display: none">客户名称</th>
+                    <th style="display: none">收货单号</th>
+                    <th style="display: none">外部单号</th>
+                    <th style="display: none">ASNID</th>
+                    <th style="display: none">ASNNumber</th>
+                    <th style="display: none">RDID</th>
+                    <th style="display: none">RID</th>
+                    <th style="display: none">仓库ID</th>
+                    <th style="display: none">仓库</th>
+                </tr>
+            </thead>
+            <tbody id="editTable">
+
+                @if (Model.Shelves != null && Model.Shelves.Any())
+                {
+                    foreach (var item in Model.Shelves)
+                    {
+                        <tr>
+                            <td style="position: relative" class="OoperationTD">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    @*onclick="BreakUp(this,@item.LineNumber)"*@
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton">拆分</label>
+                                    @*<div data-id="@crminfo.ID"   class="editSettledPod">编辑</div>*@
+                                    @*onclick='Del(this,@item.LineNumber)'*@
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton">删除</label>
+                                    @*<div    onclick="deleteSKU('@crminfo.ID',this)">删除</div>*@
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                @*<div    onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                            </td>
+                            <td class="LineNumber">@item.LineNumber</td>
+                            <td class="SKU">@item.SKU</td>
+                            @if (string.IsNullOrEmpty(item.SkuLineNumber))
+                            {
+                                <td class="SkuLineNumber">00001</td>
+                            }
+                            else
+                            {
+                                <td class="SkuLineNumber">@item.SkuLineNumber</td>
+                            }
+                            <td class="GoodsName">@item.GoodsName</td>
+                            @if (!string.IsNullOrEmpty(item.GoodsType))
+                            {
+                                var list = (ViewBag.selectList as IEnumerable<SelectListItem>).ToList();
+                                for (int i = 0; i < list.Count(); i++)
+                                {
+                                    if (list[i].Text == item.GoodsType)
+                                    {
+                                        list[i].Selected = true;
+                                        break;
+                                    }
+                                }
+                                <td class="GoodsType">@Html.DropDownList("A品", list, new { @class = "notKeyVal form-control", type = "DropDownList", @style = "width:80px" })</td>
+                            }
+                            else
+                            {
+                                <td class="GoodsType">@Html.DropDownList("A品", ViewBag.selectList as IEnumerable<SelectListItem>, new { @class = "notKeyVal form-control", type = "DropDownList", @style = "width:80px" })</td>
+                            }
+                            @* <td>
+                                    <input type="text" style="width: 80px;" placeholder="" class="form-control"  value=""/>
+                                </td>*@
+                            <td class="UPC">
+                                <input type="text" style="width: 80px;" placeholder="" class="form-control" value="@item.UPC" />
+                            </td>
+                            <td class="QtyExpected">@item.QtyExpected</td>
+                            <td class="QtyReceived">
+                                @if (@item.QtyReceived == 0)
+                                {
+                                    <input type="text" style="width: 80px;" placeholder="" class="form-control " onblur="la('@item.LineNumber','@item.QtyExpected','@item.BatchNumber','@item.BoxNumber')" value="@item.QtyExpected" />
+                                }
+                                else
+                                {
+                                    <input type="text" style="width: 80px;" placeholder="" class="form-control " onblur="la('@item.LineNumber','@item.QtyExpected','@item.BatchNumber','@item.BoxNumber')" value="@item.QtyReceived" />
+                                }
+                            </td>
+
+                            <td class="Unit">
+                                @item.Unit
+                            </td>
+                            <td class="Specifications">
+                                @item.Specifications
+                            </td>
+                            <td class="Location">
+                                @if (!string.IsNullOrEmpty(@item.Area) && !string.IsNullOrEmpty(@item.Location))
+                                {
+                                    <input type="text" class="Location form-control" style="width: 120px;" placeholder="" value="@item.Area|@item.Location" />
+                                }
+                                else
+                                {
+                                    <input type="text" class="Location form-control" style="width: 120px;" placeholder="" value="" />
+                                }
+                            </td>
+                            <td class="RemainingNum">
+                                <input type="text" readonly="true" style="width: 120px;" class="form-control " placeholder="" value="@item.LocationMax" />
+
+                            </td>
+                            <td class="BatchNumber">
+                                @if (@item.BatchNumber != null && @item.BatchNumber != "")
+                                {
+                                    <input type="text" style="width: 120px;" class="form-control BatchNumber" disabled="disabled" placeholder="" value="@item.BatchNumber" />
+                                }
+                                else
+                                {
+                                    <input type="text" style="width: 120px;" class="form-control BatchNumber" placeholder="" value="@item.BatchNumber" />
+                                }
+                            </td>
+                            <td class="BoxNumber">
+
+                                @if (@item.BoxNumber != null && @item.BoxNumber != "")
+                                {
+                                    <input type="text" style="width: 200px;" class="form-control BoxNumber" disabled="disabled" placeholder="" value="@item.BoxNumber" />
+                                }
+                                else
+                                {
+                                    <input type="text" style="width: 200px;" class="form-control BoxNumber" placeholder="" value="@item.BoxNumber" />
+                                }
+
+                            </td>
+                            <td class="Remark">
+                                <input type="text" style="width: 120px;" class="form-control Remark" placeholder="" value="@item.Remark" />
+                            </td>
+
+                            <td style="display: none" class="CustomerID">@item.CustomerID</td>
+                            <td style="display: none" class="CustomerName">@item.CustomerName</td>
+                            <td style="display: none" class="ReceiptNumber">@item.ReceiptNumber</td>
+                            <td style="display: none" class="ExternReceiptNumber">@item.ExternReceiptNumber</td>
+                            <td style="display: none" class="ASNID">@item.ASNID</td>
+                            <td style="display: none" class="ASNNumber">@item.ASNNumber</td>
+                            <td style="display: none" class="RDID">@item.RDID</td>
+                            <td style="display: none" class="RID">@item.RID</td>
+                            <td style="display: none" class="WarehouseID">@item.WarehouseID</td>
+                            <td style="display: none" class="WarehouseName">@item.WarehouseName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+}
+@*<div id="Abnormals" style="display: none;">
+        <div style="overflow-y: auto; width:98%; height: auto;">
+            <table id="differencesTable">
+                <thead>
+                    <tr>
+                        <th>收货单行号</th>
+                        <th>SKU</th>
+                        <th>SKU行号</th>
+                        <th>货品名称</th>
+                        <th>货品类型</th>
+                        <th>期望数量</th>
+                        <th>实际数量</th>
+                        <th>库区</th>
+                        <th>库位</th>
+                        <th>备注</th>
+
+                    </tr>
+                </thead>
+                <tbody id="differences"></tbody>
+            </table>
+        </div>
+    </div>*@
+

@@ -1,0 +1,177 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.WaveModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.StartCompleteTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCompleteTime)
+
+    <fieldset>
+        <legend>波次查询条件</legend>
+        <table id="conditionTable">
+            @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+            }
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>波次号</label>
+                </td>
+                <td style="width: 16%;">@Html.TextAreaFor(m => m.SearchCondition.WaveNumber, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>订单号</label>
+                </td>
+                <td style="width: 16%;">@Html.TextAreaFor(m => m.SearchCondition.OrderNumber, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>外部单号</label>
+                </td>
+                <td style="width: 16%;">@Html.TextAreaFor(m => m.SearchCondition.ExternOrderNumber, new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>预出库单号</label>
+                </td>
+                <td style="width: 16%;">@Html.TextAreaFor(m => m.SearchCondition.PreOrderNumber, new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>创建日期</label>
+                </td>
+                <td>@Html.CalendarRange("CreateTime", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartCreateTime, @Model.SearchCondition.EndCreateTime)</td>
+                <td class="TableColumnTitle">
+                    <label>完成日期</label>
+                </td>
+                <td>@Html.CalendarRange("CompleteTime", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteTime, @Model.SearchCondition.EndCompleteTime)</td>
+
+                <td class="TableColumnTitle"></td>
+                <td></td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="分配波次" id="AddWaveButton" />
+            <input type="button" class="btn btn-success" value="分配波次2" id="AddWaveButton2" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            波次列表
+            @if (Model.WaveCollection != null && Model.WaveCollection.Any())
+            {
+                @Html.Raw("(" + Model.WaveCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable" style="width: 110%;">
+                <thead>
+                    <tr>
+
+                        <th class="checkBoxHead">
+                            @Html.CheckBox("selectAll", new { @class = "btn btn-success" })
+
+                        </th>
+                        <th style="width: 150px">波次号</th>
+                        <th style="width: 150px">客户</th>
+                        <th style="width: 150px">仓库</th>
+                        <th style="width: 150px">波次数量</th>
+                        <th style="width: 150px">实际分配数量</th>
+                        <th style="width: 150px">是否按单品单件分配</th>
+                        <th style="width: 150px">是否按快递公司分配</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.WaveCollection != null && Model.WaveCollection.Any())
+                    {
+                        foreach (var info in Model.WaveCollection)
+                        {
+                            var isstr1 = info.IsSinglePriece == 1 ? "是" : "否";
+                            var isstr2 = info.IsExpressCompany == 1 ? "是" : "否";
+                            <tr id="@info.ID">
+                                <td>
+                                    @Html.CheckBox(info.ID.ToString(), new { data_ID = info.ID, data_name = info.WaveNumber, @class = "btn btn-success" })
+                                </td>
+                                <td>
+                                    <a href="/WMS/OrderManagement/WaveDetailView/?ID=@info.ID&ViewType=3&CustomerID=@info.CustomerID">@info.WaveNumber</a>
+                                </td>
+                                <td>
+                                    @info.CustomerName
+                                </td>
+                                <td>
+                                    @info.WarehouseName
+                                </td>
+                                <td>
+                                    @info.WaveCount
+                                </td>
+                                <td>
+                                    @info.ActualCount
+                                </td>
+                                <td>
+                                    @isstr1
+                                </td>
+                                <td>
+                                    @isstr2
+                                </td>
+                            </tr>
+
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+
+    <div id="DistributionDiv" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 150px">客户</td>
+                <td>
+                    @Html.DropDownList("customer", CustomerList)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 150px">仓库</td>
+                <td>
+                    @Html.DropDownList("warehouse", WarehouseList)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 150px">是否按快递公司</td>
+
+                <td><input id="IsExpressCompany" type="checkbox" checked="checked" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 150px">是否按单品单件</td>
+
+                <td><input id="IsSinglePriece" type="checkbox" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 150px">数量</td>
+
+                <td><input id="WaveCount" type="text" /></td>
+            </tr>
+        </table>
+        <br />
+        <br />
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="WaveBackOK" />
+            <input type="button" class="btn btn-success" value="返回" id="WaveReturn" />
+        </div>
+    </div>
+}

@@ -1,0 +1,135 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintPodModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@{
+    ViewBag.Title = "PrintAllPod";
+}
+<h2>PrintBox</h2>
+<style>
+    .only_for_print {
+        display: none;
+    }
+    .PageNext {
+        page-break-after: always;
+    }
+    .noprint {
+        display: none;
+    }
+    .bor > td {
+        border: 2px solid #000000;
+    }
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+    .border-table > td {
+        border: solid #000 1px;
+    }
+    #boxlist tr td {
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法   
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        location.href = "/WMS/OrderManagement/Index";
+    }
+</script>
+<div class="actionButtonDiv" style="padding-top: 60px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="PackageID()">
+</div>
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+    <table id="resultTable" border="0">
+        <thead>
+            <tr>
+                 <th>系统单号</th>
+                <th>客户名称</th>
+                <th>地址</th>
+            </tr>
+        </thead>
+        <tbody id="BodyTable">
+            @foreach (var CustomerInfo in Model.EnumerableCustomerInfo)
+            {
+                <tr id="">
+                    <td>@CustomerInfo.OrderNumber</td>
+                    <td>@CustomerInfo.Company</td>
+                    <td>@CustomerInfo.AddressLine1</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+            var i = 0;
+            foreach (var item in Model.EnumerableCustomerInfo)
+            {
+                i++;
+                var ids = "page" + i;
+    <div id='@ids'  class='only_for_print pagestyle' style="padding-top:110px">
+        <table style="padding:0px; text-align:left;"  id="boxpod"  >
+            <tr></tr>
+            <tr>
+                <td style="width:2px;"></td>
+                <td style="padding-top: 25px; padding-left: 55px;line-height:18px;">&nbsp;&nbsp;&nbsp;@item.OrderNumber<br/>@item.ExternOrderNumber<label style="margin-left:95px; padding:0px;line-height:0px;" >@item.datetime1</label><br/>@item.Warehouseaddress </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style=" padding-left: 30px;">@item.Estimatdischargetime <label style="margin-left:235px;">@item.Warehousecontact<label style="margin-left:95px;">@item.Warehousephone</label></label></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style=" padding-left: 40px;">@item.ShipToKey&nbsp;&nbsp;&nbsp;@item.Company&nbsp;&nbsp;&nbsp;@item.str9<label style="margin-left:125px;">@item.Receivingcontact</label> </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style=" padding-left: 55px;">@item.AddressLine1</td>
+                <td></td>
+            </tr>
+            <tr>
+                 <td></td>
+                <td style="padding-top: 50px; padding-left: 75px;">@item.Estimatdischargetime</td>
+                <td></td>
+            </tr>
+            <tr>
+                  <td></td>
+                <td style="padding-left: 35px;">@item.goodsName</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="padding-left: 55px;">@item.sumNum <label style="margin-left:205px;">@item.sumBox 箱</label> </td>
+                <td></td>
+            </tr>
+        </table>
+    </div> 
+            }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

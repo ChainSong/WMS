@@ -1,0 +1,339 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.AdjustmentCondition.StartAdjustmentDate)
+    @Html.HiddenFor(m => m.AdjustmentCondition.EndAdjustmentDate)
+    var ProjectName = (string)ViewBag.ProjectName;
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                    //var LocationList = (IEnumerable<SelectListItem>)ViewBag.LocationList;
+
+                    var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+                    ctype = ctype.Where(c => c.Type == "CustomerID" && c.Code == "AKZO");
+                    bool bl = false;
+                    foreach (var item in ctype)
+                    {
+                        if (CustomerList.Where(c => c.Value == item.Name).Any() && CustomerList.Where(c => c.Value == item.Name).Count() > 0)
+                        {
+                            bl = true;
+                            break;
+                        }
+                    }
+                }
+                <td class="TableColumnTitle"><label>客户名称</label></td>
+                <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.AdjustmentCondition.Warehouse, WarehouseList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>调整单类型</label></td>
+                @*@if (CustomerList.Where(c => c.Value == "75" || c.Value=="88").Any() && CustomerList.Where(c => c.Value == "75" || c.Value=="88").Count() > 0)
+                    {
+                *@
+                @if (bl)
+                {
+                    <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.AdjustmentType, Model.InventoryType.Where(c => c.Text != "库存调整单"), "==请选择==", new { @class = "form-control" })</td>
+                }
+                else
+                {
+                    <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.AdjustmentType, Model.InventoryType, "==请选择==", new { @class = "form-control" })</td>
+                }
+
+                <td class="TableColumnTitle"><label>调整日期</label></td>
+                <td style="width: 22%;">@Html.CalendarRange("AdjustmentDate", "calendarRange form-control calendarRangeReWrite", @Model.AdjustmentCondition.StartAdjustmentDate, @Model.AdjustmentCondition.EndAdjustmentDate)</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>冻结状态</label></td>
+                <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.IsHold, Model.FreezeList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>单据状态</label></td>
+                <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.Status, Model.InventoryStatus, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>库区</label></td>
+                <td>@Html.DropDownListFor(m => m.AdjustmentCondition.str19, AreaList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>库位</label></td>
+                <td>@Html.TextBoxFor(m => m.AdjustmentCondition.str20, new { @style = "width:100%", id = "locationselect", @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>库存调整单号</label></td>
+                <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.AdjustmentNumber, new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>SKU</label></td>
+                <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.str18, new { @style = "width:100%", id = "skulist", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>调整原因</label>
+                </td>
+                <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.AdjustmentReason, Model.ADJReasonType, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>调整备注</label>
+                </td>
+                <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.Remark, new { @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>门店代码</label></td>
+                <td>@Html.TextBoxFor(m => m.AdjustmentCondition.str3, new { @style = "width:100%", id = "locationselect", @class = "form-control" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增" id="addButton" onclick="createasn('@ProjectName')" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="portButton" name="Action" />
+            <input type="button" style="display:none;" class="btn btn-success" value="完成" id="CompletButton" onclick="PLComplet()" name="Action" />
+            <input type="button" class="btn btn-success" value="取消" id="StatusBackButton" onclick="Cancels()" name="Action" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            调整单列表
+            @if (Model.AdjustmentCollection != null && Model.AdjustmentCollection.Any())
+            {
+                @Html.Raw("(" + Model.AdjustmentCollection.Count() + ")");
+            }
+        </legend>
+        <div style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="width: 50px;">操作</th>
+                        <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                        <th>调整单号</th>
+                        <th>客户</th>
+                        <th>门店代码</th>
+                        <th>创建时间</th>
+                        <th>调整时间</th>
+                        <th>单据类型</th>
+                        <th>单据状态</th>
+                        @if (ProjectName != "Akzo")
+                        {
+                            <th>冻结单状态</th>
+                        }
+                        <th>仓库</th>
+                        <th>调整原因</th>
+                        <th>调整备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.AdjustmentCollection != null && Model.AdjustmentCollection.Any())
+                    {
+                        foreach (var adjust in Model.AdjustmentCollection)
+                        {
+                            var tdd = "operateTD" + @adjust.ID;
+                    <tr id="@adjust.AdjustmentNumber">
+                        <td style="position: relative">
+                            <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                @*  @if (adjust.Status == 1 && adjust.AdjustmentType != "库存冻结单" && adjust.IsHold != 1)
+                {
+                    <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                }
+                @if (adjust.Status == 1 && adjust.AdjustmentType == "库存冻结单" && adjust.IsHold != 1)
+                {
+                    <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                }
+                @if ((adjust.Status == 9 || adjust.Status == -1) && adjust.AdjustmentType == "库存冻结单" && adjust.IsHold == 1)
+                {
+                    <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                    <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                    <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                }*@
+                                @if (adjust.Status == 1)
+                                {
+                                    if (adjust.AdjustmentType == "鲸仓调整单")
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   edit" onclick="submitAndSend('@adjust.AdjustmentNumber','@adjust.ID','@adjust.AdjustmentType',this)">确认并反馈鲸仓</label>
+                                    }
+                                    else
+                                    {
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   edit" onclick="edit('@adjust.ID','@adjust.AdjustmentType')">编辑</label>
+                                        if (adjust.IsHold != 2)
+                                        {
+                                            <label style="cursor: pointer;" class="btn btn-primary btn-xs   Complet" onclick="Complet('@adjust.ID','@adjust.AdjustmentType',this)">完成</label>
+                                        }
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Cancel" onclick="Cancel('@adjust.ID',this)">取消</label>
+
+                                    }
+                                }
+                                @if (adjust.AdjustmentType == "库存冻结单" && adjust.IsHold == 1 && adjust.Status == 9)
+                                {
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs   Receipt" onclick="Unfreeze('@adjust.ID',this)">解冻</label>
+                                }
+                            </div>
+                            @if (((adjust.Status == 9 || adjust.Status == -1) && adjust.AdjustmentType != "库存冻结单") || (adjust.IsHold == 2 && adjust.AdjustmentType == "库存冻结单"))
+                            {
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs " disabled="disabled">操作</label>
+                            }
+                            else
+                            {
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                            }
+                        </td>
+                        <td>
+                            @Html.CheckBox("check" + @adjust.AdjustmentNumber, new { data_ID = @adjust.ID, data_name = @adjust.Status, data = @adjust.AdjustmentType, @class = "checkForSelect" })
+                        </td>
+                        <td>
+                            @if (adjust.AdjustmentType == "库存调整单" || adjust.AdjustmentType == "鲸仓调整单")
+                            {
+                                <a href="/WMS/InventoryManagement/AdjustAddorEditorView/?ID=@adjust.ID&ViewType=0">@adjust.AdjustmentNumber</a>
+                            }
+                            else if (adjust.AdjustmentType == "库存移动单")
+                            {
+                                <a href="/WMS/InventoryManagement/MoveAddorEditorView/?ID=@adjust.ID&ViewType=0">@adjust.AdjustmentNumber</a>
+                            }
+                            else if (adjust.AdjustmentType == "库存冻结单")
+                            {
+                                <a href="/WMS/InventoryManagement/FrozenAddorEditorView/?ID=@adjust.ID&ViewType=0">@adjust.AdjustmentNumber</a>
+                            }
+                            else if (adjust.AdjustmentType == "库存品级调整单")
+                            {
+                                <a href="/WMS/InventoryManagement/AdjustGoodsTypeAddorEditorView/?ID=@adjust.ID&ViewType=0">@adjust.AdjustmentNumber</a>
+                            }
+                        </td>
+                        <td>@adjust.CustomerName</td>
+                        <td>@adjust.str3</td>
+                        <td>@adjust.CreateTime</td>
+                        <td>@adjust.AdjustmentTime</td>
+                        <td>@adjust.AdjustmentType</td>
+                        <td>
+                            @if (adjust.Status == 1)
+                            {
+                                @Html.Raw("新增");
+                            }
+                            else if (adjust.Status == 9)
+                            {
+                                @Html.Raw("完成");
+                            }
+                            else
+                            {
+                                @Html.Raw("取消");
+                            }
+                        </td>
+                        @if (ProjectName != "Akzo")
+                        {
+                            <td>
+                                @if (adjust.IsHold == 1)
+                                {
+                                    @Html.Raw("冻结");
+                                }
+                                else if (adjust.IsHold == 2)
+                                {
+                                    @Html.Raw("已解冻");
+                                }
+                                else
+                                {
+                                    @Html.Raw(" ");
+                                }
+                            </td>
+                        }
+                        <td>@adjust.Warehouse</td>
+                        <td>@adjust.AdjustmentReason</td>
+                        <td>@adjust.Remark</td>
+
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+
+
+    <div style="padding-top: 100px">
+        <div style="float: left; width: 100%">
+            <fieldset>
+                <legend>导入提示</legend>
+                <div>
+                    <label>1,请根据批量导入模板进行导入</label><br>
+                    <label>2,尽量不要长时间段的导入,减轻服务器压力</label><br>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>
+                    选择Excel导入变更单信息
+                </legend>
+                <div id="importDiv">
+                    <b>客户:</b>@Html.DropDownListFor(m => m.AdjustmentCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", @style = "width:150px;padding-bottom:1px", id = "CustomerID" })
+                    <b>仓库:</b>@Html.DropDownListFor(m => m.AdjustmentCondition.Warehouse, WarehouseList, new { @class = "form-control", @style = "width:150px;padding-bottom:1px", id = "warehousename" })
+                    <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+                    <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+                    <a class="btn btn-primary" id="portButtonTemplet" style="margin-top: -9px; text-decoration: none; color: white" onclick="demo();">下载模板</a>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>
+                    导入结果
+                </legend>
+                <div id="outPutResult">
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div id="confirm" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px;">提示</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">&nbsp;&nbsp;&nbsp;&nbsp;您确定取消吗？</td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="confirmOK" />
+            <input type="button" class="btn btn-success" value="返回" id="confirmReturn" />
+        </div>
+    </div>
+
+    <div id="selectType" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">调整单类型</td>
+                <td>
+                    @*@if (CustomerList.Where(c => c.Value == "75" || c.Value == "88").Any() && CustomerList.Where(c => c.Value == "75" || c.Value == "88").Count() > 0)
+                        {
+                            @Html.DropDownList("select_adjustmenttype",Model.InventoryType.Where(c=>c.Text !="库存冻结单" && c.Text!="库存调整单"), "==请选择==", new { @class = "form-control" })
+                        }else{
+                            @Html.DropDownList("select_adjustmenttype",Model.InventoryType, "==请选择==", new { @class = "form-control" })
+                        }*@
+                    @if (bl)
+                    {
+                        @Html.DropDownList("select_adjustmenttype", Model.InventoryType.Where(c => c.Text != "库存调整单"), "==请选择==", new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("select_adjustmenttype", Model.InventoryType, "==请选择==", new { @class = "form-control" })
+                    }
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="selectOK" />
+            <input type="button" style="margin-left: 50px;" class="btn btn-success" value="返回" id="selectReturn" />
+        </div>
+    </div>
+
+    <div id="OrderCheck01Div" style="display: none">
+        <table id="OrderCheck01">
+            <thead>
+                <tr>
+                    <th style="width:30%">单号</th>
+                    <th style="width:20%">状态</th>
+                    <th style="width:50%">返回结果</th>
+                </tr>
+            </thead>
+            <tbody id="OrderCheck01Body">
+                <tr></tr>
+            </tbody>
+        </table>
+    </div>
+}

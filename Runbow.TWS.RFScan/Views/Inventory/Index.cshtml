@@ -1,0 +1,91 @@
+@{
+    ViewBag.Title = "盘点清单";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <title>盘点清单</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var checklist = new Array();
+            $.ajax({
+                type: "Post",
+                url: '/Inventory/GetCheckList',
+                data: {},
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                        checklist = data;
+                        $.each(checklist, function (index2, item2) {
+                            var apptext = "<tr>";
+                            apptext += "<td>";
+                            apptext += "<a href='/Inventory/CheckDetail?CheckNumber=" + item2.CheckNumber + "'>";
+                            apptext += item2.CheckNumber;
+                            apptext += "</a>";
+                            apptext += "</td>";
+                            apptext += "<td>";
+                            apptext += item2.Type_Description;
+                            apptext += "</td>";
+                            apptext += "<td>";
+                            apptext += item2.CreateTime;
+                            apptext += "</td>";
+                            apptext += "</tr>";
+                            $("#MainTable").append(apptext);
+                        });
+                    }
+                    else {
+                    }
+                },
+                error: function (msg) {
+                    alert("网络连接失败！");
+                }
+
+            });
+        });
+        function tdback() {
+            history.back(-1);
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            font-size: 16px;
+        }
+
+        #MainTable tbody tr td {
+            line-height: 25px !important;
+            height: 25px !important;
+        }
+
+        #MainTable td {
+            border-left: 1px solid #428BCA;
+            border-top: 1px solid #428BCA
+        }
+
+        #MainTable {
+            text-align: center;
+            border-right: 1px solid #428BCA;
+            border-bottom: 1px solid #428BCA;
+        }
+    </style>
+</head>
+    <body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+        <table style="text-align:left;width:100%;" >
+ <tr style="height:10px"><td style="text-align: left; font-weight: bold;    padding: 10px 5px;color: #428BCA;line-height: 40px;" onclick="tdback()">
+    <img src="/img/right.png" style="width: 15px;height: 21px;vertical-align: middle;" />返回
+</td></tr>
+           </table> 
+          <table style="text-align:left;width:100%" border="1" id="MainTable" >
+     <tr style="width:100%" ><td   style="width:40%;">盘点单号</td><td   style="width:30%">盘点类型</td><td style="width:30%">创建时间</td></tr>
+           </table> 
+    </body>
+    </html>

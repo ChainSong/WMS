@@ -1,0 +1,131 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.WMS_CustomerListViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>客户</label>
+                </td>
+                <td>
+                    @Html.DropDownList("CustomerID", Model.StorerID, "==全部==", new { @class = "form-control" })
+                </td>
+
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>@Html.LabelFor(m => m.StorerKey)</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.StorerKey, new { style = "width:100%", @class = "form-control" })
+                </td>
+
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>@Html.Raw("公司名称")</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Company, new { style = "width:100%", @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>@Html.Raw("联系人")</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Contact1, new { style = "width:100%", @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;">
+                    <label>@Html.Raw("联系电话")</label>
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.PhoneNum1, new { style = "width:100%", @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" class="btn btn-success" />
+            <input type="button" value="新增" id="addButton" class="btn btn-success" @*onclick="javascript: window.location.href = 'Create';"*@ />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            @Html.Raw("客户列表")
+            @Html.Raw("(" + Model.Customer.Count() + ")")
+            &nbsp;&nbsp;@ViewBag.Message
+        </legend>
+        <div id="tables" style="overflow-x: scroll; min-height: 180px;">
+            <table id="resultTable" style="width: 130%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th style="width:55px;">操作</th>
+                        <th style="width:60px;">货主代码</th>
+                        <th style="width:60px;">库区关联</th>
+                        <th style="width:50px;">城市</th>
+                        <th style="width:180px;">公司名称</th>
+                        <th style="width:75px;">联系人</th>
+                        <th style="width:500px;">地址</th>
+                        <th style="width:100px;">联系电话1</th>
+                        <th style="width:100px;">联系电话2</th>
+                        <th style="width:100px;">邮箱</th>
+                        <th style="width:100px">门店属性</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Customer.Any())
+                    {
+                        foreach (var shipper in Model.Customer)
+                        {
+                    <tr>
+                        <td style="position: relative">
+                            <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                <a style="cursor: pointer;color:#fff;display:normal;" class="btn btn-primary btn-xs Create" href="/System/WMS_Customer/Create?id=@shipper.StorerKey&ViewType=1&customerid=@shipper.CustomerID" data-name="@shipper.StorerKey" data-id="@Model.Type">编辑</a>
+                                <a style="cursor: pointer;color:#fff;display:normal;" class="btn btn-primary btn-xs Delete" href="#" data-name="@shipper.StorerKey" data-id="@shipper.StorerKey" onclick="DeleteCustomer('@shipper.StorerKey');">删除</a>
+                            </div>
+                            <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                        </td>
+                        @*<td>
+                            <a class="btn btn-primary btn-xs Ooperation" href="/System/WMS_Customer/Create?id=@shipper.StorerKey&ViewType=1&customerid=@shipper.CustomerID" data-name="@shipper.StorerKey" data-id="@Model.Type" style="color:#fff;">编辑</a>
+                            <a class="btn btn-primary btn-xs Ooperation" href="#" data-name="@shipper.StorerKey" data-id="@shipper.StorerKey" style="color:#fff; " onclick="DeleteCustomer('@shipper.StorerKey');">删除</a>
+                        </td>*@
+                        <td>@shipper.StorerKey </td>
+                        <td>@shipper.UserDef2</td>
+                        <td>@shipper.City</td>
+                        <td>@shipper.Company</td>
+                        <td>@shipper.Contact1</td>
+                        <td>@shipper.AddressLine1</td>
+                        <td>@shipper.PhoneNum1</td>
+                        <td>@shipper.PhoneNum2</td>
+                        <td>@shipper.Email1</td>
+                        <td>@shipper.UserDef3</td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div> 
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+    <fieldset style="margin-top: 100px;">
+        <legend>店铺信息批量导入
+        </legend>
+
+        <div id="importDiv">
+            <label>客户：</label>@Html.DropDownListFor(m => m.StorerID, Model.StorerID, new { @id = "StorerID", @class = "form-control", style = "width:200px;padding-bottom:1px" })
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+            <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+            <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" />
+        </div>
+    </fieldset>
+    <fieldset style="margin-top: 20px;">
+    <legend>导入结果
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>
+}

@@ -1,0 +1,964 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Product.QueryProductModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.productStorerInfo.ID);
+    @Html.HiddenFor(m => m.productStorerInfo.StorerID);
+
+    <input type="hidden" id="Tishi" value="@ViewBag.Tishi" />
+    <div>
+        <fieldset>
+            <legend>基础信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>货主</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @{
+                            var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+                        }
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.StorerName
+                        }
+                        else if (Model.type == 3)
+                        {
+                            @Html.DropDownListFor(m => m.productStorerInfo.StorerID, Model.GetStorerID, new { @class = "form-control", style = "width:100%", Readonly = "true" })
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.productStorerInfo.StorerID, Model.GetStorerID, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>SKU</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.SKU
+                        }
+                        else if (Model.type == 3)
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.SKU, new { @class = "form-control", style = "width:100%", Readonly = "true" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.SKU, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>状态</label>
+                    </td>
+                    @if (Model.type == 1)
+                    {
+                        if (Model.productStorerInfo.Status == 1)
+                        {
+                            <td style="width: 16%;">可用 </td>
+                        }
+                        else
+                        {
+                            <td style="width: 16%;">不可用 </td>
+                        }
+                    }
+                    else
+                    {
+                        <td>
+                            @Html.DropDownListFor(m => m.productStorerInfo.Status, Model.GetStatusCode, new { @class = "form-control", style = "width:100%" })
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>货品名称</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+
+                            @Model.productStorerInfo.GoodsName
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.GoodsName, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>货品种类</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            var goodstype = Model.Get_Type.Where(v => v.Value == @Model.productStorerInfo.GoodsType.ToString()).Select(b => b.Text.ToString()).First();
+                            @Html.Raw(goodstype.ToString());
+                            @*switch (@Model.productStorerInfo.GoodsType)
+                    {
+                        case 1:
+                    @Html.Raw("种类1");
+                                    break;
+                        case 2:
+                    @Html.Raw("种类2");
+                                    break;
+                        case 3:
+                    @Html.Raw("种类3");
+                                    break;
+                        default:
+                                    break;
+                    }*@
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.productStorerInfo.GoodsType, Model.Get_Type, "==全部==", new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    @* <td class="TableColumnTitle">
+                <label>SKU分类</label></td>
+            <td style="width: 16%;">
+                @if (Model.type == 1)
+                {
+                    @(Model.GetSKUClassification.SingleOrDefault(o => o.Text == @Model.productStorerInfo.SKUClassification.ToString()) == null ? "" : Model.GetSKUClassification.SingleOrDefault(o => o.Text == @Model.productStorerInfo.SKUClassification.ToString()).Text)
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.productStorerInfo.SKUClassification, Model.GetSKUClassification, "==全部==", new { @class = "form-control", style = "width:100%" })
+                }
+            </td>*@
+                    <td class="TableColumnTitle">
+                        <label>SKU分组</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @(Model.GetSKUGroup.SingleOrDefault(o => o.Text == @Model.productStorerInfo.SKUGroup.ToString()) == null ? "" : Model.GetSKUGroup.SingleOrDefault(o => o.Text == @Model.productStorerInfo.SKUGroup.ToString()).Text)
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.productStorerInfo.SKUGroup, Model.GetSKUGroup, "==全部==", new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>制造商SKU</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.ManufacturerSKU
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.ManufacturerSKU, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>零售商SKU</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.RetailSKU
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.RetailSKU, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>可替换SKU</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.ReplaceSKU
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.ReplaceSKU, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr style="display:none">
+                    <td class="TableColumnTitle">
+                        @*<label>季节</label></td>*@
+                        <label>箱组</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.BoxGroup
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.BoxGroup, new { @class = "form-control", style = "width:100%" })
+                        }
+                        @*@Html.CalendarRange("ExpectDate", "calendarRange form-control calendarRangeReWrite", null, null)*@
+                    </td>
+                    <td class="TableColumnTitle">
+                        @*<label>损耗率</label></td>*@
+                        <label>包装</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Packing
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Packing, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>是否预警</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @*@Html.CheckBox("war",Model.productStorerInfo.Int2== 1 ? true : false)*@
+                        @Html.CheckBoxFor(m => m.productStorerInfo.Int2)
+                    </td>
+                    <td class="TableColumnTitle">
+                        @*<label>ABC分类</label></td>*@
+                        <label>安全库存值</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Grade
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Grade, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>制造商</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Manufacturer
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Manufacturer, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>危险代码</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.DangerCode
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.DangerCode, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        @if (ctype != null
+                            && ctype.Any()
+                            && ctype.Where(c => c.Type == "CustomerID" && (c.Code == "Bridge") && c.Name == Model.productStorerInfo.StorerID.ToString()) != null
+                            && ctype.Where(c => c.Type == "CustomerID" && (c.Code == "Bridge") && c.Name == Model.productStorerInfo.StorerID.ToString()).Any()
+                        )
+                        {
+                            <label>有效期(日)</label>
+                        }
+                        else
+                        {
+                            <label>有效期(月)</label>
+                        }
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Int1
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Int1, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>国家</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Country
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Country, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>描述</label>
+                    </td>
+                    <td colspan="6">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Remark
+                        }
+                        else
+                        {
+                            @Html.TextAreaFor(m => m.productStorerInfo.Remark, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>长度</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str11
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str11, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>宽度</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str12
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str12, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>高度</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str13
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str13, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>安全库存</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str14
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str14, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>箱规格1</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str15
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str15, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>箱规格2</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str16
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str16, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>箱规格3</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str17
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str17, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>箱规格4</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str18
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str18, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>箱规格5</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str19
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str19, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>包装信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>容积</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Volume
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Volume, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>标准容积</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.StandardVolume
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.StandardVolume, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>重量</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Weight
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Weight, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>标准重量</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.StandardWeight
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.StandardWeight, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>净重</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.NetWeight
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.NetWeight, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>标准净重</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.StandardNetWeight
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.StandardNetWeight, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>单价</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Price
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Price, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>实际单价</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.ActualPrice
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.ActualPrice, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>成本</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Cost
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Cost, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>实际成本</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.ActualCost
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.ActualCost, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>标准订货成本</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.StandardOrderingCost
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.StandardOrderingCost, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>运输成本</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.ShipmentCost
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.ShipmentCost, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset style="display:none">
+            <legend>质检信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>质检地</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.QcInSpectionLoc
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.QcInSpectionLoc, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>质检合格率</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.QCPercentage
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.QCPercentage, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>质检Uom</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.ReceiptQcUom
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.ReceiptQcUom, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>质检是否合格</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Html.CheckBoxFor(m => m.IsQcEligible, true)
+                        }
+                        else
+                        {
+                            @Html.CheckBoxFor(model => model.IsQcEligible)
+                        }
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset style="display:none">
+            <legend>策略信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>放货区域</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.PutArea
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.PutArea, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>放货代码</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.PutCode
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.PutCode, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>放置规则</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.PutRule
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.PutRule, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>策略</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.PutStrategy
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.PutStrategy, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>分配规则</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.AllocateRule
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.AllocateRule, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>拣货代码</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.PickedCode
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.PickedCode, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>货品信息</legend>
+            <table>
+
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>Article</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str10
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str10, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>色号</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str8
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str8, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>Size</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Str9
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Str9, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>品名类别</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.SKUType
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.SKUType, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>货品颜色</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Color
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Color, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>货品尺寸</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @if (Model.type == 1)
+                        {
+                            @Model.productStorerInfo.Size
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.productStorerInfo.Size, new { @class = "form-control", style = "width:100%" })
+                        }
+                    </td>
+                </tr>
+
+            </table>
+        </fieldset>
+
+        @*@if (Model.productStorerInfo.StorerID.ToString() == "81" || Model.productStorerInfo.StorerID.ToString() == "69" || Model.productStorerInfo.StorerID.ToString() == "65")*@
+        @if (ctype != null
+            && ctype.Any()
+            && ctype.Where(c => c.Type == "CustomerID" && (c.Code == "NIKENFS" || c.Code == "NIKEOSR") && c.Name == Model.productStorerInfo.StorerID.ToString()) != null
+            && ctype.Where(c => c.Type == "CustomerID" && (c.Code == "NIKENFS" || c.Code == "NIKEOSR") && c.Name == Model.productStorerInfo.StorerID.ToString()).Any()
+            )
+        {
+            if (Model.type == 1)
+            {
+                <fieldset>
+                    <legend>NIKE专有信息</legend>
+                    <table>
+                        <tr>
+                            <td class="TableColumnTitle">
+                                <label>BU</label>
+                            </td>
+                            <td style="width: 16%;">
+                                @Model.productStorerInfo.Str11
+                            </td>
+                            <td class="TableColumnTitle">
+                                <label>GenderAge</label>
+                            </td>
+                            <td style="width: 16%;">
+                                @Model.productStorerInfo.Str12
+                            </td>
+                            <td class="TableColumnTitle">
+                                <label>挂架</label>
+                            </td>
+                            <td style="width: 16%;">
+                                @Model.productStorerInfo.Str13
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">
+                                <label>价格</label>
+                            </td>
+                            <td style="width: 16%;">
+                                @Model.productStorerInfo.Str2
+                            </td>
+                            <td class="TableColumnTitle">
+                                <label>安全扣</label>
+                            </td>
+                            <td style="width: 16%;">
+                                @Model.productStorerInfo.Str3
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            }
+        }
+        @if (Model.type == 1)
+        {
+            <fieldset>
+                <legend>
+                    UPC信息
+                    <label data-skuid="@Model.productStorerInfo.ID" style="cursor: pointer;" class="btn btn-primary btn-xs AddUPCButton">添加UPC</label>
+                </legend>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>操作</th>
+                            <th>UPC</th>
+                            <th>UPC名称</th>
+                            <th>UPC类型</th>
+                            <th>UPC数量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.productDetail != null && Model.productDetail.Any())
+                        {
+                            foreach (var item in Model.productDetail)
+                            {
+                                <tr>
+                                    <td style="position: relative">
+                                        <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                            <label data-id="@item.ID" style="cursor: pointer;" class="btn btn-primary btn-xs DelButton">删除</label>
+                                            @*<div    onclick="deleteSKU('@crminfo.ID',this)">删除</div>*@
+                                        </div>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                        @*<div    onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                                    </td>
+                                    <td>
+                                        @item.UPC
+                                    @*<input type="text" name="UPC" />*@
+                                </td>
+                                <td>
+                                    @item.UPCName
+                                @*<input type="text" name="UPCName" />*@
+                            </td>
+                            <td>
+                                @item.UPCType
+                            @*<input type="text" name="UPCType" />*@
+                        </td>
+                        <td>
+                            @item.UPCNumber
+                        @*<input type="text" name="UPCNumber" />*@
+                    </td>
+                </tr>
+            }
+        }
+                    </tbody>
+                </table>
+            </fieldset>
+        }
+        <div class="actionButtonDiv">
+            @if (Model.type != 1)
+            {
+                <input type="submit" value="提交" id="submitButton" class="btn btn-success" />
+            }
+            <input type="button" value="返回" id="returnButton" class="btn btn-success" />
+        </div>
+    </div>
+}

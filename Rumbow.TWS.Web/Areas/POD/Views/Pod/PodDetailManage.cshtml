@@ -1,0 +1,210 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodDetailManageViewModel
+@using Runbow.TWS.Common;
+
+@{
+    var ColumnCollection = Model.Config.ColumnCollection.Where(c => (c.IsKey && !c.IsHide) || (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.CustomerID);
+                }
+
+                return c;
+            }
+        });
+}
+
+<fieldset>
+    <legend>运单明细列表</legend>
+    <table id="PodDetailTable">
+        <thead>
+            <tr>
+                @foreach (var column in ColumnCollection.OrderBy(t => t.Order))
+                {
+                    if (column.IsHide)
+                    {
+                    <th style="display: none">
+                        @column.DisplayName
+                    </th>
+                    }
+                    else
+                    {
+                    <th>
+                        @column.DisplayName
+                    </th>
+                    }
+                }
+                <th style="align-content: center">删除
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.PodDetails != null)
+            {
+                foreach (var row in Model.PodDetails)
+                {
+                <tr>
+                    @foreach (var column in ColumnCollection.OrderBy(t => t.Order))
+                    {
+                        object o = typeof(Runbow.TWS.Entity.PodDetail).GetProperty(column.DbColumnName).GetValue(row);
+                        if (column.IsHide)
+                        {
+                        <td style="display: none">
+                            @if (o != null)
+                            {
+                                @o.ToString()
+                            }
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            @if (o != null)
+                            {
+                                if (string.Equals(column.Type, "DateTime", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var time = (DateTime?)o;
+                                    if (time != null && time.HasValue)
+                                    {
+                                @time.Value.DateTimeToString()
+                                    }
+                                }
+                                else if (string.Equals(column.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var time = (DateTime?)o;
+                                    if (time != null && time.HasValue)
+                                    {
+                                @time.Value.ToString("yyyy-MM-dd HH:mm")
+                                    }
+                                }
+                                else if (string.Equals(column.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(column.Type, "DropDownList", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    @Html.ChooseString(o.ToString() == "1", "Y", "N")
+                                }
+                                else
+                                {
+                                @o.ToString()
+                                }
+                            }
+                        </td>
+                        }
+                    }
+                    <td>
+                        <a href="#" data-action="Delete" data-id="@row.ID">删除</a>
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+
+@{
+    var notKeyColumns = ColumnCollection.Where(c => c.IsKey == false && c.IsHide == false);
+    var notKeyTextBoxColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextAreaColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumnsCount = notKeyTextBoxColumns.Count;
+    int notKeyTextBoxRowCount = notKeyTextBoxColumnsCount % 3 > 0 ? notKeyTextBoxColumnsCount / 3 + 1 : notKeyTextBoxColumnsCount / 3;
+    int notKeyTextAreaRowCount = notKeyTextAreaColumns.Count;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.PodDetail.ID)
+    @Html.HiddenFor(m => m.PodDetail.PodID)
+    @Html.HiddenFor(m => m.PodDetail.SystemNumber)
+    @Html.HiddenFor(m => m.PodDetail.CustomerOrderNumber)
+    @Html.HiddenFor(m => m.PodDetail.GoodCode)
+    @Html.HiddenFor(m => m.PodDetail.GoodName)
+    @Html.HiddenFor(m => m.PodDetail.UnitCode)
+    @Html.HiddenFor(m => m.PodDetail.UnitName)
+    @Html.HiddenFor(m => m.PodDetail.ExpectedAmount)
+    @Html.HiddenFor(m => m.PodDetail.ActualAmount)
+    @Html.HiddenFor(m => m.PodDetail.Remark)
+    @Html.HiddenFor(m => m.PodDetail.Creator)
+    @Html.HiddenFor(m => m.PodDetail.CreateTime)
+    @Html.HiddenFor(m => m.PodDetail.Str1)
+    @Html.HiddenFor(m => m.PodDetail.Str2)
+    @Html.HiddenFor(m => m.PodDetail.Str3)
+    @Html.HiddenFor(m => m.PodDetail.Str4)
+    @Html.HiddenFor(m => m.PodDetail.Str5)
+    @Html.HiddenFor(m => m.PodDetail.DateTime1)
+    @Html.HiddenFor(m => m.CustomerID)
+    @Html.HiddenFor(m => m.IsOuterUser)
+    <script>
+        var podID = '@Model.PodDetail.PodID';
+    </script>
+    <fieldset>
+        <legend>新增明细条目</legend>
+        <table>
+            @for (int i = 0; i < notKeyTextBoxRowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= notKeyTextBoxColumnsCount)
+                        {
+                        <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = notKeyTextBoxColumns[i * 3 + j];
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td>
+                            @{
+                            switch (column.Type)
+                            {
+                                case "TextBox":
+                                @Html.TextBox(column.DbColumnName, null, new { @class = "notKeyVal" });
+                                                                                                      break;
+                                case "DateTime":
+                                @Html.Calendar(column.DbColumnName, "notKeyVal");
+                                                                                break;
+                                case "DateTimeWithTime":
+                                @Html.CalendarDateTime(column.DbColumnName, "notKeyVal");
+                                                                                break;
+                                case "CheckBox":
+                                @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                                                                                                 break;
+                                case "DropDownList":
+                                @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                                                                                                                                               break;
+                                default:
+                                                                                                                                               break;
+                            }
+                            }
+                        </td>
+                        }
+                    }
+                </tr>
+            }
+            @for (int i = 0; i < notKeyTextAreaRowCount; i++)
+            {
+                <tr>
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + notKeyTextAreaColumns[i].DbColumnName, notKeyTextAreaColumns[i].DisplayName)
+                    </td>
+                    <td colspan="5">
+                        @Html.TextArea(notKeyTextAreaColumns[i].DbColumnName, new { style = "width:95%", @class = "notKeyVal" })
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div class="actionButtonDiv">
+            <input type="submit" value="提交" id="submitButton" />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="button" value="返回" id="returnButton" />
+        </div>
+    </fieldset>
+}

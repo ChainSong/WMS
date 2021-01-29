@@ -1,0 +1,485 @@
+﻿@{
+    ViewBag.Title = "出库交接";
+}
+
+<html>
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    @*<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">*@
+    @*<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>*@
+    <link href="~/Assets/CSS/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <script src="~/Assets/JS/jquery3.3.1.js"></script>
+    <script src="~/Assets/JS/bootstrap3.3.7.min.js"></script>
+    <script src="~/Assets/JS/moment-with-locales.min.js"></script>
+    <script src="~/Assets/JS/Layer/layer.js"></script>
+    @*<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>*@
+    <script src="~/Assets/JS/bootstrap-datetimepicker.min.js"></script>
+    @model Runbow.TWS.RFScan.Models.ReceiptViewModel
+    <link href="~/Assets/CSS/bootstrap.min.css" rel="stylesheet" />
+
+    <title>出库交接</title>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD',
+                locale: moment.locale('zh-cn')
+            });
+        });
+        var AreaName = "";
+
+        var layerindex;
+        var adjustnumber = "";
+        function CheckPackageDetailNoScan() {
+            $.ajax({
+                type: "Post",
+                url: '/Receipt/CheckPackageDetailNoScan',
+                data: { "StoreCode": $("#CompanyCode").val(), "OrderTime": $("#OrderTime").val(), "OrderType": $("#OrderType").val() },
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.Code == "1") {
+                        var tablediffs = $("#checkzjtable");
+                        $('#checkzjtable tbody').html('');
+
+                        for (var i = 0; i < data.data.length; i++) {
+                            var tr = "<tr style='text-align: center'>" +
+                                "<td> " + data.data[i].PackageNumber + "</td>" +
+                                "</tr > ";
+                            tablediffs.append(tr);
+                        }
+                        layer.open({
+                            type: 1,
+                            skin: 'layui-layer-rim', //加上边框
+                            area: ['300px', '340px'], //宽高
+                            content: $("#showzjdata"),
+                            end: function () {
+                               
+                            }
+                        });
+                    }
+                    else if (data.Code == "0") {
+                        layer.confirm('当前条件没有查询到数据', {
+                            icon: 0,
+                            btn: ['确定'] //按钮
+                        }, function () {
+
+                            layer.closeAll();
+                        });
+                    }
+                    else {
+                        layer.msg("异常错误");
+                        layer.closeAll();
+                    }
+
+                },
+                error: function (msg) {
+                    layer.closeAll();
+                }
+
+            });
+        }
+        function ClearPackageDetail() {
+            if ($("#CompanyCode").val() == "") {
+                layer.confirm('请选择门店', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+
+                    layer.closeAll();
+                });
+                return;
+            }
+            if ($("#OrderTime").val() == "") {
+                layer.confirm('请选择出货日期', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+
+                    layer.closeAll();
+                });
+                return;
+            }
+            if ($("#OrderType").val() == "") {
+                layer.confirm('请选择订单类型', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+
+                    layer.closeAll();
+                });
+                return;
+            }
+            layer.confirm('重置将会清除已扫信息，是否继续?', {
+                icon: 3,
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/ClearPackageDtailRF',
+                    data: { "StoreCode": $("#CompanyCode").val(), "OrderTime": $("#OrderTime").val(), "OrderType": $("#OrderType").val() },
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.Code == "1") {
+                            layer.confirm('重置完成', {
+                                icon: 1,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#AllQty")[0].innerText = 0;
+                                $("#Qty")[0].innerText = "0/";
+                                layer.closeAll();
+                            });
+                          
+                        }
+                        else {
+                            layer.msg("异常错误");
+                            layer.closeAll();
+                        }
+
+                    },
+                    error: function (msg) {
+                        layer.closeAll();
+                    }
+
+                });
+            })
+
+        }
+        function ScanPackageNumber(event) {
+            if (event.keyCode == 13) {
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/ScanPackageNumberRedis',
+                    data: { "StoreCode": $("#CompanyCode").val(), "OrderTime": $("#OrderTime").val(), "OrderType": $("#OrderType").val(), "PackageNumber": $("#PackageNumber").val() },
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+
+                        $("#PackageNumber").select();
+                        if (data.Code == "1") {
+                            $("#SuccessAudio")[0].play();
+                            var qty = 0;
+                            for (var i = 0; i < data.data.length; i++) {
+                                if (data.data[i].Status == 1) {
+                                    qty++;
+                                }
+                            }
+                            $("#Qty")[0].innerText = qty + "/";
+
+
+                        }
+                        else if (data.Code == "2") {
+                            $("#Audio")[0].play();
+                            layer.confirm('箱号不正确', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#PackageNumber").select();
+                                layer.closeAll();
+                            });
+                        }
+                        else if (data.Code == "3") {
+                            $("#Audio")[0].play();
+                            layer.confirm('该箱已扫描', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#PackageNumber").select();
+                                layer.closeAll();
+                            });
+                        }
+                        else if (data.Code == "4") {
+                            $("#Audio")[0].play();
+                            layer.confirm('没有生成EpackList明细', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#PackageNumber").select();
+                                layer.closeAll();
+                            });
+                        }
+                        else {
+                            $("#Audio")[0].play();
+                            layer.confirm('异常错误', {
+                                icon: 2,
+                                btn: ['确定'] //按钮
+                            }, function () {
+                                $("#PackageNumber").select();
+                                layer.closeAll();
+                            });
+                        }
+
+                    },
+                    error: function (msg) {
+                        result = false;
+                    }
+
+                });
+            }
+        }
+        function searchPackageDetail() {
+            if ($("#CompanyCode").val() == "") {
+                layer.confirm('请选择门店', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+
+                    layer.closeAll();
+                    });
+                return;
+            }
+            if ($("#OrderTime").val() == "") {
+                layer.confirm('请选择出货日期', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+
+                    layer.closeAll();
+                });
+                return;
+            }
+            if ($("#OrderType").val() == "") {
+                layer.confirm('请选择订单类型', {
+                    icon: 0,
+                    btn: ['确定'] //按钮
+                }, function () {
+
+                    layer.closeAll();
+                });
+                return;
+            }
+            layer.confirm('确认当前是否已全部包装完成', {
+                icon: 3,
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+
+                $.ajax({
+                    type: "Post",
+                    url: '/Receipt/GetPackageDtailRF',
+                    data: { "StoreCode": $("#CompanyCode").val(), "OrderTime": $("#OrderTime").val(), "OrderType": $("#OrderType").val() },
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.Code == "1") {
+                            $("#PackageNumber").focus();
+                            var Allqty = data.data.length;
+                            var qty = 0;
+                            for (var i = 0; i < data.data.length; i++) {
+                                if (data.data[i].Status == 1) {
+                                    qty++;
+                                }
+                            }
+                            $("#AllQty")[0].innerText = Allqty;
+                            $("#Qty")[0].innerText = qty + "/";
+                            layer.closeAll();
+                        }
+                        else if (data.Code == "0") {
+                            layer.confirm('当前条件没有查询到数据', {
+                                icon: 0,
+                                btn: ['确定'] //按钮
+                            }, function () {
+
+                                layer.closeAll();
+                            });
+                        }
+                        else {
+                            layer.msg("异常错误");
+                            layer.closeAll();
+                        }
+
+                    },
+                    error: function (msg) {
+                        layer.closeAll();
+                    }
+
+                });
+            })
+        }
+
+
+        function WarehouseCheckContinue(PDNumber) {
+            window.location.href = "/Receipt/WarehouseCheckDetail?PDNumber=" + PDNumber +"&CustomerID=@ViewBag.CustomerID&WareHouseName=@ViewBag.WareHouseName&WareHouseID=@ViewBag.WareHouseID";
+        }
+        function getNowFormatDate() {
+            var date = new Date();
+            var month = date.getMonth() + 1;
+            var strDate = date.getDate();
+            var strHour = date.getHours();
+            var strMin = date.getMinutes();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            if (strHour >= 0 && strHour <= 9) {
+                strHour = "0" + strHour;
+            }
+            if (strMin >= 0 && strMin <= 9) {
+                strMin = "0" + strMin;
+            }
+            var currentdate = date.getFullYear().toString()  + month  + strDate
+                + strHour + strMin
+                + date.getSeconds().toString();
+
+            return currentdate;
+
+            alert(currentdate)
+        }
+        //验证当前箱是否完成
+
+        function Scan(event) {
+            if (event.keyCode == 13) {
+                var scanval = $("#skuagain").val();
+                if (checkLocation(scanval)) {
+                    $.ajax({
+                        type: "Post",
+                        url: '/Receipt/UpdateReceiptReceivingByLocationAgain',
+                        data: { "ReceiptNumber": $("#ReceiptNumber").val(), "Area": AreaName, "Location": scanval },
+                        async: false,
+                        dataType: "text",
+                        success: function (data) {
+                            if (data == "") {
+                                alert("当前箱已完成");
+                                return;
+                            }
+                            else if (data == "-1") {
+                                alert("扫描异常");
+                                return;
+                            }
+                            else {
+                                layer.close(layerindex);
+                                chechboxnumberoverclearboxnumber();
+                                checkcomplete();
+                            }
+
+                        },
+                        error: function (msg) {
+                            alert(msg);
+                        }
+
+                    });
+
+                }
+                else {
+                    alert("扫描的数据有误");
+                    $("#skuagain").focus();
+                    document.getElementById("skuagain").select();
+                }
+            }
+        }
+
+        //验证数据是否是库位
+        function checkLocation(location) {
+            var result = false;
+            $.ajax({
+                type: "Post",
+                url: '/Receipt/CheckLocationForAreaAgain',
+                data: { "Location": location },
+                async: false,
+                success: function (data) {
+                    if (data != "") {
+                        if (data == "库区有误") {
+                            alert("库区有误");
+                            result = false;
+                        }
+                        else if (data == "-1") {
+                            alert("异常");
+                            result = false;
+                        }
+                        else {
+                            AreaName = data;//保存当前库区
+                            //location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ID=" + ID + "&ViewType=3&Flag=1"
+                            result = true;
+                            //$("#Scan").val(location);
+                        }
+                    }
+                    else {
+                        result = false;
+                    }
+
+                },
+                error: function (msg) {
+                    result = false;
+                }
+
+            });
+            return result;
+        }
+
+
+
+    </script>
+</head>
+@using (Html.BeginForm())
+{
+    @Html.Hidden("UserName", (string)ViewBag.UserName)
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="height: 100%">
+    <div class="row" style="margin-top:10px">
+        <audio src="~/audio/1.mp3" id="Audio">
+            您的浏览器不支持 audio 标签。
+        </audio>
+        <audio src="~/audio/success.mp3" id="SuccessAudio">
+            您的浏览器不支持 audio 标签。
+        </audio>
+        <div class="col-lg-6">
+            <div class="panel panel-primary" style="width:315px;margin-left:3px">
+                <div class="panel-heading">条件筛选</div>
+                <div class="panel-body">
+                    <div>@Html.DropDownList("CompanyCode", Model.CompanyCodeList, new { @class = "form-control", @style = "width:100%", placeholder = "订单类型" })</div>
+                    <div style="margin-top:10px">@Html.DropDownList("OrderType", Model.OrderTypeList, new { @class = "form-control", @style = "width:100%", placeholder = "订单类型" })</div>
+                    <div style="margin-top:10px">
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' id="OrderTime" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;float:right">
+                        <input type="button" class="btn btn-warning btn-lg" value="查看未扫描" onclick="CheckPackageDetailNoScan()" />
+                        <input type="button" class="btn btn-danger btn-lg" value="重置" onclick="ClearPackageDetail()" />
+                        <input type="button" class="btn btn-primary btn-lg" value="确定" onclick="searchPackageDetail()" id="searchButton" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row" style="">
+        <div class="col-lg-6">
+            <div class="panel panel-danger" style="width:315px;margin-left:3px">
+                <div class="panel-heading">扫描箱号</div>
+                <div class="panel-body">
+                    <div>
+                        <input id="PackageNumber" class="form-control" type="text" onkeydown="ScanPackageNumber(event)" />
+                    </div>
+                    <div><font style="color:#ff0000;font-size:20px">已扫总箱数/</font><font style="width:70px;color:#0026ff;font-size:20px">期望总箱数</font></div>
+                    <div>
+                        <font style="color:#ff0000;font-size:30px" id="Qty">0/</font><font id="AllQty" style="width:70px;color:#0026ff;font-size:30px">0</font>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="showzjdata" style="display:none;width:280px">
+        <table class="table table-striped" id="checkzjtable" style="width:280px">
+            <thead>
+                <tr style="text-align:left">
+                    <th style="text-align:center">箱号</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+}
+</html>

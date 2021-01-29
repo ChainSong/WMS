@@ -1,0 +1,51 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.MaryKayLoginsticsTrackInfoModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.colID)
+    @Html.HiddenFor(m => m.colCustOrderNo)
+    @Html.HiddenFor(m => m.colDelivery)
+    @Html.HiddenFor(m => m.colProvince)
+    @Html.HiddenFor(m => m.colTrackInfo)
+    <fieldset>
+        <legend>@ViewBag.Message</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">MK订单号</td>
+                <td>@Html.TextBoxFor(model => Model.colCustOrderNo,new { @class = "form-control", @style="color:red;",disabled="disabled"})</td>
+                <td class="TableColumnTitle">快递运单号</td>
+                <td>@Html.TextBoxFor(model => Model.colDelivery,new { @class = "form-control", @style="color:red;",disabled="disabled"})</td>
+                <td class="TableColumnTitle">所在省份</td>
+                <td>@Html.TextBoxFor(model => Model.colProvince,new { @class = "form-control", @style="color:red;",disabled="disabled"})</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">创建时间</td>
+                <td>@Html.TextBoxFor(model => Model.colCreateTime,new { @class = "form-control"})
+                </td>
+                <td class="TableColumnTitle">跟踪时间</td>
+                <td>@Html.TextBoxFor(model => Model.colTrackTime,new { @class = "form-control"})</td>
+                <td class="TableColumnTitle">签收时间</td>
+                <td>@Html.TextBoxFor(model => Model.colSignTime,new { @class = "form-control"})</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">签收人</td>
+                <td>@Html.TextBoxFor(model => Model.colSignName,new { @class = "form-control", @style="color:red;",disabled="disabled"})
+                </td>
+                <td class="TableColumnTitle">跟踪状态</td>
+                <td>@Html.DropDownListFor(model => Model.colTrackInfo, Model.TrackInfoType, new { @style = "width:205px;height:34px;" })</td>
+                <td class="TableColumnTitle">责任归属</td>
+                <td>@Html.TextBoxFor(model => Model.colResponsibilityOwner,new { @class = "form-control"})</td>
+            </tr>
+            <tr>
+                 <td class="TableColumnTitle" style="vertical-align:top;" >跟踪信息</td>
+                <td colspan="5">@Html.TextAreaFor(model => Model.colTrackComment,new { @class = "form-control"})</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="保存"  id="btnSave" />
+            <a class="btn btn-success" onclick="window.location.href = '/POD/MaryKay/MaryKayLoginsticsTrackInfo'">返回</a>
+        </div>
+    </fieldset>
+
+
+}

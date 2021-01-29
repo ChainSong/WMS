@@ -1,0 +1,767 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{99059584-B657-4BAF-8D7A-1160879646DA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Runbow.TWS.Entity</RootNamespace>
+    <AssemblyName>Runbow.TWS.Entity</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AMS\AMSSearchCondition.cs" />
+    <Compile Include="AMS\AMSUpload.cs" />
+    <Compile Include="Application\AllocateConfig.cs" />
+    <Compile Include="Application\AllocateConfigs.cs" />
+    <Compile Include="Application\Column.cs" />
+    <Compile Include="Application\CustomerSettled.cs" />
+    <Compile Include="Application\Group.cs" />
+    <Compile Include="Application\Groups.cs" />
+    <Compile Include="Application\Module.cs" />
+    <Compile Include="Application\Project.cs" />
+    <Compile Include="Application\Projects.cs" />
+    <Compile Include="Application\SettledConfig.cs" />
+    <Compile Include="Application\SettledPodConfig.cs" />
+    <Compile Include="Application\SettledPodConfigs.cs" />
+    <Compile Include="Application\ShipperSettled.cs" />
+    <Compile Include="Application\Table.cs" />
+    <Compile Include="Application\Tables.cs" />
+    <Compile Include="Application\TransDataConfig.cs" />
+    <Compile Include="Application\TransDataConfigs.cs" />
+    <Compile Include="Application\WarehouseConfig.cs" />
+    <Compile Include="Application\TableColumn.cs" />
+    <Compile Include="BaiduMap\PodStatusLogMap.cs" />
+    <Compile Include="BaiduMap\PODTrackingMap.cs" />
+    <Compile Include="BaiduMap\VehicleLocation.cs" />
+    <Compile Include="ContractManagement\Contract.cs" />
+    <Compile Include="ContractManagement\ContractConfig.cs" />
+    <Compile Include="ContractManagement\ContractSearchCondition.cs" />
+    <Compile Include="CRM\CRMInfo.cs" />
+    <Compile Include="CRM\CrmToDb.cs" />
+    <Compile Include="CRM\CRMTrackInfo.cs" />
+    <Compile Include="DataBaseEntity\AMSUploadToDb.cs" />
+    <Compile Include="DataBaseEntity\ArticleDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\ASNScanTrayToDb.cs" />
+    <Compile Include="DataBaseEntity\AttachmentsToDb.cs" />
+    <Compile Include="DataBaseEntity\BarCodeTable.cs" />
+    <Compile Include="DataBaseEntity\BarCodeTableToDb.cs" />
+    <Compile Include="DataBaseEntity\CordOperationToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMDriverToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMShipperToVehicleToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMVehicleToDb.cs" />
+    <Compile Include="DataBaseEntity\DirectAddInventoryToDb.cs" />
+    <Compile Include="DataBaseEntity\ExternOrderNumberToDb.cs" />
+    <Compile Include="DataBaseEntity\InsertShipperToDb.cs" />
+    <Compile Include="DataBaseEntity\LogOperationRFToDb.cs" />
+    <Compile Include="DataBaseEntity\LogOperationToDb.cs" />
+    <Compile Include="DataBaseEntity\NikeforBSPODToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMVehicleToDriverToDb.cs" />
+    <Compile Include="DataBaseEntity\Numbers.cs" />
+    <Compile Include="DataBaseEntity\NumbersToDb.cs" />
+    <Compile Include="DataBaseEntity\PodStatusTrackToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMInfoToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMShipperCoopperationToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMShipperTerminalInfoToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMShipperToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMShipperTransportationLineToDb.cs" />
+    <Compile Include="DataBaseEntity\CRMTrackInfoToDb.cs" />
+    <Compile Include="DataBaseEntity\CustomerToDb.cs" />
+    <Compile Include="DataBaseEntity\DbParam.cs" />
+    <Compile Include="DataBaseEntity\ExecuteType.cs" />
+    <Compile Include="DataBaseEntity\IdsForInt32.cs" />
+    <Compile Include="DataBaseEntity\IdsForInt64.cs" />
+    <Compile Include="DataBaseEntity\InvoiceToDb.cs" />
+    <Compile Include="DataBaseEntity\LocationInfoToDb.cs" />
+    <Compile Include="DataBaseEntity\Log56PhoneStatusToDb.cs" />
+    <Compile Include="DataBaseEntity\Log56TrackToDb.cs" />
+    <Compile Include="DataBaseEntity\PodDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\PodExceptionToDb.cs" />
+    <Compile Include="DataBaseEntity\PodFeadBackToDb.cs" />
+    <Compile Include="DataBaseEntity\PodFeeToDb.cs" />
+    <Compile Include="DataBaseEntity\PodReplyDocumentToDb.cs" />
+    <Compile Include="DataBaseEntity\PodStatusLogToDb.cs" />
+    <Compile Include="DataBaseEntity\PodToDb.cs" />
+    <Compile Include="DataBaseEntity\PodTrackToDb.cs" />
+    <Compile Include="DataBaseEntity\ProductDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\QuotedPricesToDb.cs" />
+    <Compile Include="DataBaseEntity\ReceiptReceivingToDbRF.cs" />
+    <Compile Include="DataBaseEntity\WMSOrderExpressInfoToDB.cs" />
+    <Compile Include="DataBaseEntity\WXSoldRefundDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WarehouseCheckDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSOrderShipmentDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSOrderShipmentToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSOrderDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSSettlementDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSDeliverDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSDeliverToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSMachiningToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSOrderExpressToDB.cs" />
+    <Compile Include="DataBaseEntity\WMSPreOrderDetailInfoToDb.cs" />
+    <Compile Include="DataBaseEntity\ProductStorerInfoToDB.cs" />
+    <Compile Include="DataBaseEntity\ProjectCustomerOrShipperToDb.cs" />
+    <Compile Include="DataBaseEntity\QuotedPriceToDb.cs" />
+    <Compile Include="DataBaseEntity\ReceiptReceivingToDb.cs" />
+    <Compile Include="DataBaseEntity\ScanToDb.cs" />
+    <Compile Include="DataBaseEntity\SettledPodAuditHistoryToDb.cs" />
+    <Compile Include="DataBaseEntity\SettledPodToDb.cs" />
+    <Compile Include="DataBaseEntity\ShelvesToDb.cs" />
+    <Compile Include="DataBaseEntity\ShipperRegionCoveredToDb.cs" />
+    <Compile Include="DataBaseEntity\ShipperToDb.cs" />
+    <Compile Include="DataBaseEntity\StringsToDb.cs" />
+    <Compile Include="DataBaseEntity\UdtUpdateAkzoPodToDb.cs" />
+    <Compile Include="DataBaseEntity\UdtUpdateAkzoModelsPodToDb.cs" />
+    <Compile Include="DataBaseEntity\UdtUpdateNikePodBGToDb.cs" />
+    <Compile Include="DataBaseEntity\UdtUpdateNikePodToDb.cs" />
+    <Compile Include="DataBaseEntity\SettledPodDistributionToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSAdjutmentDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSAdjutmentToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSASNDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSASNToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSInventoryToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSPreOrderIds.cs" />
+    <Compile Include="DataBaseEntity\WMSPreOrderIdsToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSPreOrderInfoToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSPreOrderToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSReceiptDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSReceiptReceivingToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSReceiptToDb.cs" />
+    <Compile Include="DataBaseEntity\VehicleLocationToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSOrderToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSPackageToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSPackageDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSCheckDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSReplenishmentDetailSKUToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSTemplateToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSQRCodeToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSGoodsShelfToDb.cs" />
+    <Compile Include="DataBaseEntity\WMS_CustomerToDb.cs" />
+    <Compile Include="DataBaseEntity\WMSGoodsShelfRowAndCellToDb.cs" />
+    <Compile Include="DataBaseEntity\APIAndBackSettingToDb.cs" />
+    <Compile Include="DataBaseEntity\WMS_SKUAndArticleNoTable.cs" />
+    <Compile Include="DataBaseEntity\WMS_SKUAndArticleNoToDb.cs" />
+    <Compile Include="DataBaseEntity\WorkOrderToDb.cs" />
+    <Compile Include="DataBaseEntity\WXSoldProductDetailToDb.cs" />
+    <Compile Include="DataBaseEntity\WXSoldProductToDb.cs" />
+    <Compile Include="Finance\Invoice.cs" />
+    <Compile Include="Finance\InvoiceSearchCondition.cs" />
+    <Compile Include="Finance\ReceiveOrPayOrders.cs" />
+    <Compile Include="Finance\SettledPod.cs" />
+    <Compile Include="Finance\SettledPodAuditHistory.cs" />
+    <Compile Include="Finance\SettledPodCompare.cs" />
+    <Compile Include="Finance\SettledPodSearchCondition.cs" />
+    <Compile Include="ForecastWarehouse\ForecastOrders.cs" />
+    <Compile Include="ForecastWarehouse\GapPickingNote.cs" />
+    <Compile Include="ForecastWarehouse\UserCode.cs" />
+    <Compile Include="Front\WXAccessToken.cs" />
+    <Compile Include="Front\WXCustomer.cs" />
+    <Compile Include="Front\WXCustomerSearchCondition.cs" />
+    <Compile Include="Front\WXPODBarCode.cs" />
+    <Compile Include="InventoryApi\OSRJobCondition.cs" />
+    <Compile Include="InventoryApi\OSRJobSelect.cs" />
+    <Compile Include="InventoryApi\OSRStockCondition.cs" />
+    <Compile Include="InventoryApi\OSRStockSelect.cs" />
+    <Compile Include="InventoryApi\OSRStorageCondition.cs" />
+    <Compile Include="InventoryApi\OSRStorageDetailed.cs" />
+    <Compile Include="InventoryApi\OSRStorageHeader.cs" />
+    <Compile Include="InventoryApi\OSRStorageSelect.cs" />
+    <Compile Include="InventoryApi\OSRThelibraryCondition.cs" />
+    <Compile Include="InventoryApi\OSRThelibraryDetailed.cs" />
+    <Compile Include="InventoryApi\OSRThelibraryHeader.cs" />
+    <Compile Include="InventoryApi\OSRThelibrarySelect.cs" />
+    <Compile Include="InventoryApi\SampleJobCondition.cs" />
+    <Compile Include="InventoryApi\SampleJobSelect.cs" />
+    <Compile Include="InventoryApi\SampleStockCondition.cs" />
+    <Compile Include="InventoryApi\SampleStockSelect.cs" />
+    <Compile Include="InventoryApi\SampleStorageCondition.cs" />
+    <Compile Include="InventoryApi\SampleStorageSelect.cs" />
+    <Compile Include="InventoryApi\SampleThelibraryCondition.cs" />
+    <Compile Include="InventoryApi\SampleThelibrarySelect.cs" />
+    <Compile Include="MobileWeb\BTBMoneySummaryReport.cs" />
+    <Compile Include="MobileWeb\InsetrOrderImg.cs" />
+    <Compile Include="MobileWeb\InsetrOrderImgDb.cs" />
+    <Compile Include="MobileWeb\OrderManagementInfo.cs" />
+    <Compile Include="MobileWeb\PodStatusTrack.cs" />
+    <Compile Include="MonitoringReport\tbl_wms_OrderHeader.cs" />
+    <Compile Include="Phone\WeiQueryPod.cs" />
+    <Compile Include="Phone\WeiQueryPodCondition.cs" />
+    <Compile Include="POD\AddLog56TracksRequest.cs" />
+    <Compile Include="POD\AddLog56TracksResult.cs" />
+    <Compile Include="POD\Adidas\AdidasScanDataSearchCondition.cs" />
+    <Compile Include="POD\Adidas\ScanInfo.cs" />
+    <Compile Include="POD\AKZO\UpdateAKZOPod.cs" />
+    <Compile Include="POD\AKZO\UpdateAKZOModelsPod.cs" />
+    <Compile Include="POD\BAFPriceInfo.cs" />
+    <Compile Include="POD\BAFPriceInfoToDb.cs" />
+    <Compile Include="POD\Baixing\LoginUser.cs" />
+    <Compile Include="POD\Baixing\PodAddress.cs" />
+    <Compile Include="POD\Baixing\PodOrder.cs" />
+    <Compile Include="POD\Baixing\PodReceiver.cs" />
+    <Compile Include="POD\Baixing\PodSender.cs" />
+    <Compile Include="POD\Baixing\PodRaw.cs" />
+    <Compile Include="POD\Baixing\PodTrack_QY.cs" />
+    <Compile Include="POD\Baixing\ResponsePodRaw.cs" />
+    <Compile Include="POD\MaryKay\DMS_POD.cs" />
+    <Compile Include="POD\MaryKay\DMS_Province.cs" />
+    <Compile Include="POD\MaryKay\DMS_Shipper.cs" />
+    <Compile Include="POD\Nike\NikeforBSPOD.cs" />
+    <Compile Include="POD\Nike\NikePodForBSCondition.cs" />
+    <Compile Include="POD\PODDistributionVehicle.cs" />
+    <Compile Include="POD\PodStatusTrack.cs" />
+    <Compile Include="POD\Distribution\DbToExcel.cs" />
+    <Compile Include="POD\Distribution\PodDistribution.cs" />
+    <Compile Include="POD\Distribution\PodToDistribution.cs" />
+    <Compile Include="POD\Distribution\SettlePodDistribution.cs" />
+    <Compile Include="POD\GroupedPods.cs" />
+    <Compile Include="POD\Log56PhoneStatus.cs" />
+    <Compile Include="POD\Log56Track.cs" />
+    <Compile Include="POD\MaryKay\MaryKay_InterfaceLog.cs" />
+    <Compile Include="POD\Nike\TYscan.cs" />
+    <Compile Include="POD\Nike\TYscanDetail.cs" />
+    <Compile Include="POD\Nike\TYscanDetailSearchCondition.cs" />
+    <Compile Include="POD\Nike\TYscanGroupBy.cs" />
+    <Compile Include="POD\Nike\TYscanGroupBySearchCondition.cs" />
+    <Compile Include="POD\Nike\TYscanSearchCondition.cs" />
+    <Compile Include="POD\Nike\UpdateNikePod.cs" />
+    <Compile Include="POD\Nike\UpdateNikePodBG.cs" />
+    <Compile Include="POD\POD.cs" />
+    <Compile Include="POD\PodAll.cs" />
+    <Compile Include="POD\PodDescription.cs" />
+    <Compile Include="POD\PodDetail.cs" />
+    <Compile Include="POD\PodExceptions.cs" />
+    <Compile Include="POD\PodFeadBack.cs" />
+    <Compile Include="POD\PodFee.cs" />
+    <Compile Include="POD\PodKey.cs" />
+    <Compile Include="POD\PodReplyDocument.cs" />
+    <Compile Include="POD\PodReplyDocumentSearchCondition.cs" />
+    <Compile Include="POD\PodReplyDocumentWithAttachment.cs" />
+    <Compile Include="POD\PodSearchCondition.cs" />
+    <Compile Include="POD\PodStatusLog.cs" />
+    <Compile Include="POD\PodTrack.cs" />
+    <Compile Include="POD\PodWithAttachment.cs" />
+    <Compile Include="POD\ServicePeriod.cs" />
+    <Compile Include="POD\SuperPOD.cs" />
+    <Compile Include="POD\SuperPodAll.cs" />
+    <Compile Include="POD\TotalPODEntity.cs" />
+    <Compile Include="POD\UdtUpdateAdidasPodToDb.cs" />
+    <Compile Include="POD\UpdateAdidasPod.cs" />
+    <Compile Include="POD\UpdateAdidasPurchasePod.cs" />
+    <Compile Include="POD\UpdateAdidasPurchasePodDb.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RabbitMQ\InstructionInfo.cs" />
+    <Compile Include="RabbitMQ\RabbitRecOption.cs" />
+    <Compile Include="RabbitMQ\RabbitSenderOption.cs" />
+    <Compile Include="Reports\CustomerPodMonthlyAndDayCount.cs" />
+    <Compile Include="Reports\CustomerPodYearCount.cs" />
+    <Compile Include="Reports\CustomerPodYearMonthCount.cs" />
+    <Compile Include="Reports\IncomAndExpenses.cs" />
+    <Compile Include="Reports\PodInvoiceReceiveOrPayOrders.cs" />
+    <Compile Include="Reports\PodRegionCount.cs" />
+    <Compile Include="Reports\ShipperCost.cs" />
+    <Compile Include="Reports\ShowCaseHotMap.cs" />
+    <Compile Include="Reports\TransOrder.cs" />
+    <Compile Include="Reports\WMSOrderStatusInfo.cs" />
+    <Compile Include="WebApi\Express\ExpressDelivery.cs" />
+    <Compile Include="WebApi\Express\YdResponseParam.cs" />
+    <Compile Include="WebApi\Express\YdRequestParam.cs" />
+    <Compile Include="WebApi\Express\YtoExpressrNumberInfo.cs" />
+    <Compile Include="WebApi\Express\Ytofeedback.cs" />
+    <Compile Include="WebApi\Express\YtoReceiver.cs" />
+    <Compile Include="WebApi\Express\YtoSender.cs" />
+    <Compile Include="WMS.WXApp\ChangLogisticsRequest.cs" />
+    <Compile Include="WMS.WXApp\ChangLogisticsResponse.cs" />
+    <Compile Include="WMS.WXApp\IncrementSoldTradesRequest.cs" />
+    <Compile Include="WMS.WXApp\IncrementSoldTradesResponse.cs" />
+    <Compile Include="WMS.WXApp\LogisticRequest.cs" />
+    <Compile Include="WMS.WXApp\LogisticResponse.cs" />
+    <Compile Include="WMS.WXApp\ProductRequest.cs" />
+    <Compile Include="WMS.WXApp\ProductResponse.cs" />
+    <Compile Include="WMS.WXApp\RefundDetailRequest.cs" />
+    <Compile Include="WMS.WXApp\RefundDetailResponse.cs" />
+    <Compile Include="WMS.WXApp\SoldProductsRequest.cs" />
+    <Compile Include="WMS.WXApp\SoldProductsResponse.cs" />
+    <Compile Include="WMS.WXApp\SoldRefundsRequest.cs" />
+    <Compile Include="WMS.WXApp\SoldRefundsResponse.cs" />
+    <Compile Include="WMS.WXApp\SoldTradesDetailToDb.cs" />
+    <Compile Include="WMS.WXApp\SoldTradesRequest.cs" />
+    <Compile Include="WMS.WXApp\SoldTradesResponse.cs" />
+    <Compile Include="WMS.WXApp\SoldTradesToDb.cs" />
+    <Compile Include="WMS.WXApp\TradeRequest.cs" />
+    <Compile Include="WMS.WXApp\TradeResponse.cs" />
+    <Compile Include="WMS.WXApp\UpdateProductApproveStatusRequest.cs" />
+    <Compile Include="WMS.WXApp\UpdateProductApproveStatusResponse.cs" />
+    <Compile Include="WMS.WXApp\UpdateProductQuantityRequest.cs" />
+    <Compile Include="WMS.WXApp\UpdateProductQuantityResponse.cs" />
+    <Compile Include="WMS\Log\CustomIsoDateTimeConverter.cs" />
+    <Compile Include="WMS\Log\LogOperationRFSearchCondition.cs" />
+    <Compile Include="WMS\Log\LogOperationSearchCondition.cs" />
+    <Compile Include="WMS\Log\NikeCrodOrderLog.cs" />
+    <Compile Include="WMS\Log\WMS_NikeReturnSFTP_Log.cs" />
+    <Compile Include="WMS\Log\WMS_Cord_Operation.cs" />
+    <Compile Include="WMS\Log\WMS_LogRF_Exception.cs" />
+    <Compile Include="WMS\Log\WMS_Log_OperationRF.cs" />
+    <Compile Include="WMS\Log\WMS_Log_Operation.cs" />
+    <Compile Include="WMS\NikeOSRBJPrint\PrintExpressJite.cs" />
+    <Compile Include="WMS\NikeOSRBJPrint\PrintExpressYd.cs" />
+    <Compile Include="WMS\Order\OrderECModel.cs" />
+    <Compile Include="WMS\Order\Order_Detail.cs" />
+    <Compile Include="WMS\Order\Order_Express.cs" />
+    <Compile Include="WMS\Order\Order_Header.cs" />
+    <Compile Include="WMS\Order\WMS_CheckExpress.cs" />
+    <Compile Include="WMS\Order\WMS_OrderShipment.cs" />
+    <Compile Include="WMS\Order\OrderShipmentSearchCondition.cs" />
+    <Compile Include="WMS\Order\WMS_OrderShipmentAndDetail.cs" />
+    <Compile Include="WMS\Order\WMS_OrderShipmentDetail.cs" />
+    <Compile Include="WMS\PreOrders\CancelOrderInfo.cs" />
+    <Compile Include="WMS\PreOrders\CancelOrderModel.cs" />
+    <Compile Include="WMS\PreOrders\CancelOrderSearchCondition.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderDistributionResult.cs" />
+    <Compile Include="WMS\Product\SKUFloar.cs" />
+    <Compile Include="WMS\Product\SKURF.cs" />
+    <Compile Include="WMS\Product\ArticleRF.cs" />
+    <Compile Include="WMS\Receipt\ASNAbnormalSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\ASNAbnormalTracking.cs" />
+    <Compile Include="WMS\Receipt\ASNDetailLocation.cs" />
+    <Compile Include="WMS\Receipt\ASNNewBoxLabel.cs" />
+    <Compile Include="WMS\Receipt\ASNNewBoxLabelSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\ASNScanTray.cs" />
+    <Compile Include="WMS\Receipt\ReceiptReceivingRFScan.cs" />
+    <Compile Include="WMS\Report\ProcessTrackingSearchCondition.cs" />
+    <Compile Include="WMS\Report\InspectionReport.cs" />
+    <Compile Include="WMS\Report\InspectionReportSearchCondition.cs" />
+    <Compile Include="WMS\Report\WMS_ProcessTracking.cs" />
+    <Compile Include="WMS\Report\WorkingSearchCondition.cs" />
+    <Compile Include="WMS\Report\WMS_WorkingStatis.cs" />
+    <Compile Include="WMS\Report\WMS_WorkingStatisDetail.cs" />
+    <Compile Include="WMS\Receipt\ASNScan.cs" />
+    <Compile Include="WMS\SettlementManagement\HiltiCount.cs" />
+    <Compile Include="ShipperManagement\CRMCar.cs" />
+    <Compile Include="ShipperManagement\CRMShipper.cs" />
+    <Compile Include="ShipperManagement\CRMShipperCooperation.cs" />
+    <Compile Include="ShipperManagement\CRMShipperImport.cs" />
+    <Compile Include="ShipperManagement\CRMShipperInfo.cs" />
+    <Compile Include="ShipperManagement\CRMShipperSearchCondition.cs" />
+    <Compile Include="ShipperManagement\CRMShipperTerminalInfo.cs" />
+    <Compile Include="ShipperManagement\CRMShipperTransportationLine.cs" />
+    <Compile Include="ShipperManagement\DriverManagement\CRMDriver.cs" />
+    <Compile Include="ShipperManagement\DriverManagement\CRMDriverSearchCondition.cs" />
+    <Compile Include="ShipperManagement\InsertShipperExcel.cs" />
+    <Compile Include="ShipperManagement\ShipperToVehicle.cs" />
+    <Compile Include="ShipperManagement\VehicleInfos.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\CRMDriverName.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\CRMVehicle.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\CRMVehicleSearchCondition.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\VehicleInfo.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\VehicleToDriver.cs" />
+    <Compile Include="System\Attachment.cs" />
+    <Compile Include="System\CacheInfo.cs" />
+    <Compile Include="System\ProjectRoleMenu.cs" />
+    <Compile Include="System\QueryBAFPrice.cs" />
+    <Compile Include="System\CheckedMenu.cs" />
+    <Compile Include="System\Config.cs" />
+    <Compile Include="System\Customer.cs" />
+    <Compile Include="System\LogHistory.cs" />
+    <Compile Include="System\Map.cs" />
+    <Compile Include="System\Menu.cs" />
+    <Compile Include="POD\PodForecastInfo.cs" />
+    <Compile Include="System\PodType.cs" />
+    <Compile Include="System\Project.cs" />
+    <Compile Include="System\ProjectCustomer.cs" />
+    <Compile Include="System\ProjectCustomerOrShipperSegment.cs" />
+    <Compile Include="System\ProjectRole.cs" />
+    <Compile Include="System\ProjectShipper.cs" />
+    <Compile Include="System\ProjectCustomersOrShippers.cs" />
+    <Compile Include="System\ProjectUserCustomer.cs" />
+    <Compile Include="System\ProjectUserRole.cs" />
+    <Compile Include="System\QuotedPrice.cs" />
+    <Compile Include="System\QuotedPrices.cs" />
+    <Compile Include="System\Region.cs" />
+    <Compile Include="System\Role.cs" />
+    <Compile Include="System\Segment.cs" />
+    <Compile Include="System\SegmentDetail.cs" />
+    <Compile Include="System\Shipper.cs" />
+    <Compile Include="System\ShipperAllInfo.cs" />
+    <Compile Include="System\ShipperRegionCovered.cs" />
+    <Compile Include="System\ShipperRelatedInfo.cs" />
+    <Compile Include="System\TransportationLine.cs" />
+    <Compile Include="System\User.cs" />
+    <Compile Include="System\UserWarehouseInfo.cs" />
+    <Compile Include="System\Vehicle.cs" />
+    <Compile Include="System\ProjectCustomerWarehouse.cs" />
+    <Compile Include="Task\WMS_Task.cs" />
+    <Compile Include="WebApi\Haddad\OrderCancel.cs" />
+    <Compile Include="WebApi\Haddad\OrderStatus.cs" />
+    <Compile Include="WebApi\Order\APIAndBackSetting.cs" />
+    <Compile Include="WebApi\Order\APIASNModel.cs" />
+    <Compile Include="WebApi\Order\APIASNBody.cs" />
+    <Compile Include="WebApi\VehicleLocation\VehicleLocation.cs" />
+    <Compile Include="WMS\DeliveryConfirm\DeliverDetail.cs" />
+    <Compile Include="WMS\DeliveryConfirm\DeliverHeader.cs" />
+    <Compile Include="WMS\DeliveryConfirm\DeliverHeaderSearchCondition.cs" />
+    <Compile Include="WMS\Instructions\Instructions.cs" />
+    <Compile Include="WMS\Instructions\Instruction_Order_Mapping.cs" />
+    <Compile Include="WMS\Instructions\PickUpGoodsWall.cs" />
+    <Compile Include="WMS\Instructions\ShelvesPanel.cs" />
+    <Compile Include="WMS\Inventory\Adjustment.cs" />
+    <Compile Include="WMS\Inventory\AdjustmentDetail.cs" />
+    <Compile Include="WMS\Inventory\AdjustmentDetailSearchCondition.cs" />
+    <Compile Include="WMS\Inventory\AdjustmentSearchCondition.cs" />
+    <Compile Include="WMS\Inventory\DirectAddInventory.cs" />
+    <Compile Include="WMS\Inventory\InventoryCompare.cs" />
+    <Compile Include="WMS\Inventory\Inventorys.cs" />
+    <Compile Include="WMS\Inventory\InventorySearchCondition.cs" />
+    <Compile Include="WMS\Inventory\InventorySnapshoot.cs" />
+    <Compile Include="WMS\Inventory\Replenishment.cs" />
+    <Compile Include="WMS\Inventory\ReplenishmentDetail.cs" />
+    <Compile Include="WMS\Inventory\ReplenishmentDetailSearchCondition.cs" />
+    <Compile Include="WMS\Inventory\ReplenishmentDetailSKUs.cs" />
+    <Compile Include="WMS\Inventory\ReplenishmentSearchCondition.cs" />
+    <Compile Include="WMS\NIKECE\IASN.cs" />
+    <Compile Include="WMS\NIKECE\BusinessUnit.cs" />
+    <Compile Include="WMS\NIKECE\Class1.cs" />
+    <Compile Include="WMS\NIKECE\CountryOfOrigin .cs" />
+    <Compile Include="WMS\NIKECE\Customer.cs" />
+    <Compile Include="WMS\NIKECE\CustomerOrderTransaction.cs" />
+    <Compile Include="WMS\NIKECE\Delivery.cs" />
+    <Compile Include="WMS\NIKECE\IGR.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\BusinessUnit.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\DateTime1.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\Inventory.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\InventoryAction.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\InventoryItem.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\InventoryLocation.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\ItemID.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\ItemLocation.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\MessageID.cs" />
+    <Compile Include="WMS\NIKECE\InventoryAdjustment\Quantity.cs" />
+    <Compile Include="WMS\NIKECE\InventoryControlTransaction.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\BusinessUnit.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\DateTime1.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\InventoryAction.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\InventoryPosition.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\InventorySnapshot.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\Item.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\ItemID.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\MessageID.cs" />
+    <Compile Include="WMS\NIKECE\InventorySnapshot\Quantity.cs" />
+    <Compile Include="WMS\NIKECE\InvoiceNumber.cs" />
+    <Compile Include="WMS\NIKECE\ItemID.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Batch.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Color.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Dates.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Description.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Item.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\ItemID.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\ItemMaintenance.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\ItemMaster.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\ItemPrice.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Marketing.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\MerchandiseHierarchy.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Name.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Pack.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Size.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\Style.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\StyleID.cs" />
+    <Compile Include="WMS\NIKECE\ItemMaster\SupplierInformation.cs" />
+    <Compile Include="WMS\NIKECE\JWT\JWTHeader.cs" />
+    <Compile Include="WMS\NIKECE\JWT\JWTPayload.cs" />
+    <Compile Include="WMS\NIKECE\LineItem.cs" />
+    <Compile Include="WMS\NIKECE\LineItemGR.cs" />
+    <Compile Include="WMS\NIKECE\LocalRequirements.cs" />
+    <Compile Include="WMS\NIKECE\Parent.cs" />
+    <Compile Include="WMS\NIKECE\POSLog.cs" />
+    <Compile Include="WMS\NIKECE\POSLogDateTime.cs" />
+    <Compile Include="WMS\NIKECE\POSLogGR.cs" />
+    <Compile Include="WMS\NIKECE\Quantity.cs" />
+    <Compile Include="WMS\NIKECE\ReceiveInventory.cs" />
+    <Compile Include="WMS\NIKECE\ResultMessage.cs" />
+    <Compile Include="WMS\NIKECE\SaleForDelivery.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\AddressLine.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\BusinessUnit.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Customer.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\CustomerOrderTransaction.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Delivery.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Delivery2.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\InvoiceNumber.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\ItemID.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\LineItem.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\LocalRequirements.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Name.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Name2.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\POSLog.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\POSLogDateTime.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\PreferredAddress.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\PreferredLocation.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\SaleForDelivery.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\ShipConfirm.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Territory.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\TrailerText.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\Transaction.cs" />
+    <Compile Include="WMS\NIKECE\ShipConfirm\UnitID.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Address.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\AddressLine.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\BusinessSOD.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\BusinessUnit.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\ControlTransaction.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Customer.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\CustomerOrderTransaction.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Delivery.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Delivery2.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\EMail.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\ItemID.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\LineItem.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\LocalRequirements.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\MerchandiseHierarchy.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Name.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Name2.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\POSLog.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\PreferredAddress.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\PreferredLocation.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\SaleForDelivery.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Sales.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\SessionSettle.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\ShipRequest.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\TelephoneNumber.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\TenderSummary.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Territory.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\Transaction.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\UnitID.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\WMS_ShipRequestDetail.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\WMS_ShipRequestDetailToDB.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\WMS_ShipRequestHeader.cs" />
+    <Compile Include="WMS\NIKECE\ShipRequest\WMS_ShipRequestHeaderToDb.cs" />
+    <Compile Include="WMS\NIKECE\TrailerText.cs" />
+    <Compile Include="WMS\NIKECE\Transaction.cs" />
+    <Compile Include="WMS\NIKECE\TransactionGR.cs" />
+    <Compile Include="WMS\NIKECE\UnitID.cs" />
+    <Compile Include="WMS\OnlineOrder\Consignee.cs" />
+    <Compile Include="WMS\OnlineOrder\ConsigneeSearchCondition.cs" />
+    <Compile Include="WMS\OnlineOrder\DeliveryOrder.cs" />
+    <Compile Include="WMS\OnlineOrder\DeliveryOrderSearchCondition.cs" />
+    <Compile Include="WMS\Order\OrderDetailForRedisRF.cs" />
+    <Compile Include="WMS\Order\OrderPickDetail.cs" />
+    <Compile Include="WMS\Order\Picking.cs" />
+    <Compile Include="WMS\Order\PickingDetail.cs" />
+    <Compile Include="WMS\Order\WaveSearchCondition.cs" />
+    <Compile Include="WMS\Order\WMS_Wave.cs" />
+    <Compile Include="WMS\Order\WMS_WaveDetail.cs" />
+    <Compile Include="WMS\Machining\MachiningSearchCondition.cs" />
+    <Compile Include="WMS\Machining\WMS_MachiningHeaderAndDetail.cs" />
+    <Compile Include="WMS\NikeNFSPrint\NFSPrintBoxInfo.cs" />
+    <Compile Include="WMS\NikeOSRBJPrint\PrintBoxInfo.cs" />
+    <Compile Include="WMS\NikeOSRBJPrint\PrintPodInfo.cs" />
+    <Compile Include="WMS\Order\BarCode.cs" />
+    <Compile Include="WMS\Order\BarCodeSearchCondition.cs" />
+    <Compile Include="WMS\Order\OrderBackStatus.cs" />
+    <Compile Include="WMS\Order\BoxSize.cs" />
+    <Compile Include="WMS\Order\OrderNumbers.cs" />
+    <Compile Include="WMS\Order\OrderNumberToDb.cs" />
+    <Compile Include="WMS\Order\PackageInfo.cs" />
+    <Compile Include="WMS\Order\PackageDetailInfo.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderBackStatus.cs" />
+    <Compile Include="WMS\PreOrders\DistributionInformation.cs" />
+    <Compile Include="WMS\PreOrders\PreOrder.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderAndPreOrderDetail.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderDetail.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderIds.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderSearchCondition.cs" />
+    <Compile Include="WMS\Order\OrderInfo.cs" />
+    <Compile Include="WMS\Order\OrderDetailInfo.cs" />
+    <Compile Include="WMS\Order\OrderSearchCondition.cs" />
+    <Compile Include="WMS\Order\OrderDetailSearchCondition.cs" />
+    <Compile Include="WMS\Print\PrintDetail.cs" />
+    <Compile Include="WMS\Print\PrintHeader.cs" />
+    <Compile Include="WMS\Print\PrintHeaderSearchCondition.cs" />
+    <Compile Include="WMS\Product\ArticleSearch.cs" />
+    <Compile Include="WMS\Product\ProductDetail.cs" />
+    <Compile Include="WMS\Product\ProductSearch.cs" />
+    <Compile Include="WMS\Product\ProductSearchCondition.cs" />
+    <Compile Include="WMS\Product\ProductStorer.cs" />
+    <Compile Include="WMS\Product\ProductStorerInfo.cs" />
+    <Compile Include="WMS\Product\StorerToUser.cs" />
+    <Compile Include="WMS\Product\UpdateSearchCondition.cs" />
+    <Compile Include="WMS\Product\WMSProductSearch.cs" />
+    <Compile Include="WMS\Product\WMS_ArticleDetail.cs" />
+    <Compile Include="WMS\Product\WMS_Customer.cs" />
+    <Compile Include="WMS\Product\WMSArticleSearch.cs" />
+    <Compile Include="WMS\Receipt\ASN.cs" />
+    <Compile Include="WMS\Receipt\ASNDetail.cs" />
+    <Compile Include="WMS\Receipt\ASNDetailByProc.cs" />
+    <Compile Include="WMS\Receipt\ASNDetailSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\ASNSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\Receipt.cs" />
+    <Compile Include="WMS\Receipt\ReceiptDetail.cs" />
+    <Compile Include="WMS\Receipt\ReceiptDetailSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\ReceiptPrint.cs" />
+    <Compile Include="WMS\Receipt\ReceiptReceiving.cs" />
+    <Compile Include="WMS\Receipt\ReceiptReceivingSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\ReceiptSearchCondition.cs" />
+    <Compile Include="WMS\Receipt\ReceiptShelves.cs" />
+    <Compile Include="WMS\Report\ReportExpressInfo.cs" />
+    <Compile Include="WMS\Report\ReportExpressInfoSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportInventorySummary.cs" />
+    <Compile Include="WMS\Report\ReportInventorySearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportInventory.cs" />
+    <Compile Include="WMS\Report\ReportInventorySummarySearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportReceiptReport.cs" />
+    <Compile Include="WMS\Report\ReportSku.cs" />
+    <Compile Include="WMS\Report\ReportSKUChange.cs" />
+    <Compile Include="WMS\Report\ReportSKUChangeSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportSkuInAndOut.cs" />
+    <Compile Include="WMS\Report\ReportSkuInAndOutSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportSkuSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportStaff.cs" />
+    <Compile Include="WMS\Report\ReportStaffSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportInventoryChange.cs" />
+    <Compile Include="WMS\Report\ReportInventoryChangeSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportTableSearchCondition.cs" />
+    <Compile Include="WMS\Report\ReportWarehouseStorageDensity.cs" />
+    <Compile Include="WMS\Report\ReportWarehouseStorageDensitySearchCondition.cs" />
+    <Compile Include="WMS\Report\ReprotTableIn.cs" />
+    <Compile Include="WMS\SettlementManagement\Settlement.cs" />
+    <Compile Include="WMS\SettlementManagement\SettlementDetail.cs" />
+    <Compile Include="WMS\SettlementManagement\SettlementSearchCondition.cs" />
+    <Compile Include="WMS\SettlementManagement\WMS_HiltibjSettled.cs" />
+    <Compile Include="WMS\Shelves\GetReceiptbyCondition.cs" />
+    <Compile Include="WMS\Shelves\Shelves.cs" />
+    <Compile Include="WMS\Shelves\StoresByGetReceipt.cs" />
+    <Compile Include="WMS\ShipmentOut\Print\E1BPSHIPMENTHEADER.cs" />
+    <Compile Include="WMS\ShipmentOut\Print\E1BPSHIPMENTITEM.cs" />
+    <Compile Include="WMS\ShipmentOut\Print\EDI_DC40.cs" />
+    <Compile Include="WMS\ShipmentOut\Print\IDOC.cs" />
+    <Compile Include="WMS\ShipmentOut\Print\SHIPMENT_CREATEFROMDATA01.cs" />
+    <Compile Include="WMS\Storer\StorerSearchCondition.cs" />
+    <Compile Include="WMS\Storer\Storer.cs" />
+    <Compile Include="WMS\Template\SearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\AreaInfo.cs" />
+    <Compile Include="WMS\Warehouse\LocationInfo.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseAllocate.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseCheck.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseCheckDetail.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseCheckSearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseInfo.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseSearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\WLocationSearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\GoodsShelfInfo.cs" />
+    <Compile Include="WMS\Warehouse\GoodsShelfSearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\QRCodeInfo.cs" />
+    <Compile Include="WMS\Warehouse\QRCodeSearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\ProductWarningInfo.cs" />
+    <Compile Include="WMS\Warehouse\ProductWarningSearchCondition.cs" />
+    <Compile Include="WMS\Warehouse\WMS_User_Area_Mapping.cs" />
+    <Compile Include="WMS\WMSConfig.cs" />
+    <Compile Include="WMS\WMS_Config_Type.cs" />
+    <Compile Include="WMS\WMS_UnitAndSpecifications_Config.cs" />
+    <Compile Include="WMS\WorkOrder\WorkOrder.cs" />
+    <Compile Include="WMS\WorkOrder\WorkOrderFile.cs" />
+    <Compile Include="WMS\WorkOrder\WorkOrderProcess.cs" />
+    <Compile Include="WMS\WorkOrder\WorkOrderSearchCondition.cs" />
+    <Compile Include="WMS\YXDRBJPrint\YXDRBJPrintPodInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Runbow.TWS.Common\Runbow.TWS.Common.csproj">
+      <Project>{a8de5d57-c805-44c0-955a-79995e3b2466}</Project>
+      <Name>Runbow.TWS.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="VehicleManagement\" />
+    <Folder Include="WMS\ShipmentOut\Common\" />
+    <Folder Include="WMS\ShipmentOut\GoodsIssus\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

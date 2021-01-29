@@ -1,0 +1,445 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.IndexWLocationViewModel
+@*@Html.Hidden("WLSearchCondition_SearchType",ViewData["WLSearchCondition_SearchType"])
+    @Html.HiddenFor(m=>m.SearchType)*@
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<link href="~/Assets/Layui/layui/css/layui.css" rel="stylesheet" />
+<script src="~/Assets/Layui/layui/layui.js"></script>
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    @Html.Hidden("searchFlag", Model.flag);
+    <fieldset id="Location">
+        <legend>查询条件</legend>
+        <table id="conditionTableLocation">
+            <tr>
+                <td class="TableColumnTitle"><label>查询类型</label></td>
+                <td colspan="5">@Html.DropDownListFor(m => m.WLSearchCondition.SearchType, Model.SearchType, new { @class = "form-control", style = "width:23%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.WLSearchCondition.WarehouseID, Model.WarehouseIDD, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>区域</label></td>
+                <td>@Html.DropDownListFor(m => m.WLSearchCondition.AreaID, Model.WarehouseAreaList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>货位</label></td>
+                <td>@Html.TextBoxFor(m => m.WLSearchCondition.Location, new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>货位类型</label></td>
+                <td>@Html.DropDownListFor(m => m.WLSearchCondition.LocationType, Model.LocationType1, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>货位级别</label></td>
+                <td>@Html.DropDownListFor(m => m.WLSearchCondition.LocationLevel, Model.LocationLevel, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                @* <td class="TableColumnTitle"><label>货位类别</label></td>
+                    <td>@Html.DropDownListFor(m=>m.WLSearchCondition.Classification,Model.Classification,"==请选择==", new { @class ="form-control",style="width:100%"})</td>*@
+                <td class="TableColumnTitle"><label>是否可放置多个品种</label></td>
+                <td>@Html.DropDownListFor(m => m.WLSearchCondition.IsMultiSKU, Model.IsMultiSKU, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            @* <tr>
+                    <td class="TableColumnTitle"><label>货位Handling</label></td>
+                    <td>@Html.DropDownListFor(m=>m.WLSearchCondition.Handling,Model.Handling,"==请选择==", new { @class ="form-control",style="width:100%"})</td>
+                    <td class="TableColumnTitle"><label>ABC分类</label></td>
+                    <td>@Html.DropDownListFor(m=>m.WLSearchCondition.ABCClassification,Model.ABCClassification,"==请选择==", new { @class ="form-control",style="width:100%"})</td>
+
+                </tr>*@
+            <tr>
+
+                <td class="TableColumnTitle"><label>是否可用</label></td>
+                <td>@Html.DropDownListFor(m => m.WLSearchCondition.LocationStatus, Model.LocationStatus, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle"><label>是否可放置多个批次号</label></td>
+                <td colspan="3">@Html.DropDownListFor(m => m.WLSearchCondition.IsMultiLot, Model.IsMultiLot, "==请选择==", new { @class = "form-control", style = "width:31%" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButtonLocation" name="WLAction" />
+            &nbsp;
+            @if (Model.flag == 0)
+            {
+                <input type="button" class="btn btn-success" value="新增库位" id="addButtonLocation" name="WLAction" />
+            }
+            &nbsp;
+            <input type="button" value="导出" id="exportButton" class="btn btn-success" />
+        </div>
+    </fieldset>
+    <fieldset id="LocationTable">
+        <legend>
+            库位列表
+            @if (Model.WLocationCollection != null && Model.WLocationCollection.Any())
+            {
+                @Html.Raw("(" + Model.WLocationCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTableLocation">
+            <thead>
+                <tr>
+                    @if (Model.flag == 0)
+                    {
+                        <th id="OperateTh" style="width: 50px;">操作</th>
+                    }
+                    <th>货位</th>
+                    <th>
+                        所在<br />
+                        区域
+                    </th>
+                    <th>
+                        所属<br />
+                        仓库
+                    </th>
+                    <th>
+                        是否<br />
+                        可用
+                    </th>
+                    @*  <th>放货<br/>
+                        次序</th>*@
+                    <th>
+                        拣货<br />
+                        次序
+                    </th>
+                    @* <th>货位<br/>
+                        分类</th>*@
+                    <th>
+                        货位<br />
+                        类型
+                    </th>
+                    @*  <th>货位<br/>
+                        Handling</th>     *@
+                    @* <th>ABC<br/>
+                        分类</th>*@
+                    <th>
+                        是否可以放置<br />
+                        多个品种
+                    </th>
+                    <th>
+                        是否可以放置<br />
+                        多个批次号
+                    </th>
+                    <th>
+                        货位<br />
+                        级别
+                    </th>
+                    <th>
+                        货位最<br />
+                        大数量
+                    </th>
+                    @*  <th>货位最<br/>
+                        大ID</th>*@
+                    @*  @if(Model.flag==0)
+                        {
+                        <th>操作</th>
+                        }*@
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.WLocationCollection != null && Model.WLocationCollection.Any())
+                {
+                    foreach (var wlocation in Model.WLocationCollection)
+                    {
+                        <tr id="@wlocation.ID">
+                            @if (Model.flag == 0)
+                            {
+                                <td style="position: relative" class="OoperationTD">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs  LocationStatus" data-name="@wlocation.ID">编辑</label>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs WarehouseDelete" onclick="LocationDelete(@wlocation.ID,'@wlocation.Location')">删除</label>
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+
+                                </td>
+                            }
+                            <td>
+                                @if (Model.flag == 0)
+                                {
+                                    <a href="/WMS/Warehouse/LocationCreate/?ViewType=0&&ID=@wlocation.ID&&AreaID=@wlocation.AreaID&&WLSearchCondition_SearchType=2">@wlocation.Location</a>
+                                }
+                                else
+                                {
+                                    @wlocation.Location
+                                }
+                            </td>
+
+                            <td>
+                                @wlocation.AreaName
+                            </td>
+                            <td>
+                                @wlocation.WarehouseName
+                            </td>
+                            <td>
+                                @{if (wlocation.LocationStatus == "0")
+                                    {
+                                        @("不可用");
+                                    }
+                                    else
+                                    {
+                                        @("可用");
+                                    }
+                                }
+
+                            </td>
+                            @*  <td>
+                                    @wlocation.GoodsPutOrder
+                                </td>*@
+                            <td>
+                                @wlocation.GoodsPickOrder
+                            </td>
+                            @* <td>
+                                     @(Model.Classification.SingleOrDefault(o=>o.Value==@wlocation.Classification.ToString()).Text)
+
+                                </td>*@
+                            <td>
+                                @(Model.LocationType1.SingleOrDefault(o => o.Value == @wlocation.LocationType.ToString()).Text)
+
+                            </td>
+                            @* <td>
+                                      @(Model.Handling.SingleOrDefault(o=>o.Value== @wlocation.Handling.ToString()).Text)
+
+                                </td>*@
+                            @*<td>
+                                    @(Model.ABCClassification.SingleOrDefault(o=>o.Value== @wlocation.ABCClassification.ToString()).Text)
+
+                                </td>*@
+                            <td>
+                                @{if (wlocation.IsMultiSKU == true)
+                                    {
+                                        @("是");
+                                    }
+                                    else
+                                    {
+                                        @("否");
+                                    }
+                                }
+
+                            </td>
+                            <td>
+                                @{if (wlocation.IsMultiLot == true)
+                                    {
+                                        @("是");
+                                    }
+                                    else
+                                    {
+                                        @("否");
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @wlocation.LocationLevel
+                            </td>
+                            <td>
+                                @wlocation.MaxNumber
+                            </td>
+                            @*<td>
+                                    @wlocation.MaxID
+                                </td>*@
+                            @* @if(Model.flag==0)
+                                {
+                                 <td style="background-color:white;">
+                                       <label style="cursor:pointer; color:white"  class="LocationStatus label label-info" data-name="@wlocation.ID" >编辑</label>
+
+
+                                       <label style="cursor:pointer; color:white"  class="label label-info" data-name="@wlocation.ID" onclick="LocationDelete(@wlocation.ID,'@wlocation.Location')">删除</label>
+                                  </td>
+                                }*@
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+
+}
+
+<script>
+    layui.config({
+        base: '../../../Assets/Layui/layui_exts/',
+    }).extend({
+        excel: 'excel',
+    });
+    layui.use(['form', 'layer', 'excel'], function () {
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery,
+            excel = layui.excel;
+
+        jQuery.support.cors = true;
+
+        var timestart;//计算开始用时
+        var timeend;//计算结束用时
+        var loading;//弹出层下标，用来关闭提示框
+        $("#exportButton").on("click", function () {
+            //弹出loading
+            loading = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.8 });
+            timestart = Date.now();
+            var searchData =
+            {
+                WarehouseID: $("#WLSearchCondition_WarehouseID option:selected").val(),
+                AreaID: $("#WLSearchCondition_AreaID option:selected").val(),
+                Location: $("#WLSearchCondition_Location").val(),
+                LocationType: $("#WLSearchCondition_LocationType").val(),
+                LocationLevel: $("#WLSearchCondition_LocationLevel").val(),
+                IsMultiSKU: $("#WLSearchCondition_IsMultiSKU").val(),
+                LocationStatus: $("#WLSearchCondition_LocationStatus").val(),
+                IsMultiLot: $("#WLSearchCondition_IsMultiLot").val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/WMS/Warehouse/GetWLocationInfo',
+                data: {
+                    requestData: JSON.stringify(searchData),
+                    page: 1,
+                    limit: 1
+                },
+                success: function (res) {
+                    var count = res.count;//第一次请求获取总行数
+                    console.log("总行数：" + count);
+                    if (count > 50000) {
+                        layer.msg('当前查询数据量超出限制(50000)，无法导出！');
+                        return;
+                    }
+                    var pagenum = 1000;//分段获取的行数
+                    var times = Math.ceil(res.count / pagenum);//分段获取的次数
+                    var arrs = new Array();//定义集合
+                    timestart = Date.now();
+                    getData(times, pagenum, arrs);
+                }, error: function (res) {
+                    layer.close(loading);
+                    layer.alert('获取数据失败');
+                }
+            });
+        });
+
+        //递归调用后台获取数组拼接
+        //times:递归次数
+        //limit:分段获取行数
+        //arrs：拼接的数组
+        function getData(times, limit, arrs) {
+            console.log("次数：" + times);
+            var searchData = {
+                WarehouseID: $("#WLSearchCondition_WarehouseID option:selected").val(),
+                AreaID: $("#WLSearchCondition_AreaID option:selected").val(),
+                Location: $("#WLSearchCondition_Location").val(),
+                LocationType: $("#WLSearchCondition_LocationType").val(),
+                LocationLevel: $("#WLSearchCondition_LocationLevel").val(),
+                IsMultiSKU: $("#WLSearchCondition_IsMultiSKU").val(),
+                LocationStatus: $("#WLSearchCondition_LocationStatus").val(),
+                IsMultiLot: $("#WLSearchCondition_IsMultiLot").val()
+            };
+            $.ajax({
+                url: '/WMS/Warehouse/GetWLocationInfo',
+                type: 'POST',
+                data: {
+                    requestData: JSON.stringify(searchData),
+                    page: times,
+                    limit: limit
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var data = res.data;
+                    arrs.push.apply(arrs, data);
+                    console.log("行数:" + arrs.length);
+                    if (res.count > limit && times > 1) {
+                        getData(times - 1, limit, arrs);
+                    } else {
+                        callback(arrs);
+                    }
+                }, error: function (res) {
+                    console.log(res);
+                    layer.close(loading);
+                    layer.alert('获取数据失败');
+                }
+            });
+        }
+
+        //导出EXCEL数组数据
+        function callback(arrs) {
+            console.log("数组长度：" + arrs.length);
+            timeend = Date.now();
+            var spent = (timeend - timestart) / 1000;
+            console.log('获取数据耗时 ' + spent + ' s');
+            timestart = Date.now();
+            data = excel.filterExportData(arrs, {
+                WarehouseName: 'WarehouseName',
+                AreaName: 'AreaName',
+                Location: 'Location',
+                LocationStatus: 'LocationStatus',
+                Str1: 'Str1'
+            });
+            // 重点2！！！一般都需要加一个表头，表头的键名顺序需要与最终导出的数据一致
+            data.unshift({
+                WarehouseName: '仓库',
+                AreaName: '库区',
+                Location: '库位',
+                LocationStatus: '是否可用',
+                Str1: '货位类型'
+            });
+            //设置样式的函数，传入设置的范围，表头样式
+            excel.setExportCellStyle(data, 'A1:E1', {
+                s: {
+                    fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                    alignment: {
+                        horizontal: 'center',
+                        vertical: 'center'
+                    },
+                    font: { sz: 12, bold: true }
+                }
+            });
+            //设置样式的函数，传入设置的范围，单元格边框样式
+            excel.setExportCellStyle(data, 'A1:E' + data.length, {
+                s: {
+                    border: {
+                        top: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }, bottom: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }, left: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }, right: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }
+                    }
+                }
+            });
+            // 意思是：A列100px，B/C列120px，M列150px，其他列80px
+            var colConf = excel.makeColConfig({
+                'A': 100,
+                'B': 100,
+                'E': 150
+            }, 80);
+            excel.exportExcel({
+                sheet1: data
+            }, '库位信息导出' + getCurrentTimeStr() + '.xlsx', 'xlsx', {
+                    extend: {
+                        '!cols': colConf
+                    }
+                });
+            timeend = Date.now();
+            spent = (timeend - timestart) / 1000;
+            console.log('导出耗时 ' + spent + ' s');
+            layer.close(loading);
+        }
+
+        //获取当前日期字符串
+        function getCurrentTimeStr() {
+            var isTime = new Date();
+            var y = isTime.getFullYear();
+            var m = isTime.getMonth();
+            var d = isTime.getDate();
+            var h = isTime.getHours();
+            var mi = isTime.getMinutes();
+            var s = isTime.getSeconds();
+            m = m + 1;
+            var str = "";
+            str += y;
+            str += (m + "").length < 2 ? ("0" + m) : m;
+            str += (d + "").length < 2 ? ("0" + d) : d;
+            str += (h + "").length < 2 ? ("0" + h) : h;
+            str += (mi + "").length < 2 ? ("0" + mi) : mi;
+            str += (s + "").length < 2 ? ("0" + s) : s;
+            return str;
+        }
+    })
+
+</script>

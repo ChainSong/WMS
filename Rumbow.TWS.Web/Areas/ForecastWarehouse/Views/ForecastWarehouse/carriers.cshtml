@@ -1,0 +1,74 @@
+﻿@model Runbow.TWS.Web.Areas.ForecastWarehouse.Models.ForecastOrdersModel
+ @Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@*预报订单查询页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        <tr>
+           
+            <td class="TableColumnTitle">
+                日期:
+            </td>
+            <td>
+               @Html.CalendarFor(model => model.WaveReleaseTime)-@Html.CalendarFor(model => model.WaveReleaseTime2)
+           </td>
+            <td class="TableColumnTitle">
+               @Html.LabelFor(m => m.ForecastOrders.State)
+            </td>
+            <td>
+              @Html.DropDownListFor(m => m.States,Model.State2)
+                     
+            </td>
+            <td colspan="2">
+                 <input type="submit" value="查询" id="query" />
+             </td>
+        </tr>
+        
+            
+        
+        
+    </table>
+   @* <div class="actionButtonDiv">
+                <input type="submit" value="查询" id="query" />
+
+    </div>*@
+</fieldset>
+    <a id="xiangxi" class=""  href="/ForecastWarehouse/ForecastWarehouse/xiangxi"  >详细信息</a>
+    @Model.Message
+       if(Model !=null){
+    <fieldset>
+        <legend></legend>
+        @if (Model.IEnumerableForecastOrders != null)
+        {
+        <table id="CrmInfoTable">
+             <thead>
+            <tr>
+                 <th class="TableColumnTitle">日期</th>
+            <th class="TableColumnTitle">城市</th>
+            <th class="TableColumnTitle">箱数</th>
+            
+           </thead>
+            
+                @foreach (var info in Model.IEnumerableForecastOrders)
+                {
+                   <tr>
+                        <td>@info.WaveReleaseTime</td>
+                       <td><a id="ShipToSity" class=""  href="/ForecastWarehouse/ForecastWarehouse/carrierslist?ShipToSity=@info.ShipToSity&WaveReleaseTime=@info.WaveReleaseTime"  data-id="@info.ShipToSity">@info.ShipToSity</a></td>
+                      @* <td>@info.Shiptocity</td>*@
+                       <td>@info.Cartons</td>
+                       
+                      
+                   </tr>
+                }
+            
+        </table>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        }
+        
+    </fieldset>
+    }
+}

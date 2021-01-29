@@ -1,0 +1,97 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.CreateTransportationLineViewModel
+@{
+    var startCityTreeKey = Guid.NewGuid().ToString();
+    var endCityTreeKey = Guid.NewGuid().ToString();
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.State)
+    @Html.HiddenFor(m => m.Str1)
+    @Html.HiddenFor(m => m.Str2)
+    @Html.HiddenFor(m => m.Str3)
+
+    <fieldset>
+        <legend>新增线路
+            &nbsp;&nbsp;
+            @ViewBag.Message</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Name)
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 40%">
+                    @Html.TextBoxFor(model => model.Name)
+                    @Html.ValidationMessageFor(model => model.Name)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Distance)
+                </td>
+                <td style="width: 40%">
+                    @Html.TextBoxFor(model => model.Distance)
+                    @Html.ValidationMessageFor(model => model.Distance)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.StartCityID)
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 40%">
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = startCityTreeKey })
+                    <a id="startCityClear" href="#">清空</a>
+                    @Html.HiddenFor(model => model.StartCityID)
+                    @Html.HiddenFor(model => model.StartCityName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.EndCityID)
+                    @Html.NecessaryFlag()
+                </td>
+                <td style="width: 40%">
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = endCityTreeKey })
+                    <a id="endCityClear" href="#">清空</a>
+                    @Html.HiddenFor(model => model.EndCityID)
+                    @Html.HiddenFor(model => model.EndCityName)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Remark)
+                </td>
+                <td colspan="3">
+                    @Html.TextAreaFor(model => model.Remark, new { style = "width:95%" })
+                    @Html.ValidationMessageFor(model => model.Remark)
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="保存" id="btnCreate" />
+            &nbsp;&nbsp;
+            <input type="button" value="返回" id="btnReturn" />
+        </div>
+    </fieldset>
+}
+
+<script>
+    function onRegionSelected(rid, rn, treeId) {
+        if (treeId === '@startCityTreeKey') {
+            $('#StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (treeId === '@endCityTreeKey') {
+            $('#EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#EndCityName').val($('#endCityTreeName').attr('value'));
+        }
+    }
+
+    function onRegionAutoCompleteSelected(globalID) {
+        if (globalID === '@startCityTreeKey') {
+            $('#StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (globalID === '@endCityTreeKey') {
+           $('#EndCityID').val($('#endCityTreeID').attr('value'));
+           $('#EndCityName').val($('#endCityTreeName').attr('value'));
+       }
+    }
+
+</script>

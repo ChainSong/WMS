@@ -1,0 +1,210 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.WarehouseOperationViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using(Html.BeginForm()){
+@Html.HiddenFor(m => m.ViewType)  @*存放视图类型*@
+@Html.Hidden("ViewDataAreaID",ViewData["ViewDataAreaID"])
+@Html.Hidden("ViewDataWarehouseID",ViewData["ViewDataWarehouseID"])
+@Html.HiddenFor(m=>m.Warehouse.ID)
+@Html.HiddenFor(m=>m.Area.ID)
+@Html.Hidden("WarehouseID",@Model.Warehouse.ID)
+
+<div>
+     <fieldset>
+        <legend>基础信息
+        </legend>
+        <table id="BasicInfo">
+         <tr>
+              @{
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+              <td class="TableColumnTitle" style="width: 13%;"><label>所属仓库</label></td>
+              @*<td  colspan="5">*@
+              <td style="width: 27%;">
+                  @if(Convert.ToInt64(ViewData["ViewDataWarehouseID"])==0 && Model.ViewType==1)
+                  {
+                    @Html.DropDownListFor(o => o.Area.WarehouseID, WarehouseList, new { @class="form-control", style ="width:23%"})
+               
+                  }
+                  else
+                  {
+                    @Model.Warehouse.WarehouseName  
+                  }
+              </td>
+
+             <td class="TableColumnTitle" style="width: 13%;"><label>库区类型</label></td>
+             <td style="width: 21%;">
+                 @if (Model.ViewType!=0)
+                    {
+                       @Html.DropDownListFor(o=>o.Area.Str1,Model.AreaTypeList,new { @class="form-control",style="width:100%"} )  
+                    }
+                    else
+                    {
+                      @(Model.AreaTypeList.SingleOrDefault(o=>o.Value==Model.Area.Str1.ToString()).Value)
+                    }
+             </td>
+         </tr>
+
+          <tr>
+              <td class="TableColumnTitle" style="width: 13%;"><label>库区名称</label></td>
+                <td style="width: 27%;">
+                    @if (Model.ViewType==1)
+                    {
+                       @Html.TextBoxFor(o=>o.Area.AreaName, new { @class="form-control",style="width:100%;disabled:true;"})
+                       
+                    }
+                    else
+                    {
+                        @Model.Area.AreaName
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>库区状态</label></td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                       @Html.DropDownListFor(o=>o.Area.Status,Model.WarehouseStatusList,new { @class="form-control",style="width:100%"} )   //是否停用
+                    }
+                    else
+                    {
+                      @(Model.WarehouseStatusList.SingleOrDefault(o=>o.Value==Model.Area.Status.ToString()).Text)
+                    }
+                        
+                </td>
+               @* <td class="TableColumnTitle" style="width: 13%;"><label>库区类型</label></td>
+                <td style="width: 21%;">
+                    @if (Model.ViewType!=0)
+                    {
+                       @Html.DropDownListFor(o=>o.Area.Type,Model.ParaLocationClassifyList,new { @class="form-control", style ="width:100%"})   //库区类别
+                    }
+                    else
+                    {
+    
+                       @(Model.ParaLocationClassifyList.SingleOrDefault(o=>o.Value==Model.Area.Type.ToString()).Text)
+                        
+                    }
+                </td>*@
+          </tr>
+            
+                <tr>
+                <td class="TableColumnTitle" ><label>备注</label></td>
+                <td colspan="5" >
+                     @if (Model.ViewType!=0)
+                    {
+                        @Html.TextAreaFor(o=>o.Area.Remark, new {@class="form-control", style="width:100%" })  
+                         
+                    }
+                    else
+                     { 
+                         @Model.Area.Remark  
+                     }
+                </td>
+                 </tr>
+        </table>
+
+
+    </fieldset>
+
+  
+    <fieldset>
+        <legend>库位信息 <a href="/WMS/Warehouse/LocationCreate/?ViewType=1&AreaID=@Model.Area.ID&WarehouseID=@Model.Warehouse.ID">新增</a></legend>  @*这里对库位的新增类似编辑，故设置为2*@
+
+                  <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>操作</th>
+                             <th>库位名称</th>
+                             <th>库位类型</th>
+                            @*<th>类型</th>*@
+                          @*  <th>ABCClassification</th>*@
+                            <th>状态</th>
+                            @*<th>操作</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Area.Locations != null && Model.Area.Locations.Any())
+                        {
+                            foreach (var location in Model.Area.Locations)
+                            {
+                                string color = string.Empty;
+                                string tdColor = string.Empty;
+                                color = "white";
+                                tdColor = "white";
+           
+                       
+                            <tr id="@location.ID" style="background-color:@color">
+                              <td style="position: relative" class="OoperationTD">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs  LocationCreateStatus" data-id="@location.ID" data-name="@location.ID" >编辑</label>
+                                    @*<label style="cursor: pointer;" class="btn btn-primary btn-xs WarehouseDelete"  onclick="LocationDelete(@location.ID,'@location.Location')">删除</label>*@
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                               </td>
+
+                                <td>
+                                     <a href="/WMS/Warehouse/LocationCreate/?ViewType=0&&ID=@location.ID&&AreaID=@location.AreaID">@location.Location</a>  
+                                </td>
+                                 <td>
+                                    @(Model.ParaLocationTypeList.SingleOrDefault(o=>o.Value==location.LocationType.ToString()).Text)
+                                </td>
+                               @* <td>
+
+                                    @{if (location.LocationType == 1)
+                                      {
+                                        @("普通仓库");
+                                         }
+                                      else if (location.LocationType == 1)
+                                      {
+                                        @("化工仓库");
+                                      }
+                                      else
+                                      {
+                                        @("逻辑客仓库");
+                                       }
+                                
+                                    }
+                                </td>*@
+                   
+                              @*  <td>
+                                    @location.ABCClassification
+                                </td>*@
+                                  <td>
+                                       @{if (location.LocationStatus == "0")
+                                         {
+                                           @("不可用");
+                                         }
+                                         else
+                                        {
+                                        @("可用");
+                                        }
+                                        }                                 
+                                </td>
+                          
+                                @* <td style="background-color:@tdColor;">
+                                     <label style="cursor:pointer; color:white;" class="label label-info LocationCreateStatus" data-id="@location.ID" data--name="@location.AreaID">编辑</label>
+                               
+                                 <label  data-name="@location.ID" style="cursor:pointer; color:white;" class="label label-info" onclick="LocationDelete(@location.ID,'@location.Location')">删除</label>
+                                 
+                                </td>*@
+                       
+                            </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+    </fieldset>
+        <div class="actionButtonDiv">
+        @{
+                    if (Model.ViewType == 1 || Model.ViewType == 2)
+                    {                      
+                    <input type="submit" class="btn btn-success" value="提交" id="submitButton" />
+                    <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+                    }
+                    if (Model.ViewType ==0)
+                    {
+            <input type="button" class="btn btn-success" value="继续新增库区" id="AddArea" />
+            <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+                     }
+        }
+     </div>
+    </div>
+}

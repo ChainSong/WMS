@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "捡货";
+}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta name="viewport" content="initial-scale=1.0,width=device-width" />
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    <script src="~/Assets/JS/Layer/layer.js"></script>
+    @model Runbow.TWS.RFScan.Models.OrderViewModel
+    <link href="~/Assets/CSS/bootstrap.min.css" rel="stylesheet" />
+    <title>捡货</title>
+    <script type="text/javascript">
+        function Completes(OrderNumber, ID, obj) {
+            layer.confirm('<font size="4">确认是否强制捡货完成？</font>', {
+                btn: ['确定', '放弃'], icon: 3, shift: 0, closeBtn: 1,
+                title: ['提示', 'font-size:18px;']
+
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    type: "Post",
+                    url: '/Order/InsertIntoPickFromRedis',
+                    data: { "OrderNumber": OrderNumber, "ID": ID },
+                    async: false,
+                    dataType: "text",
+                    success: function (data) {
+                        if (data == "1") {
+                            alert("捡货完成");
+                            $(obj).parent().parent().remove();
+                        }
+                        else if (data == "2") {
+                            alert("捡货失败,未开始扫描");
+                        }
+                        else if (data == "0") {
+                            alert("捡货失败,数据同步失败");
+                        }
+                        else {
+                            alert(data);
+
+                        }
+
+                    },
+                    error: function (msg) {
+                        alert(msg);
+                    }
+
+                });
+            });
+        };
+    </script>
+</head>
+@using (Html.BeginForm())
+{
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" style="height: 100%">
+    <div class="row" style="margin-top:10px">
+        <div class="col-lg-6">
+            <div class="input-group">
+                @Html.TextBoxFor(m => m.SearchCondition.ExternOrderNumber, new { @class = "form-control", style = "height:46px", placeholder = "单号模糊查询" })
+                <span class="input-group-btn">
+                    <input type="submit" class="btn btn-primary btn-lg" value="查询" id="searchButton" name="Action" />
+                </span>
+
+            </div>
+        </div>
+    </div>
+    <table id="resultTable" class="table table-striped">
+        <thead>
+            <tr style="text-align:center">
+                <th style="text-align:center">外部单号</th>
+                <th style="text-align:center">订单时间</th>
+                @if (ViewBag.UserName == "shrfadmin")
+                {
+                    <th style="text-align:center">操作</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.OrderCollection != null && Model.OrderCollection.Any())
+            {
+                foreach (var crminfo in Model.OrderCollection)
+                {
+                    <tr style="text-align:center">
+                        <td><a href="/Order/Index/?CustomerID=@crminfo.CustomerID&WareHouseName=@crminfo.Warehouse&WareHouseID=@ViewBag.WareHouseID&OrderNumber=@crminfo.OrderNumber">@crminfo.ExternOrderNumber</a></td>
+                        <td>@crminfo.CreateTime</td>
+                        @if (ViewBag.UserName == "shrfadmin")
+                        {
+                            <td> <label style="cursor: pointer;" class="btn btn-primary btn-xs CompleteButton" onclick="Completes('@crminfo.OrderNumber','@crminfo.ID',this)" data-id="@crminfo.OrderNumber">完成</label></td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</body>
+}
+</html>

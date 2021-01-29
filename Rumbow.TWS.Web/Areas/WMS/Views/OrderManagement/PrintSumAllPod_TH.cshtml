@@ -1,0 +1,439 @@
+﻿
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintPodModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+@{
+    ViewBag.Title = "PrintSumAllPod_TH";
+}
+
+<h2>汇总打印托运单</h2>
+<style>
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 0px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 0px;
+        }
+
+    #boxlist tr td {
+        text-align: center;
+        font-size: 10px;
+    }
+
+    .bcTarget {
+        font-size: 40px;
+    }
+</style>
+
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        //location.href = history.back();//多层级页面跳转，准确跳回所在菜单主页
+        var url = $(window.parent.document).find(".active a").attr('href');
+        url = url.toString().split(',')[2];
+        url = url.substring(1, url.length - 2);
+        location.href = url;
+        //location.href = "/WMS/OrderManagement/Index";
+
+    }
+
+    //生成条码
+     function BarcodeC(obj, data) {
+
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 32, showHRI: false });
+    }
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+    })
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 60px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="PackageID()">
+</div>
+
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+
+    <table id="resultTable" border="0">
+        <thead>
+            <tr>
+                <th>系统单号</th>
+                <th>客户名称</th>
+                <th>地址</th>
+            </tr>
+        </thead>
+        <tbody id="BodyTable">
+            @foreach (var CustomerInfo in Model.EnumerableCustomerInfo)
+            {
+                <tr id="">
+                    <td>@CustomerInfo.OrderNumber</td>
+                    <td>@CustomerInfo.Company</td>
+                    <td>@CustomerInfo.AddressLine1</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    var i = 0;
+    foreach (var item in Model.EnumerableCustomerInfo)
+    {
+        i++;
+        var ids = "page" + i;
+
+
+    <div id='@ids' class='only_for_print pagestyle' style="height:80%">
+
+        <div style="height:8%;line-height:8%;width:99%;margin:0px auto; overflow:hidden;">
+            <table id="tb1" style="width:100%;height:100%; font-family:'Microsoft YaHei';border-style:none;border-collapse:collapse; " border="0" cellpadding="0" cellspacing="0" frame=void>
+                <tr>
+                    <td width="70%">
+                        <h3 style="margin-left:5%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;font-family:'Microsoft YaHei';font-size:16px;font-weight:600;">供应商（Supplier）：耐克体育（中国）有限公司</h3>
+                    </td>
+                    <td rowspan="3">
+                        <h3 style="margin-left:20%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;font-family:'Microsoft YaHei';font-size:20px;font-weight:600;">RBOW</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td><h3 style="margin-left:60%;font-family:'Microsoft YaHei';font-size:16px;font-weight:600;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">国内运输委托书暨回单</h3></td>
+                </tr>
+                <tr>
+                    <td><h3 style="margin-left:60%;font-family:'Microsoft YaHei';font-size:16px;font-weight:600;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">PROOF  OF  DELIVERY</h3></td>
+                </tr>
+            </table>
+        </div>
+        <div style="height:41%;line-height:41%;width:99%;overflow:hidden; margin:0px auto; margin-bottom :0px;padding-bottom:0px;">
+            <table cellpadding="0" cellspacing="0" style="margin:0px auto; word-wrap: break-word; word-break: break-all;width:100%;height:100%; padding:0px;margin:0px; font-family:'Microsoft YaHei'; ">
+                @*//地址放两行，进行列合并 在进行存放地址时可以进行多行放置 9、10、11行   一共20行*@
+                <tr style="height:3%;width:100%;margin:0px;padding:0px;">
+                    @*一二行后面放置条形码*@
+                    <td style="height:7%;width:100%;margin:0px;padding:0px; " colspan="4" @*width="35%"*@>
+                        <div style="width:100%;margin:0px;padding:0px;">
+                            <table style="width:100%;margin:0px;padding:0px;" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td width="35%"><font>发货单号MBOL#：@item.OrderNumber</font></td>
+                                    <td width="35%">日期：</td>
+                                    @if (item.str12 == "否")
+                                    {
+                                        <td width="30%" rowspan="3" colspan="3">
+                                            <div class="bcTarget" style="margin: 0px auto;text-align:center;width:70%;height:32px;line-height:32px;">RBOW-@item.str9</div>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td width="30%" rowspan="3" colspan="3">
+                                            <div class="bcTarget" style="margin: 0px auto; text-align:center;width:70%;height:32px;line-height:32px;">@item.str9</div>
+                                        </td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td width="30%">Pack Slip No: &nbsp;&nbsp;&nbsp;&nbsp;@item.str11</td>
+                                    <td width="30%">Data： &nbsp;&nbsp;&nbsp;&nbsp;@item.str7</td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="30%">B/L NO：</td>
+                                    @if (item.str12 == "否")
+                                    {
+                                        <td width="30%">Load#：&nbsp;&nbsp;&nbsp;&nbsp;RBOW-@item.str9</td>
+                                    }
+                                    else
+                                    {
+                                        <td width="30%">Load#：&nbsp;&nbsp;&nbsp;&nbsp;@item.str9</td>
+                                    }
+                                </tr>
+                            </table>
+                        </div>
+
+                    </td>
+
+                </tr>
+                <tr style="margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">
+                    <td width="30%">装货地址</td>
+                    <td width="70%" colspan="3"></td>
+                    @*<td></td>
+                    <td></td>*@
+                </tr>
+                <tr>
+                    <td width="30%">Loading Place：</td>
+                    <td width="70%" colspan="3"><div><font>上海市松江区中凯路222号</font></div></td>
+                    @*<td></td>
+                    <td></td>*@
+                </tr>
+                <tr style="width:100%;">
+                    <td style="width:25%;"><div style="width:100%;">装货时间</div></td>
+                    <td style="width:25%;"><div style="width:100%;">仓库联系人</div></td>
+                    <td style="width:25%;"><div style="width:100%;">电话</div></td>
+                    <td style="width:25%;"><div style="width:100%;">传真</div></td>
+                </tr>
+                <tr style="width:100%;">
+                    <td style="width:25%;"><div style="width:100%;">Loading Time：&nbsp;&nbsp;@item.str7</div></td>
+                    <td style="width:25%;"><div style="width:100%;">W/H Contact：&nbsp;&nbsp;<font>赵昌松</font></div></td>
+                    <td style="width:25%;"><div style="width:100%;">Tel：&nbsp;&nbsp;<font>021-57719958</font></div></td>
+                    <td style="width:25%;"><div style="width:100%;">Fax：</div></td>
+                </tr>
+                <tr>
+                    <td>收货单位：&nbsp;&nbsp;&nbsp;&nbsp;@item.str4</td>
+                    <td></td>
+                    <td>联系人</td>
+                    <td>电话</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Consignee：&nbsp;&nbsp;&nbsp;&nbsp;@item.str5</td>
+                    <td>Contact：</td>
+                    <td>Tel：</td>
+                </tr>
+                <tr>
+                    <td colspan="2">卸货地点</td>
+                    <td colspan="2">@item.City</td>
+                    @*<td></td>*@
+                    @*<td></td>*@
+                </tr>
+                <tr style="height:18px;line-height:18px;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">
+                    <td @*colspan="2"*@>Unloading Place：</td>
+                    <td @*rowspan="3"*@ colspan="3">
+                        @item.Address3   @item.Address4   @item.Address2  @item.Address1
+                        @*string[] a=@item.Address1.Split('&');
+                        string a3=a[0]*@
+
+                    </td>
+                    @*<td></td>
+                    <td></td>*@
+                </tr>
+
+                <tr style="width:100%;">
+                    <td style="width:50%;" colspan="2">预计卸货时间</td>
+                    @*<td></td>*@
+                    <td style="width:50%;" colspan="2">实际卸货时间</td>
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td @*width="50%"*@ colspan="2">
+                        Est Unloading Time：&nbsp;&nbsp;&nbsp;&nbsp;@item.str10
+                    </td>
+                    @*<td></td>*@
+                    <td @*width="50%"*@ colspan="2">Act Unloading Time：</td>
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td>货物名称</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr style="width:100%;">
+                    <td style="width:25%">SKU：&nbsp;&nbsp;&nbsp;&nbsp;@item.goodsName</td>
+                    @if (item.str13 == "FTW")
+                    {
+                        <td style="width:25%">FW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item.sumNum &nbsp;&nbsp;&nbsp;&nbsp;件，</td>
+                        <td style="width:25%">APP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 件，</td>
+                        <td style="width:25%">EQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 件</td>
+                    }
+                    else if (item.str13 == "APP")
+                    {
+                        <td>FW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 件，</td>
+                        <td>APP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item.sumNum &nbsp;&nbsp;&nbsp;&nbsp;件，</td>
+                        <td>EQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 件</td>
+                    }
+                    else
+                    {
+                        <td>FW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 件，</td>
+                        <td>APP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 件，</td>
+                        <td>EQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item.sumNum &nbsp;&nbsp;&nbsp;&nbsp;件</td>
+                    }
+
+                </tr>
+                <tr>
+                    <td>货物总数量</td>
+                    <td>货物总重量</td>
+                    <td>货物价值</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Total Packages：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item.sumBox 箱</td>
+                    <td>Total Weight：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公斤</td>
+                    <td>Cargo Value：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;人民币</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>货位体积（M）</td>
+                    <td></td>
+                    <td>起止里程</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="2">Size（CBM）：&nbsp;&nbsp;&nbsp;&nbsp;或总计&nbsp;&nbsp;&nbsp;&nbsp;立方米</td>
+                    @*<td></td>*@
+                    <td colspan="2">Mileage：&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    @*<td></td>*@
+                </tr>
+            </table>
+        </div>
+        <p style="margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">Remarks：</p>
+        <div style="width:99%;margin:0px auto; height:12%;border:1px solid #000; line-height:12%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%;height:100%; font-family:'Microsoft YaHei';width:100%;">
+                <tr>
+                    <td width="60%">注意事项NOTICE</td>
+                    <td>收货单位备注REMARKS</td>
+                </tr>
+                <tr>
+                    <td>1.承运人需防水，防震，防潮，门到门运输。</td>
+                    @if (item.str15 == "" || item.str15 == null)
+                    {
+                        <td style="text-align:center;" rowspan="5"></td>
+                    }
+                    else
+                    {
+                        <td style="text-align:center;" rowspan="5"><h4>CRD：@item.str15</h4></td>
+                    }
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td>2.收货人在货到时，需检查货物数量和外包装并在本回单上签名盖章。</td>
+                    @*<td></td>*@
+                </tr>
+
+                <tr>
+                    <td>3.若货物在运输途中外包装受损，收货人需检查内包装货物。</td>
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td>如有货损/货缺，需在“收货单位备注”上注明，并及时与发货方联系。</td>
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td>4.货物明细单在包装箱内（最后一箱）</td>
+                    @*<td></td>*@
+                </tr>
+            </table>
+        </div>
+        <div style="border: 1px solid #000;width:99%;margin:0px auto;height:10%;line-height:10%;margin-top:1px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%;height:100%; font-family:'Microsoft YaHei';">
+                <tr>
+                    <td>客户反馈CUSTOMER FEEDBACK</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>1.所有箱数是否同一天收到</td>
+                    <td>Yes &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;NO</td>
+                </tr>
+                <tr>
+                    <td>2.收货前收到运输公司预计到货时间通知</td>
+                    <td>Yes &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;NO</td>
+                </tr>
+                <tr>
+                    <td>3.整车配备包括司机在内的3名卸货人员</td>
+                    <td>Yes &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;NO</td>
+                </tr>
+                <tr>
+                    <td>4.其他意见</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div style="height:20%;line-height:20%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">
+            <table cellpadding="0" cellspacing="0" style="width:100%;height:100%; font-family:'Microsoft YaHei'; ">
+                <tr style="margin:0px auto;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;text-align:center;">
+                    <td colspan="3">“货收讫回执联.需及时交回IDS有关仓库联系人”</td>
+                    @*<td></td>
+                    <td></td>*@
+                </tr>
+                <tr>
+                    <td>承运人</td>
+                    <td>收货人（签名）</td>
+                    <td>日期</td>
+                </tr>
+                <tr>
+                    <td>Carrier</td>
+                    <td>Consignee Sign</td>
+                    <td>Date</td>
+                </tr>
+                <tr>
+                    <td>日期</td>
+                    <td>收货人（盖章）</td>
+                    <td rowspan="3"></td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>Consignee Chap</td>
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td colspan="3">本单共四联：</td>
+                    @*<td></td>*@
+                    @*<td></td>*@
+                </tr>
+                <tr>
+                    <td colspan="3">白：货收讫回执联 红：承运人联 蓝：收货人联 黄：存根联</td>
+                    @*<td></td>
+                    <td></td>*@
+                </tr>
+                <tr style="height:9%;line-height:9%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;text-align:center;width:100%;">
+                    @if (item.str12 == "否")
+                    {
+                        <td colspan="3" style="width:100%;text-align:center;height:30%;line-height:30%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;text-align:center;">
+                            <div class="bcTarget" style="height:70%;width:60%;margin:0px auto; margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;text-align:center;">POD-RBOW-@item.str9</div>
+                            <div style="font-size:16px;height:30%;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">"*POD-RBOW-@item.str9*</div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="3" style="width:100%; text-align:center;margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;text-align:center;height:30%;line-height:30%;">
+                            <div class="bcTarget" style="height:70%; width:70%;margin:0px auto; margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;text-align:center;">POD-@item.str9</div>
+                            <div style="font-size:16px;height:30%; margin-top:0px;padding-top:0px;margin-bottom:0px;padding-bottom:0px;">*POD-@item.str9*</div>
+                        </td>
+                    }
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

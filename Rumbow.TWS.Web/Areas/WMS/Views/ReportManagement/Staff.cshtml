@@ -1,0 +1,77 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.StaffViewModel
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.CreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    <fieldset>
+        <legend>
+            查询条件
+        </legend>
+        <table>
+            <tr>
+                @{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+                <td class="TableColumnTitle"><label>客户</label></td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>操作平台</label></td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.OperatingPlatform, Model.OperationType, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>操作人</label></td>
+                <td>@Html.TextBoxFor(m=>m.SearchCondition.StaffName, new { @class="form-control", style = "width:100%"})</td>
+                 <td class="TableColumnTitle"><label>操作日期</label></td>
+                <td>
+                  @Html.CalendarRange("CreateTime", "calendarRange form-control calendarRangeReWrite", Model.SearchCondition.CreateTime, Model.SearchCondition.EndCreateTime)
+                </td>
+                 <td class="TableColumnTitle"></td>
+                <td></td>
+            </tr>
+        </table>
+         <div class="actionButtonDiv">
+         <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+         </div>
+    </fieldset> 
+    <fieldset>
+        <legend>
+            明细列表
+             @if (Model.ReportStaffCollection != null && Model.ReportStaffCollection.Any())
+             {
+                 @Html.Raw("(" + Model.ReportStaffCollection.Count() + ")");
+             }
+        </legend>
+        <div>
+            <table  id="resultTable" >
+              <thead>
+                <tr>
+                   <th>操作人</th>
+                   <th>操作时间</th>
+                   <th>操作内容</th>
+                   <th>操作平台</th>
+                </tr>
+               </thead>
+               <tbody>
+
+                @if (Model.ReportStaffCollection != null && Model.ReportStaffCollection.Any())
+                {
+                    foreach (var item in Model.ReportStaffCollection)
+                    {  
+                    <tr>
+                        <td>@item.StaffName</td>
+                        <td>@item.CreateTime</td>
+                        <td>@item.OperationContent</td>
+                        <td>@item.OperatingPlatform</td> 
+                    </tr>
+                    }
+                }
+            </tbody>
+            </table>
+        </div>
+    </fieldset>
+}

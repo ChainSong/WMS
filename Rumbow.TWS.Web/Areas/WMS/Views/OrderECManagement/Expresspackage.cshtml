@@ -1,0 +1,144 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+<style type="text/css">
+    .demo-class {
+        font-size: 100px;
+    }
+</style>
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderECManagement.ExpressPackgeModel
+@using (Html.BeginForm())
+{
+    <audio src="/Areas/WMS/1.mp3" id="Audio">
+        您的浏览器不支持 audio 标签。
+    </audio>
+    @Html.HiddenFor(m => m.SupplieTypeList)
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+    <div id="tables" style="overflow-x: no-display;overflow-y: no-display; min-height: 300px;border:0px solid black">
+        <table id="resultTable" style="width: 100%; table-layout: fixed;">
+            <tr>
+                <td class="TableColumnTitle"><label>客户</label></td>
+                <td>@Html.DropDownListFor(m => m.CustomerIDs, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <th style="padding-left:5px;" colspan="3">SKU列表</th>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.Warehouses, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td style="text-align:center;">SKU</td>
+                <td style="text-align:center;">订单数量</td>
+                <td style="text-align:center;">差异数量</td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;" rowspan="2">请扫描</th>
+                <td>
+                    <input id="PackageCollection_Scan" type="text" class="form-control" style="width:100%" />
+                </td>
+                <td rowspan="14" colspan="3">
+                    <div style="width:100%; height: 520px;border:1px solid #808080;" id="SkuListTable"></div>
+                </td>
+            </tr>
+            <tr>
+                <th style="padding-left:5px;" colspan="3"><input id="ScanMode" title="" type="checkbox" style="" /> 扫描模式</th>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">快递单号</th>
+                <td>
+                    @Html.TextBoxFor(m => m.PackageCollection.ExpressNumber, new { @class = "form-control", @style = "width:100%" })
+                </td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">快递公司</th>
+                <td>
+                    @Html.TextBoxFor(m => m.PackageCollection.ExpressCompany, new { @class = "form-control", @style = "width:100%" })
+                </td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">客户订单号</th>
+                <td>
+                    @Html.TextBoxFor(m => m.PackageCollection.OrderNumber, new { @class = "form-control", @style = "width:100%" })
+                </td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">耗材类型</th>
+                <td>
+                    <input id="engineval" type="text" onchange="fa2();" style="width:100%" />
+                    @Html.DropDownListFor(m => m.PackageCollection.PackageType, Model.SupplieTypeList)
+                </td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">长：</th>
+                <td><span id="PackageCollection_Length"></span>（米）</td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">宽：</th>
+                <td><span id="PackageCollection_Width"></span>（米）</td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">高：</th>
+                <td><span id="PackageCollection_Height"></span>（米）</td>
+            </tr>
+            <tr>
+                <th class="TableColumnTitle" style="padding-left:5px;">体积：</th>
+                <td><span id="volume"></span>（立方米）</td>
+            </tr>
+            <tr>
+                @*<th rowspan="5" style="text-align:left;padding-left:5px;">关联订单</th>*@
+                <td colspan="2">
+                    <div style="padding-left:5px;height: 150px;border:1px solid #808080;" id="AssociatedTable"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    @*<fieldset>
+            <legend class="TableColumnTitle">录入信息</legend>
+            <div id="tablesinput" style="overflow-x: auto;overflow-y: auto; min-height: 180px;">
+                <table id="resultTableinput" style="width: 100%; min-height: 180px; table-layout: fixed;">
+                    <tr>
+                        <th class="TableColumnTitle" style="padding-left:5px;">快递公司</th>
+                        <td>
+                            @Html.TextBoxFor(m => m.PackageCollection.ExpressCompany, new {@class = "form-control", @style = "width:100%" })
+                        </td>
+                        <th style="padding-left:5px;" colspan="3"><input id="ScanMode" title="" type="checkbox" style="" /> 扫描模式</th>
+                    </tr>
+                    <tr>
+                        <th class="TableColumnTitle" style="padding-left:5px;">耗材类型</th>
+                        <td>
+                            <input  id="engineval"  type="text"  onchange="fa2();" style = "width:100%"/>
+                            @Html.DropDownListFor(m => m.PackageCollection.PackageType, Model.SupplieTypeList)
+                        </td>
+                        <th style="padding-left:5px;">复检SKU</th>
+                        <td colspan="2">
+                            <input class="form-control" style = "width:100%;" id="CheckSKU"/>
+                        </td>
+                        <td id="engine">
+                            <span class="tt">发动机号:</span>
+                            <input  id="engineval" style="width: 100px;position:relative;z-index:998;" maxlength="9" type="text"  class="u-ipt" placeholder="发动机号" value="$!{engineno}" onchange="fa2();"/>
+                            <select class="u-select"  style="width: 112px;left:314px;top:33px;z-index:99;color: rgba(0,0,0,0);  " id="engine2" onChange="showinput2(this.options[this.options.selectedIndex].value);">
+                                <option value="1" style="color: #999999">1</option>
+                                <option value="2" style="color: #999999">2</option>
+                                <option value="3" style="color: #999999">3</option>
+                            </select>
+                        </td>
+                    </tr>
+                     <tr>
+                        <th class="TableColumnTitle" style="padding-left:5px;">长：<span id="PackageCollection_Length"></span>
+                            （米）</th>
+                        <th class="TableColumnTitle" style="padding-left:5px;">宽：<span id="PackageCollection_Width"></span>
+                            （米）</th>
+                        <th class="TableColumnTitle" style="padding-left:5px;">高：<span id="PackageCollection_Height"></span>
+                            （米）</th>
+                        <th class="TableColumnTitle" style="padding-left:5px;" colspan="2">体积：<span id="volume"></span>（立方米）</th>
+                    </tr>
+                    <tr>
+                        <td style=""><input class="btn btn-success" id="SaveButton" type="button" value="保存 √" style="" /></td>
+                        <td><input class="btn btn-success" id="CloseButton" type="button" value="关闭 ×" style="" /></td>
+                        <th style="padding-left:5px;" colspan="3"></th>
+                    </tr>
+                </table>
+            </div>
+        </fieldset>*@
+}

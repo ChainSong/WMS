@@ -1,0 +1,51 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.AddOrUpdateServicePeriodModel
+
+
+@using(Html.BeginForm())
+{
+<fieldset>
+    <legend>时效</legend>
+    <div>
+    <table>
+        <tr>
+             <td class="TableColumnTitle" style="width:10%">目的城市</td>
+             <td style="width:30%">
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey ="endCity" })
+                      <a id="CityClear" href="#">清空</a>
+                     @Html.HiddenFor(m=>m.EndCity)
+                     @Html.HiddenFor(m=>m.EndCityID)
+             </td>
+             <td class="TableColumnTitle" style="width:10%">时效</td>
+             <td style="width:30%">@Html.TextBoxFor(m=>m.Period)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="提交" class="SubmitButton"/></td>
+        </tr>
+      
+    </table>
+    </div>
+    
+</fieldset>  
+    
+    <fieldset>
+    <legend>销售</legend>
+    <div>
+    <table>
+        <tr>
+             <td class="TableColumnTitle" style="width:10%">销售姓名</td>
+             <td style="width:30%">
+                @Html.TextBoxFor(m=>m.SellName)
+             </td>
+             <td class="TableColumnTitle" style="width:10%">电话号码</td>
+             <td style="width:30%">@Html.TextBoxFor(m=>m.SellPhone)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="提交" class="SellSubmitButton"/></td>
+        </tr>
+    </table>
+    </div>
+    <div style="text-align:center"></div>  
+</fieldset>  
+    
+    <fieldset>
+        <legend>结果</legend>
+        <div>
+            <span class="ResultValue" style="font-size:20px"></span>
+
+        </div>
+    </fieldset>
+}

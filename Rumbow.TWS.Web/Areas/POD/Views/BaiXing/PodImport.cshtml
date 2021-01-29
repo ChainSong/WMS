@@ -1,0 +1,26 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+<fieldset>
+    <legend>
+        操作提示
+    </legend>
+    <div id="message">
+        请按项目要求的标准顺丰快递表格进行导入 <br />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        @ViewBag.DisplyMessage
+    </legend>
+    <div id="importDiv">
+        <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+        <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+    </div>
+</fieldset>
+<fieldset>
+    <legend>导入结果<label id="resultCount" style="display:none"></label>
+    </legend>
+    <div id="outPutResult">
+    </div>
+</fieldset>

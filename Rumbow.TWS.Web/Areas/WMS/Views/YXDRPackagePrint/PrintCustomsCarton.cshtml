@@ -1,0 +1,172 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintBoxModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+
+<style>
+    .only_for_print
+    {
+        /*display: none;*/
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+
+    .noprint
+    {
+        display: none;
+    }
+    /**/
+    .bor > td
+    {
+        border: 2px solid #000000;
+    }
+
+    .border-table
+    {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td
+        {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td
+    {
+        text-align: center;
+        font-size: 14px;
+    }
+
+    /*.tdstyle
+    {
+        font-size: 11px;
+        text-align: center;
+        border: 2px solid;
+        font-weight: bold;
+    }*/
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法   
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        var OrderID=@ViewBag.OrderID;
+        if(OrderID=='0')
+        {
+            history.go(-1);
+        }
+        else
+        {
+            location.href = "/WMS/OrderManagement/YXDRPackage/?ID=" + OrderID;
+        }
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 60px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    <input type="button" value="返回" class="btn btn-success" onclick="PackageID()">
+</div>
+
+
+@*内容*@
+
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+    var i = 0;
+    var package = "";
+    foreach (var item in Model.EnumerableCustomerInfo.OrderBy(m => m.PackageNumber))
+    {
+        if (package != item.PackageNumber)
+        {
+            i++;
+            package = item.PackageNumber;
+            var pages = "page" + i;
+    <div id="@pages" class='only_for_print pagestyle' style="clear: both">
+        @*打印div*@
+
+        <p style="font-size: 13px"><strong>箱唛：@item.Str20</strong></p>
+        <table style="width: 280px;">
+            <tr style="height: 13px">
+                <td style="border: 2px solid" class="tdstyle">收货方</td>
+                <td style="border: 2px solid" class="tdstyle">RECEIVER</td>
+                <td style="border: 2px solid" class="tdstyle">@item.Company</td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">生产工厂</td>
+                <td style="border: 2px solid" class="tdstyle">MANUFACTUREF</td>
+                <td style="border: 2px solid" class="tdstyle">YXDR(CHINA)</td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">品牌</td>
+                <td style="border: 2px solid" class="tdstyle">BRAND</td>
+                <td style="border: 2px solid" class="tdstyle"></td>
+            </tr>
+
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">单号</td>
+                <td style="border: 2px solid" class="tdstyle">ORDER-NO</td>
+                <td style="border: 2px solid" class="tdstyle">@item.ShipmentNo</td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">款号</td>
+                <td style="border: 2px solid" class="tdstyle">STYLE-NO</td>
+                <td style="border: 2px solid" class="tdstyle"></td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">数量</td>
+                <td style="border: 2px solid" class="tdstyle">QTY</td>
+                <td style="border: 2px solid" class="tdstyle">@item.Qty</td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">箱号</td>
+                <td style="border: 2px solid" class="tdstyle">CARTONNO</td>
+                <td style="border: 2px solid" class="tdstyle">@item.Hanger&nbsp;/&nbsp;@item.BU</td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">毛重</td>
+                <td style="border: 2px solid" class="tdstyle">GROSS WEIGHT</td>
+                <td style="border: 2px solid" class="tdstyle">@item.Str17</td>
+            </tr>
+            <tr>
+                <td style="border: 2px solid" class="tdstyle">体积</td>
+                <td style="border: 2px solid" class="tdstyle">VALUME</td>
+                <td style="border: 2px solid" class="tdstyle">@item.Size</td>
+            </tr>
+        </table>
+        <br />
+    </div>         
+            
+            
+        }
+    }
+}
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

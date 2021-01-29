@@ -1,0 +1,272 @@
+﻿@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.QRCodeViewModel
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{    
+   @Html.Hidden("WarehouseID", (long)ViewBag.WarehouseID);
+   @Html.Hidden("OperationID", "");
+   @Html.DropDownList("OperationList", (IEnumerable<SelectListItem>)ViewBag.OperationList, new { style = "display:none" });
+   @Html.DropDownList("ChargeList", (IEnumerable<SelectListItem>)ViewBag.ChargeList, new { style = "display:none" });
+<fieldset id="WarehouseCondition">
+        <legend >条件设置</legend>
+        <table id="conditionTable">
+           @*   <tr>
+                @{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+              <td class="TableColumnTitle"><label>客户</label></td>
+                 <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control"  ,Readonly = "true"})</td>
+            </tr>*@
+            <tr>
+                <td class="TableColumnTitle"><label>长度</label></td>
+                <td>@Html.TextBox("lengths", null, new { @class = "form-control", style = "width:100%;", })</td>
+                <td class="TableColumnTitle"><label>宽度</label></td>
+                <td>@Html.TextBox("widths", null, new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            </table>
+    <div class="actionButtonDiv">   
+        @if ((Model.QRCodeCollection != null && Model.QRCodeCollection.Count() == 0) || Model.QRCodeCollection == null)
+        {    
+             <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="生成平面图" id="addButton"/>  
+         <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="保存" id="SaveButton" />  
+       
+        }
+        else if (Model.QRCodeCollection != null && Model.QRCodeCollection.Count() > 0)
+        {
+          <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="保存" id="EditButton"/>   
+          <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="删除" id="DeleteButton" />
+          
+        }                 
+        </div>
+    </fieldset>
+      <fieldset id="WarehouseTable">
+        <legend>仓库布局平面图 
+        </legend> 
+          <div>   
+          <table id="typeTable" style="width:40%;margin-bottom:20px;float:left;">
+              <tr style="cursor:pointer">
+                @* <td id='1' style="text-align:center;">通道</td>
+                   <td id='2' style="text-align:center;">柱子</td>
+                   <td id='3' style="text-align:center;">货架</td>
+                   <td id='4' style="text-align:center;">充电桩</td>
+                   <td id='5' style="text-align:center;">入库口</td>
+                   <td id='6' style="text-align:center;">出库口</td>
+                   <td id='7' style="text-align:center;">包装区</td>
+                   <td id='8' style="text-align:center;">暂存区</td>
+                   <td id='9' style="text-align:center;">操作台</td>*@
+
+                   <td id='1' style="text-align:center;width:100px">通道</td>
+                   <td id='2' style="text-align:center;width:100px">操作台</td>
+                   <td id='3' style="text-align:center;width:100px">货架</td>
+                   <td id='4' style="text-align:center;width:100px">充电桩</td>
+                   <td id='5' style="text-align:center;width:100px">缓冲区</td>
+                   <td id='51' style="text-align:center;width:140px">缓冲区入口</td>
+                   <td id='52' style="text-align:center;width:140px">缓冲区出口</td>
+                   <td id='6' style="text-align:center;width:100px">柱子</td>
+
+              </tr>
+              <tr>
+                   @*<td style="background-color:#00ff21;"></td>
+                   <td style="background-color:#f00;"></td>
+                   <td style="background-color:#3131f7;"></td>
+                   <td style="background-color:#ecf520;"></td>
+                   <td style="background-color:#111010;"></td>
+                   <td style="background-color:#e8eef4;"></td>
+                   <td style="background-color:#0ff;"></td>
+                   <td style="background-color:#564c4c;"></td>
+                   <td style="background-color:#9c23e5;"></td>*@
+
+                   <td style="background-color:#00ff21;"></td>
+                   <td style="background-color:#9c23e5;"></td>
+                   <td style="background-color:#3131f7;"></td>
+                   <td style="background-color:#ecf520;"></td>
+                   <td style="background-color:#564c4c;text-align:center;padding:0px;color:#00ff21">〇</td>
+                   <td style="background-color:#564c4c;text-align:center;padding:0px;color:#00ff21">⇨</td>
+                   <td style="background-color:#564c4c;text-align:center;padding:0px;color:#00ff21">⇩</td>
+                   <td style="background-color:#f00;"></td>
+              </tr>
+          </table>   
+              <div style="padding-left:45%;">
+                  已选中：<label id="lb"></label>
+              </div>        
+              </div> 
+           @if (Model.QRCodeCollection != null && Model.QRCodeCollection.Count() == 0)
+           { 
+        <table id="resultTable" style="height:500px;border:2px solid">           
+        </table>
+           }
+          @if (Model.QRCodeCollection != null && Model.QRCodeCollection.Count() > 0)
+          { 
+           <table id="resultTable" style="height:500px;margin-bottom:40px">   
+                @if (Model.QRCodeCollection != null && Model.QRCodeCollection.Any())
+                {
+                    var r = Model.QRCodeCollection.Select(c => c.Length).FirstOrDefault().AsInt();
+                    var l = Model.QRCodeCollection.Select(c => c.Width).FirstOrDefault().AsInt();
+                    for (var i = 0; i < r; i++)
+                    {
+                     <tr>
+                       @foreach (var receipt in Model.QRCodeCollection.Skip(i * l).Take(l))
+                       {
+                           var str1 = @receipt.Str1 == "" ? "0" : @receipt.Str1;
+                           switch (receipt.MapType)
+                           {
+
+                               case "1":
+                                <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#00ff21;' MapType="1" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)' ></td> 
+                                   break;
+                               case "2":
+                                   var s1 = @receipt.MapID == 0 ? "" : "✔";
+                               <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#9c23e5;font-size:60%;color:#fff;padding:0px;text-align:center' MapType="2" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'>@s1</td> 
+                                   break;
+                               case "3":
+                                   var s = @receipt.MapID == 0 ? "" : "✔";                                
+                               <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#3131f7;font-size:60%;color:#fff;padding:0px;text-align:center' MapType="3 "  onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'>@s</td> 
+                                   break;
+                               case "4":
+                                   var s2 = @receipt.MapID == 0 ? "" : "✔";           
+                               <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#ecf520;font-size:60%;color:#fff;padding:0px;text-align:center' MapType="4" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'>@s2</td> 
+                                   break;
+                               case "5":
+                                   var s3 = @receipt.Str1 == "0" ? "〇" : (@receipt.Str1 == "1" ? "⇨" : "⇩");
+                                   if (@receipt.MapID == 0)
+                                   {                  
+                               <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#564c4c;font-size:60%;color:#00ff21;padding:0px;text-align:center' MapType="5" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'>@s3</td> 
+                                   }
+                                   else
+                                   {
+                               <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#564c4c;font-size:60%;color:#9c23e5;padding:0px;text-align:center' MapType="5" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'>@s3</td> 
+                                   }
+                                   break;
+                               case "6":
+                               <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#f00;' MapType="6" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'></td> 
+                                   break;
+                               default:
+                             <td id="@receipt.QRCode" X="@receipt.X" Y="@receipt.Y" Str1="@str1" MapID="@receipt.MapID" style='background-color:#00ff21;' MapType="1" onMouseOver='changeColor(this)'  onMouseout='changeColor(this)'></td> 
+                                   break;
+
+                           }
+
+                       }       
+                     </tr>
+                    }
+                }
+                    
+        </table>
+          }
+            </fieldset>
+    
+         <div id="statusBackDiv" style="display:none">
+        <table>
+            <tr>  
+         <td class="TableColumnTitle" style="width: 100px">类型</td>                
+         <td>@Html.DropDownList("backStatusid", Model.QRCodeType, "==请选择==", new { @class = "form-control", @style = "width:200px" })</td>
+            </tr>
+            <tr style="display:none"><td>@Html.TextBox("StatusbackID", "")</td></tr>            
+        </table>
+        <br><br><br><br>
+        <div class="actionButtonDiv">          
+        <input type="button"  class="btn btn-success"  value="确定" id="statusBackOK"  />
+        <input type="button"  class="btn btn-success"  value="返回" id="statusBackReturn"  />
+         </div>
+
+            
+    </div>
+     <div id="mydiv1" style="position:absolute;display:none;border:1px solid silver;">
+         <table id="LocationTable" style="background-color:#fff">
+             <thead>
+                 <tr>
+                     <th>货架</th>
+                     <th>库位</th>
+                 </tr>
+             </thead>
+         </table>
+     </div>
+         <div id="mydiv2" style="position:absolute;display:none;border:1px solid silver;">
+         <table id="OpTable" style="background-color:#fff">
+             <thead>
+                 <tr>
+                     <th>操作台</th>
+                 </tr>
+             </thead>
+         </table>
+     </div>
+         <div id="mydiv3" style="position:absolute;display:none;border:1px solid silver;">
+         <table id="ChTable" style="background-color:#fff">
+             <thead>
+                 <tr>
+                     <th>充电桩</th>
+                 </tr>
+             </thead>
+         </table>
+     </div>
+    <fieldset>
+        <legend>导入货架二维码关联
+        </legend>
+        <div id="importDiv">
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+            <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+            <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" />
+        </div>
+    </fieldset>
+    
+    <div id="Operation"  style="display:none">
+        <fieldset>
+            <legend>操作台列表</legend>
+        </fieldset>
+        <table id="OperationTable">
+            <thead>
+                <tr>
+                    <th style="display: none">ID</th>
+                    <th>操作台</th>
+                    <th>类型</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+              @if (Model.OperationCollection != null && Model.OperationCollection.Any())
+              {
+                  foreach (var g in Model.OperationCollection)
+                  {                     
+                <tr>
+                     <td style="display:none">@g.ID</td>
+                     <td>@g.Operation</td>
+                     <td>@g.OperationType</td>
+                     <td>@g.Status</td>
+                </tr>
+                  }
+              }
+            </tbody>
+        </table>
+    </div>
+        <div id="Charge"  style="display:none;overflow-y: scroll;height:200px">
+        <fieldset>
+            <legend>充电桩列表</legend>
+        </fieldset>
+        <table id="ChargeTable" style="height:300px">
+            <thead>
+                <tr>
+                    <th style="display: none">ID</th>
+                    <th>充电桩</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+              @if (Model.ChargeCollection != null && Model.ChargeCollection.Any())
+              {
+                  foreach (var g in Model.ChargeCollection)
+                  {                     
+                <tr>
+                     <td style="display:none">@g.ID</td>
+                     <td>@g.ChargingName</td>
+                     <td>@g.Status</td>
+                </tr>
+                  }
+              }
+            </tbody>
+        </table>
+    </div>
+}
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">

@@ -1,0 +1,252 @@
+﻿@model Runbow.TWS.Web.Areas.ContractManagement.Models.QueryContractViewModel
+@{ var yes="是";
+   var no="否"; }
+@using (Html.BeginForm()) 
+{
+     @Html.HiddenFor(m => m.ShowEditButton)
+    <fieldset>
+        <legend>
+            查询条件
+            @Html.Hidden("SearchType")
+        </legend>
+        <table>
+                <tr>
+                    <td class="TableColumnTitle">所属公司</td>
+                    <td style="width: 27%;">@Html.DropDownListFor(m=>m.SearchCondition.SCCompany,Model.CompanyList,"",new { style = "width:95%"})</td>
+
+                    <td class="TableColumnTitle">业务大类</td>
+                    <td>@Html.DropDownListFor(m=>m.SearchCondition.SCBusiness,Model.BusinessList,"")</td>
+
+                    <td class="TableColumnTitle">部门名称</td>
+                    <td>@Html.DropDownListFor(m=>m.SearchCondition.SCDepartment,Model.DepartmentList,"")</td>
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">合同种类</td>
+                    <td>@Html.DropDownListFor(m=>m.SearchCondition.SCContractType,Model.ContractTypeList,"")</td>
+             
+                    <td class="TableColumnTitle">合同日期查询</td>
+                    <td>@Html.CalendarFor(m=>m.SearchCondition.SCContractStart_start)</td>
+
+                    <td class="TableColumnTitle">至</td>
+                    <td>@Html.CalendarFor(m=>m.SearchCondition.SCContractStart_end)</td>
+                </tr>
+            
+                <tr>
+                    <td class="TableColumnTitle">是否顺延</td>
+                    <td>@Html.DropDownListFor(m=>m.SearchCondition.SCExtended,Model.YesNOList,"")</td>
+
+                    <td class="TableColumnTitle">是否含印花税</td>
+                    <td>@Html.DropDownListFor(m=>m.SearchCondition.StampTax,Model.YesNOList,"")</td>
+
+                     <td class="TableColumnTitle">合同显示类型</td>
+                    <td colspan="2">
+                       @Html.RadioButtonFor(m=>m.SearchType1,0)全部  
+                       @Html.RadioButtonFor(m=>m.SearchType1,1)将过期合同
+                       @Html.RadioButtonFor(m=>m.SearchType1,2)已过期合同
+                     </td>
+
+
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">模糊查询(合同编号、内容等)</td>
+                    <td colspan="3">@Html.TextBoxFor(m=>m.SearchCondition.SCContract,new { style = "width:90%" }) </td>
+
+                    <td class="TableColumnTitle">保单显示类型</td>
+                    <td colspan="2">
+                       @Html.RadioButtonFor(m=>m.SearchType2,0)全部  
+                       @Html.RadioButtonFor(m=>m.SearchType2,1)未过期保单
+                       @Html.RadioButtonFor(m=>m.SearchType2,2)已过期保单
+                     </td>
+
+                </tr>
+
+        </table>
+        <div  class="actionButtonDiv">
+         <input type="submit"  id="searchButton" name="Action" value="查询"/> 
+         <input type="submit" id="exportButton" name="Action" value="导出" />
+        </div>
+    </fieldset>
+      <fieldset>
+        <legend>合同列表
+            @if (Model.ContractCollection != null && Model.ContractCollection.Any())
+            {
+                @Html.Raw("(" + Model.ContractCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                     <th>合同
+                         <br />编号</th>
+                    <th>所属
+                        <br />公司</th>
+                    <th>部门
+                        <br />名称</th>
+                    <th>合同<br />种类</th>
+                    <th>合同
+                        <br />内容</th>
+                    <th>业务对<br />
+                        方名称
+                    </th>
+                    <th>合同起<br />
+                        始日期</th>
+                     <th>实际到<br />
+                        期日期</th>
+                 @*  <th>是否<br />
+                        顺延</th>*@
+                 @*  <th>是否<br />
+                        过期</th>*@
+                 @*   <th>是否含<br />
+                        印花税</th>*@
+                    <th>保单起
+                        始日期
+                    </th>
+                     <th>保单终
+                        止日期
+                    </th>
+                    @if(Model.ShowEditButton)
+                    {
+                       <th>操作</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ContractCollection != null && Model.ContractCollection.Any())
+                {
+                    foreach (var contract in Model.ContractCollection)
+                    {
+                        string color = string.Empty;
+                        string tdColor = string.Empty;
+                        color = "white";
+                        tdColor = "white";
+           
+                       
+                    <tr style="background-color:@color">
+                        <td>
+                             <a href="/ContractManagement/Contract/Create/?id=@contract.ID&&ViewType=0">@contract.ContractNumber</a>  
+                        </td>
+                        <td>
+                            @contract.CompanyName
+                        </td>
+@*                        <td>
+                            @contract.BusinessName
+                        </td>*@
+                        <td>
+                            @contract.DepartmentName
+                        </td>
+                          <td>
+                            @contract.ContractTypeName
+                        </td>
+                           <td>
+                            @contract.ContractContent
+                        </td>
+                           <td>
+                            @contract.BusinessPartnerName
+                        </td>
+                        <td>
+                            @if(contract.ContractStartDate==new DateTime(0001,1,1))
+                            {
+                                
+                            }
+                            else
+	                        {
+                               @contract.ContractStartDate.ToShortDateString(); 
+	                        }
+                        </td>
+                        <td>
+                            @if (contract.ContractExpireDate == new DateTime(0001, 1, 1) || contract.ContractExpireDate == new DateTime(1753, 1, 1))
+                            {
+                                
+                            }
+                            else
+                            {
+                               @contract.ContractExpireDate.ToShortDateString(); 
+                            }
+                            
+                        </td>
+                     
+                @*        <td>
+                             
+                            @if (contract.IsContractExtension=="Y")
+                            {
+                               
+                                @yes;
+                              
+                            }
+                            else if (contract.IsContractExtension == "N")
+                            {
+                                @no;
+                            }
+                            
+                        </td>*@
+              @*          <td>
+                             @if (contract.IsContractExpired=="Y")
+                             {
+                               
+                                @yes;
+                              
+                            }
+                            else
+                            {
+                                @no;
+                            }
+                            
+                        </td>*@
+      @*                  <td>
+                            @if (contract.StampTax=="Y")
+                            {
+                               
+                                @yes;
+                              
+                            }
+                            else if (contract.StampTax == "N")
+                            {
+                                @no;
+                            }
+                        </td>*@
+                        <td>
+                             @if (contract.PolStartDate == new DateTime(0001, 1, 1) || contract.PolStartDate == new DateTime(1753, 1, 1))
+                             {
+                                 
+                             }
+                             else
+                             {
+                                  @contract.PolStartDate.ToShortDateString();
+                             }
+                           
+                        </td>
+                        <td>
+                              @if (contract.PolEndDate == new DateTime(0001, 1, 1) || contract.PolEndDate == new DateTime(1753, 1, 1))
+                             {
+                                 
+                             }
+                             else
+                             {
+                                 @contract.PolEndDate.ToShortDateString(); 
+                             }
+                         
+                        </td>
+                        @if(Model.ShowEditButton){
+                         <td style="background-color:@tdColor;">
+                            <a href="/ContractManagement/Contract/Create/?id=@contract.ID&&ViewType=2">编辑</a>
+                        @if(contract.IsContractExtension=="Y"){
+                         <label  id="delayOperate" data-name="@contract.ID" style="cursor:pointer; color:blue">顺延</label>
+                        }
+                        else if (contract.IsContractExtension == "N")
+                        {
+                          <label  id="undelayOperate" data-name="@contract.ID" style="cursor:default; color:grey">顺延</label>
+                        }
+
+                         <label  id="delOperate" data-name="@contract.ID" style="cursor:pointer; color:blue">删除</label>
+                        </td>
+                        }
+                       
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

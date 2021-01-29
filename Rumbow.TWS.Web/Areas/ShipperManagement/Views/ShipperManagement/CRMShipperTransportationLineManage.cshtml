@@ -1,0 +1,86 @@
+﻿@model Runbow.TWS.Web.Areas.ShipperManagement.Models.CRMShipperTransportationLineManageViewModel
+<fieldset>
+    <legend>线路新增
+    </legend>
+    @Html.HiddenFor(m => m.CRMShipperID)
+    @Html.HiddenFor(m => m.ViewType)
+    <table id="CRMShipperTransportationLineTable">
+        <tr>
+            <td class="TableColumnTitle" style="width: 10%;">出发地</td>
+            <td style="width: 23%;">
+                @Html.HiddenFor(m => m.StartPlaceID)
+                @Html.HiddenFor(m => m.StartPlaceName)
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startPlaceID", NameKey = "startPlaceName", TreeKey = "startPlaceTreeKey" })
+                <a id="StartPlaceClear" href="#">清空</a>
+            </td>
+            <td class="TableColumnTitle" style="width: 10%;">目的地</td>
+            <td style="width: 23%;">
+                @Html.HiddenFor(m => m.EndPlaceName)
+                @Html.HiddenFor(m => m.EndPlaceID)
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endPlaceID", NameKey = "endPlaceName", TreeKey = "endPlaceTreeKey" })
+                <a id="EndPlaceClear" href="#">清空</a>
+            </td>
+            
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width: 10%;">覆盖线路</td>
+            <td style="width: 23%;">
+                @Html.HiddenFor(m => m.CoverRegionID)
+                @Html.HiddenFor(m => m.CoverRegionName)
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "coverRegionID", NameKey = "coverRegionName", TreeKey = "coverRegionTreeKey" })
+                <a id="CoverRegionClear" href="#">清空</a>
+            </td>
+            <td class="TableColumnTitle" style="width: 10%;">运输时效(天)</td>
+            <td style="width: 23%;">
+               @Html.TextBoxFor(m => m.Period)
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;" colspan="4">
+                <input type="button" value="新增" id="insertTransportationLine" />
+                @Html.Raw("&nbsp;&nbsp")
+                <input type="button" value="返回" id="return" />
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>主营线路列表
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>出发地</th>
+                <th>目的地</th>
+                <th>覆盖线路</th>
+                <th>运输时效(天)</th>
+                <th>删除</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.CRMShipperTransportationLineCollection != null && Model.CRMShipperTransportationLineCollection.Any())
+            {
+                foreach (var transportationLine in Model.CRMShipperTransportationLineCollection)
+                {
+                    <tr data-id="@transportationLine.ID">
+                        <td>
+                            @transportationLine.StartCityName
+                        </td>
+                        <td>
+                            @transportationLine.EndCityName
+                        </td>
+                        <td>
+                            @transportationLine.CoverRegionName
+                        </td>
+                        <td>
+                            @transportationLine.Period
+                        </td>
+                        <td style="width:10%">
+                            <a id="deleteCRMShipper" class="deleteCRMShipperTransportationLine" data-id="@transportationLine.ID" href="#">删除</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>

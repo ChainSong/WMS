@@ -1,0 +1,164 @@
+﻿@model Runbow.TWS.Web.Areas.ForecastWarehouse.Models.ForecastOrdersModel
+ @Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Url.FrameworkJs("ajaxfileupload.js")
+@Url.FrameworkJs("WdatePicker.js")
+
+
+@*预报订单查询页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(m => m.waveId)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.ForecastOrders.waveId)
+            </td>
+            <td class="TableColumnTitle">
+                 @Html.LabelFor(m => m.ForecastOrders.WaveReleaseTime)
+            </td>
+            <td>
+               @Html.CalendarFor(model => model.ForecastOrders.WaveReleaseTime)-@Html.CalendarFor(model => model.ForecastOrders.WaveReleaseTime2)
+            </td>  
+            <td class="TableColumnTitle">
+               @Html.LabelFor(m => m.ForecastOrders.State)
+            </td>
+            <td>
+              @Html.DropDownListFor(m => m.ForecastOrders.State,Model.State)
+                     
+            </td>
+        </tr>
+         <tr>
+          
+            <td class="TableColumnTitle">
+                 @Html.LabelFor(m => m.PickTime)
+            </td>
+            <td>
+               @Html.CalendarFor(model => model.ForecastOrders.PickTime)-@Html.CalendarFor(model => model.ForecastOrders.PickTime2)
+            </td>  
+                <td class="TableColumnTitle">
+                 @Html.LabelFor(m => m.DeliverTime)
+            </td>
+            <td>
+               @Html.CalendarFor(model => model.ForecastOrders.DeliverTime)-@Html.CalendarFor(model => model.ForecastOrders.DeliverTime2)
+            </td>  
+              <td class="TableColumnTitle">
+               按时间排序
+            </td>
+            <td>
+              @Html.DropDownListFor(m => m.ForecastOrders.zhi2,Model.zhi)
+                     
+            </td>  
+             <td colspan="2">
+                 <input type="submit" value="查询" id="query" />
+             </td>
+        </tr>
+        
+    </table>
+   @* <div class="actionButtonDiv">
+                <input type="submit" value="查询" id="query" />
+
+    </div>*@
+</fieldset>
+    @Model.Message
+       if(Model !=null){
+    <fieldset>
+        <legend></legend>
+        @if (Model.IEnumerableForecastOrders != null)
+        {
+        <table id="CrmInfoTable">
+             <thead>
+            <tr>
+                 <th class="TableColumnTitle">ID</th>
+            <th class="TableColumnTitle">波次号</th>
+            <th class="TableColumnTitle">WaveReleaseTime</th>
+            <th class="TableColumnTitle">预计发货时间</th>
+            <th class="TableColumnTitle">要求提货时间</th>
+    <th class="TableColumnTitle">完成发货时间</th>
+            <th class="TableColumnTitle">状态</th>
+            <th class="TableColumnTitle">操作</th></tr>
+           </thead>
+                @foreach (var info in Model.IEnumerableForecastOrders)
+                {
+                   <tr>
+                        <td>@info.WID</td>
+                       <td> <a id="waveList" class=""  href="/ForecastWarehouse/ForecastWarehouse/waveList?waveList=@info.waveId" data-waveId="@info.waveId">@info.waveId</a></td>
+                       <td>@info.WaveReleaseTime</td>
+                            <td>@info.DeliverTime</td>
+                       <td>@info.PickTime</td>
+                   <td>@info.shipments</td>
+                       <td>@info.State</td>
+                      
+             
+                       <td>
+@*                           <a id="AddCrmTrack" class="" href="/CRM/Crm/CrmTrack/?id=@crminfo.ID&typeid=@Model.TypeID" data-id="@crminfo.ID" data-typeid="@Model.TypeID">新增跟踪信息</a>*@
+                              <a id="deblocking" class=""  href="/ForecastWarehouse/ForecastWarehouse/deblocking?waveId=@info.WID&State2=@info.State" data-waveId="@info.WID">解锁</a>
+                           
+                           <a id="cancellation" class="" href="/ForecastWarehouse/ForecastWarehouse/cancellation?waveId=@info.WID&State2=@info.State" data-waveId="@info.WID">作废</a>
+                 
+                                 @*<a id="SpecifiedDeliveryDate" class="" href="/ForecastWarehouse/ForecastWarehouse/SpecifiedDeliveryDate?waveId=@info.WID&State2=@info.State" data-id="@info.waveId">指定日期发货</a>*@
+                          <a id="SpecifiedDeliveryDate" href="#" class="" onclick='showDialog("@info.WID","@info.State")' data-id="@info.waveId">指定日期发货</a>
+                            @*<a id="SpecifiedDeliveryDate2" class="" href="/ForecastWarehouse/ForecastWarehouse/SpecifiedDeliveryDate2?waveId=@info.WID&State2=@info.State" data-id="@info.waveId">要求提货时间</a>*@
+                             <a id="SpecifiedDeliveryDate2"  href="#" class="" onclick='showDialog2("@info.WID","@info.State")' data-id="@info.waveId">要求提货时间</a>
+                            @*<a id="fahuo2" class="" href="#" data-id="@info.waveId">要求提货时间</a>*@
+                            <a id="confirmation " class="" href="/ForecastWarehouse/ForecastWarehouse/confirmation?waveId=@info.WID&State2=@info.State" data-id="@info.waveId">确认发货</a>
+
+                           @*<a id="DeleteCrm" class="DeleteCrm" href="#" data-id="@info.waveId" >报表汇总</a>*@
+                       </td>
+                   </tr>
+                }
+            
+        </table>
+       
+
+        }
+     
+    </fieldset>
+    }
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+}
+
+
+<div id="divnone" style="display: none">
+ <div id="showInDialog" style="display: none">
+    <table>
+        <tr> <td style="color:red;" colspan="2"><span>时间格式为:xxxx(年)-xx(月)-xx(日)</span></td></tr>
+        <tr>
+           
+             <td class="TableColumnTitle">
+                           时间:
+            </td>
+            <td>
+           @*@Html.CalendarFor(model => model.zhi2)*@
+                  
+               @* <input id ="zhi2" type="text" onclick='WdatePicker()' />*@
+                  @Html.TextBoxFor(m => m.zhi2)
+                @Html.Hidden("zhi2","pay", @Model.zhi2)
+                 @*@Html.Calendar("PickTime","pay", @Model.PickTime)*@
+            </td>  
+        </tr>
+    </table>
+</div>
+</div>
+<div id="divnone2" style="display: none">
+ <div id="showInDialog2" style="display: none">
+    <table>
+        <tr> <td style="color:red;"  colspan="2"><span>时间格式为:xxxx(年)-xx(月)-xx(日)</span></td></tr>
+        <tr>
+            
+             <td class="TableColumnTitle">
+                时间:
+            </td>
+            <td>
+                     @Html.TextBoxFor(m => m.zhi2)
+                @Html.Hidden("zhi2","pay", @Model.zhi2)
+            </td>  
+        </tr>
+    </table>
+</div>
+</div>

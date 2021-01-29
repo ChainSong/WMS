@@ -1,0 +1,81 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.SettlementManagement.SettlementListViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+
+<fieldset>
+    <div>
+        <table>
+            <thead>
+                <tr style="font-weight:bold;text-align:center;">
+                    <th style="text-align:center; width:5%;">CD SDC</th>
+                    <th style="text-align:center; width:5%;">Qty</th>
+                    <th style="text-align:center; width:5%;">Total Billing</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SettlementCollection != null && Model.SettlementCollection.Any())
+                {
+                    foreach (var item in Model.SettlementCollection)
+                    {
+                        <tr style="font-weight:bold;">
+                            <td>
+                                Warehouse
+                            </td>
+                            <td style="text-align:center;"></td>
+                            <td style="text-align:right;">@item.TotalBilling</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rental
+                            </td>
+                            <td style="text-align:center;" rowspan="4">@item.Qty</td>
+                            <td style="text-align:right;">@item.RentalTotalBilling</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Facility Items
+                            </td>
+                            @*<td></td>*@
+                            <td style="text-align:right;">@item.FacilityTotalBilling</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Handling Cost
+                            </td>
+                            @*<td></td>*@
+                            <td style="text-align:right;">@item.HandlingCost</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                OB Handling
+                            </td>
+                            @*<td></td>*@
+                            <td style="text-align:right;">@item.OBHandlingTotalBilling</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                VAS
+                            </td>
+                            <td style="text-align:center;"></td>
+                            <td style="text-align:right;">@item.VAS</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                GOH handling
+                            </td>
+                            <td style="text-align:center;">@item.HangerQty</td>
+                            <td style="text-align:right;">@item.GOHHandlingTotalBilling</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Security tag
+                            </td>
+                            <td style="text-align:center;">@item.SafelockQty</td>
+                            <td style="text-align:right;">@item.SecurityTagTotalBilling</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</fieldset>

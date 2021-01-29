@@ -1,0 +1,613 @@
+﻿<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/WMS/OrderManagement/PrintOrderNike.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+@Url.jsrender()
+@Url.Json2()
+@Html.Hidden("IDs", (string)ViewBag.IDs);
+@{
+    Layout = null;
+}
+
+<style media="print">
+    .bcTarget {
+        font-size: 25px;
+    }
+
+    .Noprint {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .atr {
+        border-bottom: 1px #ccc solid;
+    }
+</style>
+<script type="text/javascript">
+
+    function printWithAlert() {
+
+        UpdatePrintStatus();
+        document.all.WebBrowser.ExecWB(6, 1);
+        //  window.WebBrowser.ExecWB(45, 1);
+
+    }
+    function printWithoutAlert() {
+        document.all.WebBrowser.ExecWB(6, 6);
+    }
+    function printSetup() {
+        document.all.WebBrowser.ExecWB(8, 1);
+    }
+    function printPrieview() {
+
+    }
+    function printImmediately() {
+        document.all.WebBrowser.ExecWB(6, 6);
+        window.close();
+    }
+    function printReturn() {
+        // post('/POD/POD/QueryPod', { QueryPodViewModel: null, Action: '查询' });
+        window.location.href = '/WMS/OrderManagement/Index';
+    }
+    function post(URL, PARAMS) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            // alert(opt.name)        
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+    function BarcodeC(obj, data) {
+
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 50, showHRI: false });
+
+    }
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+    })
+
+    //更新打印次数
+    function UpdatePrintStatus() {
+        var ids = "";
+        ids = $("#IDs").val();
+        $.ajax({
+            type: "POST",
+            url: "/WMS/OrderManagement/UpdatePrintStatus",
+            data: {
+                "IDs": ids,
+            },
+            async: "false",
+            success: function (data) {
+
+            },
+            error: function (msg) {
+                alert(msg.val);
+            }
+        });
+    }
+
+</script>
+<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none">
+</object>
+<table align="center" class="NOPRINT">
+    <tr>
+        <td align="center">
+            <button title="打印" onclick="printWithAlert()">打印</button>
+            @*<button onclick='printPrieview()' title='打印预览...'>打印预览</button>*@
+            <input type="button" value="打印设置" onclick="printSetup()">
+            <button title="返回" onclick="printReturn()">返回</button>
+        </td>
+        @*  <button title="直接打印" onclick="printWithoutAlert()">直接打印</button>*@
+    </tr>
+</table>
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+@if (Model.OrderCollection != null && Model.OrderCollection.Any())
+{
+    var ii = 0;
+
+    foreach (var item in Model.OrderCollection)
+    {
+        var cname = "";
+        ii += 1;
+        if (ii != 1 && ii != Model.OrderCollection.Count())
+        {
+            cname = "PageNext";
+        }
+        var ss = 0;
+        var number = 0;
+        decimal counttotal = 0;
+        var counts = Model.OrderDetailCollection.Where(c => c.OID == item.ID).Count();
+        if (counts <= 11)
+        {
+            
+    <div class="@cname" style="width: 90%; height: 100%;">
+        <div style="width: 100%; height: 100%;">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 40%; font-weight: bolder; font-size: 30px; vertical-align: bottom; text-align: center;">
+                        <span style="margin-left: 40px;">拣货单</span>
+                    </td>
+                </tr>
+            </table>
+            <hr size="1" noshadow color="black" style="border: none; border-top: 2px solid #000;" />
+            <table style="width: 100%; text-align: left;">
+                <tr>
+                    <td colspan="3" style="font-weight: bold; font-size: 16px;">订单信息 
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr style="height: 20px;">
+                    <td colspan="1">
+                        <div class="bcTarget">@item.OrderNumber.ToString()</div>
+                    </td>
+                    <td style="text-align: left;" colspan="2">
+                        <div class="bcTarget">@item.ExternOrderNumber.ToString()</div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr style="height: 20px;">
+                    <td style="font-weight: bold; font-size: 14px;">出库单号：<strong style="border-bottom: 1px solid #000;">@item.OrderNumber</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">外部单号：<strong style="border-bottom: 1px solid #000;">@item.ExternOrderNumber</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">预出库单号：<strong style="border-bottom: 1px solid #000;">@item.PreOrderNumber</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">出库日期：<strong style="border-bottom: 1px solid #000;">@item.OrderTime</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">总重量：<strong style="border-bottom: 1px solid #000;">@item.str13</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">总体积：<strong style="border-bottom: 1px solid #000;">@item.str14</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">收货人：<strong style="border-bottom: 1px solid #000;">@item.Consignee</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">联系方式：<strong style="border-bottom: 1px solid #000;">@item.Contact</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">收货地址：<strong style="border-bottom: 1px solid #000;">@item.Address</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;" colspan="2">收货单位：<strong style="border-bottom: 1px solid #000;">@item.str5</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">操作日期：<strong style="border-bottom: 1px solid #000;">@item.CreateTime.Value</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">省：<strong style="border-bottom: 1px solid #000;">@item.Province</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">市：<strong style="border-bottom: 1px solid #000;">@item.City</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">区：<strong style="border-bottom: 1px solid #000;">@item.District</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">订单类型：<strong style="border-bottom: 1px solid #000;">@item.OrderType</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">电脑单号：<strong style="border-bottom: 1px solid #000;">@item.str15</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;" colspan="3">备注：<strong style="border-bottom: 1px solid #000;">@item.str11</strong>
+                    </td>
+                </tr>
+            </table>
+            <table border="1" cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 5px; border-collapse: collapse;">
+                <tr>
+                    <td style="font-weight: bold; font-size: 16px; width: 16%; text-align: left;" colspan="11">拣货明细&nbsp;&nbsp;@item.ExternOrderNumber
+                    </td>
+                </tr>
+                <tr style="height: 23px;">
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">行号
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">库位
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">SKU
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">批次
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">描述
+                    </td>
+                    @*<td style="font-weight: bold; font-size: 14px; text-align: center;">BU
+                    </td>*@
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">重量
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">体积
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">是否扫描
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">备注
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">建捡数量
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">实捡数量
+                    </td>
+
+                </tr>
+                @if (Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any() != null && Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any())
+                {
+                    foreach (var items in Model.OrderDetailCollection.Where(c => c.OID == item.ID))
+                    {
+                        counttotal += (decimal)items.Qty;
+                        number++;
+                        if (items.OID == item.ID)
+                        {
+                    <tr style="height: 23px;">
+                        <td style="text-align: center; font-size: 14px;">@number</td>
+                        <td style="text-align: center; font-size: 18px;">@items.Location</td>
+                        <td style="text-align: center; font-size: 18px;">@items.SKU</td>
+                        <td style="text-align: center; font-size: 18px;">@items.BatchNumber</td>
+                        <td style="text-align: center; font-size: 14px;">@items.GoodsName</td>
+                        @*<td style="text-align: center; font-size: 14px;">@items.BU</td>*@
+                        <td style="text-align: center; font-size: 14px;">@items.str13</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str14</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str12</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str11</td>
+                        <td style="text-align: center; font-size: 18px;">@items.Qty</td>
+                        <td style="text-align: center; font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                        }
+                    }
+                    <tr>
+                        <td style="border-right: none; border-bottom: none;" colspan="9"></td>
+                        <td style="text-align: center; font-size: 14px; border-left: none; border-bottom: none;" colspan="1">总计 : @counttotal</td>
+                        <td style="border-bottom: none" colspan="1"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-size: 14px; border-right: none; border-top: none;" colspan="3">捡货人：</td>
+                        <td style="text-align: left; font-size: 14px; border-left: none; border-top: none;" colspan="7">捡货时间:</td>
+                        <td style="text-align: right; border-top: none;" colspan="1">1 / 1 页</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+        }
+        else
+        {
+            var i = (counts - 11) % 15 == 0 ? (counts - 11) / 15 + 1 : ((counts - 11) / 15) + 2;
+            for (var j = 0; j < i; j++)
+            {
+                int skip = 0; int Take = 11;
+                ss = ss + 1;
+
+                if (ss < i)
+                {
+    
+    <div class="PageNext">
+        @if (ss == 1)
+        {
+                
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 40%; font-weight: bolder; font-size: 30px; vertical-align: bottom; text-align: center;">
+                        <span style="margin-left: 40px;">拣货单</span>
+                    </td>
+                </tr>
+            </table>@*
+                <hr size="1" noshadow color="black" style="border: none; border-top: 2px solid #000;" />*@
+            <table style="width: 100%; text-align: left;">
+                <tr>
+                    <td colspan="3" style="font-weight: bold; font-size: 16px;">订单信息 
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr style="height: 20px;">
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="1">
+                        @item.OrderNumber.ToString()
+                    </td>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 25px; text-align: left;" colspan="2">
+                        @item.ExternOrderNumber.ToString()
+                    </td>
+                    <td></td>
+                </tr>
+                <tr style="height: 20px;">
+                    <td style="font-weight: bold; font-size: 14px;">出库单号：<strong style="border-bottom: 1px solid #000;">@item.OrderNumber</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">外部单号：<strong style="border-bottom: 1px solid #000;">@item.ExternOrderNumber</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">预出库单号：<strong style="border-bottom: 1px solid #000;">@item.PreOrderNumber</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">出库日期：<strong style="border-bottom: 1px solid #000;">@item.OrderTime</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">重量：<strong style="border-bottom: 1px solid #000;">@item.str13</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">体积：<strong style="border-bottom: 1px solid #000;">@item.str14</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">收货人：<strong style="border-bottom: 1px solid #000;">@item.str5</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">联系方式：<strong style="border-bottom: 1px solid #000;">@item.Contact</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">收货地址：<strong style="border-bottom: 1px solid #000;">@item.Address</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">省：<strong style="border-bottom: 1px solid #000;">@item.Province</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">市：<strong style="border-bottom: 1px solid #000;">@item.City</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">区：<strong style="border-bottom: 1px solid #000;">@item.District</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;">订单类型：<strong style="border-bottom: 1px solid #000;">@item.OrderType</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;">电脑单号：<strong style="border-bottom: 1px solid #000;">@item.str15</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px;"></td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 14px;" colspan="3">备注：<strong style="border-bottom: 1px solid #000;">@item.str11</strong>
+                    </td>
+                </tr>
+            </table>
+                   
+        }
+        <table border="1" cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 5px; border-collapse: collapse;">
+            <tr>
+                <td style="font-weight: bold; font-size: 16px; width: 16%; text-align: left;" colspan="12">拣货明细&nbsp;&nbsp;@item.ExternOrderNumber
+                </td>
+            </tr>
+            <tr style="height: 23px;">
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">行号
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">库位
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">SKU
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">批次
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">描述
+                </td>
+                @*<td style="font-weight: bold; font-size: 14px; text-align: center;">BU
+                    </td>*@
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">重量
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">体积
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">是否扫描
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">备注
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">建议捡货数量
+                </td>
+                <td style="font-weight: bold; font-size: 14px; text-align: center;">实际捡货数量
+                </td>
+
+            </tr>
+            @if (Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any() != null && Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any())
+            {
+                if (ss > 1)
+                {
+                    skip = (j - 1) * 15 + 11; Take = 15;
+                }
+                foreach (var items in Model.OrderDetailCollection.Where(c => c.OID == item.ID).Skip(skip).Take(Take))
+                {
+                    counttotal += (decimal)items.Qty;
+                    number++;
+                    if (items.OID == item.ID)
+                    {
+                <tr style="height: 23px;">
+                    <td style="text-align: center; font-size: 14px;">@number</td>
+                    <td style="text-align: center; font-size: 18px;">@items.Location</td>
+                    <td style="text-align: center; font-size: 18px;">@items.SKU</td>
+                    <td style="text-align: center; font-size: 18px;">@items.BatchNumber</td>
+                    <td style="text-align: center; font-size: 14px;">@items.GoodsName</td>
+                    @*<td style="text-align: center; font-size: 14px;">@items.BU</td>*@
+                    <td style="text-align: center; font-size: 14px;">@items.str13</td>
+                    <td style="text-align: center; font-size: 14px;">@items.str14</td>
+                    <td style="text-align: center; font-size: 14px;">@items.str12</td>
+                    <td style="text-align: center; font-size: 14px;">@items.str11</td>
+                    <td style="text-align: center; font-size: 18px;">@items.Qty</td>
+                    <td style="text-align: center; font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+                    }
+                }
+                <tr>
+                    <td style="border-right: none; border-bottom: none;" colspan="9"></td>
+                    <td style="text-align: center; font-size: 14px; border-left: none; border-bottom: none;" colspan="1">总计 : @counttotal</td>
+                    <td style="border-bottom: none" colspan="1"></td>
+                </tr>
+                <tr>
+                    <td style="text-align: left; font-size: 14px; border-right: none; border-top: none;" colspan="3">捡货人：</td>
+                    <td style="text-align: left; font-size: 14px; border-left: none; border-top: none;" colspan="7">捡货时间:</td>
+                    <td style="text-align: right; border-top: none;" colspan="1">@ss / @i 页</td>
+                </tr>
+            }
+        </table>
+    </div>@*
+        <hr size="1" noshadow color="black" class="Noprint" />*@
+ 
+     
+                }
+                else
+                {
+    <div>
+        <hr size="1" noshadow color="black" class="Noprint" />
+        <div class="PageNext" style="width: 100%; height: 100%;">
+            @if (ss == 1)
+            {
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 40%; font-weight: bolder; font-size: 30px; vertical-align: bottom; text-align: center;">
+                            <span style="margin-left: 40px;">拣货单</span>
+                        </td>
+                    </tr>
+                </table>
+                <hr size="1" noshadow color="black" style="border: none; border-top: 2px solid #000;" />
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td colspan="3" style="font-weight: bold; font-size: 16px;">订单信息 
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr style="height: 20px;">
+                        <td style="font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="1">
+                            @item.OrderNumber.ToString()
+                        </td>
+                        <td style="font-family: '3 of 9 Barcode'; font-size: 25px; text-align: left;" colspan="2">
+                            @item.ExternOrderNumber.ToString()
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr style="height: 20px;">
+                        <td style="font-weight: bold; font-size: 14px;">出库单号：<strong style="border-bottom: 1px solid #000;">@item.OrderNumber</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">外部单号：<strong style="border-bottom: 1px solid #000;">@item.ExternOrderNumber</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">预出库单号：<strong style="border-bottom: 1px solid #000;">@item.PreOrderNumber</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; font-size: 14px;">出库日期：<strong style="border-bottom: 1px solid #000;">@item.OrderTime</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">重量：<strong style="border-bottom: 1px solid #000;">@item.str13</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">体积：<strong style="border-bottom: 1px solid #000;">@item.str14</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; font-size: 14px;">收货人：<strong style="border-bottom: 1px solid #000;">@item.str5</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">联系方式：<strong style="border-bottom: 1px solid #000;">@item.Contact</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">收货地址：<strong style="border-bottom: 1px solid #000;">@item.Address</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; font-size: 14px;">省：<strong style="border-bottom: 1px solid #000;">@item.Province</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">市：<strong style="border-bottom: 1px solid #000;">@item.City</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">区：<strong style="border-bottom: 1px solid #000;">@item.District</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; font-size: 14px;">订单类型：<strong style="border-bottom: 1px solid #000;">@item.OrderType</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;">电脑单号：<strong style="border-bottom: 1px solid #000;">@item.str15</strong>
+                        </td>
+                        <td style="font-weight: bold; font-size: 14px;"></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; font-size: 14px;" colspan="3">备注：<strong style="border-bottom: 1px solid #000;">@item.str11</strong>
+                        </td>
+                    </tr>
+                </table>
+            }
+            <table border="1" cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 5px; border-collapse: collapse;">
+                <tr>
+                    <td style="font-weight: bold; font-size: 16px; width: 16%; text-align: left;" colspan="12">拣货明细&nbsp;&nbsp;@item.ExternOrderNumber
+                    </td>
+                </tr>
+                <tr style="height: 23px;">
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">行号
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">库位
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">SKU
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">批次
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">描述
+                    </td>
+                    @*<td style="font-weight: bold; font-size: 14px; text-align: center;">BU
+                    </td>*@
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">重量
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">体积
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">是否扫描
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">备注
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">建议捡货数量
+                    </td>
+                    <td style="font-weight: bold; font-size: 14px; text-align: center;">实际捡货数量
+                    </td>
+
+                </tr>
+                @if (Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any() != null && Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any())
+                {
+                    if (ss > 1)
+                    {
+                        skip = (j - 1) * 15 + 11; Take = 15;
+                    }
+                    foreach (var items in Model.OrderDetailCollection.Where(c => c.OID == item.ID).Skip(skip).Take(Take))
+                    {
+                        counttotal += (decimal)items.Qty;
+                        number++;
+                        if (items.OID == item.ID)
+                        {
+                    <tr style="height: 23px;">
+                        <td style="text-align: center; font-size: 14px;">@number</td>
+                        <td style="text-align: center; font-size: 18px;">@items.Location</td>
+                        <td style="text-align: center; font-size: 18px;">@items.SKU</td>
+                        <td style="text-align: center; font-size: 18px;">@items.BatchNumber</td>
+                        <td style="text-align: center; font-size: 14px;">@items.GoodsName</td>
+                        @*               <td style="text-align: center; font-size: 14px;">@items.BU</td>*@
+                        <td style="text-align: center; font-size: 14px;">@items.str13</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str14</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str12</td>
+                        <td style="text-align: center; font-size: 14px;">@items.str11</td>
+                        <td style="text-align: center; font-size: 18px;">@items.Qty</td>
+                        <td style="text-align: center; font-size: 14px;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                        }
+                    }
+                    <tr>
+                        <td style="border-right: none; border-bottom: none;" colspan="9"></td>
+                        <td style="text-align: center; font-size: 14px; border-left: none; border-bottom: none;" colspan="1">总计 : @counttotal</td>
+                        <td style="border-bottom: none" colspan="1"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-size: 14px; border-right: none; border-top: none;" colspan="3">捡货人：</td>
+                        <td style="text-align: left; font-size: 14px; border-left: none; border-top: none;" colspan="7">捡货时间:</td>
+                        <td style="text-align: right; border-top: none;" colspan="1">@ss / @i 页</td>
+                    </tr>
+                }
+            </table>
+
+        </div>
+
+    </div>
+   
+                }
+            }
+        }
+    }
+
+
+}
+
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

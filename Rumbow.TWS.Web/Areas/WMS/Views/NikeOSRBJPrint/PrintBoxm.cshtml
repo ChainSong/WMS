@@ -1,0 +1,274 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintBoxModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+<style>
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 0px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 0px;
+        }
+</style>
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...')
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        var OrderID=@ViewBag.OrderID;
+        if(OrderID=='0')
+        {
+            history.go(-1);
+        }
+        else
+        {
+            location.href = "/WMS/OrderManagement/NikePackage/?ID=" + OrderID;
+        }
+    }
+    function BarcodeC(obj, data) {
+
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 30, showHRI: false });
+
+    }
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+    })
+</script>
+
+<div class="actionButtonDiv" style="padding-top: -12px; float: left;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    @*<input type="button" value="返回" class="btn btn-success" onclick="PackageID()">*@
+</div>
+@{
+    var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+}
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+
+    var packcount = Model.EnumerableCustomerInfo.Count();
+    var k = 0;
+    var packlistnumberheader = "";
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>装箱单号</th>
+                <th>POS代码</th>
+                <th>客户</th>
+                <th>客户名称</th>
+                <th>地址</th>
+            </tr>
+        </thead>
+
+        <tbody id="BodyTable">
+            @foreach (var CustomerInfo in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+            {
+                if (k == 0 || packlistnumberheader != CustomerInfo.PackageNumber)
+                {
+                    k++;
+                <tr id="">
+                    <td>@CustomerInfo.PackageNumber.ToString()</td>
+                    <td>@CustomerInfo.CompanyCode</td>
+                    <td>@CustomerInfo.StorerKey</td>
+                    <td>@CustomerInfo.Company</td>
+                    <td>@CustomerInfo.AddressLine1</td>
+                </tr>
+                }
+                packlistnumberheader = CustomerInfo.PackageNumber;
+            }
+        </tbody>
+    </table>
+
+            var i = 0;
+            var packlistnumber = "";
+            var g = 0;
+            var p = 0;
+            var PageCount = 0;
+            var CurrentPage = 0;
+            //总页数
+            foreach (var item in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+            {
+                if (p == 0 || packlistnumberheader != item.PackageNumber)
+                {
+                    p++;
+                    var page = Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count() / 10 + 1;
+                    PageCount += page;
+                    packlistnumberheader = item.PackageNumber;
+                }
+
+            }
+
+            foreach (var item in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+            {
+                if (g == 0 || packlistnumber != item.PackageNumber)
+                {
+                    var ss = 0;
+                    g++;
+                    var counts = Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Count();
+                    var Number = counts / 10 + 1;
+
+                    for (var j = 0; j < Number; j++)
+                    {
+                        CurrentPage++;
+                        ss = ss + 1;
+                        var pages = "page" + CurrentPage;
+    <div id='@pages' style="padding-top:5px;text-align:center;" >
+        @if (ss == 1)
+        {
+            <table style="text-align: left; font-family: 黑体; font-weight: bold; padding: 0px;">
+                <tr>
+                    <td>装箱单号：</td>
+                    <td colspan="7">@item.PackageNumber</td>
+                </tr>
+                  <tr>
+                    <td></td>
+                    <td colspan="7"> <div  class="bcTarget">@item.PackageNumber.ToString()</div> </td>
+                </tr>
+                <tr>
+                    <td>SHIP FROM：</td>
+                    <td>@Model.EnumerableCustomerInfo.Select(m => m.StorerKey).FirstOrDefault()</td>
+                    <td rowspan="2">
+                        <table>
+                            @*@if (item.CustomerID == 65 || item.CustomerID == 68)*@
+                            @if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKEOSR" && c.Name == item.CustomerID.ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKEOSR" && c.Name == item.CustomerID.ToString()).Any())
+                            {
+                                <tr>
+                                    <td>@Model.EnumerableCustomerInfo.Select(m => m.CompanyCode).FirstOrDefault()</td>
+                                </tr>
+                            }
+                            @*else if (item.CustomerID == 69 || item.CustomerID == 81)*@
+                            else if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()).Any())
+                            {
+                                <tr>
+                                    <td colspan="2" style="text-align:center; font-size:30px; font-weight:900;border:2px solid black;border-top-color:black;border-right-color:black;border-left-color:black;border-bottom-color:white;">@Model.EnumerableCustomerInfo.Select(m => m.City).FirstOrDefault() </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center;font-size:20px;border:2px solid black; border-top-color:white;border-right-color:white;border-left-color:black;border-bottom-color:black;">@Model.EnumerableCustomerInfo.Select(m => m.BU).FirstOrDefault() </td>
+                                    <td style="text-align:center;font-size:20px;border:2px solid black; border-top-color:white;border-left-color:white;border-right-color:black;border-bottom-color:black;">@Model.EnumerableCustomerInfo.Select(m => m.GenderAge).FirstOrDefault()</td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                    <td>&nbsp</td>
+                </tr>
+                <tr>
+                    <td>SHIP TO：</td>
+                    <td>@Model.EnumerableCustomerInfo.Select(m => m.str4).FirstOrDefault()</td>
+                </tr>
+                <tr>
+                    <td>客户名称：</td>
+                    <td colspan="7">@Model.EnumerableCustomerInfo.Select(m => m.Company).FirstOrDefault()</td>
+                </tr>
+                @*<tr>
+                    <td>退仓编号：</td>
+                    <td colspan="2"></td>
+                </tr>*@
+                <tr>
+                    <td>客户地址：</td>
+                    <td colspan="6">
+                        @Model.EnumerableCustomerInfo.Select(m => m.AddressLine1).FirstOrDefault()
+                    </td>
+                </tr>
+
+            </table>
+        }
+        <table style="text-align: center; font-family: 黑体; font-weight: bold;">
+            @if (ss == 1)
+            {
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">总数:@Model.EnumerableCustomerInfo.Where(a => a.PackageNumber == item.PackageNumber).Select(m => m.Qty).Sum()</td>
+                </tr>
+            }
+            <tr style="border-bottom: 3px solid #000;">
+                <td>UPC
+                </td>
+                <td>SKU
+                </td>
+                <td>UOM
+                </td>
+                <td>数量
+                </td>
+            </tr>
+
+            @foreach (var itemdetail in Model.EnumerableCustomerInfo.Where(c => c.PackageNumber == item.PackageNumber).Skip(j * 10).Take(10))
+            {
+                <tr>
+                    <td>@itemdetail.SKU
+                    </td>
+                    <td style="width:50%" >@itemdetail.Atrcle
+                    </td>
+                    <td>EA
+                    </td>
+                    <td>@itemdetail.Qty
+                    </td>
+                </tr>
+            }
+
+        </table>
+        <table style="text-align: center; font-family: 黑体; font-weight: bold;">
+            <tr>
+                <td>@item.OrderNumber</td>
+                <td>@CurrentPage/@PageCount</td>
+            </tr>
+
+        </table>
+
+    </div>
+                    }
+
+                    packlistnumber = item.PackageNumber;
+                }
+                //if (g == 0 || packlistnumber != item.PackageNumber)
+                //{
+                //    g++;
+                //    var ids = "page" + g;
+
+
+                //    packlistnumber = @item.PackageNumber;
+                //}
+            }
+}
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

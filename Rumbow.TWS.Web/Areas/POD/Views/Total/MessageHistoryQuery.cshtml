@@ -1,0 +1,74 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.TotalModel.MessageHistoryQueryModel
+        
+
+
+@using(Html.BeginForm())
+{
+    @Html.HiddenFor(m=>m.BeginSendTime)
+    @Html.HiddenFor(m=>m.EndSendTime)
+    @Html.HiddenFor(m=>m.IsExprot)
+    <fieldset>
+    <legend>短信历史查询
+    </legend>
+    <div id="ExportResult">  
+        <table>
+            <tr>
+                <td class="TableColumnTitle">客户运单号</td>
+                <td >@Html.TextAreaFor(model => model.CustomerOrderNumber)</td>
+                
+                <td class="TableColumnTitle">手机号码</td>
+                <td>@Html.TextAreaFor(model => model.Phone)</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">发送时间</td>
+                <td>@Html.CalendarRange("SendTime","calendarRange")<a id="SendTime_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+                <td class="TableColumnTitle"></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <div class="actionButtonDiv"><input type="submit" value="查询" name="action" id="QueryButton"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="导出" name="action" id="ExprotButton"/></div>
+         
+    </div>
+</fieldset>
+    
+    
+    if (Model.MessageHistoryTable != null)
+    {
+    
+    <fieldset>
+        <legend>数据信息</legend>
+        <div style="width:100%;">
+        <table style="width:100%;text-align:center">
+           
+            <tr>
+                @foreach (var columnsnames in Model.MessageHistoryTable.Columns)
+                {
+                   
+                    <td  class="TableColumnTitle">@columnsnames.ToString()</td>
+                }
+            </tr>
+       
+           @for (int i = 0; i < Model.MessageHistoryTable.Rows.Count; i++)
+           {
+            <tr>
+               @for (int j = 0; j < Model.MessageHistoryTable.Columns.Count; j++)
+               {
+                 
+                  
+                   <td>@Model.MessageHistoryTable.Rows[i][j].ToString()</td>
+                   
+                   
+                
+               }
+            </tr>
+           }
+        </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    
+    }
+    
+    
+}

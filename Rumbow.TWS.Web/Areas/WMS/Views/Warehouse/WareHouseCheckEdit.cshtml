@@ -1,0 +1,267 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.WarehouseCheckModel
+@Url.jsrender()
+@Url.Json2()
+@Url.PopupJs()
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{ 
+<fieldset>
+    <legend>库存盘点编辑</legend>
+    @if (Model.WarehouseCheckCollection != null && Model.WarehouseCheckCollection.Any())
+    {
+        foreach (var item in Model.WarehouseCheckCollection)
+        {
+            <table id="UserTable">
+                <tr>
+                    <td class="TableColumnTitle">
+                        盘点单号
+                    </td>
+                    <td>
+                        @item.CheckNumber
+                    </td>
+                    <td class="TableColumnTitle">
+                        外部盘点单号
+                    </td>
+                    <td>
+                        @item.ExternNumber
+                    </td>
+                    <td class="TableColumnTitle">
+                        创建日期
+                    </td>
+                    <td>
+                        @item.Checkdate
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle" style="width: 10%">
+                        客户
+                    </td>
+                    <td style="width: 20%">
+                        @item.CustomerName
+                    </td>
+                    <td class="TableColumnTitle" style="width: 10%">
+                        仓库
+                    </td>
+                    <td style="width: 20%">
+                        @item.Warehouse
+                    </td>
+                    <td class="TableColumnTitle" style="width: 10%">
+                        盘点单状态
+                    </td>
+                    <td style="width: 20%">
+                        @item.IS_Deal
+                    </td>
+                </tr>
+                <tr>
+                    @{
+                        if (int.Parse(item.Type) == 1)
+                        {
+                            <td class="TableColumnTitle">盘点类型 </td>
+                            <td colspan="5">@item.Type_Description </td>
+                        }
+
+                        if (int.Parse(item.Type) == 2)
+                        {
+                            <td class="TableColumnTitle">盘点类型 </td>
+                            <td>
+                                @item.Type_Description
+                            </td>
+                            <td class="TableColumnTitle">开始库位</td>
+                            <td>@item.str1</td>
+                            <td class="TableColumnTitle">结束库位</td>
+                            <td>@item.str2</td>
+                        }
+                        if (int.Parse(item.Type) == 3)
+                        {
+                            <td class="TableColumnTitle">盘点类型 </td>
+                            <td>
+                                @item.Type_Description
+                            </td>
+                            <td class="TableColumnTitle">开始品名</td>
+                            <td>@item.str1</td>
+                            <td class="TableColumnTitle">结束品名</td>
+                            <td>@item.str2</td>
+                        }
+                        if (int.Parse(item.Type) == 4)
+                        {
+                            <td class="TableColumnTitle">盘点类型 </td>
+                            <td>
+                                @item.Type_Description
+                            </td>
+                            <td class="TableColumnTitle">SKU上限数量</td>
+                            <td>@item.str1</td>
+                            <td class="TableColumnTitle">SKU下线数量</td>
+                            <td>@item.str2</td>
+                        }
+                        if (int.Parse(item.Type) == 5)
+                        {
+                            <td class="TableColumnTitle">盘点类型 </td>
+                            <td>
+                                @item.Type_Description
+                            </td>
+                            <td class="TableColumnTitle">开始时间</td>
+                            <td>@item.str1</td>
+                            <td class="TableColumnTitle">结束时间</td>
+                            <td>@item.str2</td>
+                        }
+                    }
+                </tr>
+                <tr id="trOne" style="display: none;">
+                    <td></td>
+
+                    <td></td>
+                    <td class="TableColumnTitle">
+                        <div id="CTthree">业务类型</div>
+                    </td>
+                    <td colspan="3">
+                        @*
+                            @foreach (SelectListItem item in Model.Remark)
+                               {
+                                   var ischecked = "";
+                                   if (item.Selected)
+                                   {
+                                       ischecked = "checked='checked'";
+                                   }
+                                  <input name="roles" type="checkbox" value="@item.Value" @ischecked />
+                                  @item.Text
+
+                               }*@
+                    </td>
+
+                </tr>
+            </table>
+        }
+    }
+    @Html.HiddenFor(m => m.SearchCondition.CheckNumber)
+    @Html.Hidden("IS_Deall", Model.WarehouseCheckDetailCollection.Select(s => s.IS_Deal).FirstOrDefault())
+    <div class="actionButtonDiv">
+
+        @{ if (Model.ViewType != 2)
+            {
+                <input type="submit" @*class="btn btn-primary"*@ class="btn btn-success" value="保存" id="SaveButton" name="Action" />
+
+                <input type="button" @*class="btn btn-primary"*@ class="btn btn-success" value="完成盘点" id="DoneButton" onclick="Done()" />
+
+            }
+        }
+
+        <input type="button" class="btn btn-success" value="盘点差异" id="CheckButton" />
+
+        <input type="button" class="btn btn-success" value="返回" id="BackButton" onclick="history.go(-1)" />
+
+
+    </div>
+</fieldset>
+
+    <fieldset>
+        <legend>盘点列表</legend>
+        <table id="RoleTable">
+            <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>仓库|区域</th>
+                    <th>库位</th>
+                    <th>SKU</th>
+                    <th>UPC</th>
+                    <th>批次号</th>
+                    <th>托号</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>盘点数量</th>
+                    <th>实际数量</th>
+                    <th>实际差异数量</th>
+                    <th style="display:none">ID</th>
+                </tr>
+            </thead>
+            <tbody id="Tbody">
+                @if (Model.WarehouseCheckDetailCollection != null && Model.WarehouseCheckDetailCollection.Any())
+                {
+                    foreach (var item in Model.WarehouseCheckDetailCollection)
+                    {
+                    <tr>
+                        <td>@item.CustomerName</td>
+                        <td>@item.Warehouse|@item.Area</td>
+                        <td>@item.Location</td>
+                        <td>@item.SKU</td>
+                        <td>@item.UPC</td>
+                        <td>@item.BatchNumber</td>
+                        <td>@item.BoxNumber</td>
+                        <td>@item.Unit</td>
+                        <td>@item.Specifications</td>
+                        <td>@item.CheckQty</td>
+                        @{if (int.Parse(item.IS_Deal) == 0)
+                          {
+                              <td><input type="text"  name="ActualQTY" value="@item.ActualQty"></td>
+                          }
+                          else
+                          {
+                            <td>@item.ActualQty</td>
+                          }
+                        }
+                        <td>
+                            <label>@Html.Raw( @item.DifferQty=="" ? "0":@item.DifferQty)</label>
+                        </td>
+                        <td style="display:none">@item.ID</td>
+                    </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </fieldset>  
+    
+    <div id="CheckDiv" style="display:none;-ms-overflow-y: scroll;">
+        <table>
+             <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>仓库|区域</th>
+                    <th>库位</th>
+                    <th>SKU</th>
+                    <th>UPC</th>
+                    <th>批次号</th>
+                    <th>托号</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>盘点数量</th>
+                    <th>实际数量</th>
+                    <th>实际差异数量</th>
+                    <th style="display:none">ID</th>
+                </tr>
+            </thead>
+             <tbody id="Tbodys">
+                @if (Model.WarehouseCheckDetailCollection != null && Model.WarehouseCheckDetailCollection.Any())
+                {
+                    foreach (var item in Model.WarehouseCheckDetailCollection.Where(c=>c.DifferQty!="0.00"&&c.DifferQty!=""))
+                    {
+                    <tr>
+                        <td>@item.CustomerName</td>
+                        <td>@item.Warehouse|@item.Area</td>
+                        <td>@item.Location</td>
+                        <td>@item.SKU</td>
+                        <td>@item.UPC</td>
+                        <td>@item.BatchNumber</td>
+                        <td>@item.BoxNumber</td>
+                        <td>@item.Unit</td>
+                        <td>@item.Specifications</td>
+                        <td>@item.CheckQty</td>
+                        <td>@item.ActualQty</td>
+                        <td>
+                            <label>@Html.Raw( @item.DifferQty=="" ? "0.00":@item.DifferQty)</label>
+                        </td>
+                        <td style="display:none">@item.ID</td>
+                    </tr>
+                    }
+                }
+                 </tbody>
+        </table>
+        <br><br><br><br>
+        <div class="actionButtonDiv" >       
+        @*<input type="button"  class="btn btn-success"  value="导出差异" id="exportDiff" onclick="exportDiff('@Model.WarehouseCheckCollection.Select(c=>c.CheckNumber).First()')"  />*@
+        <input type="button"  class="btn btn-success"  value="返回" id="statusBackReturn"  />
+         </div>
+    </div>
+} 

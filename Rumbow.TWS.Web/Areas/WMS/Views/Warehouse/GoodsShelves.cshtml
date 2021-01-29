@@ -1,0 +1,140 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.Warehouse.GoodsShelfsViewModel 
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{ 
+    @Html.Hidden("searchFlag", Session["searchFlag"]);
+    <fieldset id="WarehouseCondition">
+        <legend >查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+                <td class="TableColumnTitle"><label>客户</label></td>
+                 <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.WareHouseID, WarehouseList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>货架名</label></td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.GoodsShelvesName , new { @class ="form-control",style="width:100%"})</td>
+            </tr>
+        </table>
+          <div class="actionButtonDiv">
+         <input type="submit" @*class="btn btn-primary"*@class ="btn btn-success" value="查询" id="searchButton" name="Action" />
+         <input type="button" @*class="btn btn-primary"*@class ="btn btn-success" value="新增货架" id="addButton"/>     
+        </div>
+        </fieldset>
+    
+    <fieldset id="WarehouseTable">
+        <legend>货架列表
+             @if (Model.GoodsShelfCollection != null && Model.GoodsShelfCollection.Any())
+             {
+                 @Html.Raw("(" + Model.GoodsShelfCollection.Count() + ")");
+             }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; width: 100%;min-height:180px">
+        <table id="resultTable">
+            <thead>
+                <tr>
+                     @if (Session["searchFlag"] == null)
+                      {
+                        <th id="OperateTh">操作</th>
+                      }
+                    <th style="width:40%">仓库</th>
+                    <th>货架</th>
+                    <th>层数</th>
+                    <th style="display:none">ID</th>                     
+                    
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.GoodsShelfCollection != null && Model.GoodsShelfCollection.Any())
+                {
+                    foreach (var warehouse in Model.GoodsShelfCollection)
+                    {
+                        var tdd = "operateTD" + @warehouse.ID;
+                    <tr id="@warehouse.ID">
+                          @if (Session["searchFlag"] == null)
+                        {
+                            <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    <label data-id="@warehouse.ID" style="cursor: pointer;" class="btn btn-primary btn-xs EditorButton editSettledPod" onclick="WarehouseEdit(@warehouse.ID)" >编辑</label>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton" onclick="WarehouseDelete(@warehouse.ID,@warehouse.CustomerID,@warehouse.WareHouseID)">删除</label>
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+
+                            </td> 
+                        }
+
+
+                        <td>
+                            @warehouse.WarehouseName
+                        </td>
+                        <td>
+                            <a href="/WMS/Warehouse/GoodsShelvesCreate/?ID=@warehouse.ID&ViewType=3&WarehouseID=@warehouse.WareHouseID&CustomerID=@warehouse.CustomerID">@warehouse.GoodsShelvesName</a>                           
+                        </td>
+                         <td>
+                            @warehouse.Levels
+                        </td>
+                        <td style="display:none">
+                            @warehouse.ID
+                        </td>
+                        
+                        </tr>
+                     }
+                  }
+                </tbody>
+            </table>
+            </div>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+            </fieldset>
+       if (Session["searchFlag"] == null)
+    {
+<div>
+  <div style="float:left;width:45%">
+<fieldset>
+    <legend>选择Excel导入货架
+    </legend>
+    <div id="importDiv">
+        <label>客户：</label>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, new { @id = "StorerID", @class = "form-control", style = "width:15%;padding-bottom:1px" })
+        <label>仓库</label>@Html.DropDownListFor(m => m.SearchCondition.WareHouseID, WarehouseList, new { @id = "WareHouseID", @class = "form-control", style = "width:15%;padding-bottom:1px" })
+        <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 20%" />
+        <input type="submit" value="导入" style="margin-top:-9px;" class="btn btn-primary" onclick="return GoodsShelfImportClick();" />
+        <input type="submit" style="margin-top:-9px;" class="btn btn-primary" value="下载货架模板" id="portButtonTemplet" name="Action"/>
+
+    </div>
+</fieldset>
+    <fieldset style="margin-top: 20px;width:45%">
+                <legend>导入结果
+                </legend>
+                <div id="outPutResult">
+                </div>
+            </fieldset>  
+      </div>
+      <div style="float:left;width:48%">
+<fieldset>
+    <legend>导入货架库位关联
+    </legend>
+    <div id="importDiv2">
+        <label>客户：</label>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, new { @id = "StorerID2", @class = "form-control", style = "width:15%;padding-bottom:1px" })
+        <label>仓库</label>@Html.DropDownListFor(m => m.SearchCondition.WareHouseID, WarehouseList, new { @id = "WareHouseID2", @class = "form-control", style = "width:15%;padding-bottom:1px" })
+        <input type="file" id="importExcel2" name="importExcel2" class="form-control" style="width: 20%" />
+        <input type="submit" value="导入" style="margin-top:-9px;" class="btn btn-primary" onclick="return GoodsShelfImportClick2();" />
+        <input type="submit" style="margin-top:-9px;" class="btn btn-primary" value="下载货架库位关联模板" id="portButtonTemplet2" name="Action"/>
+
+    </div>
+</fieldset>
+    <fieldset style="margin-top: 20px;width:45%">
+                <legend>导入结果
+                </legend>
+                <div id="outPutResult2">
+                </div>
+            </fieldset>  
+      </div>
+    </div>
+    }
+}

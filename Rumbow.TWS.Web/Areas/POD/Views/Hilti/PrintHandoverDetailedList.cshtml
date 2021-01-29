@@ -1,0 +1,53 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PrintHandoverDetailedListModel
+@using(Html.BeginForm()){
+@*@Html.HiddenFor(m=>m.BeginActualDeliveryDate)
+@Html.HiddenFor(m=>m.EndActualDeliveryDate)
+*@
+    @Html.HiddenFor(m=>m.BeginDistributionDate)
+    @Html.HiddenFor(m=>m.EndDistributionDate)
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+        <tr>
+            <td style="width:20%" class="TableColumnTitle">@Html.LabelFor(m=>m.Shipper)</td>
+            <td>
+                @if(Model.UserType==1)
+                {
+                @Html.TextBoxFor(m => m.Shipper, new { disabled = "disabled"})
+                }
+                else
+                {
+                @Html.TextBoxFor(m => m.Shipper)
+                }
+            </td>
+                @Html.HiddenFor(m => m.UserType)
+                @Html.HiddenFor(m => m.Shipper)
+                @Html.HiddenFor(m => m.ShipperID)
+            <td style="width:20%" class="TableColumnTitle"> @Html.LabelFor(m=>m.DistributionDate)</td>
+            
+            @*<td>@Html.CalendarRange("ActualDeliveryDate","calendarRange")<a id="ActualDeliveryDate_ID" href="#" onclick="EmptyValue(this)">清空</a></td>*@
+            <td>@Html.CalendarRange("DistributionDate","calendarRange",Model.BeginDistributionDate,Model.EndDistributionDate)<a id="DistributionDate_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="QueryButton" name="Action"/>
+        </div>
+</fieldset>
+    
+    if(Model.DateList !=null){
+    <fieldset>
+        <legend>信息</legend>
+        <table>
+            @for(int i = 0;i<Model.DateList.Rows.Count;i++)
+            {
+            <tr>
+                <td>@Model.DateList.Rows[i][0].ToString()</td>
+                
+                @*<td>@Html.ActionLink("点击打印导出", "PrintHandoverDetailedListDetail", new { datetime =Model.DateList[i].ToString(),ShipperName=Model.Shipper})</td>*@
+                <td><a href='PrintHandoverDetailedListDetail?datetime=@Model.DateList.Rows[i][0].ToString()&ShipperName=@HttpUtility.UrlEncode(@Model.Shipper)&ShipperID=@Model.ShipperID', target="_blank">点击打印导出</a></td>
+            </tr>
+            }
+        </table>
+    </fieldset>
+    }
+}

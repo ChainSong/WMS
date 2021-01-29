@@ -1,0 +1,98 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.ImageAuditDetailViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.PodID)
+    @Html.HiddenFor(m => m.CurrentFolder)
+    @Html.HiddenFor(m => m.CurrentImageName)
+    @Html.HiddenFor(m => m.CurrentImageExtension)
+    @Html.HiddenFor(m => m.PrevPodID)
+    @Html.HiddenFor(m => m.NextPodID)
+    @Html.HiddenFor(m => m.ImageNames)
+    @Html.HiddenFor(m => m.URLPrev)
+    @Html.HiddenFor(m => m.Message)
+    @Html.HiddenFor(m => m.PictureUrl)
+    <div id="ImageAuditDetailMain">
+        <div id="ImageDiv">
+            <fieldset id="ImgFieldset">
+                <legend>回单信息(
+                @if(!string.IsNullOrEmpty(Model.PictureUrl))
+                {
+                    string url = Url.Content("~/Front/Home/GetAttachment/") + Model.AttachmentID;
+
+                    <a class="attachmentClass" href="@url">点击下载</a>
+                }
+                    )</legend>
+                <div id="NextPrevDiv">
+                    <label id="prevImageButton" class="PointCursor"><</label>
+                    <label id="nextImageButton" class="PointCursor">></label>
+                </div>
+                <div class="imgBox">
+                    <img id="waitingImg" src="../../../../Image/waiting.gif" />
+                    <img src="#" id="ImageControl" style="width: 750px;" />
+                    <div id="leftDiv" class="left" title="点击翻阅上一图">&nbsp;</div>
+                    <div id="rightDiv" class="right" title="点击翻阅下一图">&nbsp;</div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="ActionDiv">
+            <fieldset>
+                <legend>审核信息</legend>
+                <table>
+                    @if (Model.Pod != null)
+                    {
+                        <tr>
+                            <td class="TableColumnTitle">系统运单号</td>
+                            <td>@Model.Pod.SystemNumber</td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">客户运单号</td>
+                            <td>@Model.Pod.CustomerOrderNumber</td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">客户名称</td>
+                            <td>@Model.Pod.CustomerName</td>
+                        </tr>
+                        if (Model.Pod.CustomerID == 2)
+                        {
+                            <tr>
+                                <td class="TableColumnTitle">103单号</td>
+                                <td>@Model.Pod.Str1</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="TableColumnTitle">起运城市</td>
+                            <td>@Model.Pod.StartCityName</td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">目的城市</td>
+                            <td>@Model.Pod.EndCityName</td>
+                        </tr>
+                        <tr>
+                            <td class="TableColumnTitle">发货日期</td>
+                            <td>@Model.Pod.ActualDeliveryDate</td>
+                        </tr>   
+                    }
+                    <tr>
+                        <td class="TableColumnTitle" style="width: 30%">审核人</td>
+                        <td>@Model.UserName</td>
+                    </tr>
+                    <tr>
+                        <td class="TableColumnTitle">是否合格</td>
+                        <td>@Html.DropDownListFor(m => m.IsOK, Model.IsOKs)</td>
+                    </tr>
+                    <tr>
+                        <td class="TableColumnTitle">备注(不合格必填)</td>
+                        <td>@Html.TextAreaFor(m => m.Remark, new { style = "width:95%" })</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center">
+                            <input type="button" id="backButton" value="上一单" />
+                            <input type="button" id="nextButton" value="下一单" />
+                            <input type="submit" id="AutidButton" value="审核" />
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </div>
+    </div>
+}

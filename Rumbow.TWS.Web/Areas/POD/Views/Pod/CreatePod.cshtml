@@ -1,0 +1,604 @@
+﻿@using System.Linq;
+@using System.Collections.Generic;
+@using Runbow.TWS.Web.Areas.POD.Models;
+
+@model Runbow.TWS.Web.Areas.POD.Models.PodViewModel
+@{
+    var IsEdit = (bool)ViewBag.EditModel;
+    var columnsForPod = Model.ModuleConfig.Tables.TableCollection.First(t => t.Name == "Pod").ColumnCollection;
+    var notKeyColumns = columnsForPod.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.Pod.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.Pod.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.Pod.CustomerID);
+                }
+
+                return c;
+            }
+        });
+    var notKeyTextBoxColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase)
+         || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "FileUpload", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextAreaColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumnsCount = notKeyTextBoxColumns.Count;
+    int notKeyTextBoxRowCount = notKeyTextBoxColumnsCount % 3 > 0 ? notKeyTextBoxColumnsCount / 3 + 1 : notKeyTextBoxColumnsCount / 3;
+    int notKeyTextAreaRowCount = notKeyTextAreaColumns.Count;
+    var startCityTreeKey = Guid.NewGuid().ToString();
+    var endCityTreeKey = Guid.NewGuid().ToString();
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Pod.ID)
+    @Html.HiddenFor(m => m.Pod.ProjectID)
+    @Html.HiddenFor(m => m.Pod.Creator)
+    @Html.HiddenFor(m => m.Pod.CreateTime)
+    @Html.HiddenFor(m => m.Pod.Str1)
+    @Html.HiddenFor(m => m.Pod.Str2)
+    @Html.HiddenFor(m => m.Pod.Str3)
+    @Html.HiddenFor(m => m.Pod.Str4)
+    @Html.HiddenFor(m => m.Pod.Str5)
+    @Html.HiddenFor(m => m.Pod.Str6)
+    @Html.HiddenFor(m => m.Pod.Str7)
+    @Html.HiddenFor(m => m.Pod.Str8)
+    @Html.HiddenFor(m => m.Pod.Str9)
+    @Html.HiddenFor(m => m.Pod.Str10)
+    @Html.HiddenFor(m => m.Pod.Str11)
+    @Html.HiddenFor(m => m.Pod.Str12)
+    @Html.HiddenFor(m => m.Pod.Str13)
+    @Html.HiddenFor(m => m.Pod.Str14)
+    @Html.HiddenFor(m => m.Pod.Str15)
+    @Html.HiddenFor(m => m.Pod.Str16)
+    @Html.HiddenFor(m => m.Pod.Str17)
+    @Html.HiddenFor(m => m.Pod.Str18)
+    @Html.HiddenFor(m => m.Pod.Str19)
+    @Html.HiddenFor(m => m.Pod.Str20)
+    @Html.HiddenFor(m => m.Pod.Str21)
+    @Html.HiddenFor(m => m.Pod.Str22)
+    @Html.HiddenFor(m => m.Pod.Str23)
+    @Html.HiddenFor(m => m.Pod.Str24)
+    @Html.HiddenFor(m => m.Pod.Str25)
+    @Html.HiddenFor(m => m.Pod.Str26)
+    @Html.HiddenFor(m => m.Pod.Str27)
+    @Html.HiddenFor(m => m.Pod.Str28)
+    @Html.HiddenFor(m => m.Pod.Str29)
+    @Html.HiddenFor(m => m.Pod.Str30)
+    @Html.HiddenFor(m => m.Pod.Str31)
+    @Html.HiddenFor(m => m.Pod.Str32)
+    @Html.HiddenFor(m => m.Pod.Str33)
+    @Html.HiddenFor(m => m.Pod.Str34)
+    @Html.HiddenFor(m => m.Pod.Str35)
+    @Html.HiddenFor(m => m.Pod.Str36)
+    @Html.HiddenFor(m => m.Pod.Str37)
+    @Html.HiddenFor(m => m.Pod.Str38)
+    @Html.HiddenFor(m => m.Pod.Str40)
+    @Html.HiddenFor(m => m.Pod.Str41)
+    @Html.HiddenFor(m => m.Pod.Str42)
+    @Html.HiddenFor(m => m.Pod.Str43)
+    @Html.HiddenFor(m => m.Pod.Str44)
+    @Html.HiddenFor(m => m.Pod.Str45)
+    @Html.HiddenFor(m => m.Pod.Str46)
+    @Html.HiddenFor(m => m.Pod.Str47)
+    @Html.HiddenFor(m => m.Pod.Str48)
+    @Html.HiddenFor(m => m.Pod.Str49)
+    @Html.HiddenFor(m => m.Pod.Str50)
+    @Html.HiddenFor(m => m.Pod.DateTime1)
+    @Html.HiddenFor(m => m.Pod.DateTime2)
+    @Html.HiddenFor(m => m.Pod.DateTime3)
+    @Html.HiddenFor(m => m.Pod.DateTime4)
+    @Html.HiddenFor(m => m.Pod.DateTime5)
+    @Html.HiddenFor(m => m.Pod.DateTime6)
+    @Html.HiddenFor(m => m.Pod.DateTime7)
+    @Html.HiddenFor(m => m.Pod.DateTime8)
+    @Html.HiddenFor(m => m.Pod.DateTime9)
+    @Html.HiddenFor(m => m.Pod.DateTime10)
+    @Html.HiddenFor(m => m.Pod.DateTime11)
+    @Html.HiddenFor(m => m.Pod.DateTime12)
+    @Html.HiddenFor(m => m.Pod.DateTime13)
+    @Html.HiddenFor(m => m.Pod.DateTime14)
+    @Html.HiddenFor(m => m.Pod.DateTime15)
+    @Html.HiddenFor(m => m.Pod.Type)
+    @Html.HiddenFor(m => m.Pod.HasShortDial)
+    @Html.HiddenFor(m => m.Pod.HasDistribution)
+    @Html.HiddenFor(m => m.Pod.HasExpress)
+    @Html.HiddenFor(m => m.IsEditModel)
+    <fieldset>
+        <legend>关键信息</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblSystemNumber", columnsForPod.First(c => c.DbColumnName == "SystemNumber").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Pod.SystemNumber, new { @readonly = "readonly" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblCustomerOrderNumber", columnsForPod.First(c => c.DbColumnName == "CustomerOrderNumber").DisplayName)
+                    @if (Model.ModuleConfig.UseCustomerOrderNumber)
+                    {
+                        @Html.NecessaryFlag()
+                    }
+                </td>
+                <td>
+                    @if (Model.ModuleConfig.UseCustomerOrderNumber)
+                    {
+                        if (IsEdit)
+                        {
+                        @Html.TextBox("txtCustomerOrderNumber", Model.Pod.CustomerOrderNumber, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.CustomerOrderNumber)
+                        }
+                        else
+                        {
+                        @Html.TextBoxFor(m => m.Pod.CustomerOrderNumber)
+                        }
+                    }
+                    else
+                    {
+                        @Html.Raw("本项目不使用客户编号作为运单号")
+                        @Html.HiddenFor(m => m.Pod.CustomerOrderNumber)
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblPODState", columnsForPod.First(c => c.DbColumnName == "PODStateID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @Html.TextBox("txtPodState", Model.Pod.PODStateName, new { disabled = "disabled" })
+                    @Html.HiddenFor(m => m.Pod.PODStateID)
+                    @Html.HiddenFor(m => m.Pod.PODStateName)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblCustomerID", columnsForPod.First(c => c.DbColumnName == "CustomerID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID < 3)
+                    {
+                        @Html.DropDownListFor(m => m.Pod.CustomerID, Model.Customers)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtCustomer", Model.Pod.CustomerName, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.CustomerID)
+                    }
+                    @Html.HiddenFor(model => model.Pod.CustomerName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblShipperID", columnsForPod.First(c => c.DbColumnName == "ShipperID").DisplayName)
+                </td>
+                <td>
+                    @if (IsEdit && Model.Pod.PODStateID == 2)
+                    {
+                        @Html.TextBoxFor(m => m.Pod.ShipperName)
+                        @Html.HiddenFor(m => m.Pod.ShipperID)
+                        @*@Html.DropDownListFor(m => m.Pod.ShipperID, Model.Shippers, "==请选择==")
+                        @Html.TextBox("AutoShippers")*@
+                        
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtShipper", Model.Pod.ShipperName, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.ShipperID)
+                        @Html.HiddenFor(m => m.Pod.ShipperName)
+                    }
+                    
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblShipperTypeID", columnsForPod.First(c => c.DbColumnName == "ShipperTypeID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID < 3)
+                    {
+                        @Html.DropDownListFor(m => m.Pod.ShipperTypeID, Model.ShipperTypes)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtShipperType", Model.Pod.ShipperTypeName, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.ShipperTypeID)
+                    }
+                    @Html.HiddenFor(m => m.Pod.ShipperTypeName)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblStartCity", columnsForPod.First(c => c.DbColumnName == "StartCityID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID < 3)
+                    {
+                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = startCityTreeKey })
+                        <a id="startCityClear" href="#">清空</a>
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtStartCity", Model.Pod.StartCityName, new { disabled = "disabled" });
+                    }
+
+                    @Html.HiddenFor(m => m.Pod.StartCityID)
+                    @Html.HiddenFor(m => m.Pod.StartCityName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblEndCity", columnsForPod.First(c => c.DbColumnName == "EndCityID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID < 3)
+                    {
+                        @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = endCityTreeKey })
+                        <a id="endCityClear" href="#">清空</a>
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtEndCity", Model.Pod.EndCityName, new { disabled = "disabled" });
+                    }
+                    @Html.HiddenFor(m => m.Pod.EndCityID)
+                    @Html.HiddenFor(m => m.Pod.EndCityName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblPODTypeID", columnsForPod.First(c => c.DbColumnName == "PODTypeID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID < 3)
+                    {
+                        @Html.DropDownListFor(m => m.Pod.PODTypeID, Model.PODTypes)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtPodType", Model.Pod.PODTypeName, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.PODTypeID)
+                    }
+                    @Html.HiddenFor(m => m.Pod.PODTypeName)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblTtlOrTpl", columnsForPod.First(c => c.DbColumnName == "TtlOrTplID").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID < 3)
+                    {
+                        @Html.DropDownListFor(m => m.Pod.TtlOrTplID, Model.TtlOrTpls,"==请选择==")
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtTtlOrTpl", Model.Pod.TtlOrTplName, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.TtlOrTplID)
+                    }
+                    @Html.HiddenFor(m => m.Pod.TtlOrTplName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblActualDeliveryDate", columnsForPod.First(c => c.DbColumnName == "ActualDeliveryDate").DisplayName)
+                    @Html.NecessaryFlag()
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID <= 3)
+                    {
+                        @Html.CalendarDateTimeFor(m => m.Pod.ActualDeliveryDate)
+                        
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtActialDeliveryDate", Model.Pod.ActualDeliveryDate.HasValue ? Model.Pod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd hh-mm-ss") : "", new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.ActualDeliveryDate)
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblBoxNumber", columnsForPod.First(c => c.DbColumnName == "BoxNumber").DisplayName)
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID <= 3)
+                    {
+                        @Html.TextBoxFor(m => m.Pod.BoxNumber)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtBoxNumber", Model.Pod.BoxNumber, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.BoxNumber);
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblGoodsNumber", columnsForPod.First(c => c.DbColumnName == "GoodsNumber").DisplayName)
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID <= 3)
+                    {
+                        @Html.TextBoxFor(m => m.Pod.GoodsNumber)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtGoodsNumber", Model.Pod.GoodsNumber, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.GoodsNumber)
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblWeight", columnsForPod.First(c => c.DbColumnName == "Weight").DisplayName)
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID <= 3)
+                    {
+                        @Html.TextBoxFor(m => m.Pod.Weight)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtWeight", Model.Pod.Weight, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.Weight)
+                    }
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblVolume", columnsForPod.First(c => c.DbColumnName == "Volume").DisplayName)
+                </td>
+                <td>
+                    @if (Model.Pod.PODStateID <= 3)
+                    {
+                        @Html.TextBoxFor(m => m.Pod.Volume)
+                    }
+                    else
+                    {
+                        @Html.TextBox("txtVolume", Model.Pod.Volume, new { disabled = "disabled" })
+                        @Html.HiddenFor(m => m.Pod.Volume)
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>@*
+
+    <fieldset>
+        <legend>短拨信息</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    信息1
+                </td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle">
+                     信息2
+                </td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle">
+                     信息3
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>承运商信息</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    信息1
+                </td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle">
+                     信息2
+                </td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle">
+                     信息3
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend>配送信息</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    信息1
+                </td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle">
+                     信息2
+                </td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle">
+                     信息3
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </fieldset>*@
+
+    <fieldset>
+        <legend>其他信息</legend>
+        <table>
+            @for (int i = 0; i < notKeyTextBoxRowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= notKeyTextBoxColumnsCount)
+                        {
+                        <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = notKeyTextBoxColumns[i * 3 + j];
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td>
+                            @{
+                            switch (column.Type)
+                            {
+                                case "TextBox":
+                                @Html.TextBox(column.DbColumnName, null, new { @class = "notKeyVal", @value = column.DefaultValue });
+                                                                                                                                    break;
+                                case "DateTime":
+                                @Html.Calendar(column.DbColumnName, "notKeyVal datetimeval");
+                                                                                            break;
+                                case "CheckBox":
+                                @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                                                                                                 break;
+                                case "DropDownList":
+                                @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                                                                                                                                        break;
+                                case "DateTimeWithTime":
+                                @Html.CalendarDateTime(column.DbColumnName,"notKeyVal dateAndtimeval");
+                                                                                                    break;   
+                                case "FileUpload":
+                                @Html.SingleFileUpload("FileUpload" + column.DbColumnName, column.DbColumnName, typeof(Runbow.TWS.Entity.Pod).GetProperty(column.DbColumnName).GetValue(Model.Pod).ToString(), false,true,false,true);
+                                                                                                                                                                                                                                                       break;                                                                                                 
+                                default:
+                                                                                                                                         break;
+                            }
+                            }
+                        </td>
+                        }
+                    }
+                </tr>
+            }
+
+            @for (int i = 0; i < notKeyTextAreaRowCount; i++)
+            {
+                <tr>
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + notKeyTextAreaColumns[i].DbColumnName, notKeyTextAreaColumns[i].DisplayName)
+                    </td>
+                    <td colspan="5">
+                        @Html.TextArea(notKeyTextAreaColumns[i].DbColumnName, new { style = "width:95%", @class = "notKeyVal" })
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <input type="submit" value="提交" id="submitButton" />
+        @{
+            if (IsEdit)
+            {
+            @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;");
+            <input type="button" value="返回" id="returnButton" onclick="window.history.back();" />
+            }
+        }
+    </div>
+}
+
+<script>
+    function onRegionSelected(rid, rn, treeId) {
+        if (treeId === '@startCityTreeKey') {
+            $('#Pod_StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#Pod_StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (treeId === '@endCityTreeKey') {
+            $('#Pod_EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#Pod_EndCityName').val($('#endCityTreeName').attr('value'));
+
+            //TODO: Below cold is only used for Hilti
+            SetTargetProvinceForHilti();
+            SetServicePeriodForHilti();
+        }
+    }
+
+    function onRegionAutoCompleteSelected(globalID) {
+        if (globalID === '@startCityTreeKey') {
+            $('#Pod_StartCityID').val($('#startCityTreeID').attr('value'));
+            $('#Pod_StartCityName').val($('#startCityTreeName').attr('value'));
+        } else if (globalID === '@endCityTreeKey') {
+            $('#Pod_EndCityID').val($('#endCityTreeID').attr('value'));
+            $('#Pod_EndCityName').val($('#endCityTreeName').attr('value'));
+
+            //TODO: Below cold is only used for Hilti
+            SetTargetProvinceForHilti();
+            SetServicePeriodForHilti();
+        }
+    }
+
+    function SetServicePeriodForHilti() {
+        var customerID = $('#Pod_CustomerID').val();
+        if (customerID === '2') {
+            var startCityID = $('#Pod_StartCityID').val();
+            var endCityID = $('#Pod_EndCityID').val();
+            var actualDeliveryTime = $('#Pod_ActualDeliveryDate').val();
+
+            if (startCityID !== '' && endCityID !== '' && actualDeliveryTime !== '') {
+                $.send(
+                    '/POD/Hilti/GetServicePeriod',
+                    {
+                        customerID: 2, startCityID: startCityID, endCityID: endCityID
+                    },
+                    function (response) {
+                        if (response) {
+                            var period = parseInt(response.Period);
+                            var isBeloneToShanghai = false;
+                            $.send(
+                                '/POD/Hilti/IsBeloneToShanghai',
+                                {
+                                    cityID: endCityID
+                                },
+                                function (res) {
+                                    if (res.IsSuccess === true) {
+                                        if ($('#Str23').val() !== '') {
+                                            var t = $('#Str23').val().split(':')[0];
+                                            if (t) {
+                                                if (parseInt(t) > 12) {
+                                                    period += 1;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    var date = new Date(actualDeliveryTime)
+                                    date.addDays(period);
+                                    $('#DateTime2').val(date.Format('yyyy-MM-dd'));
+                                },
+                                function (res) {
+                                    var date = new Date(actualDeliveryTime)
+                                    date.addDays(period);
+                                    $('#DateTime2').val(date.Format('yyyy-MM-dd'));
+                                });
+                        }
+                    });
+            }
+        }
+    }
+
+    function SetTargetProvinceForHilti() {
+        var customerID = $('#Pod_CustomerID').val();
+        if (customerID === '2' || customerID === '11') {
+            var endCityName = $('#Pod_EndCityName').val();
+            if (endCityName !== '') {
+                $.send(
+                '/System/Region/GetParentProvinceByName',
+                {
+                    name: endCityName
+                },
+                function (response) {
+                    if (response) {
+                        if (customerID === '2') {
+                            $('#Str4').val(response.Value);
+                        } else if (customerID === '11') {
+                            $('#Str5').val(response.Value);
+                        }
+                    }
+                });
+            }
+        }
+    }
+</script>

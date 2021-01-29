@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>CSRedis.NET45</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>https://github.com/Asking16/CSRedis.NET4.5</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/Asking16/CSRedis.NET4.5/master/Net.csredis.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>CSRedis.NET45</description>
+    <copyright>Copyright 2018</copyright>
+    <tags>redis, , »º´æ, csredis</tags>
+  </metadata>
+</package>

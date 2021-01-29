@@ -1,0 +1,280 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+@model Runbow.TWS.Web.Areas.WMS.Models.ReportManagement.InventoryChangeViewModel
+@using Runbow.TWS.Common;
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                }
+                <td class="TableColumnTitle"><label>客户</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle"><label>调整单类型</label></td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.InventoryChangeTypes, Model.InventoryChangeTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                @*<td class="TableColumnTitle"><label>库区</label></td>*@
+                <td>@*@Html.DropDownListFor(m => m.SearchCondition.Location, AreaList, "==请选择==", new { @style = "width:100%", @class = "form-control",disabled="disabled" })*@</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>门店代码</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.str3, new { @class = "form-control", style = "width:100%" })</td>
+                @*<td class="TableColumnTitle"><label>库位</label></td>
+                    <td>@Html.TextAreaFor(m => m.SearchCondition.Location, new { @style = "width:100%", @class = "form-control" ,disabled="disabled"})</td>
+                    <td class="TableColumnTitle"><label>SKU</label></td>
+                    <td>@Html.TextAreaFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control" ,disabled="disabled"})</td>*@
+                @*<td class="TableColumnTitle"><label>库存类型</label></td>
+                    <td>@Html.DropDownListFor(m => m.SearchCondition.InventoryChangeTypes, Model.InventoryChangeTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>*@
+            </tr>
+            <tr></tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="OutboundOrder" name="Action" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            明细列表
+            @if (Model.ReportInventoryChangeCollection != null && Model.ReportInventoryChangeCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReportInventoryChangeCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                @if (String.IsNullOrWhiteSpace(Model.SearchCondition.InventoryChangeTypes))
+                {
+                    <tr>
+                        @*<th class="checkBoxHead">@Html.CheckBox("selectAll")</th>*@
+                        <th>调整单类型</th>
+                        <th>调整单号</th>
+                        <th>调整行号</th>
+                        <th>类型</th>
+                        <th>调整类型</th>
+                        <th>冻结原因</th>
+                        <th>冻结状态</th>
+                        <th>新库位</th>
+                        <th>调整数量</th>
+                        <th>新ContainerKey</th>
+                        <th>货主</th>
+                        <th>SKU</th>
+                        <th>批次号</th>
+                        <th>库位</th>
+                        <th>数量</th>
+                        <th>ContainerKey</th>
+                        <th>状态</th>
+                        <th>创建人</th>
+                        <th>创建日期</th>
+                        <th>更新人</th>
+                        <th>更新日期</th>
+                        <th>门店代码</th>
+                    </tr>
+                }
+                else if (Model.SearchCondition.InventoryChangeTypes.Equals("库存调整单") || Model.SearchCondition.InventoryChangeTypes.Equals("库存品级调整单"))
+                {
+                    <tr>
+                        @*<th class="checkBoxHead">@Html.CheckBox("selectAll")</th>*@
+                        <th>调整单类型</th>
+                        <th>调整单号</th>
+                        <th>调整行号</th>
+                        <th>类型</th>
+                        <th>调整类型</th>
+                        <th>新库位</th>
+                        <th>调整数量</th>
+                        <th>货主</th>
+                        <th>SKU</th>
+                        <th>批次号</th>
+                        <th>库位</th>
+                        <th>数量</th>
+                        <th>ContainerKey</th>
+                        <th>状态</th>
+                        <th>创建人</th>
+                        <th>创建日期</th>
+                        <th>更新人</th>
+                        <th>更新日期</th>
+                        <th>门店代码</th>
+                    </tr>
+                }
+                else if (Model.SearchCondition.InventoryChangeTypes.Equals("库存冻结单"))
+                {
+                    <tr>
+                        @*<th class="checkBoxHead">@Html.CheckBox("selectAll")</th>*@
+                        <th>调整单类型</th>
+                        <th>调整单号</th>
+                        <th>类型</th>
+                        <th>冻结原因</th>
+                        <th>冻结状态</th>
+                        <th>货主</th>
+                        <th>SKU</th>
+                        <th>批次号</th>
+                        <th>库位</th>
+                        <th>数量</th>
+                        <th>ContainerKey</th>
+                        <th>状态</th>
+                        <th>创建人</th>
+                        <th>创建日期</th>
+                        <th>更新人</th>
+                        <th>更新日期</th>
+                        <th>门店代码</th>
+                    </tr>
+                }
+                else if (Model.SearchCondition.InventoryChangeTypes.Equals("库存移动单"))
+                {
+                    <tr>
+                        @*<th class="checkBoxHead">@Html.CheckBox("selectAll")</th>*@
+                        <th>调整单类型</th>
+                        <th>调整单号</th>
+                        <th>类型</th>
+                        <th>新库位</th>
+                        <th>新ContainerKey</th>
+                        <th>货主</th>
+                        <th>SKU</th>
+                        <th>批次号</th>
+                        <th>库位</th>
+                        <th>数量</th>
+                        <th>ContainerKey</th>
+                        <th>状态</th>
+                        <th>创建人</th>
+                        <th>创建日期</th>
+                        <th>更新人</th>
+                        <th>更新日期</th>
+                        <th>门店代码</th>
+                    </tr>
+                }
+            </thead>
+            <tbody>
+                @if (Model.ReportInventoryChangeCollection != null && Model.ReportInventoryChangeCollection.Any())
+                {
+                    if (String.IsNullOrWhiteSpace(Model.SearchCondition.InventoryChangeTypes))
+                    {
+                        foreach (var item in Model.ReportInventoryChangeCollection)
+                        {
+                            <tr>
+                                @* <td>
+                                        @Html.CheckBox("check" + @item.ID, new { data_ID = @item.IDS, @class = "checkForSelect" })
+                                    </td>*@
+                                <td>@item.AdjustmentType</td>
+                                <td>@item.AdjustmentKey</td>
+                                <td>@item.AdjustmentLineNumber</td>
+                                <td>@item.OriginalInvType</td>
+                                <td>@item.AdjustedInvType</td>
+                                <td>@item.HoldReason</td>
+                                <td>@item.HoldStatus</td>
+                                <td>@item.ToLocation</td>
+                                <td>@item.AdjustedQty</td>
+                                <td>@item.ToContainerKey</td>
+                                <td>@item.Storer</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Lot</td>
+                                <td>@item.Location</td>
+                                <td>@item.Qty</td>
+                                <td>@item.ContainerKey</td>
+                                <td>@item.Status</td>
+                                <td>@item.CreateUser</td>
+                                <td>@item.CreateDate</td>
+                                <td>@item.UpdateUser</td>
+                                <td>@item.UpdateDate</td>
+                                <td>@item.str3</td>
+                            </tr>
+                        }
+                    }
+                    else if (Model.SearchCondition.InventoryChangeTypes.Equals("库存调整单") || Model.SearchCondition.InventoryChangeTypes.Equals("库存品级调整单"))
+                    {
+                        foreach (var item in Model.ReportInventoryChangeCollection)
+                        {
+                            <tr>
+                                @* <td>
+            @Html.CheckBox("check" + @item.ID, new { data_ID = @item.IDS, @class = "checkForSelect" })
+        </td>*@
+                                <td>@item.AdjustmentType</td>
+                                <td>@item.AdjustmentKey</td>
+                                <td>@item.AdjustmentLineNumber</td>
+                                <td>@item.OriginalInvType</td>
+                                <td>@item.AdjustedInvType</td>
+                                <td>@item.ToLocation</td>
+                                <td>@item.AdjustedQty</td>
+                                <td>@item.Storer</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Lot</td>
+                                <td>@item.Location</td>
+                                <td>@item.Qty</td>
+                                <td>@item.ContainerKey</td>
+                                <td>@item.Status</td>
+                                <td>@item.CreateUser</td>
+                                <td>@item.CreateDate</td>
+                                <td>@item.UpdateUser</td>
+                                <td>@item.UpdateDate</td>
+                                <td>@item.str3</td>
+                            </tr>
+                        }
+                    }
+                    else if (Model.SearchCondition.InventoryChangeTypes.Equals("库存冻结单"))
+                    {
+                        foreach (var item in Model.ReportInventoryChangeCollection)
+                        {
+                            <tr>
+                                @* <td>
+            @Html.CheckBox("check" + @item.ID, new { data_ID = @item.IDS, @class = "checkForSelect" })
+        </td>*@
+                                <td>@item.AdjustmentType</td>
+                                <td>@item.AdjustmentKey</td>
+                                <td>@item.OriginalInvType</td>
+                                <td>@item.HoldReason</td>
+                                <td>@item.HoldStatus</td>
+                                <td>@item.Storer</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Lot</td>
+                                <td>@item.Location</td>
+                                <td>@item.Qty</td>
+                                <td>@item.ContainerKey</td>
+                                <td>@item.Status</td>
+                                <td>@item.CreateUser</td>
+                                <td>@item.CreateDate</td>
+                                <td>@item.UpdateUser</td>
+                                <td>@item.UpdateDate</td>
+                                <td>@item.str3</td>
+                            </tr>
+                        }
+                    }
+                    else if (Model.SearchCondition.InventoryChangeTypes.Equals("库存移动单"))
+                    {
+                        foreach (var item in Model.ReportInventoryChangeCollection)
+                        {
+                            <tr>
+                                @* <td>@Html.CheckBox("check" + @item.ID, new { data_ID = @item.IDS, @class = "checkForSelect" })</td>*@
+                                <td>@item.AdjustmentType</td>
+                                <td>@item.AdjustmentKey</td>
+                                <td>@item.OriginalInvType</td>
+                                <td>@item.ToLocation</td>
+                                <td>@item.ToContainerKey</td>
+                                <td>@item.Storer</td>
+                                <td>@item.SKU</td>
+                                <td>@item.Lot</td>
+                                <td>@item.Location</td>
+                                <td>@item.Qty</td>
+                                <td>@item.ContainerKey</td>
+                                <td>@item.Status</td>
+                                <td>@item.CreateUser</td>
+                                <td>@item.CreateDate</td>
+                                <td>@item.UpdateUser</td>
+                                <td>@item.UpdateDate</td>
+                                <td>@item.str3</td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+}

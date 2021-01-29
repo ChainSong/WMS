@@ -1,0 +1,335 @@
+﻿<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/WMS/ReceiptManagement/PrintShelvesNike.js"></script>
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.ReceiptDetailViewModel
+@Html.HiddenFor(m => m.rid)
+@Url.jsrender()
+@Url.Json2()
+@{
+    Layout = null;
+}
+
+<style media="print">
+    .Noprint {
+        display: none;
+    }
+
+    .print {
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            orientationMixed: true,   // 此属性通知控件，存在有纵有横的打印页面
+            orientation: 2,           // 设置控件的默认打印方向，是纵向
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    function printWithAlert() {
+        document.all.WebBrowser.ExecWB(6, 1);
+    }
+    function printWithoutAlert() {
+        document.all.WebBrowser.ExecWB(6, 6);
+    }
+    function printSetup() {
+        document.all.WebBrowser.ExecWB(8, 1);
+    }
+    function printPrieview() {
+
+    }
+    function printImmediately() {
+        document.all.WebBrowser.ExecWB(6, 6);
+        window.close();
+    }
+    function printReturn() {
+        window.location.href = '/WMS/ShelvesManagement/Index';
+    }
+    function post(URL, PARAMS) {
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+</script>
+
+<div class="Noprint" style="text-align: center;">
+    <object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none"></object>
+    <input type="button" name="button-print" value="打印预览" onclick="doPrint('打印预览...')" />
+    @*<input type="button" name="button_setup" value="打印页面设置" onclick="printSetup()" />*@
+    <input type="button" name="button_return" value="返回" onclick="history.go(-1)" />
+</div>
+
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+@{
+    var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+}
+@if (Model.ReceiptCollection != null && Model.ReceiptCollection.Any())
+{
+    var ss = 0;//当前页数
+    foreach (var item in Model.ReceiptCollection)
+    {
+        var k = 1;//箱序号
+        var smal = 0;//当前页数
+        var number = 0;
+        decimal counttotal = 0;
+        var counts = Model.ReceiptDetailCollection.Where(c => c.RID == item.ID).Count();
+        if (counts <= 10)
+        {
+            <div id="page1" class="only_for_print pagestyle" style="width: 90%; height: 100%; margin-top: 0px; border:1px solid red">
+                <div style="width: 100%; height: 100%;">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td style="width: 40%; font-weight: bolder; font-size: 30px; vertical-align: bottom; text-align: center;">
+                                <span style="margin-left: 40px;">上架单</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <hr size="1" noshadow color="black" style="border: none; border-top: 2px solid #000;" />
+                    <table style="width: 100%; text-align: left;">
+                        <tr>
+                            <td colspan="2" style="font-weight: bold; font-size: 16px;">订单信息</td>
+                        </tr>
+                        <tr style="height: 10px;">
+                            <td style="text-align: right; font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="2">*@item.ReceiptNumber*</td>
+                            <td style="text-align: right; font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="2">*@item.ExternReceiptNumber*</td>
+                            <td style="text-align: right; font-weight: bold; font-size: 16px;" colspan="2"></td>
+                        </tr>
+                        <tr style="height: 10px;">
+                            <td style="text-align: right; font-weight: bold; width: 13%; font-size: 16px;">系统收货单号：</td>
+                            <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ReceiptNumber</td>
+                            <td style="text-align: right; font-weight: bold; width: 13%; font-size: 16px;">外部收货单号：</td>
+                            <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ExternReceiptNumber</td>
+                            <td style="text-align: right; font-weight: bold; width: 13%; font-size: 16px;">订单类别：</td>
+                            <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ReceiptType</td>
+                        </tr>
+                        <tr style="height: 10px;">
+                            <td style="text-align: right; font-weight: bold; font-size: 16px;">预计收货日期：</td>
+                            <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ReceiptDate</td>
+                            <td style="text-align: right; font-weight: bold; font-size: 16px;">预计到达日期：</td>
+                            <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">&nbsp;</td>
+                            <td style="text-align: right; font-weight: bold; font-size: 16px;">门店名称：</td>
+                            <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.str3</td>
+                        </tr>
+                    </table>
+                    <table border="1" cellspacing="0" cellpadding="0" style="width: 99%; margin-top: 0px; border-collapse: collapse;">
+                        <tr>
+                            <td style="font-weight: bold; font-size: 16px; width: 16%; text-align: left;" colspan="11">上架单明细&nbsp;&nbsp;@item.ReceiptNumber&nbsp;&nbsp;@item.ExternReceiptNumber&nbsp;&nbsp;@item.str3</td>
+                        </tr>
+                        <tr style="height: 23px;">
+                            <td style="font-weight: bold; font-size: 16px; text-align: center;">行号</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center;">箱序号</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center;width: 15%;">箱号</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 12%;">SKU</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">Article</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">Size</td>
+                            @if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()).Any())
+                            {
+                                <td style="font-weight: bold; font-size: 16px; text-align: center;">Gender</td>
+                            }
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 5%;">预计数量</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">推荐库位</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">放置货位</td>
+                            <td style="font-weight: bold; font-size: 16px; text-align: center; width: 5%;">实收数量</td>
+                        </tr>
+                        @if (Model.ReceiptDetailCollection.Where(c => c.RID == item.ID) != null && Model.ReceiptDetailCollection.Where(c => c.RID == item.ID).Any())
+                        {
+                            var s = "";
+                            foreach (var items in Model.ReceiptDetailCollection.Where(c => c.RID == item.ID))
+                            {
+                                counttotal += (decimal)items.QtyExpected;
+                                number++;
+                                if (items.RID == item.ID)
+                                {
+                                    <tr style="height: 43px; vertical-align:bottom;">
+                                        <td style="text-align: center;">@items.LineNumber</td>
+                                        @if (@s == items.str2.ToString() || @s == "")
+                                        {
+                                            <td style="text-align: center;">@k</td>
+                                        }
+                                        else
+                                        {
+                                            k++;
+                                            <td style="text-align: center;">@k</td>
+                                        }
+                                        <td style="text-align: center;">@items.str2</td>
+                                        <td style="text-align: center;">@items.SKU</td>
+                                        <td style="text-align: center;">@items.str10</td>
+                                        <td style="text-align: center;">@items.str9</td>
+                                        @if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()).Any())
+                                        {
+                                            <td style="text-align: center;">@items.Gender</td>
+                                        }
+                                        <td style="text-align: center;">@items.QtyExpected</td>
+                                        <td style="text-align: center;">@items.str20</td>
+                                        <td style="text-align: center;">&nbsp;</td>
+                                        <td style="text-align: center;">&nbsp;</td>
+                                    </tr>
+                                }
+                                s = items.str2;
+                            }
+                            <tr>
+                                <td style="text-align: left; font-size: 14px;" colspan="3">上架人：</td>
+                                <td style="text-align: left; font-size: 14px;" colspan="4">上架时间:</td>
+                                <td style="text-align: right;" colspan="4">1 / 1 页</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            var s = "";//当前箱号
+            var i = (counts - 10) % 15 == 0 ? (counts - 10) / 15 + 1 : ((counts - 10) / 15) + 2;
+            for (var j = 0; j < i; j++)
+            {
+                int skip = 0; int Take = 10;
+                ss = ss + 1;
+                smal = smal + 1;
+                var pages = "page" + ss;
+                <div id='@pages' class="only_for_print pagestyle" style="width: 90%; height: 100%; margin-top: 0px; border:1px solid red">
+                    <div style="width: 100%; height: 100%;">
+                        @if (smal == 1)
+                        {
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 40%; font-weight: bolder; font-size: 30px; vertical-align: bottom; text-align: center;"><span style="margin-left: 40px;">上架单</span></td>
+                                </tr>
+                            </table>
+                            <hr size="1" noshadow color="black" style="border: none; border-top: 2px solid #000;" />
+                            <table style="width: 100%; text-align: left;">
+                                <tr>
+                                    <td colspan="2" style="font-weight: bold; font-size: 16px;">订单信息</td>
+                                </tr>
+                                <tr style="height: 10px;">
+                                    <td style="text-align: right; font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="2">*@item.ReceiptNumber*</td>
+                                    <td style="text-align: right; font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="2">*@item.ExternReceiptNumber*</td>
+                                    <td style="text-align: right; font-weight: bold; font-size: 16px;" colspan="2"></td>
+                                </tr>
+                                <tr style="height: 10px;">
+                                    <td style="text-align: right; font-weight: bold; width: 13%; font-size: 16px;">系统收货单号：</td>
+                                    <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ReceiptNumber</td>
+                                    <td style="text-align: right; font-weight: bold; width: 13%; font-size: 16px;">外部收货单号：</td>
+                                    <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ExternReceiptNumber</td>
+                                    <td style="text-align: right; font-weight: bold; width: 13%; font-size: 16px;">订单类别：</td>
+                                    <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ReceiptType</td>
+                                </tr>
+                                <tr style="height: 10px;">
+                                    <td style="text-align: right; font-weight: bold; font-size: 16px;">预计收货日期：</td>
+                                    <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.ReceiptDate</td>
+                                    <td style="text-align: right; font-weight: bold; font-size: 16px;">预计到达日期：</td>
+                                    <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">&nbsp;</td>
+                                    <td style="text-align: right; font-weight: bold; font-size: 16px;">门店名称：</td>
+                                    <td style="border-bottom: 1px solid #000; width: 22%; text-align: center;">@item.str3</td>
+                                </tr>
+                            </table>
+                        }
+                        <table border="1" cellspacing="0" cellpadding="0" style="width: 99%; margin-top: 0px; border-color:blue; border-collapse:collapse;">
+                            <tr>
+                                <td style="font-weight: bold; font-size: 16px; width: 16%; text-align: left;" colspan="11">上架单明细&nbsp;&nbsp;@item.ReceiptNumber&nbsp;&nbsp;@item.ExternReceiptNumber&nbsp;&nbsp;@item.str3</td>
+                            </tr>
+                            <tr style="height: 23px;">
+                                <td style="font-weight: bold; font-size: 16px; text-align: center;">行号</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center;">箱序号</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center;width: 15%;">箱号</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 12%;">SKU</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">Article</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">Size</td>
+                                @if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()).Any())
+                                {
+                                    <td style="font-weight: bold; font-size: 16px; text-align: center;">Gender</td>
+                                }
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 5%;">预计数量</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">推荐库位</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 10%;">放置货位</td>
+                                <td style="font-weight: bold; font-size: 16px; text-align: center; width: 5%;">实收数量</td>
+                            </tr>
+                            @if (Model.ReceiptDetailCollection.Where(c => c.RID == item.ID) != null && Model.ReceiptDetailCollection.Where(c => c.RID == item.ID).Any())
+                            {
+                                if (smal > 1)
+                                {
+                                    skip = (j - 1) * 15 + 10; Take = 15;
+                                }
+                                foreach (var items in Model.ReceiptDetailCollection.Where(c => c.RID == item.ID).Skip(skip).Take(Take))
+                                {
+                                    counttotal += (decimal)items.QtyExpected;
+                                    number++;
+                                    if (items.RID == item.ID)
+                                    {
+                                        <tr style="height: 43px; vertical-align:bottom;">
+                                            <td style="text-align: center;">@items.LineNumber</td>
+                                            @if (@s == items.str2.ToString() || @s == "")
+                                            {
+                                                <td style="text-align: center;">@k</td>
+                                            }
+                                            else
+                                            {
+                                                k++;
+                                                <td style="text-align: center;">@k</td>
+                                            }
+                                            <td style="text-align: center;">@items.str2</td>
+                                            <td style="text-align: center;">@items.SKU</td>
+                                            <td style="text-align: center;">@items.str10</td>
+                                            <td style="text-align: center;">@items.str9</td>
+                                            @if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == item.CustomerID.ToString()).Any())
+                                            {
+                                                <td style="text-align: center;">@items.Gender</td>
+                                            }
+                                            <td style="text-align: center;">@items.QtyExpected</td>
+                                            <td style="text-align: center;">@items.str20</td>
+                                            <td style="text-align: center;">&nbsp;</td>
+                                            <td style="text-align: center;">&nbsp;</td>
+                                        </tr>
+                                    }
+                                    s = items.str2;
+                                }
+                                <tr style="height: 23px;">
+                                    <td style="text-align: left; font-size: 14px;" colspan="3">上架人：</td>
+                                    <td style="text-align: left; font-size: 14px;" colspan="4">上架时间:</td>
+                                    <td style="text-align: right; font-size: 14px;" colspan="4">@smal / @i 页</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

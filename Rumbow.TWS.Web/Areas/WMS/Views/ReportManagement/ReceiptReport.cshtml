@@ -1,0 +1,231 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@{
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.CompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.StartCompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndCompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.StartReceiptDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndReceiptDate)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime5)
+    //@Html.HiddenFor(m => m.SearchCondition.ID)
+    //@Html.HiddenFor(m => m.SearchCondition.ReceiptNumber)
+    //@Html.HiddenFor(m => m.SearchCondition.ExternReceiptNumber)
+    //@Html.HiddenFor(m => m.SearchCondition.ASNID)
+    //@Html.HiddenFor(m => m.SearchCondition.ASNNumber)
+    //@Html.HiddenFor(m => m.SearchCondition.CustomerID)
+    //@Html.HiddenFor(m => m.SearchCondition.CustomerName)
+    //@Html.HiddenFor(m => m.SearchCondition.WarehouseID)
+    @Html.HiddenFor(m => m.SearchCondition.WarehouseName)
+    //@Html.HiddenFor(m => m.SearchCondition.ReceiptDate)
+    //@Html.HiddenFor(m => m.SearchCondition.Status)
+    //@Html.HiddenFor(m => m.SearchCondition.ReceiptType)
+    @Html.HiddenFor(m => m.SearchCondition.Creator)
+    @Html.HiddenFor(m => m.SearchCondition.Updator)
+    @Html.HiddenFor(m => m.SearchCondition.UpdateTime)
+    @Html.HiddenFor(m => m.SearchCondition.Remark)
+    @Html.HiddenFor(m => m.SearchCondition.str1)
+    @Html.HiddenFor(m => m.SearchCondition.str2)
+    @*@Html.HiddenFor(m => m.SearchCondition.str3)*@
+    @Html.HiddenFor(m => m.SearchCondition.str4)
+    @Html.HiddenFor(m => m.SearchCondition.str5)
+    @Html.HiddenFor(m => m.SearchCondition.str6)
+    @Html.HiddenFor(m => m.SearchCondition.str7)
+    @Html.HiddenFor(m => m.SearchCondition.str8)
+    @Html.HiddenFor(m => m.SearchCondition.str9)
+    @Html.HiddenFor(m => m.SearchCondition.str10)
+    @Html.HiddenFor(m => m.SearchCondition.str11)
+    @Html.HiddenFor(m => m.SearchCondition.str12)
+    @Html.HiddenFor(m => m.SearchCondition.str13)
+    @Html.HiddenFor(m => m.SearchCondition.str14)
+    @Html.HiddenFor(m => m.SearchCondition.str15)
+    @Html.HiddenFor(m => m.SearchCondition.str16)
+    @Html.HiddenFor(m => m.SearchCondition.str17)
+    @Html.HiddenFor(m => m.SearchCondition.str18)
+    @Html.HiddenFor(m => m.SearchCondition.str19)
+    @Html.HiddenFor(m => m.SearchCondition.str20)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.Int1)
+    @Html.HiddenFor(m => m.SearchCondition.Int2)
+    @Html.HiddenFor(m => m.SearchCondition.Int3)
+    @Html.HiddenFor(m => m.SearchCondition.Int4)
+    @Html.HiddenFor(m => m.SearchCondition.Int5)
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                    var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>库区</label>
+                </td>
+                <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.Area, AreaList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>入库日期</label>
+                </td>
+                <td>@Html.CalendarRange("ReceiptDate", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartReceiptDate, @Model.SearchCondition.EndReceiptDate)</td>
+                <td class="TableColumnTitle">
+                    <label>完成日期</label>
+                </td>
+                <td>@Html.CalendarRange("CompleteDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteDate, @Model.SearchCondition.EndCompleteDate)</td>
+                <td class="TableColumnTitle">
+                    <label>入库单状态</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.ReceiptStatus.Where(c => c.Text != "取消"), "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    <label>入库类型</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.ReceiptType, Model.ReceiptType, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+
+                <td class="TableColumnTitle">
+                    <label>门店代码</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.str3, new { @class = "form-control", style = "width:100%" })</td>
+                @*<td class="TableColumnTitle">
+            <label>入库单号</label>
+        </td>
+        <td>@Html.TextAreaFor(m => m.SearchCondition.ReceiptNumber, new { @class = "form-control", style = "width:100%", @placeholder = " 待开发" })</td>
+        <td class="TableColumnTitle">
+            <label>外部单号</label>
+        </td>
+        <td>@Html.TextAreaFor(m => m.SearchCondition.ExternReceiptNumber, new { @class = "form-control", style = "width:100%", @placeholder = " 待开发" })</td>
+        </tr>*@
+                @*<tr>
+            <td class="TableColumnTitle">
+                <label>库位</label>
+            </td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.Location, new { @style = "width:100%", @class = "form-control", @placeholder = " 待开发" })</td>
+            <td class="TableColumnTitle">
+                <label>SKU</label>
+            </td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control", @placeholder = " 待开发" })</td>
+            <td class="TableColumnTitle">
+                <label>Article</label>
+            </td>
+            <td>@Html.TextAreaFor(m => m.SearchCondition.Article, new { @style = "width:100%", @class = "form-control", @placeholder = " 待开发" })</td>
+        </tr>*@
+</table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出" id="addButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="快速导出" id="OutboundOrder" style="display:normal;" name="Action" />
+        </div>
+    </fieldset>
+
+    <fieldset>
+
+        @{
+            System.Data.DataTable project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, Model.SearchCondition.CustomerID, "WMS_ReceiptReport");
+            if (project == null || project.Rows.Count == 0)
+            {
+                project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(Model.ProjectRoleID, null, "WMS_ReceiptReport");
+                if (project == null || project.Rows.Count == 0)
+                {
+                    project = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetTable_Colums(null, null, "WMS_ReceiptReport");
+                }
+            }
+        }
+
+        <legend>
+            入库单列表
+            @if (Model.ReceiptDetailCollection2 != null && Model.ReceiptDetailCollection2.Any())
+            {
+                @Html.Raw("(" + Model.ReceiptDetailCollection2.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-x: scroll; min-height: 180px;">
+            <table id="resultTable" style="width: 130%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        @foreach (System.Data.DataRow dr in project.Rows)
+                        {
+                            if (@dr["ForView"].ToString() == "1")
+                            {
+                                if (@dr["DisplayName"].ToString() == "BU" || @dr["DisplayName"].ToString() == "Size" || @dr["DisplayName"].ToString() == "类别" ||
+                                    @dr["DisplayName"].ToString() == "Price" || @dr["DisplayName"].ToString() == "安全扣" || @dr["DisplayName"].ToString() == "库区" ||
+                                    @dr["DisplayName"].ToString() == "箱单号")
+                                {
+                                    <th style="width:80px;">@dr["DisplayName"]</th>
+                                }
+                                else
+                                {
+                                    <th style="width:150px;">@dr["DisplayName"]</th>
+                                }
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ReceiptDetailCollection2 != null && Model.ReceiptDetailCollection2.Any())
+                    {
+                        foreach (var item in Model.ReceiptDetailCollection2)
+                        {
+                            <tr style="line-height:12px;">
+                                @foreach (System.Data.DataRow dr in project.Rows)
+                                {
+                                    if (@dr["ForView"].ToString() == "1")
+                                    {
+                                    <td>
+                                        @{
+                                            var o = typeof(Runbow.TWS.Entity.ReportReceiptReport).GetProperty(dr["Columns"].ToString()).GetValue(item);
+                                            if (@o == null)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                @o.ToString()
+                                            }
+                                        }
+                                    </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+
+    </fieldset>
+}

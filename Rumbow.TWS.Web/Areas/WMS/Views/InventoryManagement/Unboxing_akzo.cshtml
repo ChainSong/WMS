@@ -1,0 +1,88 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.PopupJs()
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.Hidden("InventoryQty", Model.InventoryCollection.Select(c => c.Qty).FirstOrDefault());
+    @Html.Hidden("IDS", (string)ViewBag.IDS);
+    <fieldset>
+        <legend>待拆箱SKU</legend>
+        <table>
+            <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>仓库</th>
+                    <th>SKU</th>
+                    <th>UPC</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>品级</th>
+                    <th>数量</th>
+                    <th>库区</th>
+                    <th>库位</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+                    {
+                        foreach (var item in Model.InventoryCollection)
+                        {
+                            <tr>
+                                <td>@item.CustomerName</td>
+                                <td>@item.Warehouse</td>
+                                <td>@item.SKU</td>
+                                <td>@item.UPC</td>
+                                <td>@item.Unit</td>
+                                <td>@item.Specifications</td>
+                                <td>@item.GoodsType</td>
+                                <td>@item.Qty</td>
+                                <td>@item.Area</td>
+                                <td>@item.Location</td>
+                            </tr>
+                            
+                        }
+                    }
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>拆箱后SKU</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">拆箱数量</td>
+                <td>@Html.TextBox("FromQty", Model.InventoryCollection.Select(c=>c.Qty).FirstOrDefault(), new { @class = "form-control numberCheck", style = "width:20%;" })</td>
+            </tr>
+        </table>
+        <table id="resultTable" style="margin-top:20px">
+            <thead>
+                <tr>
+                    <th>操作</th>
+                    <th>SKU</th>
+                    <th>名称</th>
+                    <th>数量</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    <label data-skuid="" style="cursor: pointer;" class="btn btn-primary btn-xs AddButton">添加</label>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton">删除</label>
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+
+                            </td> 
+                    <td class="SKU">@Html.TextBox("SKU", null, new { @class = "form-control SKUQuery", style = "width:100%;" })</td>
+                    <td class="GoodsName">@Html.TextBox("GoodsName", null, new { @class = "form-control", style = "width:100%;", Readonly="readonly" })</td>
+                    <td class="ToQty">@Html.TextBox("Qty", null, new { @class = "form-control numberCheck", style = "width:100%;" })</td>
+                </tr>
+            </tbody>
+        </table>
+         <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="提交" id="SubmitButton" />
+            <input type="button" class="btn btn-success" value="返回" id="backButton" />
+             </div>
+    </fieldset>
+}

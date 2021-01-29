@@ -1,0 +1,815 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.BatchEditPodsViewModel
+@using Runbow.TWS.Common;
+@Url.PopupJs()
+@{
+    IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+    var notKeyColumns = Model.Config.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.SearchCondition.CustomerID)))
+              .Select(c =>
+              {
+                  if (c.InnerColumns.Count == 0)
+                  {
+                      return c;
+                  }
+                  else
+                  {
+                      if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.SearchCondition.CustomerID))
+                      {
+                          return c.InnerColumns.First(innerc => innerc.CustomerID == Model.SearchCondition.CustomerID);
+                      }
+
+                      return c;
+                  }
+              });
+    if (Model.IsInnerUser)
+    {
+        if (!Model.SearchCondition.CustomerID.HasValue || Model.SearchCondition.CustomerID == 0)
+        {
+            tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey);
+        }
+        else
+        {
+            tmpDynamicSearchColumns = notKeyColumns.Where(c => (c.IsSearchCondition && c.IsKey) || (c.IsSearchCondition && !c.IsKey && !c.IsHide));
+            tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsKey && c.IsSearchCondition));
+        }
+    }
+    else
+    {
+        if (!Model.SearchCondition.CustomerID.HasValue || Model.SearchCondition.CustomerID == 0)
+        {
+            tmpDynamicSearchColumns = Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID));
+        }
+        else
+        {
+            tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition && c.ShowRoleIDs.Contains(Model.ProjectRoleID)).ToList();
+            tmpDynamicSearchColumns = tmpDynamicSearchColumns.Union(Model.Config.ColumnCollection.Where(c => c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).ToList();
+        }
+    }
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.SearchConditionOrder).ToList();
+    //var dynamicSearchColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey)).OrderBy(c => c.SearchConditionOrder).ToList() : Model.Config.ColumnCollection.Where(c => (c.IsSearchCondition && !c.IsKey && !c.IsHide) || (c.IsSearchCondition && c.IsKey && c.ShowRoleIDs.Contains(Model.ProjectRoleID))).OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+    var showColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns.Where(c => c.IsShowInList)) : Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)).Union(notKeyColumns.Where(c => c.IsShowInList && c.ShowRoleIDs.Contains(Model.ProjectRoleID)));
+}
+
+@*<style type="text/css">
+    #gg { 
+        position:fixed; 
+        bottom:0; 
+        background:#000; 
+        width:95%; height:30px; 
+        line-height:23px; z-index:9999; 
+        opacity:.60; 
+        filter:alpha(opacity=70); _bottom:auto; 
+        _width:100%; 
+        _position:absolute; 
+        _top:expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-this.offsetHeight-
+        (parseInt(this.currentStyle.marginTop, 10)||0)-(parseInt(this.currentStyle.marginBottom, 10)||0)));
+    }
+</style>*@
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.HideActionButton)
+    @Html.HiddenFor(m => m.SearchCondition.ID)
+    @Html.HiddenFor(m => m.SearchCondition.ProjectID)
+    @Html.HiddenFor(m => m.SearchCondition.PODTypeID)
+    @Html.HiddenFor(m => m.SearchCondition.ShipperTypeID)
+    @Html.HiddenFor(m => m.SearchCondition.TtlOrTplID)
+    @Html.HiddenFor(m => m.SearchCondition.StartCityID)
+    @Html.HiddenFor(m => m.SearchCondition.StartCityName)
+    @Html.HiddenFor(m => m.SearchCondition.EndCityID)
+    @Html.HiddenFor(m => m.SearchCondition.EndCityName)
+    @Html.HiddenFor(m => m.SearchCondition.StartCities)
+    @Html.HiddenFor(m => m.SearchCondition.EndCities)
+    @Html.HiddenFor(m => m.SearchCondition.BoxNumber)
+    @Html.HiddenFor(m => m.SearchCondition.GoodsNumber)
+    @Html.HiddenFor(m => m.SearchCondition.Weight)
+    @Html.HiddenFor(m => m.SearchCondition.Volume)
+    @Html.HiddenFor(m => m.SearchCondition.Creator)
+    @Html.HiddenFor(m => m.SearchCondition.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndActualDeliveryDate)
+    @Html.HiddenFor(m => m.SearchCondition.CreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.Str1)
+    @Html.HiddenFor(m => m.SearchCondition.Str2)
+    @Html.HiddenFor(m => m.SearchCondition.Str3)
+    @Html.HiddenFor(m => m.SearchCondition.Str4)
+    @Html.HiddenFor(m => m.SearchCondition.Str5)
+    @Html.HiddenFor(m => m.SearchCondition.Str6)
+    @Html.HiddenFor(m => m.SearchCondition.Str7)
+    @Html.HiddenFor(m => m.SearchCondition.Str8)
+    @Html.HiddenFor(m => m.SearchCondition.Str9)
+    @Html.HiddenFor(m => m.SearchCondition.Str10)
+    @Html.HiddenFor(m => m.SearchCondition.Str11)
+    @Html.HiddenFor(m => m.SearchCondition.Str12)
+    @Html.HiddenFor(m => m.SearchCondition.Str13)
+    @Html.HiddenFor(m => m.SearchCondition.Str14)
+    @Html.HiddenFor(m => m.SearchCondition.Str15)
+    @Html.HiddenFor(m => m.SearchCondition.Str16)
+    @Html.HiddenFor(m => m.SearchCondition.Str17)
+    @Html.HiddenFor(m => m.SearchCondition.Str18)
+    @Html.HiddenFor(m => m.SearchCondition.Str19)
+    @Html.HiddenFor(m => m.SearchCondition.Str20)
+    @Html.HiddenFor(m => m.SearchCondition.Str21)
+    @Html.HiddenFor(m => m.SearchCondition.Str22)
+    @Html.HiddenFor(m => m.SearchCondition.Str23)
+    @Html.HiddenFor(m => m.SearchCondition.Str24)
+    @Html.HiddenFor(m => m.SearchCondition.Str25)
+    @Html.HiddenFor(m => m.SearchCondition.Str26)
+    @Html.HiddenFor(m => m.SearchCondition.Str27)
+    @Html.HiddenFor(m => m.SearchCondition.Str28)
+    @Html.HiddenFor(m => m.SearchCondition.Str29)
+    @Html.HiddenFor(m => m.SearchCondition.Str30)
+    @Html.HiddenFor(m => m.SearchCondition.Str31)
+    @Html.HiddenFor(m => m.SearchCondition.Str32)
+    @Html.HiddenFor(m => m.SearchCondition.Str33)
+    @Html.HiddenFor(m => m.SearchCondition.Str34)
+    @Html.HiddenFor(m => m.SearchCondition.Str35)
+    @Html.HiddenFor(m => m.SearchCondition.Str36)
+    @Html.HiddenFor(m => m.SearchCondition.Str37)
+    @Html.HiddenFor(m => m.SearchCondition.Str38)
+    @Html.HiddenFor(m => m.SearchCondition.Str39)
+    @Html.HiddenFor(m => m.SearchCondition.Str40)
+    @Html.HiddenFor(m => m.SearchCondition.Str41)
+    @Html.HiddenFor(m => m.SearchCondition.Str42)
+    @Html.HiddenFor(m => m.SearchCondition.Str43)
+    @Html.HiddenFor(m => m.SearchCondition.Str44)
+    @Html.HiddenFor(m => m.SearchCondition.Str45)
+    @Html.HiddenFor(m => m.SearchCondition.Str46)
+    @Html.HiddenFor(m => m.SearchCondition.Str47)
+    @Html.HiddenFor(m => m.SearchCondition.Str48)
+    @Html.HiddenFor(m => m.SearchCondition.Str49)
+    @Html.HiddenFor(m => m.SearchCondition.Str50)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime6)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime6)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime7)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime7)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime8)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime8)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime9)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime9)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime10)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime10)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime11)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime11)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime12)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime12)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime13)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime13)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime14)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime14)
+    @Html.HiddenFor(m => m.SearchCondition.DateTime15)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime15)
+    @Html.HiddenFor(m => m.SearchCondition.ShipperIDIsNull)
+    @Html.HiddenFor(m => m.ActionButtonName)
+    @Html.HiddenFor(m => m.DestPodState)
+    @Html.HiddenFor(m => m.DestPodStateName)
+    @Html.HiddenFor(m => m.IsSplit)
+    @Html.HiddenFor(m => m.ShowEditRelated)
+    @Html.HiddenFor(m => m.IsAllocateShipper)
+    @Html.HiddenFor(m => m.ShowCustomerOrShipperDrop)
+    @Html.HiddenFor(m => m.IsInnerUser)
+    @Html.HiddenFor(m => m.ProjectRoleID)
+    @Html.HiddenFor(m => m.IsSettled)
+    @Html.HiddenFor(m => m.SettltedType)
+    @Html.HiddenFor(m => m.SearchCondition.IsSettledForCustomer)
+    @Html.HiddenFor(m => m.SearchCondition.IsSettledForShipper)
+    @Html.HiddenFor(m => m.SearchCondition.IsUsedForOriginalPOD)
+    @Html.HiddenFor(m => m.SearchCondition.HasShortDial)
+    @Html.HiddenFor(m => m.SearchCondition.HasDistribution)
+    @Html.HiddenFor(m => m.SearchCondition.HasExpress)
+    @Html.HiddenFor(m => m.IsExternFee)
+    @Html.HiddenFor(m => m.ExternFeeType)
+    @Html.HiddenFor(m => m.ManualSettledType)
+    @Html.HiddenFor(m => m.IsManualSettled)
+    @Html.HiddenFor(m => m.IsUsedForSendForecast)
+    @Html.HiddenFor(m => m.SearchCondition.PodMinStateID)
+    @Html.HiddenFor(m => m.IsReturnPodStatus)
+    @Html.HiddenFor(m => m.IsWenXinStatus)
+    @Html.HiddenFor(m => m.SearchCondition.wxStatus)
+    @Html.HiddenFor(m => m.IsPODDistributionVehicle)
+    @Html.HiddenFor(m => m.WaybillReach)
+    if (!Model.ShowCustomerOrShipperDrop)
+    {
+        if (!Model.IsAllocateShipper)
+        {
+    @Html.HiddenFor(m => m.SearchCondition.CustomerID)
+    @Html.HiddenFor(m => m.SearchCondition.ShipperID)
+        }
+        else
+        {
+    @Html.HiddenFor(m => m.SearchCondition.ShipperID)
+        }
+    }
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblSystemNumber", Model.Config.ColumnCollection.First(c => c.DbColumnName == "SystemNumber").DisplayName)
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.SystemNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblCustomerOrderNumber", Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerOrderNumber").DisplayName)
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.CustomerOrderNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblPODState", Model.Config.ColumnCollection.First(c => c.DbColumnName == "PODStateID").DisplayName)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.PODStateID, Model.PodStates, "==请选择==", new { disabled = "disabled" })
+
+                    @Html.HiddenFor(m => m.SearchCondition.PODStateID)
+                </td>
+            </tr>
+            @if (Model.ShowCustomerOrShipperDrop)
+            {
+                <tr>
+                    <td class="TableColumnTitle">
+                        @Html.Label("lblCustomerID", Model.Config.ColumnCollection.First(c => c.DbColumnName == "CustomerID").DisplayName)
+                    </td>
+
+                    <td>
+                        @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, "==请选择==")
+                    </td>
+                    <td class="TableColumnTitle">
+                        @if (!Model.IsAllocateShipper)
+                        {
+                            @Html.Label("lblShipperID", Model.Config.ColumnCollection.First(c => c.DbColumnName == "ShipperID").DisplayName)
+                        }
+                        else
+                        {
+                            @Html.Raw("是否分配承运商")
+                        }
+                    </td>
+                    <td>
+                        @if (!Model.IsAllocateShipper)
+                        {
+                            @Html.TextBoxFor(m => m.SearchCondition.ShipperName)
+                            @Html.HiddenFor(m => m.SearchCondition.ShipperID)
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(m => m.HasAllocateShipper, Model.TrueOrFalse)
+                        }
+                    </td>
+                    <td class="TableColumnTitle"></td>
+                    <td></td>
+                </tr>
+            }
+@* <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblPODTypeID", Model.Config.ColumnCollection.First(c => c.DbColumnName == "PODTypeID").DisplayName)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.PODTypeID, Model.PODTypes, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblTtlOrTpl", Model.Config.ColumnCollection.First(c => c.DbColumnName == "TtlOrTplID").DisplayName)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.TtlOrTplID, Model.TtlOrTpls, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblShipperTypeID", Model.Config.ColumnCollection.First(c => c.DbColumnName == "ShipperTypeID").DisplayName)
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.ShipperTypeID, Model.ShipperTypes, "==请选择==")
+                </td>
+            </tr>
+
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblStartCity", Model.Config.ColumnCollection.First(c => c.DbColumnName == "StartCityID").DisplayName)
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                    <a id="startCityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.SearchCondition.StartCityID)
+                    @Html.HiddenFor(m => m.SearchCondition.StartCityName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblEndCity", Model.Config.ColumnCollection.First(c => c.DbColumnName == "EndCityID").DisplayName)
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                    <a id="endCityClear" href="#">清空</a>
+                    @Html.HiddenFor(m => m.SearchCondition.EndCityID)
+                    @Html.HiddenFor(m => m.SearchCondition.EndCityName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.Label("lblActualDeliveryDate", Model.Config.ColumnCollection.First(c => c.DbColumnName == "ActualDeliveryDate").DisplayName)
+                </td>
+                <td>
+                    @Html.CalendarRange(Model.Config.ColumnCollection.First(c => c.DbColumnName == "ActualDeliveryDate").DbColumnName, "calendarRange")
+                </td>
+            </tr>*@
+            @for (int i = 0; i < dynamicSearchColumnRowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= dynamicSearchColumns.Count)
+                        {
+                        <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = dynamicSearchColumns[i * 3 + j];
+                            var o = typeof(Runbow.TWS.Entity.Pod).GetProperty(column.DbColumnName).GetValue(Model.SearchCondition);
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td>
+                            @{
+                            if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                            {
+                                if (string.IsNullOrEmpty(column.DefaultValue))
+                                {
+                                @Html.CalendarRange(column.DbColumnName, "calendarRange")
+                                }
+                                else
+                                {
+                                    int daySpan = int.Parse(column.DefaultValue);
+                                    DateTime startDay = DateTime.Now.AddDays(daySpan);
+                                    DateTime endDay = DateTime.Now.AddDays(-daySpan);
+                                @Html.CalendarRange(column.DbColumnName, "calendarRange", startDay, endDay)
+                                }
+                            }
+                            else if (column.Type == "CheckBox")
+                            {
+                                @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal" });
+                            }
+                            else if (column.Type == "DropDownList" && column.IsKey)
+                            {
+                                @Html.DropDownList(column.DbColumnName, (IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.POD.Models.BatchEditPodsViewModel).GetProperty(column.DbColumnName.Substring(0, column.DbColumnName.Length - 4) + "s").GetValue(Model).ConvertSimpleType(typeof(IEnumerable<SelectListItem>)), "==请选择==", new { @class = "DropDownList" })
+                            }
+                            else if (column.Type == "DropDownList" && !column.IsKey)
+                            {
+                                @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                            }
+                            else if (column.Type == "RegionPicker")
+                            {
+                                if (column.DbColumnName == "StartCityName")
+                                {
+                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                <a id="startCityClear" href="#">清空</a>
+                                }
+                                else
+                                {
+                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                <a id="endCityClear" href="#">清空</a>
+                                }
+                            }
+                            else
+                            {
+                                @Html.TextBox(column.DbColumnName, o, new { @class = "notKeyVal" })
+                            }
+                            }
+                        </td>
+                        }
+                    }
+                </tr>
+            }
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+            @if (Model.IsWenXinStatus)
+            {
+                <input type="button" value="生成二维码" id="allocatePodWenXin" />            
+            }
+
+            @if (!Model.IsSplit && !Model.IsAllocateShipper && !Model.IsSettled && !Model.IsExternFee && !Model.IsManualSettled && !Model.IsUsedForSendForecast && !Model.IsReturnPodStatus && !Model.IsWenXinStatus && !Model.IsPODDistributionVehicle && !Model.WaybillReach)
+            {
+                <input type="button" value="@Model.ActionButtonName" id="conformButton" data-id="@Model.DestPodState" data-name="@Model.DestPodStateName" />
+            }
+
+            @if (Model.IsAllocateShipper)
+            {
+                <input type="button" value="自动分配承运商" id="allocatePodShipper" />
+                @Html.TextBox("allocateShipperAutoComplete")
+                @Html.Hidden("allocateShipperID")
+                <input type="button" value="手动分配承运商" id="allocatePodShipperManually" disabled="disabled" />               
+            }
+            @if (Model.IsPODDistributionVehicle)
+            {
+                <input type="button" value="分配车辆" id="IsPODDistributionVehicles" />
+            }
+            @if (Model.WaybillReach)
+            {
+                <input type="button" value="运单到达确认" id="WaybillReachs" />
+            }
+
+
+            @if (Model.IsExternFee)
+            {
+                string buttonName = string.Empty;
+                string shipperDisplyName = string.Empty;
+                string actualDateName = string.Empty;
+                string feeName = string.Empty;
+                if (Model.ExternFeeType == 1)
+                {
+                    buttonName = "生成短拨";
+                    shipperDisplyName = "选择短拨承运商";
+                    actualDateName = "短拨日期";
+                    feeName = "短拨费(元)";
+                }
+                else if (Model.ExternFeeType == 2)
+                {
+                    buttonName = "生成配送";
+                    shipperDisplyName = "选择配送承运商";
+                    actualDateName = "配送日期";
+                    feeName = "配送费(元)";
+                }
+                else if (Model.ExternFeeType == 3)
+                {
+                    buttonName = "生成快递";
+                    shipperDisplyName = "选择快递承运商";
+                    actualDateName = "快递日期";
+                    feeName = "快递费(元)";
+                }
+                
+                <input type ="button" value="@buttonName" id="genExternFee" data-Type="@Model.ExternFeeType" />
+                <div id="dialog" style="display: none;">
+                    <div id="showInDialog" style="display: none">
+                        <table>
+                            <tr>
+                                <td class="TableColumnTitle" style="width: 30%">
+                                    @shipperDisplyName
+                                </td>
+                                <td>
+                                    @Html.TextBox("externFeeShipper")
+                                    @Html.Hidden("externFeeShipperID")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">
+                                    @actualDateName
+                                </td>
+                                <td>
+                                    @Html.Calendar("externFeeDate", null, DateTime.Now)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">起运地
+                                </td>
+                                <td>
+                                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startPlaceTreeID", NameKey = "startPlaceTreeName", TreeKey = "startPlace" })
+                                    <a id="startPlaceClear" href="#">清空</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">目的地
+                                </td>
+                                <td>
+                                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endPlaceTreeID", NameKey = "endPlaceTreeName", TreeKey = "endPlace" })
+                                    <a id="endPlaceClear" href="#">清空</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">
+                                    @feeName
+                                </td>
+                                <td>
+                                    @Html.TextBox("externFee")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">费用分摊方式:
+                                </td>
+                                <td>
+                                    <select id="extenFeeSettledType">
+                                        <option value="1">按重量平摊</option>
+                                        <option value="2">按箱数平摊</option>
+                                        <option value="3">按件数平摊</option>
+                                        <option value="4">按体积平摊</option>
+                                        <option value="5">按运单数平摊</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="TableColumnTitle">备注
+                                </td>
+                                <td>
+                                    @Html.TextArea("externFeeRemark", new { style = "width:95%" })
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @if (Model.IsManualSettled)
+            {
+                if (Model.ManualSettledType == 1)
+                {
+                <input type ="button" value="手动结算承运商运费" id="ManualSettledForShipper" data-Type="@Model.ManualSettledType" />
+                <div id="outDialog" style="display: none;">
+                    <div id="ManualSettledForShipperDialog" style="display: none">
+                        <table>
+                            <tr>
+                                <td class="TableColumnTitle" style="width: 30%">承运商:
+                                </td>
+                                <td>
+                                    @Html.TextBox("manualSettledShipper")
+                                    @Html.Hidden("manualSettledShipperID")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">结算日期:
+                                </td>
+                                <td>
+                                    @Html.Calendar("manualSettledShipperDate", null, DateTime.Now)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">结算金额:
+                                </td>
+                                <td>
+                                    @Html.TextBox("manualSettledShipperFee")
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">费用分摊方式:
+                                </td>
+                                <td>
+                                    <select id="apportionType">
+                                        <option value="1">按重量平摊</option>
+                                        <option value="2">按箱数平摊</option>
+                                        <option value="3">按件数平摊</option>
+                                        <option value="4">按体积平摊</option>
+                                        <option value="5">按运单数平摊</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="TableColumnTitle">备注
+                                </td>
+                                <td>
+                                    @Html.TextArea("manualSettledShipperRemark", new { style = "width:95%" })
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                }
+            }
+
+            @if (Model.IsUsedForSendForecast)
+            {
+                <input type="button" value="发送预报邮件" id="SendForecastEmail" />
+            }
+
+            @if (Model.IsReturnPodStatus)
+            {
+                @Html.Raw("回退至: ")
+                @Html.DropDownListFor(m => m.ReturnPodStatusID, Model.PodStates)
+                <input type="button" value="回退" id="BackStatus" />
+            }
+
+            @Html.Hidden("SelectedIDs")
+        </div>
+        <div>
+            <span>
+                @Model.ReturnClientMessage
+            </span>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>运单列表  
+            @if (Model.PodCollection != null && Model.PodCollection.Any())
+            {
+                @Html.Raw("(" + Model.PodCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>
+                        @Model.Config.ColumnCollection.First(c => c.DbColumnName == "SystemNumber").DisplayName
+                    </th>
+                    @foreach (var column in showColumns)
+                    {
+                        <th>
+                            @column.DisplayName
+                        </th>
+                    }
+                    @if (!Model.HideActionButton)
+                    {
+                        <th>操作</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PodCollection != null && Model.PodCollection.Any())
+                {
+                    foreach (var pod in Model.PodCollection)
+                    {
+                    <tr data-id="@pod.ID">
+                        <td>
+                            @if (Model.IsWenXinStatus && pod.wxStatus == 1)
+                            {
+                                <input type="checkbox" disabled="disabled" />
+                            }
+                            else
+                            {
+                                @Html.CheckBox("check" + pod.ID.ToString(), new { data_ID = pod.ID, @class = "checkForSelect" })
+                            }
+
+                        </td>
+                        <td>
+                            @if (Model.IsInnerUser)
+                            {
+                                <a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAll/@pod.ID?showEditRelated=@Model.ShowEditRelated">@pod.SystemNumber</a>
+                            }
+                            else
+                            {
+                                <a id="listSystemNumber" data-id="@pod.ID" href="/POD/POD/ViewPodAllForOuterUser/@pod.ID?showEditRelated=@Model.ShowEditRelated">@pod.SystemNumber</a>
+                            }
+                        </td>
+                        @foreach (var column in showColumns)
+                        {
+                            <td>
+                                @{
+                            var o = typeof(Runbow.TWS.Entity.Pod).GetProperty(column.DbColumnName).GetValue(pod);
+                            if (o != null)
+                            {
+                                switch (column.Type)
+                                {
+                                    case "CheckBox":
+                                        if ((int)o == 1)
+                                        {
+                                    @Html.Raw("Y")
+                                        }
+                                        else
+                                        {
+                                    @Html.Raw("N")
+                                        }
+                                        break;
+                                    case "DropDownList":
+                                        if (!column.IsKey)
+                                        {
+                                    @Html.ChooseString(o.ToString() == "1", "Y", "N")
+                                        }
+                                        else
+                                        {
+                                    @o.ToString()
+                                        }
+                                        break;
+                                    case "DateTime":
+                                        var temp = (DateTime?)o;
+                                        if (temp.HasValue)
+                                        {
+                                    @temp.Value.DateTimeToString()
+                                        }
+                                        break;
+                                    case "DateTimeWithTime":
+                                        var temp1 = (DateTime?)o;
+                                        if (temp1.HasValue)
+                                        {
+                                    @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                        }
+                                        break;
+                                    default:
+                                    @o.ToString()
+                                        break;
+                                }
+                            }
+                                }
+                            </td>
+                        }
+                        @if (!Model.HideActionButton)
+                        {
+                            <td>
+                                @if (Model.IsSplit)
+                                {
+                                    if (pod.Type == 0 || pod.Type == 2)
+                                    {
+                                    <input type="text" id="splitNumber" data-id="@pod.ID" style="width:40px;" title="输入要拆分的单数" />
+                                    <a id="splitPod" class="splitPod" href="#" data-id="@pod.ID">拆分</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a id="editPod" class="editPod" href="/POD/POD/CreatePod/@pod.ID" data-id="@pod.ID">编辑</a>
+                                    <a id="deletePod" class="deletePod" href="#" data-id="@pod.ID" >删除</a>
+                                }
+                            </td>
+                        }
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}
+@if (Model.IsSettled)
+{
+    using (Html.BeginForm("SettledPod", "POD", FormMethod.Post))
+    {
+    
+    @Html.HiddenFor(m => m.SettltedType)
+    @Html.Hidden("SelectedSettledPodIDs")
+        if (Model.PodCollection != null && Model.PodCollection.Any())
+        {
+    <div class="actionButtonDiv fixedInBottom">
+        <input type="submit" value="进入结算" id="SettledPod" />
+    </div>
+        }
+
+    }
+
+}
+<div id="Evaluation" style="display: none">
+    <table style="width: 380px">
+        <tr>
+            <td style="width: 20%" class="TableColumnTitle">车牌:
+            </td>
+            <td style="width: 75%">
+                @Html.TextBoxFor(m => m.SearchCondition.podDistributionVehicle.CarNo)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">司机姓名:
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.SearchCondition.podDistributionVehicle.DriverName)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">电话号码:
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.SearchCondition.podDistributionVehicle.DriverPhone)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">到货类型:
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.SearchCondition.podDistributionVehicle.PODType, Model.PODType, new { style = "width:200px" ,@id="PODType"})
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">开始时间:
+            </td>
+            <td>
+                @Html.CalendarDateTime("StartTime", "notKeyVal datetimeval", DateTime.Now)
+            </td>
+
+        </tr>
+    </table>
+    <div class="actionButtonDiv" style="margin-top: 20px">
+        <input type="button" id="confirm" value="确认" />
+        <input type="button" value="取消" id="cancelPapup" />
+    </div>
+</div>
+<div id="WaybillReachPopup" style="display: none">
+    <table style="width: 380px">
+        <tr>
+            <td style=" width: 20%" class="TableColumnTitle">到货时间:
+            </td>
+            <td style=" width: 75%" >
+                @Html.CalendarDateTime("EndTime", "notKeyVal datetimeval",DateTime.Now)
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">到货类型:
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.SearchCondition.podDistributionVehicle.PODType, Model.PODType, new { style = "width:200px" })
+            </td>
+        </tr>
+        <tr id="Hub" >
+            <td class="TableColumnTitle">到货仓库:
+            </td>
+            <td>
+                @Html.TextBoxFor(m=>m.SearchCondition.podDistributionVehicle.Hub, new { style = "width:200px" })
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="button" id="PODconfirm" value="确认" />
+        <input type="button" value="取消" id="cancelPapup" />
+    </div>
+</div>

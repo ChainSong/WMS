@@ -1,0 +1,125 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+
+
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@Url.FrameworkJs("ajaxfileupload.js")
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@*<script src="../../../../Scripts/WMS/InventoryManagement/InventoryRemaining.js"></script>*@
+
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+    <fieldset>
+        <legend>查询条件 
+        </legend>
+        <div id="tables">
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>客户</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                    <td class="TableColumnTitle">
+                        <label>仓库</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @Html.DropDownListFor(m => m.InventorySearchCondition.Warehouse, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                    <td class="TableColumnTitle">
+                        <label>类型</label></td>
+                    <td style="width: 16%;">
+                        @Html.DropDownListFor(m => m.InventorySearchCondition.InventoryType, Model.CaiwuType, "==请选择==", new { @class = "form-control" }) </td>
+                    <td class="TableColumnTitle">
+                        <label>导入日期</label></td>
+                    <td style="width: 16%;">
+                        @Html.CalendarFor(m => m.InventorySearchCondition.CreateTime, "ExpectDate form-control")</td>
+                </tr>
+            </table>
+        </div>
+        <div class="actionButtonDiv">
+
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="submit" class="btn btn-success" value="导出汇总表" id="Total" name="Action" />
+             <input type="submit" class="btn btn-success" value="导出日报表" id=" daily" name="Action" />
+            <input type="submit" class="btn btn-success" value="产品进销存明细表" id=" detail" name="Action" />
+        </div>
+
+
+
+    </fieldset>
+    <fieldset>
+        <legend>库存列表
+            @if (Model.directAddInventory != null && Model.directAddInventory.Any())
+            {
+                @Html.Raw("(" + Model.directAddInventory.Count() + ")");
+            }
+        </legend>
+        <div id="tables">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        @*<th class="checkBoxHead">@Html.CheckBox("selectAll")</th>*@
+                        <th>客户</th>
+                        @*<th>仓库</th>*@
+                        @*<th>库区&nbsp;|&nbsp;库位</th>*@
+                        @*<th>SKU</th>*@
+                        @*<th>货品名称</th>*@
+                        <th>库存结余数量</th>
+                        <th>库存结余金额</th>
+                        <th>出库数量</th>
+                        <th>出库金额</th>
+                        <th>入库数量</th>
+                        <th>入库金额</th>
+                        @*<th>类型</th>*@
+                        @*<th>批次号</th>*@
+                        @*<th>托号</th>*@
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.directAddInventory != null && Model.directAddInventory.Any())
+                    {
+
+                        foreach (var item in Model.directAddInventory)
+                        {
+                             
+                        <tr>
+
+                            <td>@item.Customer</td>
+                            <td>@item.Qty</td>
+                             <td>@item.TotalPrice</td>
+                            <td><a href="/WMS/InventoryManagement/InventorydDtails?CustomerId=@item.CustomerID&ProduceType=1&Date=@item.CreateTime">@item.Quantity1</a></td>
+                            <td>@item.TotalPrice1</td>
+                            <td><a href="/WMS/InventoryManagement/InventorydDtails?CustomerId=@item.CustomerID&ProduceType=2&Date=@item.CreateTime">@item.Quantity2</a></td>
+                            <td>@item.TotalPrice2</td>
+                           @* <td>@Html.Raw(@item.InventoryType == 1 ? "出库" : "入库")</td>*@
+                        </tr> 
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <fieldset style="margin-top: 100px;">
+        <legend>批量导入库存说明</legend>
+        <div id="importInstructionDiv">
+            1.模板中有模拟数据，请按照demo填写<br />
+            2.尽量不要长时间段的导入,减轻服务器压力
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>选择Excel导入库存
+        </legend>
+
+        <div id="importDiv">
+            <b>客户:</b>@Html.DropDownListFor(m => m.AdjustmentCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", @style = "width:200px;padding-bottom:1px", id = "CustomerID" })
+            <b>日期:</b>  @Html.CalendarFor(m => m.InventorySearchCondition.DateTime1, "ExpectDate form-control")
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+            <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+            @*<input type="button" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" />*@
+
+        </div>
+    </fieldset>
+}

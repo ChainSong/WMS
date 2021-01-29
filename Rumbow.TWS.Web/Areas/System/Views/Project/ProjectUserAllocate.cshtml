@@ -1,0 +1,41 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ProjectUserAllocateViewModel
+           <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<fieldset>
+    <legend>选择用户</legend>
+    <table id="UserTable">
+        <tr>
+            <td class="TableColumnTitle">请选择用户
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.UserID, Model.Users, "==请选择==")
+            </td>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>角色列表</legend>
+    <table id="RoleTable">
+        <thead>
+            <tr>
+                <th class="checkBoxHead"></th>
+                <th>角色名称</th>
+                <th>角色描述</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var projectRole in Model.ProjectRoles)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" id="select"+@projectRole.ProjectRoleID data-id="@projectRole.ProjectRoleID" class="checkForSelect" />
+                    </td>
+                    <td>@projectRole.Name</td>
+                    <td>@projectRole.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="actionButtonDiv">
+        <input id="submitProjectUser" type="button" class="btn btn-success"  value="提交" />
+         <input id="btnCancel" type="button" onclick="window.location.href = '/System/Project/List'" class="btn btn-success" value="返回" />
+    </div>
+</fieldset>

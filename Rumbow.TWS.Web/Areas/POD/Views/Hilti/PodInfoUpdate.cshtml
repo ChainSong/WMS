@@ -1,0 +1,75 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodInfoUpdateViewModel
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+
+
+     <fieldset>
+    <legend>请选择Excel
+    </legend>
+    <div id="importDiv">
+         <label for="file">Upload File:</label>
+         <input type="file" name="fileToUpload" id="importExcel"  class="fileImport" />
+         <input type="button" value="操作更新" class="fileImport" onclick="return fileImportClick();"/>
+    </div>
+
+    </fieldset>
+    
+    <fieldset>
+    <legend>更新结果
+    </legend>
+    <div id="outPutResult">
+        
+       @* @if (Model.Message != null)
+        {
+            @Html.Raw(Model.Message);
+        }
+        @if (Model.DeliverGoods != null)
+        {
+        
+         <table style="width:100%">
+           
+            <tr>
+                @foreach (var columnsnames in Model.DeliverGoods.Columns)
+                {
+                <td  style="height:5px; width:7px; "class="TableColumnTitle">@columnsnames.ToString()</td>
+                }
+            </tr>
+       
+           @for (int i = 0; i < Model.DeliverGoods.Rows.Count; i++)
+           {
+            <tr>
+               @for (int j = 0; j < Model.DeliverGoods.Columns.Count; j++)
+               {
+                <td style="height:5px; width:7px">@Model.DeliverGoods.Rows[i][j].ToString()</td>
+               }
+            </tr>
+           }
+        </table>
+             
+        }*@
+    </div>
+</fieldset>
+    
+   
+
+<div id="divnone" style="display: none">
+ <div id="showInDialog">
+    <table>
+        <tr>
+            <td class="TableColumnTitle">发货日期
+            </td>
+            <td>
+                <span><font style=" color:red">请手动填写日期！</font></span>
+              @Html.TextBox("payDate", DateTime.Now.ToString("yyyy-MM-dd"))
+                @* @Html.Calendar("payDate","pay", DateTime.Now)*@
+            </td>
+        </tr>
+        <tr>
+            
+            <td colspan="2">
+               发货日期可编辑，不编辑默认当前日期。
+            </td>
+        </tr>
+    </table>
+</div>
+</div>

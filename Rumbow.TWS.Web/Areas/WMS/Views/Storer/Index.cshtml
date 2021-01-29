@@ -1,0 +1,78 @@
+﻿@model  Runbow.TWS.Web.Areas.WMS.Storer.IndexViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StatCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">货主</td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.StorerName)</td>
+               <td class="TableColumnTitle">类型</td>
+                <td> @Html.DropDownListFor(m => m.SearchCondition.Type,Model.GetTypes, "==全部==")</td>
+                <td class="TableColumnTitle">是否可用</td>
+               <td>@Html.DropDownListFor(m => m.SearchCondition.Status,Model.GetStatus, "==全部==")</td>
+            </tr>
+            <tr>                
+               <td class="TableColumnTitle">创建日期</td>
+               <td>@Html.CalendarRange("CreateTime", "calendarRange")</td>
+               <td colspan="4"></td>
+             </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="btnSave"/>&nbsp;&nbsp;
+            <input type="button" value="新增" id="btnAdd" onclick="javascript:window.location.href='Create'"/>
+        </div>
+    </fieldset>
+}
+
+
+<fieldset>
+    <legend>货主列表
+         @if (Model.WMS_StorerCollection != null && Model.WMS_StorerCollection.Any())
+         {
+             @Html.Raw("(" + Model.WMS_StorerCollection.Count() + ")");
+         }
+    </legend>
+    <table id="resultTable">
+       <thead>
+            <tr>
+                <th class="TableColumnTitle">货主</th>
+                <th class="TableColumnTitle">是否可用</th>                
+                <th class="TableColumnTitle">货主名称</th>
+                <th class="TableColumnTitle">类型</th>
+                <th class="TableColumnTitle">省份城市</th>
+                <th class="TableColumnTitle">出货公司名称</th>
+                <th class="TableColumnTitle">付款公司名称</th>
+                <th class="TableColumnTitle">退货公司名称</th>
+                <th class="TableColumnTitle">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.WMS_StorerCollection != null && Model.WMS_StorerCollection.Any())
+            {
+                foreach (var store in Model.WMS_StorerCollection)
+                {
+                <tr>
+                    <td>@store.StorerName</td>
+                    <td>@store.Status</td>
+                    <td>@store.FullName</td>
+                    <td>
+                        @store.Type                 
+                    </td>                     
+                    <td>@store.ProvinceCity</td>
+                    <td>@store.Contractor</td>
+                    <td>@store.Contractor</td>  
+                    <td>@store.Contractor</td>           
+                    <td><a id="updateWXCustomer" class="attachmentClass" href="Edit?ID=@store.ID">编辑</a></td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+

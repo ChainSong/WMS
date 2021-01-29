@@ -1,0 +1,127 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.QuotedPriceViewModel
+@Html.HiddenFor(model => model.Target)
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+
+
+
+</script>
+
+<fieldset>
+    <legend id="ltxt">查询条件</legend>
+    <table id="conditionTable">
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.ChooseString(Model.Target == 0, "客户名称", "承运商名称")
+            </td>
+            <td style="width: 320px;">
+                @if (Model.Target == 0)
+                {
+                    @Html.DropDownListFor(model => model.TargetID, Model.CustomerOrShippers, new { @class = "form-control" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.TargetName, new { @class = "form-control" })
+                    @Html.HiddenFor(model => model.TargetID)
+                }
+            </td>
+            <td class="TableColumnTitle">
+                @if (Model.Target == 1)
+                {
+                    @Html.Raw("关联客户")
+                }
+            </td>
+            <td style="width: 320px;">
+                @if (Model.Target == 1)
+                {
+                    @Html.DropDownListFor(model => model.RelatedCustomerID, Model.RelatedCustomers, "==请选择==", new { @class = "form-control" }) 
+                }
+            </td>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(model => model.TransportationLine)
+            </td>
+            <td style="width: 264px;">
+                @Html.DropDownListFor(model => model.TransportationLine, Model.TransportationLines, "==请选择==", new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(model => model.StartCityID)
+            </td>
+            <td>
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCityTreeKey" })
+                <a id="startCityClear" href="#">清空</a>
+                @Html.HiddenFor(model => model.StartCityID)
+                @Html.HiddenFor(model => model.StartCityName)
+            </td>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(model => model.EndCityID)
+            </td>
+            <td>
+                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCityTreeKey" })
+                <a id="endCityClear" href="#">清空</a>
+
+                @Html.HiddenFor(model => model.EndCityID)
+                @Html.HiddenFor(model => model.EndCityName)
+            </td>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(model => model.ShipperTypeID)
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.ShipperTypeID, Model.ShipperTypes, "==请选择==", new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(model => model.PodTypeID)
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.PodTypeID, Model.PodTypes, "==请选择==", new { @class = "form-control" })
+            </td>
+            <td class="TableColumnTitle">
+                @Html.LabelFor(model => model.TplOrTtlID)
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.TplOrTtlID, Model.TplOrTtl, "==请选择==", new { @class = "form-control" })
+            </td>
+            <td class="TableColumnTitle">有效时间
+            </td>
+            <td>
+                @Html.CalendarFor(model => model.EffectiveStartTime)~@Html.CalendarFor(model => model.EffectiveEndTime)
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="submit" value="查询" id="searchButton" class="btn btn-success" />
+        <a id="btnAddC" href="/System/QuotedPrice/Create/0" title="新增客户报价" style="color: #fff;" class="btn btn-success">新增客户报价</a>
+        <a id="btnAddS" href="/System/QuotedPrice/Create/1" title="新增承运商报价" style="color: #fff; " class="btn btn-success">新增承运商报价</a>
+        <a id="btnAddcS" href="/System/QuotedPrice/List/1" title="切换查询承运商" style="color: #fff;" class="btn btn-success">切换查询承运商</a>
+        <a id="btnAddcC" href="/System/QuotedPrice/List/0" title="切换查询客户" style="color: #fff;" class="btn btn-success">切换查询客户</a>
+
+    </div>
+</fieldset>
+
+<fieldset id="historyQuotedPrice">
+    <legend>报价列表</legend>
+    <table id="historyQuotedPriceTable">
+        <thead>
+            <tr>
+                <th style="width: 10%">@Html.ChooseString(Model.Target == 0, "客户", "承运商")</th>
+                @if (Model.Target == 1)
+                {
+                    <th style="width: 8%">关联客户</th>
+                }
+                <th style="width: 15%">运输线路</th>
+                <th style="width: 8%">运输方式</th>
+                <th style="width: 8%">运单类型</th>
+                <th style="width: 8%">整车/零担</th>
+                <th style="width: 15%">有效时间</th>
+                <th>报价明细</th>
+                <th style="width: 5%">操作</th>
+            </tr>
+        </thead>
+        <tbody id="historyQuotedPriceTbody">
+        </tbody>
+    </table>
+</fieldset>

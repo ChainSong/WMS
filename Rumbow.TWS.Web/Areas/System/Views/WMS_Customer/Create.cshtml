@@ -1,0 +1,290 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.WMS_CustomerModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+<script src="../../../../Scripts/Common/Framework/jquery-1.9.1.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@{ var message = @ViewBag.Message;
+    //bool iswrite = (bool)ViewBag.isWrite;
+    <input type="hidden" id="message" value=@message />
+}
+
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>基本信息</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.StorerID)</td>
+                <td>
+                    @Html.DropDownListFor(m => m.CustomerID, Model.StorerID, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.StorerKey)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.StorerKey, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.StorerKey
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle" style="width:11%;">@Html.LabelFor(model => model.Country)</td>
+                <td style="width:22%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.Country, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Country
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width:11%;">@Html.LabelFor(model => model.City)</td>
+                <td style="width:22%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.City, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.City
+                    }
+                </td>
+                <td class="TableColumnTitle" style="width:11%;">@Html.LabelFor(model => model.State)</td>
+                <td style="width:22%;">
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.State, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.State
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Company)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.Company, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Company
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.UserDef10)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.UserDef10, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.UserDef10
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.CompanyCode)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.CompanyCode, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.CompanyCode
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.AddressLine1)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.AddressLine1, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.AddressLine1
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Contact1) </td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.Contact1, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Contact1
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.PhoneNum1)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.PhoneNum1, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.PhoneNum1
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.FaxNum1)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.FaxNum1, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.FaxNum1
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Email1)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.Email1, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Email1
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.AddressLine2)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.AddressLine2, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.AddressLine2
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Contact2)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.Contact2, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Contact2
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.PhoneNum2)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.PhoneNum2, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.PhoneNum2
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.FaxNum2)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.FaxNum2, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.FaxNum2
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.Email2)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.Email2, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.Email2
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.UserDef2)</td>
+                @*if (Model.ViewType != 0 && iswrite)*@
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.UserDef2, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.UserDef2, new { @class = "form-control", @style = "width:100%;readonly:readonly;" })
+                        @*@Model.UserDef2*@
+                    }
+                </td>
+
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.ReceiptPrefix)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.ReceiptPrefix, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.ReceiptPrefix
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.OrderPrefix)</td>
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.TextBoxFor(model => model.OrderPrefix, new { @class = "form-control", @style = "width:100%" })
+                    }
+                    else
+                    {
+                        @Model.OrderPrefix
+                    }
+                </td>
+                <td class="TableColumnTitle">@Html.LabelFor(model => model.UserDef3)</td>               
+                <td>
+                    @if (Model.ViewType != 0)
+                    {
+                        @Html.DropDownListFor(m=>m.UserDef3, Model.StorerType, "==请选择==", new { @class = "form-control" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m=>m.UserDef3, Model.StorerType, "==请选择==", new { @class = "form-control" })
+                    }
+                </td>
+            </tr>
+        </table>
+        @if (Model.ViewType != 0)
+        {
+            <div class="actionButtonDiv">
+                <input type="submit" value="保存" id="btnCreate" class="btn btn-success" />
+                @Html.Raw("&nbsp;&nbsp;&nbsp;")
+                <input type="button" value="返回" id="returnButton" class="btn btn-success" />
+
+            </div>
+        }
+        @if (Model.ViewType == 0)
+        {
+            <div class="actionButtonDiv">
+                <input type="button" value="返回" id="returnButton" class="btn btn-success" />
+            </div>
+        }
+    </fieldset>
+}

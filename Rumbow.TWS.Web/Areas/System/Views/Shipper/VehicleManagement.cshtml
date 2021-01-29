@@ -1,0 +1,115 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.VehicleManagementViewModel
+                <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<fieldset>
+    <legend>车辆列表 &nbsp;&nbsp;@ViewBag.Message
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>车牌号</th>
+                <th>司机</th>
+                <th>工号</th>
+                <th>联系电话</th>
+                <th>体积容量</th>
+                <th>重量容量</th>
+                <th>票数容量</th>
+                <th>车辆类型</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Vehicles != null && Model.Vehicles.Any())
+            {
+                foreach (var vehicle in Model.Vehicles)
+                {
+                <tr data-id="@vehicle.ID">
+                    <td>@vehicle.PlateNumber</td>
+                    <td>@vehicle.Pilot</td>
+                    <td>@vehicle.JobNumber</td>
+                    <td>@vehicle.Contract</td>
+                    <td>@vehicle.Str1</td>
+                    <td>@vehicle.Str2</td>
+                    <td>@vehicle.Str3</td>
+                    <td>@vehicle.Str4</td>
+                    <td>@vehicle.Str7</td>
+                    <td>
+                        <a href="#" id="EditInList" data-id="@vehicle.ID">编辑</a>
+                        <a href="#" id="DeleteInList" data-id="@vehicle.ID">删除</a>
+
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>车辆操作</legend>
+    <table>
+        <tr>
+            <td class="TableColumnTitle">车牌号
+                @Html.NecessaryFlag()
+            </td>
+            <td>
+                @Html.TextBox("PlateNumber", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+            <td class="TableColumnTitle">司机
+            </td>
+            <td>
+                @Html.TextBox("Pilot", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">工号
+            </td>
+            <td>
+                @Html.TextBox("JobNumber", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+            <td class="TableColumnTitle">联系电话
+            </td>
+            <td>
+                @Html.TextBox("Contract", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">体积容量
+            </td>
+            <td>
+                @Html.TextBox("Str1", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+            <td class="TableColumnTitle">重量容量
+            </td>
+            <td>
+                @Html.TextBox("Str2", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">票数容量
+            </td>
+            <td>
+                @Html.TextBox("Str3", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+            <td class="TableColumnTitle">车辆类型
+            </td>
+            <td>
+                @Html.TextBox("Str4", "", new { maxlength = "50",@class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">备注
+            </td>
+            <td colspan="3">
+                @Html.TextArea("Str7", "", new { style = "width:95%", maxlength = "500",@class = "form-control" })
+            </td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        @Html.HiddenFor(m => m.IsEdit)
+        @Html.HiddenFor(m => m.ShipperID)
+        @Html.Hidden("VehicleID")
+        <input type="button" value="新增" class="btn btn-success" id="btnCreateOrUpdate" />
+        &nbsp;&nbsp;
+        <input type="button" class="btn btn-success" value="返回" onclick="window.location.href = '/System/Shipper/List'" id="btnReturn" />
+    </div>
+</fieldset>

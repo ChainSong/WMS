@@ -1,0 +1,80 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@model  Runbow.TWS.Web.Areas.Front.QueryWXCustomerViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StatCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">真实姓名</td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.RealName, new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">手机号码</td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.Phone, new { @class = "form-control" })</td>
+                @*<td class="TableColumnTitle">注册时间 </td>
+                <td>@Html.CalendarRange("CreateTime", "calendarRange")</td>*@
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">所属单位</td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.UnitName, new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">是否审核</td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.States, "==请选择==", new { @style = "width:180px;height:35px;" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="btnSave" class="btn btn-success" />
+            <input type="button" style="margin-left:5px;" class="btn btn-success" value="返回列表" onclick="window.location.href = '/System/User/List'" id="btnReturn" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend style="margin-top: 10px;">运单列表  
+         @if (Model.WXCustomerCollection != null && Model.WXCustomerCollection.Any())
+         {
+             @Html.Raw("(" + Model.WXCustomerCollection.Count() + ")");
+         }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th class="TableColumnTitle">真实名称</th>
+                <th class="TableColumnTitle">手机号码</th>
+                <th class="TableColumnTitle">所属单位</th>
+                <th class="TableColumnTitle">注册时间</th>
+                <th class="TableColumnTitle">审核状态</th>
+                <th class="TableColumnTitle">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.WXCustomerCollection != null && Model.WXCustomerCollection.Any())
+            {
+                foreach (var ams in Model.WXCustomerCollection)
+                {
+                <tr>
+                    <td>@ams.RealName
+                        @*<a class="attachmentClass" href="../GetAttachment/@ams.ID" data-id="@ams.ID">@ams.FileName</a>*@
+                    </td>
+                    <td>@ams.Phone</td>
+                    <td>@ams.UnitName</td>
+                    <td>@ams.CreateTime</td>
+                    @if (ams.Status.ToString().ToLower() == "true")
+                    {
+                        <td>已审核</td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td>未审核</td>
+                        <td><a id="updateWXCustomer" class="updateWXCustomer" href="#" data-id="@ams.ID|@ams.WeixinName" >审核</a></td>
+                    }
+
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>

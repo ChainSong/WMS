@@ -1,0 +1,39 @@
+﻿body {
+}
+
+/*td {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}*/
+
+.dongjie {
+    position: absolute;
+    left: 75%;
+    width: 13%;
+    height: 4%;
+    background-color: #fff;
+}
+
+.dongjie {
+    width: 23%;
+    height: 4%;
+    background-color: #fff;
+   
+}
+
+.mytable {
+    table-layout: fixed;
+    width: 140%;
+    /*border: 0px;*/
+    /*margin: 0px;*/
+}
+
+    .fixed {
+        text-overflow: ellipsis; /* for IE */
+        -moz-text-overflow: ellipsis; /* for Firefox,mozilla */
+        overflow: hidden;
+        white-space: nowrap;
+        /*border: 1px solid;*/
+        text-align: left;
+    }

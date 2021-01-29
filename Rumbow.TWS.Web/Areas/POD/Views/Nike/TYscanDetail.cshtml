@@ -1,0 +1,44 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@model  Runbow.TWS.Web.Areas.POD.QueryTYscanViewModel
+
+<fieldset>
+    <legend>运单明细
+         @if (Model.TYscanCollectionDetail != null && Model.TYscanCollectionDetail.Any())
+         {
+             @Html.Raw("(" + Model.TYscanCollectionDetail.Count() + ")");
+         }
+        &nbsp;&nbsp;<a href="javascript:history.go(-1)" class="attachmentClass">返回>></a>
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th class="TableColumnTitle">客户运单号</th>
+                <th class="TableColumnTitle">箱条码</th>
+                <th class="TableColumnTitle">创建人</th>                
+                <th class="TableColumnTitle">创建日期</th>
+                <th class="TableColumnTitle">收货扫描人</th>
+                <th class="TableColumnTitle">收货扫描时间</th>
+                <th class="TableColumnTitle">发货扫描人</th>
+                <th class="TableColumnTitle">发货扫描时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.TYscanCollectionDetail != null && Model.TYscanCollectionDetail.Any())
+            {
+                foreach (var ams in Model.TYscanCollectionDetail)
+                {
+                <tr>
+                    <td>@ams.CustomerOrderNumber</td>
+                    <td>@ams.LabelNo</td>  
+                    <td>@ams.Creator</td>
+                    <td>@ams.CreateTime</td>                     
+                    <td>@ams.SHTor</td>
+                    <td>@ams.SHTime</td>
+                    <td>@ams.FHTor</td>  
+                    <td>@ams.FHTime</td>                         
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>

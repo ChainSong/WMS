@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Runbow.TWS.Entity.SettledPod>
+@using Runbow.TWS.Common
+@{
+    var settledType = (int)ViewData["SettledType"];
+}
+<fieldset>
+    <legend>已结算运单列表
+         @if (Model != null && Model.Any())
+            {
+                @Html.Raw("(" + Model.Count() + ")");
+            }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.ChooseString(settledType == 0, "客户", "承运商")
+                </th>
+                <th>系统<br />运单号
+                </th>
+                <th>客户<br />运单号
+                </th>
+                <th>起运<br />城市
+                </th>
+                <th>目的<br />城市
+                </th>
+                <th>运输<br />类型
+                </th>
+                <th>运单<br />类型
+                </th>
+                <th>整车<br />零担
+                </th>
+                <th>箱数
+                </th>
+                <th>重量<br />(公斤)
+                </th>
+                <th>件数
+                </th>
+                <th>体积<br />(立方)
+                </th>
+                <th>运费
+                </th>
+                <th>燃油<br />附加费
+                </th>
+                <th>点费
+                </th>
+                <th>其他<br />费用
+                </th>
+                <th>合计
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var m in Model)
+                {
+                <tr>
+                    <td>
+                        @m.CustomerOrShipperName
+                    </td>
+                    <td>
+                        <a href="/POD/POD/ViewPodAll/@m.PodID?showEditRelated=False">@m.SystemNumber</a>
+                    </td>
+                    <td>
+                        <a href="/POD/POD/ViewPodAll/@m.PodID?showEditRelated=False">@m.CustomerOrderNumber</a>
+                    </td>
+                    <td>
+                        @m.StartCityName
+                    </td>
+                    <td>
+                        @m.EndCityName
+                    </td>
+                    <td>
+                        @m.ShipperTypeName
+                    </td>
+                    <td>
+                        @m.PODTypeName
+                    </td>
+                    <td>
+                        @m.TtlOrTplName
+                    </td>
+                    <td>
+                        @m.BoxNumber
+                    </td>
+                    <td>
+                        @m.Weight
+                    </td>
+                    <td>
+                        @m.GoodsNumber
+                    </td>
+                    <td>
+                        @m.Volume
+                    </td>
+                    <td>
+                        ￥@m.ShipAmt
+                    </td>
+                    <td>
+                        ￥@m.BAFAmt
+                    </td>
+                    <td>
+                        ￥@m.PointAmt
+                    </td>
+                    <td>
+                        ￥@m.OtherAmt
+                    </td>
+                    <td>
+                        ￥@m.TotalAmt
+                    </td>
+                </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+
+<div class="actionButtonDiv">
+    <input type="button" value="返回" id="btnReturn" onclick="window.location='/POD/POD/BatchEditPods/6?hideActionButton=true&isSettled=true&settledType=' + @settledType"/>
+</div>

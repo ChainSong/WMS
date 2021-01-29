@@ -1,0 +1,44 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.ProjectRoleAllocateViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="/Scripts/System/Layer/layer.js"></script>
+
+<script type="text/javascript" >
+
+   
+    $(document).ready(function () {
+       
+    });
+</script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>角色列表</legend>
+        <table id="RoleTable">
+            <thead>
+                <tr>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>角色名称</th>
+                    <th>角色描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var projectRole in Model.ProjectRoles)
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBoxFor(x => projectRole.Checked, new { data_ID = projectRole.ID })
+                        </td>
+                        <td>@projectRole.Name</td>
+                        <td>@projectRole.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="actionButtonDiv">
+            <input id="submitProjectRole" type="button" class="btn btn-success" value="提交" />
+            <input id="btnNext" type="button" class="btn btn-success" onclick="window.location.href = '/System/ProjectRoleMenu/Index'"  value="下一步" />
+            <input id="btnCancel" type="button" onclick="window.location.href = '/System/Project/List'" class="btn btn-success" value="返回项目列表" />
+            @Html.HiddenFor(x => x.SelectedRoleIDs)
+        </div>
+    </fieldset>
+}

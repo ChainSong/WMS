@@ -1,0 +1,136 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodFeadBackManageViewModel
+@using Runbow.TWS.Common;
+
+@{
+    var notKeyColumns = Model.Config.ColumnCollection.Where(c => (!c.IsKey && !c.IsHide) || (!c.IsKey && c.IsHide && c.InnerColumns.Any(innerc => innerc.CustomerID == Model.CustomerID)))
+        .Select(c =>
+        {
+            if (c.InnerColumns.Count == 0)
+            {
+                return c;
+            }
+            else
+            {
+                if (c.InnerColumns.Any(innerc => innerc.CustomerID == Model.CustomerID))
+                {
+                    return c.InnerColumns.First(innerc => innerc.CustomerID == Model.CustomerID);
+                }
+
+                return c;
+            }
+        });
+    var notKeyTextBoxColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTime", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "CheckBox", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DropDownList", StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "DateTimeWithTime", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextAreaColumns = notKeyColumns.Where(c => string.Equals(c.Type, "TextArea", StringComparison.OrdinalIgnoreCase)).OrderBy(c => c.Order).ToList();
+    var notKeyTextBoxColumnsCount = notKeyTextBoxColumns.Count;
+    int notKeyTextBoxRowCount = notKeyTextBoxColumnsCount % 3 > 0 ? notKeyTextBoxColumnsCount / 3 + 1 : notKeyTextBoxColumnsCount / 3;
+    int notKeyTextAreaRowCount = notKeyTextAreaColumns.Count;
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.PodFeadBack.ID)
+    @Html.HiddenFor(m => m.PodFeadBack.PodID)
+    @Html.HiddenFor(m => m.PodFeadBack.SystemNumber)
+    @Html.HiddenFor(m => m.PodFeadBack.CustomerOrderNumber)
+    @Html.HiddenFor(m => m.PodFeadBack.CreateTime)
+    @Html.HiddenFor(m => m.PodFeadBack.Creator)
+    @Html.HiddenFor(m => m.PodFeadBack.Str1)
+    @Html.HiddenFor(m => m.PodFeadBack.Str2)
+    @Html.HiddenFor(m => m.PodFeadBack.Str3)
+    @Html.HiddenFor(m => m.PodFeadBack.Str4)
+    @Html.HiddenFor(m => m.PodFeadBack.Str5)
+    @Html.HiddenFor(m => m.PodFeadBack.Str6)
+    @Html.HiddenFor(m => m.PodFeadBack.Str7)
+    @Html.HiddenFor(m => m.PodFeadBack.Str8)
+    @Html.HiddenFor(m => m.PodFeadBack.Str9)
+    @Html.HiddenFor(m => m.PodFeadBack.Str10)
+    @Html.HiddenFor(m => m.PodFeadBack.DateTime1)
+    @Html.HiddenFor(m => m.PodFeadBack.DateTime2)
+    @Html.HiddenFor(m => m.PodFeadBack.DateTime3)
+    @Html.HiddenFor(m => m.CustomerID)
+    @Html.HiddenFor(m => m.IsOuterUser)
+    <fieldset>
+        <legend>回访信息</legend>
+        <table>
+            @for (int i = 0; i < notKeyTextBoxRowCount; i++)
+            {
+                <tr>
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        var index = i * 3 + j;
+                        if (index >= notKeyTextBoxColumnsCount)
+                        {
+                        <td colspan="2"></td>
+                        }
+                        else
+                        {
+                            var column = notKeyTextBoxColumns[i * 3 + j];
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td style="width: 21%">
+                            @{
+                            object o = typeof(Runbow.TWS.Entity.PodFeadBack).GetProperty(column.DbColumnName).GetValue(Model.PodFeadBack);
+                            switch (column.Type)
+                            {
+                                case "TextBox":
+                                @Html.TextBox(column.DbColumnName, o, new { @class = "notKeyVal" })
+                                    break;
+                                case "DateTime":
+                                @Html.Calendar(column.DbColumnName, "notKeyVal", (DateTime?)o)
+                                    break;
+                                case "DateTimeWithTime":
+                                @Html.CalendarDateTime(column.DbColumnName, "notKeyVal", (DateTime?)o)
+                                    break;
+                                case "CheckBox":
+                                    if (o == null)
+                                    {
+                                @Html.CheckBox(column.DbColumnName, false, new { @class = "notKeyVal" })
+                                    }
+                                    else
+                                    {
+                                        bool isChecked = o.ObjectToInt32() == 1;
+                                @Html.CheckBox(column.DbColumnName, isChecked, new { @class = "notKeyVal" })
+                                    }
+                                    break;
+                                case "DropDownList":
+                                    @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal", type = "DropDownList" });
+                                    break;
+                                default:
+                                    break;
+                            }
+                            }
+                        </td>
+                        }
+                    }
+                </tr>
+            }
+
+            @for (int i = 0; i < notKeyTextAreaRowCount; i++)
+            {
+                <tr>
+                    <td class="TableColumnTitle">
+                        @Html.Label("lbl" + notKeyTextAreaColumns[i].DbColumnName, notKeyTextAreaColumns[i].DisplayName)
+                    </td>
+                    <td colspan="5">
+                        @{
+                object o = typeof(Runbow.TWS.Entity.PodFeadBack).GetProperty(notKeyTextAreaColumns[i].DbColumnName).GetValue(Model.PodFeadBack);
+                if (o != null)
+                {
+                            @Html.TextArea(notKeyTextAreaColumns[i].DbColumnName, o.ToString(), new { style = "width:95%", @class = "notKeyVal" })
+                }
+                else
+                {
+                            @Html.TextArea(notKeyTextAreaColumns[i].DbColumnName, new { style = "width:95%", @class = "notKeyVal" })
+                }
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <input type="submit" value="提交" id="submitButton" />
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button" value="返回" id="returnButton" />
+    </div>
+}

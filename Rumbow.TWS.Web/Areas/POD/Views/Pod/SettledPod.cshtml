@@ -1,0 +1,74 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.SettledPodViewModel
+@Url.PopupJs()
+@using (Html.BeginForm("SettlingPod", "POD"))
+{
+    @Html.Hidden("PodIDs", string.Join("|", Model.PodIDs))
+
+    @Html.HiddenFor(model => model.SettledType)
+    <fieldset>
+        <legend>待结算运单列表
+              @if (Model.GroupedPods != null && Model.GroupedPods.Any())
+              {
+                  @Html.Raw("(" + Model.GroupedPods.Count() + ")");
+              }
+        </legend>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        @Html.ChooseString(Model.SettledType == 0, "客户", "承运商")
+                    </th>
+                    <th>发货日期
+                    </th>
+                    <th>起始城市
+                    </th>
+                    <th>目的城市
+                    </th>
+                    <th>运输方式
+                    </th>
+                    <th>运单类型
+                    </th>
+                    <th>整车/零担
+                    </th>
+                    <th>箱数
+                    </th>
+                    <th>重量(公斤)
+                    </th>
+                    <th>件数
+                    </th>
+                    <th>体积(立方)
+                    </th>
+                    <th>包含运单数
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.GroupedPods != null && Model.GroupedPods.Any())
+                {
+                    foreach (var groupedPod in Model.GroupedPods)
+                    {
+                    <tr>
+                        <td data-id="@groupedPod.TargetID">@groupedPod.TargetName</td>
+                        <td><a href="/POD/POD/ViewPodUseList?PodIDs=@groupedPod.PodIDs" data-id="@groupedPod.ActualDeliveryDate">@groupedPod.ActualDeliveryDate</a></td>
+                        <td  data-date="@groupedPod.StartCityID" data-id="@groupedPod.PodIDs">@groupedPod.StartCityName</td>
+                        <td  data-id="@groupedPod.EndCityID">@groupedPod.EndCityName</td>
+                        <td  data-id="@groupedPod.ShipperTypeID">@groupedPod.ShipperTypeName</td>
+                        <td  data-id="@groupedPod.PODTypeID">@groupedPod.PODTypeName</td>
+                        <td  data-id="@groupedPod.TtlOrTplID">@groupedPod.TtlOrTplName</td>
+                        <td>@groupedPod.BoxNumber</td>
+                        <td>@groupedPod.Weight</td>
+                        <td>@groupedPod.GoodsNumber</td>
+                        <td>@groupedPod.Volume</td>
+                        <td><a href="/POD/POD/ViewPodUseList?PodIDs=@groupedPod.PodIDs" data-id="@groupedPod.PodIDs">@groupedPod.PodNumbers</a></td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="actionButtonDiv fixedInBottom">
+            <input type="submit" value="结算" id="btnSettledPod" />
+            <input type="button" value="返回" id="btnReturn" />
+        </div>
+    </fieldset>
+}
+

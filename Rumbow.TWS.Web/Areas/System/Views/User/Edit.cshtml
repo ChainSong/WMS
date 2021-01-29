@@ -1,0 +1,140 @@
+﻿@model Runbow.TWS.Web.Areas.System.Models.User
+@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Html.ValidationSummary(true, "")
+@Url.LoadHighchartsJS()
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //判断客户名称唯一性
+        $("#Name").blur(function () {
+            var tempvalue = $(this).val();
+            var id = $("#ID").val();
+
+            $.ajax({
+                type: 'POST',
+                url: "/System/User/CheckName",
+                data: { Name: tempvalue, Id: id, IsEdit: false },
+                success: function (data) {
+                    if (data != "") {
+                        layer.msg(data, function () { });
+                        $("#Name").focus();
+                        $('#btnSave').prop('disabled', true);
+                    } else {
+                        $('#btnSave').prop('disabled', false);
+                    }
+                },
+                error: function () {
+
+                }
+            })
+        });
+
+        var objtemp = '@ViewBag.Message';
+        if (objtemp != undefined && objtemp != "") {
+            if (objtemp != "更新成功" && objtemp != "操作成功!") {
+                layer.msg(objtemp, function () { });
+            } else {
+                layer.msg(objtemp, { icon: 1, time: 1000 }, function () {
+                    window.location.href = '/System/User/List';
+                });
+            }
+
+        }
+
+    });
+</script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>编辑用户</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Name)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name)
+                    @Html.HiddenFor(model => model.ID)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.DisplayName)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.DisplayName, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Mobile)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Tel)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Tel, new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Email)
+                </td>
+                <td>
+                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.Sex)
+                </td>
+                <td>男 @Html.RadioButtonFor(model => model.Sex, "M")
+                    女 @Html.RadioButtonFor(model => model.Sex, "F")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.UserType)
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.UserType, Model.UserTypes, new { @class = "form-control", style = "width:202px;" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label id="lblCustomerOrShipper" />
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.ShipperID, (IEnumerable<SelectListItem>)ViewBag.Shippers, "==请选择==", new { @class = "displayNone" })
+                    @Html.DropDownListFor(model => model.CustomerID, (IEnumerable<SelectListItem>)ViewBag.Customers, "==请选择==", new { @class = "displayNone" })
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.Label("管辖区域")</td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "City" })
+                    <a id="CityClear" href="#">清空</a>
+                    @Html.HiddenFor(model => model.RuleArea)
+                    @Html.HiddenFor(model => model.RuleAreaName)
+                </td>
+                <td class="TableColumnTitle">
+                    @Html.LabelFor(model => model.State)
+                </td>
+                <td>可用 @Html.RadioButtonFor(model => model.State, true)
+
+                    禁用 @Html.RadioButtonFor(model => model.State, false)
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">@Html.Label("角色")</td>
+                <td>
+                    @Html.DropDownListFor(model => model.ProjectRoleID, (IEnumerable<SelectListItem>)ViewBag.Roles, "==请选择==", new { @class = "form-control", style = "width:202px;" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="保存" class="btn btn-success" id="btnSave" />
+            <input type="button" value="返回" class="btn btn-success" id="btnReturn" />
+        </div>
+    </fieldset>
+
+}

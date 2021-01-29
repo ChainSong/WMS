@@ -1,0 +1,59 @@
+﻿@model Runbow.TWS.Web.Areas.Reports.Models.ShowCaseHotMapModel
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=lLg3HiX0fyNrXjRq1VOhHNee"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+@Url.LoadHighchartsJS()
+@Url.Json2()
+@Html.HiddenFor(m => m.Request.StartActualDeliveryDate)
+@Html.HiddenFor(m => m.Request.EndActualDeliveryDate)
+
+<script src="../../../../Scripts/Reports/PodBaiduReport/ShowCaseHotMaps.js"></script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">客户:
+                </td>
+                <td style="width: 11%">
+                    @Html.DropDownListFor(m => m.Request.Customer, Model.Customers)
+                </td>
+                <td class="TableColumnTitle">城市:
+                </td>
+                <td>
+                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+
+                </td>
+                <td class="TableColumnTitle">完成时间:
+                </td>
+                <td>
+                    @Html.CalendarRange("StartActualDeliveryDate", "calendarRange")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">类型</td>
+                <td>
+                     @Html.DropDownListFor(m => m.Request.HotMapType, Model.HotMap)
+                </td>
+                 <td class="TableColumnTitle"></td>
+                <td>
+                </td>
+                 <td class="TableColumnTitle"></td>
+                <td>
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="Button" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            @*<input type="Button" value="查询" id="searchButton" />*@
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>热力图</legend>
+    <div id="container"></div>
+    @*<div id="r-result">
+        <input type="button" onclick="openHeatmap()" value="显示热力图" /><input type="button" onclick="    closeHeatmap()" value="关闭热力图" />
+    </div>*@
+</fieldset>

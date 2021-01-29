@@ -1,0 +1,71 @@
+﻿<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.PopupJs()
+<div class="row" id="headers">
+    <input type="hidden" value="" id="OrderTemp" />
+    <div class="col-xs-12 col-md-4">
+        @*<img src="~/Img/logo.jpg" />*@
+    </div>
+
+    <div class="col-xs-12 col-md-5">
+        <h1>智能入库控制台</h1>
+    </div>
+    <div class="col-xs-12 col-md-3 div3">
+        <h3><span id="WorkStationtext"></span></h3>
+        <input type="hidden" value="" id="WorkStationId" />
+        <span id="PickUpGoodsManagement" style="padding-top: 10px;"><a>上架管理</a></span>
+        @*VGA_[操作台ID]_IN*@
+        @*  <select id="channel"> 
+            <option value="1">1</option>
+            <option value="saab">Saab</option>
+            <option value="opel">Opel</option>
+            <option value="audi">Audi</option>
+        </select>*@
+        @*<a href="javascript:void(0);" id="refresh">Refresh</a>*@
+        @*<a href="~/Home/AddElectricNumerical">Modify</a>*@ @*<label style="margin-left:10px" id="time"></label>*@
+    </div>
+
+</div>
+<div class="actionButtonDiv Total"></div>
+<div class="row">
+    <div class="col-md-4" id="shelvesPanel" style="height: 500px;">
+    </div>
+
+    <div class="col-md-4" id="dateinfoPanel" style="height: 500px">
+        <input type="hidden" value="" id="TemporaryLocation" />
+        <table style="height: 500px">
+            @*   <tr>
+                <td class="Total" style="height: 20px"></td>
+            </tr>*@
+            <tr class="body">
+            </tr>
+        </table>
+
+    </div>
+    <div class="col-md-4" id="PutGoods" style="height: 500px">
+    </div>
+    <div class="actionButtonDiv">
+        @*<input type="button" class="btn btn-success" value="查询" id="Query" />*@
+        <input type="button" class="btn btn-success" value="重置" id="Reset" />
+        <input type="button" class="btn btn-success" value="开始" id="Ack" />
+    </div>
+</div>
+
+<div id="WorkStationPanel" style="display: none">
+    <table>
+        <tr>
+            <td colspan="2" align="center">请选择操作台</td>
+        </tr>
+        <tr>
+            <td>操作台</td>
+            <td>@{
+                var WorkStation = (IEnumerable<SelectListItem>)ViewBag.WorkStation;
+                @Html.DropDownList("INSTRUCTION_", WorkStation, new { @class = "form-control" })
+            }</td>
+        </tr>
+    </table>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="确定" id="WorkStationOK" />
+    </div>
+</div>

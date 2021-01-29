@@ -1,0 +1,162 @@
+﻿@model IEnumerable<Runbow.TWS.Entity.Menu>
+@{
+    Layout = null;
+    var user = (this.ViewContext.Controller as Runbow.TWS.Web.Common.BaseController).UserInfo;
+    var loadimg = @user.ProjectName + ".PNG";
+}
+@*
+    <!doctype html>
+    <html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=9" />
+        <title>Runbow Transport and Warehouse System </title>
+        @Url.LoadPageCssJs()
+    </head>
+    <body id="wrapper">
+        <div id="head">
+            <div class="title">
+                <span class="logoText">Runbow TWS</span>
+                <span class="rightPanel">
+                    <span class='welcome'>Welcome @user.Name</span>
+                   <!-- <a class='logoff' href='/'><span>修改个人信息</span></a>-->
+                    <a class='logoff' href='Front/Home/LogOff'><span>退出系统</span></a>
+                </span>
+            </div>
+            <div class="menu">
+                @Html.Partial("TopMenu", this.Model)
+            </div>
+        </div>
+        <div id="body">
+            <iframe name='content' src='Front/Home/WelcomePage' frameborder="no" scrolling="no"></iframe>
+        </div>
+        <div id="footer">&copy;@DateTime.Today.Year Runbow</div>
+    </body>
+    </html>
+*@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@user.ProjectName</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    @*<script src="~/Assets/JS/jquery-1.11.3.min.js"></script>*@
+    <script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+    @Url.LoadPageCssJs()
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css" />
+    <link href="../../../../../../../Content/Front/Home/layout-style.css" rel="stylesheet" />
+    <link href="../../../../../../../Content/Front/Home/layout-media.css" rel="stylesheet" />
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            clock();
+        });
+        function clickA() {
+            document.getElementById("srcI").src = "/Front/Home/Welcome";
+        }
+        function clickB() {
+            document.getElementById("srcI").src = "/Front/Home/WelcomePage";
+        }
+        $(function () {
+            var t = $('#myTab li:eq(1) a').tab('show');
+        });
+
+        var int = self.setInterval("clock()", 30 * 60 * 1000);
+        function clock() {
+            var tip = "";
+            $.ajax({
+                url: "/Front/Home/getTips",
+                type: "POST",
+                success: function (data) {
+                    tip = data;
+                    $("#Scrolltip").html(tip);
+                    //alert($("#Scrolltip").text());
+
+                },
+                error: function (msg) {
+                    //alert(msg);
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="loadMenu();" onresize="loadMenu();">
+    <!--Header-part-->
+    <!--
+    <div id="header">
+        <div class="navbar-brand">
+            <div>Runbow-股份</div>
+        </div>
+    </div>
+    -->
+    <!--close-Header-part-->
+    <!--start-top-serch-->
+    @*<div id="search">
+            <input type="text" placeholder="Search here..."/>
+            <button type="submit" class="tip-bottom" title="Search"><i class="glyphicon glyphicon-search"></i></button>
+        </div>*@
+    <!--close-top-serch-->
+    @*<div style="position:fixed;bottom:50px;left:50px;z-index:999;" onclick="toggleMenu();">
+            <img src="../../../../Image/风火轮.png" />
+        </div>*@
+    @*style="background-color:#f4f4f4"*@
+    <div id="sidebar">
+        <marquee behavior="scroll" scrollAmount=3 direction="left" width=240 onmouseover=stop() onmouseout=start() bgcolor="">
+            <span id="Scrolltip" style="color:yellow;font-size:14px;font-weight:700">&nbsp;&nbsp;&nbsp;</span>
+        </marquee>
+        <ul style="display:block;width:100%">
+            <li>
+                <div style="text-align:center">
+                    <h3 style="color:#fff;text-align:center">@user.Description</h3>
+                    @*<h3 style="color:#fff;text-align:center">尼望</h3>*@
+                    @*<img src="../../../../Image/风火轮.png"   onclick="clickB();" title="返回主页" />*@
+                    @*<img src="../../../../Image/iWorker.jpg"   onclick="clickB();" title="返回主页" />*@
+                </div>
+                <div>
+                    <span><a id="btna" title="修改密码" onclick="clickA();">&nbsp;@user.Name</a></span>
+                    <a title="注销" href="Front/Home/LogOff" style="float:right"><i class="glyphicon glyphicon-log-out"></i><span class="text">Logout&nbsp;</span></a>
+                </div>
+                <br />
+            </li>
+            @Html.Partial("LeftMenu")
+        </ul>
+    </div>
+    <div id="content">
+        <!--breadcrumbs-->
+        @*<div id="content-header">
+                <div id="breadcrumb">
+                    <a href="javascript:void(0)" class="tip-bottom"><i class="glyphicon glyphicon-home"></i>Home</a>
+                    | <a href="javascript:void(0)" class="tip-bottom"><i class="glyphicon glyphicon-th-large"></i>二级菜单名</a>
+                    | <a href="javascript:void(0)" class="tip-bottom"><i class="glyphicon glyphicon-th-large"></i>三级菜单名</a>
+                </div>
+            </div>*@
+        <!--End-breadcrumbs-->
+        <!--Action boxes-->
+        <div>
+            <div class="row-fluid iframe_body" id="body">
+                @*<iframe name='main' id="srcI" src='Front/Home/WelcomePage' style="width: 100%;" frameborder="no" scrolling="yes" />*@
+                <ul id="myTab" class="nav nav-tabs" style="display: none;">
+                    <!--<li class="active">
+                        <a href="#home_index" data-toggle="tab">首页@*<span>&times;</span>*@</a>
+                    </li>-->
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="home_index">
+                        <iframe name='main' id="srcI" src='Front/Home/WelcomePage' style="width: 100%;" frameborder="no" scrolling="yes" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*</div>*@
+    <!--end-main-container-part-->
+    <!--Footer-part-->
+    <!--end-Footer-part-->
+    <!--[if lt IE 9]>
+    <![endif]-->
+    <script src="../../../../../../../Scripts/Front/Home/layout.js"></script>
+</body>
+</html>

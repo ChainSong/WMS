@@ -1,0 +1,277 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.PrintBoxModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@{
+    ViewBag.Title = "PrintBox_TH";
+}
+
+<h2>PrintBox</h2>
+<style>
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+
+    .bor > td {
+        border: 2px solid #000000;
+    }
+
+    .border-table {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td {
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            orientationMixed: true,   // 此属性通知控件，存在有纵有横的打印页面
+            orientation: 2,           // 设置控件的默认打印方向，是纵向
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        var OrderID=@ViewBag.OrderID;
+        if(OrderID=='0')
+        {
+            history.go(-1);
+        }
+        else
+        {
+            location.href = "/WMS/OrderManagement/NikeTHPackage/?ID=" + OrderID;
+        }
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 60px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    @*<input type="button" value="返回" class="btn btn-success" onclick="PackageID()">*@
+</div>
+@if (Model.EnumerableCustomerInfo != null && Model.EnumerableCustomerInfo.Any())
+{
+    var k = 0;
+    var packlistnumberheader = "";
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th style="background-color:#C0C0C0">装箱单号</th>
+                <th style="background-color:#C0C0C0">客户</th>
+                <th style="background-color:#C0C0C0">客户名称</th>
+                <th style="background-color:#C0C0C0">地址</th>
+            </tr>
+        </thead>
+        <tbody id="BodyTable">
+            @foreach (var CustomerInfo in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+            {
+                if (k == 0 || packlistnumberheader != CustomerInfo.PackageNumber)
+                {
+                    k++;
+                    <tr id="">
+                        <td>@CustomerInfo.PackageNumber.ToString()</td>
+                        <td>@CustomerInfo.ShipmentNo</td>
+                        <td>@CustomerInfo.Company</td>
+                        <td>@CustomerInfo.AddressLine1</td>
+                    </tr>
+                }
+                packlistnumberheader = CustomerInfo.PackageNumber;
+            }
+        </tbody>
+    </table>
+    var i = 0;
+    var packlistnumber = "";
+    var packlistnumberCount = "";
+    double WeightCount = 0;
+    double NetWeightCount = 0;
+    foreach (var item in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber))
+    {
+        if (packlistnumberCount != item.PackageNumber)
+        {
+            i++;
+            packlistnumberCount = item.PackageNumber;
+        }
+        WeightCount += double.Parse(item.GrossWeight);
+        NetWeightCount += double.Parse(item.NetWeight);
+    }
+    var ss = 0;
+    var counts = Model.EnumerableCustomerInfo.Count();
+    //+i
+    var shang = counts / 9;
+    var yu = counts % 9;
+    var n = 0;
+    if (yu == 0)
+    {
+        n = shang;
+    }
+    else
+    {
+        n = shang + 1;
+    }
+    for (var j = 0; j < n; j++)
+    {
+        ss = ss + 1;
+        var pages = "page" + ss;
+    <div id='@pages' class='only_for_print pagestyle'>
+        <table style="width:95%;margin:0px auto;height:10%">
+            <tr style="width:100%;padding:0px;margin:0px;text-align:right;"><td><strong>Page @ss of @n </strong></td></tr>
+            <tr style="width:100%;padding:0px;margin:0px;"><td><div style="text-align:center;margin:0px auto;height:100%;line-height:100%;width:100%;"><h3>Packing List C RBOW</h3></div></td></tr>
+        </table>
+        <table style="padding:10px 0px;width:95%;margin:0px auto;height:19% " id="boxlist">
+            <tr style="width:100%;">
+                <td style="width:20%;text-align:right;">LD C：</td>
+                @if (@Model.EnumerableCustomerInfo.First().Str12 == "是")
+                {
+                    <td style="width:25px;text-align:left;">RBOW-"+@Model.EnumerableCustomerInfo.First().Str9</td>
+                }
+                else
+                {
+                    <td style="width:25px;text-align:left;">@Model.EnumerableCustomerInfo.First().Str9</td>
+                }
+                <td style="width:20px;text-align:right;">Date C：</td>
+                <td style="width:25px;text-align:left;">@Model.EnumerableCustomerInfo.First().Str7</td>
+            </tr>
+            <tr>
+                <td style="width:20px;text-align:right;">Con C：</td>
+                <td style="width:25px;text-align:left;">@Model.EnumerableCustomerInfo.First().str5</td>
+                <td style="width:0px;text-align:right;">DEL D：</td>
+                <td style="width:25px;text-align:left;"></td>
+            </tr>
+            <tr>
+                <td style="width:20px;text-align:right;">Addr：</td>
+                <td style="width:25px;text-align:left;">
+                    @Model.EnumerableCustomerInfo.First().Address3<br />
+                    @Model.EnumerableCustomerInfo.First().Address4<br />
+                    @Model.EnumerableCustomerInfo.First().Address2<br />
+                    @Model.EnumerableCustomerInfo.First().Address1<br />
+                </td>
+                <td style="width:20px;text-align:right;">Contact C：</td>
+                <td style="width:25px;text-align:left;"></td>
+            </tr>
+            <tr>
+                <td style="width:20px;text-align:right;"></td>
+                <td style="width:25px;text-align:left;"></td>
+                <td style="width:20px;text-align:right;">TEL C：</td>
+                <td style="width:25px;text-align:left;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <table style="height:68%; text-align: center;width:95%; font-family: 黑体;margin:0px auto;border-collapse:collapse;">
+
+            @foreach (var itemdetail in Model.EnumerableCustomerInfo.OrderBy(a => a.PackageNumber).Skip(j * 9).Take(9))
+            {
+
+                if (!packlistnumber.Equals("") && !packlistnumber.Equals(@itemdetail.PackageNumber.ToString()))
+                {
+                    <tr style="height:5%;">
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">Ct No C： &nbsp;&nbsp;&nbsp;&nbsp;@itemdetail.PackageNumber</td>
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">UOM Delivery Unit Amt C：@itemdetail.Qty</td>
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">Weight：&nbsp;&nbsp;&nbsp;&nbsp;@itemdetail.GrossWeight</td>@*重量*@
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">Cube：&nbsp;&nbsp;&nbsp;&nbsp;@itemdetail.NetWeight</td>@*体积*@
+                    </tr>
+                    <tr style="height:7%;">
+                        <td>@itemdetail.Str6</td>@*Article+size*@
+                        @if (@itemdetail.BU == "FTW")
+                        {
+                            <td>PR</td>@*EA FTW显示PR APP,EQP显示EA*@
+                        }
+                        else if (@itemdetail.BU == "APP" || @itemdetail.BU == "EQP")
+                        {
+                            <td>EA</td>
+                        }
+                        <td></td>
+                        <td>@itemdetail.Qty</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr style="height:5%;">
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">Ct No C：1 &nbsp;&nbsp;&nbsp;&nbsp;@itemdetail.PackageNumber</td>
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">UOM Delivery Unit Amt C：@itemdetail.Qty</td>
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">Weight：&nbsp;&nbsp;&nbsp;&nbsp;@itemdetail.GrossWeight</td>@*重量*@
+                        <td style="border-bottom:1px solid #000;border-top:1px solid #000;">Cube：&nbsp;&nbsp;&nbsp;&nbsp;@itemdetail.NetWeight</td>@*体积*@
+                    </tr>
+                    <tr style="height:7%;">
+                        <td>@itemdetail.Str6</td>@*Article+size*@
+                        @if (@itemdetail.BU == "FTW")
+                        {
+                            <td>PR</td>@*EA FTW显示PR APP,EQP显示EA*@
+                        }
+                        else if (@itemdetail.BU == "APP" || @itemdetail.BU == "EQP")
+                        {
+                            <td>EA</td>
+                        }
+                        <td></td>
+                        <td>@itemdetail.Qty</td>
+                    </tr>
+                }
+                packlistnumber = @itemdetail.PackageNumber.ToString();
+            }
+            <tr>
+                <td colspan="4">
+                    <table @*style="height:20%;"*@>
+                        <tr>
+                            <td>TTL EC：@Model.EnumerableCustomerInfo.Select(b => b.Quantity).Sum().ToString()</td>
+                        </tr>
+                        <tr>
+                            <td>TTL CT：@Model.EnumerableCustomerInfo.Count()</td>
+                        </tr>
+                        <tr>
+                            <td>TTL Weight：&nbsp;&nbsp;@WeightCount</td>
+                        </tr>
+                        <tr>
+                            <td>TTL Cube：&nbsp;&nbsp;@NetWeightCount</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        
+        @*<table style="height:20%;text-align: center;width:95%; font-family: 黑体;margin:0px auto;">
+            
+        </table>*@
+    </div>
+    }
+}
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>
+

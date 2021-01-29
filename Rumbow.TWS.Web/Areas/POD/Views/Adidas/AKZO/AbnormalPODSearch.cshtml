@@ -1,0 +1,87 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.AbnormalPODSearchModel
+
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m=>m.BeginActualDeliveryDate)
+    @Html.HiddenFor(m=>m.EndActualDeliveryDate)
+    @Html.HiddenFor(m=>m.IsExport)
+    @Html.HiddenFor(m=>m.IsExportTrack)
+
+    
+<fieldset>
+    <legend>查询条件</legend>
+    <table>
+        
+        <tr>
+            <td style="width:20%" class="TableColumnTitle">发货日期</td>
+            <td  style="width:30%">@Html.CalendarRange("ActualDeliveryDate","calendarRange")<a id="ActualDeliveryDate_ID" href="#" onclick="EmptyValue(this)">清空</a></td>
+            <td style="width:20%" class="TableColumnTitle"></td>
+            <td style="width:30%"></td>
+           
+        </tr>
+        
+    </table>
+    <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="QueryButton" name="Query"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="导出报表" name="Exprot" id="ExprotButton"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="导出跟踪" name="ExprotTrack" id="ExprotTrackButton"/>
+        </div>
+</fieldset>
+    if (Model.AbnormalTable !=null)
+    {
+    
+    <fieldset>
+        <legend>数据信息</legend>
+        <div style="width:100%;">
+        <table style="width:100%;text-align:center">
+           
+            <tr>
+                @foreach (var columnsnames in Model.AbnormalTable.Columns)
+                {
+                    if (columnsnames.ToString()=="RowID")
+                    {
+                        continue;
+                    }
+
+                    if (columnsnames.ToString() == "ID")
+                    {
+                        continue;
+                    }
+                    <td  class="TableColumnTitle">@columnsnames.ToString()</td>
+                }
+            </tr>
+       
+           @for (int i = 0; i < Model.AbnormalTable.Rows.Count; i++)
+           {
+            <tr>
+               @for (int j = 0; j < Model.AbnormalTable.Columns.Count; j++)
+               {
+                   if (Model.AbnormalTable.Columns[j].ToString() == "RowID")
+                   {
+                       continue;
+                   }
+
+                   if (Model.AbnormalTable.Columns[j].ToString() == "ID")
+                   {
+                       continue;
+                   }
+
+                   if (Model.AbnormalTable.Columns[j].ToString() == "客户运单号")
+                   {
+                   <td><a id="listSystemNumber" data-id="@Model.AbnormalTable.Rows[i]["ID"].ToString()" href="/POD/POD/ViewPodAll/@Model.AbnormalTable.Rows[i]["ID"].ToString()">@Model.AbnormalTable.Rows[i]["客户运单号"].ToString()</a></td>
+                   }
+                   else
+                   {
+                   <td>@Model.AbnormalTable.Rows[i][j].ToString()</td>
+                   }
+                   
+                
+               }
+            </tr>
+           }
+        </table>
+        </div>
+         @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    
+    }
+}

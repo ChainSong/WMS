@@ -1,0 +1,73 @@
+﻿<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.MachiningManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.Hidden("ShowSubmit", Model.ShowSubmit)
+    <fieldset>
+        <legend>储罐查询条件 </legend>
+        <table id="BasicInfo">
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                }
+                <td class="TableColumnTitle">
+                    <label>客户名称</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.searchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle" style="width: 13%;"><label>储罐库位号</label></td>
+                <td>
+                    @Html.TextBoxFor(m => m.searchCondition.Location, new { style = "width:90%", @class = "form-control" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            储罐库存列表
+            @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+            {
+                @Html.Raw("(" + Model.InventoryCollection.Count() + ")");
+            }
+        </legend>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>库位号</th>
+                    <th>SKU</th>
+                    <th>品名</th>
+                    <th>数量</th>
+                    <th>单位</th>
+                    <th>规格</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+                {
+                    foreach (var crminfo in Model.InventoryCollection)
+                    {
+
+                        <tr>
+                            <td>@crminfo.CustomerName</td>
+                            <td>@crminfo.Location</td>
+                            <td>@crminfo.SKU</td>
+                            <td>@crminfo.GoodsName</td>
+                            <td>@crminfo.Qty</td>
+                            <td>@crminfo.Unit</td>
+                            <td>@crminfo.Specifications</td>
+                            <td><div style="text-align:center; width:75px; border:solid 1px ;border-radius:3px;cursor:pointer;color:white;background-color:#5bc0de" onclick="Machining('@crminfo.IDS',@crminfo.Qty,@crminfo.CustomerID,'@crminfo.CustomerName','@crminfo.SKU','@crminfo.GoodsName')">加工</div></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+}

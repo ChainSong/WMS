@@ -1,0 +1,203 @@
+﻿@model Runbow.TWS.Web.Areas.POD.Models.PodTrackAndReplyDocumentManageViewModel
+@using (Html.BeginForm())
+{ 
+    @Html.HiddenFor(m => m.ShipperID)
+    @Html.HiddenFor(m => m.IsInnerUser)
+    @Html.HiddenFor(m => m.ActualDeliveryDate)
+    @Html.HiddenFor(m => m.EndActualDeliveryDate)
+    @Html.HiddenFor(m => m.MinPodState)
+    <fieldset>
+        <legend>提示</legend>
+        <span>1. 此页面为方便Hilti项目在运单跟踪及回单操作方便而开发，仅Hilti项目可用，其他项目不适合此页面功能
+            <br />
+            2. 此页面为了操作方便，不提供分页功能，用户在使用时，为了提高系统性能，需设置查询条件，尽量将查出来的运单控制在300条内
+            <br />
+            3. 此页面可以操作的运单状态区间为:审核通过~运单结案。在此状态范围内的运单皆在此页面操作
+            <br />
+            4. 选择性填入“跟踪日期”，”在途位置“，“送货状态”，“延误原因”，点击”确认跟踪“按钮，系统会为运单增加一条新跟踪，跟踪时间默认为当天
+            <br />
+            5. 选择性填入”实际到货日期",“是否正常到货”，“到货差异天数”，”实际签收人“，“附件上传”，点击确认回单，系统会为运单新增或者修改回单信息。当第一次新增回单信息，系统自动为运单加上一条跟踪信息，跟踪日期为实际到货日期，在途位置为运单中目的城市，送货状态为“送达”
+            <br />
+            6. 此页面供承运商和内部员工共同使用，内部员工可以看见所有运单，承运商只能看见分配给自己的运单
+        </span>
+    </fieldset>
+    <fieldset>
+        <legend>查询条件</legend>
+        <table id="conditionTable">
+            <tr>
+                <td class="TableColumnTitle">客户运单号
+                </td>
+                <td>
+                    @Html.TextAreaFor(m => m.CustomerOrderNumber, new { style = "width:98%" })
+                </td>
+                <td class="TableColumnTitle">发货日期
+                </td>
+                <td>
+                    @Html.CalendarRange("ActualDeliveryDate", "calendarRange")
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="searchButton" />
+        </div>
+        <div>
+            <span>
+                @Model.ReturnClientMessage
+            </span>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>运单列表
+             @if (Model.PodAllCollection != null && Model.PodAllCollection.Any())
+            {
+                @Html.Raw("(" + Model.PodAllCollection.Count() + ")");
+            }
+        </legend>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        @*<th style="width:8%">客户<br />运单号
+                        </th>*@
+                        <th  style="width:20%">运单信息</th>
+                        @*<th style="width:10%">发货<br />日期
+                        </th>
+                        <th style="width:8%">起运<br />城市
+                        </th>
+                        <th style="width:7%">目的<br />城市
+                        </th>
+                        <th style="width:10%">按服务时效<br />应到货日期
+                        </th>*@
+                        <th style="width:25%">跟踪信息</th>
+                        <th style="width:37%">签收信息</th>
+                       
+                       @* <th class="GreenHead">跟踪日期
+                        </th>
+                        <th class="GreenHead">在途位置
+                        </th>
+                        <th class="GreenHead">送货状态
+                        </th>
+                        <th class="GreenHead">延误原因
+                        </th>
+                        <th class="BlueHead">实际到货日期
+                        </th>
+                        <th class="BlueHead">是否正常到货
+                        </th>
+                        <th class="BlueHead">到货差异天数
+                        </th>
+                        <th class="BlueHead">实际签收人
+                        </th>
+                        <th class="BlueHead">附件上传
+                        </th>
+                        <th>操作
+                        </th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PodAllCollection != null && Model.PodAllCollection.Any())
+                    {
+                        foreach (var podAll in Model.PodAllCollection)
+                        {
+                            bool hasSetReplyDocument = podAll.PodReplyDocument != null;
+                            var podReplyDocumentID = hasSetReplyDocument ? podAll.PodReplyDocument.ID.ToString() : "";
+                        <tr>
+                            @*<td>
+                                @if (Model.IsInnerUser)
+                                {
+                                    <a id="listCustomerOrderNumber" data-id="@podAll.Pod.ID" href="/POD/POD/ViewPodAll/@podAll.Pod.ID?showEditRelated=true">@podAll.Pod.CustomerOrderNumber</a>
+                                }
+                                else
+                                {
+                                    <a id="listCustomerOrderNumber" data-id="@podAll.Pod.ID" href="/POD/POD/ViewPodAllForOuterUser/@podAll.Pod.ID">@podAll.Pod.CustomerOrderNumber</a>
+                                }
+                            </td>*@
+                            <td>
+                                @if (Model.IsInnerUser)
+                                {
+                                    <a id="listCustomerOrderNumber" data-id="@podAll.Pod.ID" href="/POD/POD/ViewPodAll/@podAll.Pod.ID?showEditRelated=true">@podAll.Pod.CustomerOrderNumber</a>
+                                }
+                                else
+                                {
+                                    <a id="listCustomerOrderNumber" data-id="@podAll.Pod.ID" href="/POD/POD/ViewPodAllForOuterUser/@podAll.Pod.ID">@podAll.Pod.CustomerOrderNumber</a>
+                                }
+                                <br />
+                                发货日期：@Html.ChooseString(podAll.Pod.ActualDeliveryDate.HasValue, podAll.Pod.ActualDeliveryDate.Value.ToString("yyyy-MM-dd"), "")<br />
+                                起运城市：@podAll.Pod.StartCityName<br />
+                                目的城市：@podAll.Pod.EndCityName<br />
+                                按服务时效：@if (podAll.Pod.DateTime2.HasValue)
+                                {
+                                    @podAll.Pod.DateTime2.Value.ToString("yyyy-MM-dd")
+                                }
+                                <br />
+                                @if(Model.IsInnerUser)
+                                {
+                            
+                                
+                                <a id="editPod" class="editPod" href="/POD/POD/CreatePod/@podAll.Pod.ID" data-id="@podAll.Pod.ID">编辑</a><br />
+                                <a id="deletePod" class="deletePod" href="#" data-id="@podAll.Pod.ID" >删除</a>
+                           
+                                  }
+
+                            </td>
+                            
+                            @*<td>
+                                @podAll.Pod.StartCityName
+                            </td>
+                            <td>
+                                @podAll.Pod.EndCityName
+                            </td>
+                            <td>
+                                @if (podAll.Pod.DateTime2.HasValue)
+                                {
+                                    @podAll.Pod.DateTime2.Value.ToString("yyyy-MM-dd")
+                                }
+                            </td>*@
+                            <td>
+                                <div></div>
+                                <div>跟踪日期 @Html.Calendar("TrackDate"+podAll.Pod.ID, "Calendar", DateTime.Now)</div>
+                                <div>在途位置 @Html.TextBox("Location")</div>
+                                <div>送货状态 @Html.DropDownList("GoodsStatus", Model.GoodsStatus)</div>
+                                <div>延误原因 @Html.TextBox("CausesOFDelays")</div>
+                                <div>延误原因分类 @Html.DropDownList("CausesOFDelaysType", Model.CausesOFDelaysType)</div>
+                                <div><input type="button" class="TrackClass" value="确认跟踪" id="TrackSubmit" data-PODID="@podAll.Pod.ID" data-SystemNumber="@podAll.Pod.SystemNumber" data-CustomerOrderNumber="@podAll.Pod.CustomerOrderNumber"/></div>
+                                <div>上次跟踪信息:<span id="lastTrackMessage">
+                                     @if(podAll.PodTracks != null && podAll.PodTracks.Any())
+                                        {
+                                            String str = string.Empty;
+                                            var podTrack = podAll.PodTracks.First();
+                                            if(podTrack.DateTime1.HasValue)
+                                            {
+                                                str += podTrack.DateTime1.Value.ToString("yyyy-MM-dd") + " " + podTrack.Str1 + " " + podTrack.Str2 + " " + podTrack.Str3+" "+podTrack.Str4;
+                                            }
+                                            else
+                                            {
+                                                str += podTrack.Str1 + " " + podTrack.Str2 + " " + podTrack.Str3+" "+podTrack.Str4;
+                                            }
+                                            
+                                            @str
+                                        }
+                                            </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    实际到货日期
+                                    @Html.Calendar("ActualArrivalDate"+podAll.Pod.ID, "ActualArrivalDateCaledar", hasSetReplyDocument ? podAll.PodReplyDocument.DateTime1 : DateTime.Now)
+                                    @Html.Hidden("HiddenDate" + podAll.Pod.ID,podAll.Pod.DateTime2.HasValue ? podAll.Pod.DateTime2.Value.ToString("yyyy-MM-dd") : "")
+                                </div>
+                                <div>
+                                    是否正常到货
+                                    @Html.DropDownList("ArrivalInNormal", Model.ArrivalInNormal, new {@class="ArrivalInNormalClass", @val = hasSetReplyDocument ? (podAll.PodReplyDocument.Str3=="Y" || podAll.PodReplyDocument.Str3=="N") ? podAll.PodReplyDocument.Str3 : "" : "" })
+                                </div>
+                                <div>到货差异天数 @Html.TextBox("DifferenceDate", hasSetReplyDocument ? podAll.PodReplyDocument.Str2 : "")</div>
+                                <div>实际签收人  &nbsp;&nbsp; @Html.TextBox("SignPeople", hasSetReplyDocument ? podAll.PodReplyDocument.Str1 : "")</div>
+                                <div>@Html.SingleFileUpload("fileAttachmentGroupID"+podAll.Pod.ID.ToString(), "Hidden_AttachmentGroupID"+podAll.Pod.ID.ToString(), hasSetReplyDocument ? podAll.PodReplyDocument.AttachmentGroupID : podAll.Pod.CustomerOrderNumber)</div>
+                                <div> <input type="button" class="ReplyDocumentClass" value="确认回单" id="ReplyDocumentSubmit" data-PODID="@podAll.Pod.ID" data-SystemNumber="@podAll.Pod.SystemNumber" data-CustomerOrderNumber="@podAll.Pod.CustomerOrderNumber" data-PodReplyDocumentID="@podReplyDocumentID"/></div>
+                            </td>
+                            
+                        </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+    </fieldset>
+}

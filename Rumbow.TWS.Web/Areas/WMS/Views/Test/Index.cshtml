@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Assets/JS/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+    function FnTest() {
+        if ("WebSocket" in window)
+        {
+            alert("浏览器支持 WebSocket!");
+        }
+    }
+
+    function fn() {
+        // 查找div
+        //var d = document.getElementsByTagName('div')[0];
+        var d = document.getElementById("myDiv");
+        // 修改TextNode
+        alert(d.firstChild.nodeValue);
+        //d.firstChild.nodeValue = '我改改改';
+    }
+</script>
+@*<h2>Index</h2>
+<input type="button" value="test" onclick="FnTest();" />*@
+
+
+<div id="myDiv">  
+    &nbsp;&nbsp;&nbsp;123123 
+    <table><tr><td>0001</td></tr></table>
+     
+    <table><tr><td>0002</td></tr></table>
+</div>
+
+<input type="button" value="改变文本" onclick="fn();" />

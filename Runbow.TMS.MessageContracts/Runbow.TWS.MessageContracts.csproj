@@ -1,0 +1,530 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{16F15667-9682-4D12-8780-DB1173E5A678}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Runbow.TWS.MessageContracts</RootNamespace>
+    <AssemblyName>Runbow.TWS.MessageContracts</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AMS\AddAMSUploadRequest.cs" />
+    <Compile Include="AMS\GenBoxNumberRequest.cs" />
+    <Compile Include="AMS\GenBoxNumberResponse.cs" />
+    <Compile Include="AMS\GetAMSUPLOADByIDRequest.cs" />
+    <Compile Include="AMS\QueryAMSUploadRequests.cs" />
+    <Compile Include="AMS\QueryAMSUploadResponses.cs" />
+    <Compile Include="BaiduMap\PODTrackingMapRequest.cs" />
+    <Compile Include="BaiduMap\PODTrackingMapResponse.cs" />
+    <Compile Include="ContractManagement\AddOrUpdateContractRequest.cs" />
+    <Compile Include="ContractManagement\CommonParamRequest.cs" />
+    <Compile Include="ContractManagement\CommonParamResponse.cs" />
+    <Compile Include="ContractManagement\ContractExtensionRequest.cs" />
+    <Compile Include="ContractManagement\GetContractByConditionRequest.cs" />
+    <Compile Include="ContractManagement\GetContractByConditionResponse.cs" />
+    <Compile Include="ContractManagement\GetContractRequest.cs" />
+    <Compile Include="ContractManagement\GetExpireContractsReqeust.cs" />
+    <Compile Include="CRM\AddOrUpdateCRMInfoRequest.cs" />
+    <Compile Include="CRM\AddOrUpdateCRMTrackInfoRequest.cs" />
+    <Compile Include="CRM\DeleteCRMInfoRequest.cs" />
+    <Compile Include="CRM\DeleteCRMTrackInfoRequest.cs" />
+    <Compile Include="CRM\GetCrmBaseByUserIdRequest.cs" />
+    <Compile Include="CRM\GetCRMInfoRequest.cs" />
+    <Compile Include="CRM\GetCRMTrackInfoRequest.cs" />
+    <Compile Include="Finance\AddInvoiceAndPayOrdersRequest.cs" />
+    <Compile Include="Finance\AddInvoiceRequest.cs" />
+    <Compile Include="Finance\AddReceiveOrPayOrdersRequest.cs" />
+    <Compile Include="Finance\AuditSettledPodRequest.cs" />
+    <Compile Include="Finance\BatchUpdateSettledPodAmtRequest.cs" />
+    <Compile Include="Finance\CompleteOrCancelInvoiceRequest.cs" />
+    <Compile Include="Finance\DeleteAllExtenFeeDataRequest.cs" />
+    <Compile Include="Finance\DeleteInvoiceRequest.cs" />
+    <Compile Include="Finance\DeleteManualSettledFeeRequest.cs" />
+    <Compile Include="Finance\DeleteReceiveOrPayOrderRequest.cs" />
+    <Compile Include="Finance\DeleteSettledPodRequest.cs" />
+    <Compile Include="Finance\EditSettledPodRequest.cs" />
+    <Compile Include="Finance\GetInvoiceByIDRequest.cs" />
+    <Compile Include="Finance\GetInvoicesByConditionRequest.cs" />
+    <Compile Include="Finance\GetReceiveOrPayOrderByInvoiceIDRequest.cs" />
+    <Compile Include="Finance\GetSettledHistoryBySettledPodIDsRequest.cs" />
+    <Compile Include="Finance\GetSettledPodByConditionRequest.cs" />
+    <Compile Include="Finance\GetSettledPodByIDRequest.cs" />
+    <Compile Include="Finance\GetSettledPodByIDsRequest.cs" />
+    <Compile Include="Finance\GetSettledPodByPodIDsRequest.cs" />
+    <Compile Include="Finance\GetSettledPodsByConditionRequest.cs" />
+    <Compile Include="Finance\GetSettledPodsByInvoiceIDRequest.cs" />
+    <Compile Include="Finance\SettlePodsRequest.cs" />
+    <Compile Include="Finance\UpdateInvoiceNumberRequest.cs" />
+    <Compile Include="ForecastWarehouse\GapPickingNoteRequest.cs" />
+    <Compile Include="ForecastWarehouse\GapPickingNoteResponse.cs" />
+    <Compile Include="ForecastWarehouse\GetForecastOrdersRequest.cs" />
+    <Compile Include="ForecastWarehouse\GetForecastWarehouseRequest.cs" />
+    <Compile Include="Front\QueryWXCustomerRequests.cs" />
+    <Compile Include="Front\QueryWXCustomerResponses.cs" />
+    <Compile Include="Inventory\OSRImport.cs" />
+    <Compile Include="Inventory\OSRLineNumber.cs" />
+    <Compile Include="Inventory\SampleImport.cs" />
+    <Compile Include="Inventory\OSRJobRequest.cs" />
+    <Compile Include="Inventory\OSRJobResponses.cs" />
+    <Compile Include="Inventory\OSRStockRequest.cs" />
+    <Compile Include="Inventory\OSRStockResponses.cs" />
+    <Compile Include="Inventory\OSRStorageRequest.cs" />
+    <Compile Include="Inventory\OSRStorageResponses.cs" />
+    <Compile Include="Inventory\OSRThelibraryRequest.cs" />
+    <Compile Include="Inventory\OSRThelibraryResponses.cs" />
+    <Compile Include="Inventory\SampleJobRequest.cs" />
+    <Compile Include="Inventory\SampleJobResponses.cs" />
+    <Compile Include="Inventory\SampleStockRequest.cs" />
+    <Compile Include="Inventory\SampleStockResponses.cs" />
+    <Compile Include="Inventory\SampleStorageRequest.cs" />
+    <Compile Include="Inventory\SampleStorageResponses.cs" />
+    <Compile Include="Inventory\SampleThelibraryRequest.cs" />
+    <Compile Include="Inventory\SampleThelibraryResponses.cs" />
+    <Compile Include="MobileWeb\QueryOrderInformationRequests.cs" />
+    <Compile Include="MobileWeb\QueryOrderInformationResponses.cs" />
+    <Compile Include="MonitoringReport\MonitoringResponse.cs" />
+    <Compile Include="NikeNFSPrint\NFSBoxListManagementResponse.cs" />
+    <Compile Include="NikeOSRBJPrint\BoxListManagementResponse.cs" />
+    <Compile Include="NikeOSRBJPrint\ConsignmentManagementResponse.CS" />
+    <Compile Include="Phone\WinQueryPodRequest.cs" />
+    <Compile Include="Phone\WinQueryPodResponses.cs" />
+    <Compile Include="POD\AddOrUpdatePodFeadBackRequest.cs" />
+    <Compile Include="POD\AddOrUpdatePodReplyDocumentRequest.cs" />
+    <Compile Include="POD\AddPodDetailRequest.cs" />
+    <Compile Include="POD\AddPodDetailsRequest.cs" />
+    <Compile Include="POD\AddPodExceptionRequest.cs" />
+    <Compile Include="POD\AddPodExceptionsRequest.cs" />
+    <Compile Include="POD\AddPodExtensionFeeRequest.cs" />
+    <Compile Include="POD\AddPodFeadBacksRequest.cs" />
+    <Compile Include="POD\AddPodFeesRequest.cs" />
+    <Compile Include="POD\AddPodReplyDocumentsRequest.cs" />
+    <Compile Include="POD\AddPodRequest.cs" />
+    <Compile Include="POD\AddPodsRequest.cs" />
+    <Compile Include="POD\AddPodStatusLogRequest.cs" />
+    <Compile Include="POD\AddPodStatusLogsRequest.cs" />
+    <Compile Include="POD\AddPodTrackRequest.cs" />
+    <Compile Include="POD\AddPodTracksRequest.cs" />
+    <Compile Include="POD\Adidas\ABFPriceRequest.cs" />
+    <Compile Include="POD\Adidas\ABFPriceResponses.cs" />
+    <Compile Include="POD\Adidas\AddScanDataRequest.cs" />
+    <Compile Include="POD\Adidas\AddScanDatasRequest.cs" />
+    <Compile Include="POD\Adidas\QueryScanDataResponses.cs" />
+    <Compile Include="POD\Adidas\QuerySearchConditionRequest.cs" />
+    <Compile Include="POD\Adidas\UpdateAdidasPodAndGetTheDifferenceRequest.cs" />
+    <Compile Include="POD\Adidas\UpdateAdidasPodAndGetTheDifferenceResponse.cs" />
+    <Compile Include="POD\Adidas\UpdateAdidasPurchasePodAndGetTheDifferenceRequest.cs" />
+    <Compile Include="POD\Adidas\UpdateAdidasPurchasePodAndGetTheDifferenceResponse.cs" />
+    <Compile Include="POD\AKZO\GetAbnormalPODSearchRequest.cs" />
+    <Compile Include="POD\AKZO\UpdateAkzoPodAndGetTheDifferenceRequest.cs" />
+    <Compile Include="POD\AKZO\UpdateAkzoPodAndGetTheDifferenceResponse.cs" />
+    <Compile Include="POD\AKZO\UpdateAkzoModelsPodAndGetTheDifferenceResponse.cs" />
+    <Compile Include="POD\AKZO\UpdateAkzoModelsPodAndGetTheDifferenceRequest.cs" />
+    <Compile Include="POD\AuditPodReplyDocumentRequest.cs" />
+    <Compile Include="POD\BaiXing\GetBaiXingRequest.cs" />
+    <Compile Include="POD\CancenAttachmentAuditRequest.cs" />
+    <Compile Include="POD\CheckIfPodExistsByPodCustomerOrderNumberRequest.cs" />
+    <Compile Include="POD\AddPodStatusTrackRequest.cs" />
+    <Compile Include="POD\AddPodStatusTracksRequest.cs" />
+    <Compile Include="POD\DeletePodInfoRequest.cs" />
+    <Compile Include="POD\Distribution\DistributionPodRequest.cs" />
+    <Compile Include="POD\Distribution\DistributionPodResponse.cs" />
+    <Compile Include="POD\Distribution\SettlePodsDistributionRequest.cs" />
+    <Compile Include="POD\Distribution\DbToExcelsResponse.cs" />
+    <Compile Include="POD\GetPodAndReleatedInfoRequest.cs" />
+    <Compile Include="POD\GetPodForecastInfoCollectionRequest.cs" />
+    <Compile Include="POD\GetPodInfoRequest.cs" />
+    <Compile Include="POD\GetPodReplyDocumentWithAttachmentByConditionRequest.cs" />
+    <Compile Include="POD\GetTodaysPodCountRequest.cs" />
+    <Compile Include="POD\Hilti\AddOrUpdateServicePeriodRequest.cs" />
+    <Compile Include="POD\Hilti\CreditUpdateRequest.cs" />
+    <Compile Include="POD\Hilti\GetPodAndPodReplyDocumentByConditionRequest.cs" />
+    <Compile Include="POD\Hilti\GetPodQueryRequest.cs" />
+    <Compile Include="POD\Hilti\GetServicePeriodByConditionRequest.cs" />
+    <Compile Include="POD\Hilti\GetPodTrackReportExportRequest.cs" />
+    <Compile Include="POD\Hilti\PrintHandoverDetailedListDetailRequest.cs" />
+    <Compile Include="POD\Hilti\UpdatePodColumnInfoRequest.cs" />
+    <Compile Include="POD\Hilti\UpdateOrderNoInfoUpdateRequest.cs" />
+    <Compile Include="POD\Hilti\UpdatePodInfoUpdateRequest.cs" />
+    <Compile Include="POD\ManualSettledPodRequest.cs" />
+    <Compile Include="POD\MaryKay\GetMaryKayOrderIssuedRequest.cs" />
+    <Compile Include="POD\MaryKay\GetMaryKayTrackInfoRequest.cs" />
+    <Compile Include="POD\MaryKay\QueryDMSPODRequest.cs" />
+    <Compile Include="POD\MaryKay\QueryDMSPODResponse.cs" />
+    <Compile Include="POD\Nike\GetNikeExportPodAllByConditionRequest.cs" />
+    <Compile Include="POD\Nike\GetNikeReportExportRequest.cs" />
+    <Compile Include="POD\Nike\NikePODForBSRequest.cs" />
+    <Compile Include="POD\Nike\NikePODForBSResponses.cs" />
+    <Compile Include="POD\Nike\QueryTYscanRequests.cs" />
+    <Compile Include="POD\Nike\QueryTYscanResponses.cs" />
+    <Compile Include="POD\Nike\UpdateNikePodAndGetTheDifferenceRequest.cs" />
+    <Compile Include="POD\Nike\UpdateNikePodAndGetTheDifferenceResponse.cs" />
+    <Compile Include="POD\Nike\UpdateNikePodBGAndGetTheDifferenceRequest.cs" />
+    <Compile Include="POD\Nike\UpdateNikePodBGAndGetTheDifferenceResponse.cs" />
+    <Compile Include="POD\QueryBAFPriceRequest.cs" />
+    <Compile Include="POD\QueryPodByIDsRequest.cs" />
+    <Compile Include="POD\QueryPodRequest.cs" />
+    <Compile Include="POD\QueryPodResponse.cs" />
+    <Compile Include="POD\SetAttachmentRemarkRequest.cs" />
+    <Compile Include="POD\SetPodShipperManuallyRequest.cs" />
+    <Compile Include="POD\SetPodShipperRequest.cs" />
+    <Compile Include="POD\SetPodStatusRequest.cs" />
+    <Compile Include="POD\SettledPodRequest.cs" />
+    <Compile Include="POD\SettledPodResponse.cs" />
+    <Compile Include="POD\SplitPodRequest.cs" />
+    <Compile Include="POD\Total\GetMessageHistoryQueryRequest.cs" />
+    <Compile Include="POD\Total\GetTotalPODRequest.cs" />
+    <Compile Include="POD\Total\GetTotalPODResponse.cs" />
+    <Compile Include="POD\UpdateLog56PhoneStatusRequest.cs" />
+    <Compile Include="Reports\BTBMoneySummaryReportResponse.cs" />
+    <Compile Include="Reports\QueryCustomerMonthlyAndDailyPodCountRequest.cs" />
+    <Compile Include="Reports\QueryCustomerPodCountByRegionAndTimeRequest.cs" />
+    <Compile Include="Reports\QueryCustomerPodYearMonthCountByTimeRangeRequest.cs" />
+    <Compile Include="Reports\QueryCustomerYearPodCountRequest.cs" />
+    <Compile Include="Reports\QueryIncomAndExpensesRequest.cs" />
+    <Compile Include="Reports\QueryPodAndInvoiceAndReceiveOrPayOrdersRequest.cs" />
+    <Compile Include="Reports\QueryPodAndInvoiceAndReceiveOrPayOrdersResponse.cs" />
+    <Compile Include="Reports\QueryShipperCostRequest.cs" />
+    <Compile Include="Reports\ShowCaseHotMapRequest.cs" />
+    <Compile Include="Reports\ShowCaseHotMapResponse.cs" />
+    <Compile Include="Reports\TransOrderRequest..cs" />
+    <Compile Include="Reports\TransOrderResponse.cs" />
+    <Compile Include="Reports\WMSOrderStatusRequest.cs" />
+    <Compile Include="Reports\WMSOrderStatusResponse.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShipperManagement\AddOrUpdateCRMShipperCooperationsRequest.cs" />
+    <Compile Include="ShipperManagement\AddOrUpdateCRMShippersRequest.cs" />
+    <Compile Include="ShipperManagement\AddOrUpdateCRMShipperTerminalInfoRequest.cs" />
+    <Compile Include="ShipperManagement\AddOrUpdateCRMShipperTransportationLineRequest.cs" />
+    <Compile Include="ShipperManagement\CRMShipperOperationRequest.cs" />
+    <Compile Include="ShipperManagement\DriverManagement\AddOrUpdateCRMDriverRequest.cs" />
+    <Compile Include="ShipperManagement\DriverManagement\DeleteCRMDriverRequest.cs" />
+    <Compile Include="ShipperManagement\DriverManagement\GetCRMDriverByConditionRequest.cs" />
+    <Compile Include="ShipperManagement\DriverManagement\GetCRMDriverByConditionResponse.cs" />
+    <Compile Include="ShipperManagement\GetCRMShippersByConditionRequest.cs" />
+    <Compile Include="ShipperManagement\GetCRMShippersByConditionResponse.cs" />
+    <Compile Include="ShipperManagement\GetShipperToVehicleRequest.cs" />
+    <Compile Include="ShipperManagement\GetShipperToVehicleResponse.cs" />
+    <Compile Include="ShipperManagement\ShipperMappingVehicleRequest.cs" />
+    <Compile Include="ShipperManagement\ShipperToVehicleRequest.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\AddOrUpdateCRMVehicleRequest.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\DeleteCRMVehicleRequest.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\GetCRMVehicleByConditionRequest.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\GetCRMVehicleByConditionResponse.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\GetVehicleToDriverRequest.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\GetVehicleToDriverResponse.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\VehicleMappingDriverRequest.cs" />
+    <Compile Include="ShipperManagement\VehicleManagement\VehicleToDriverRequest.cs" />
+    <Compile Include="System\AddAttachmentRequest.cs" />
+    <Compile Include="System\AddCustomerRequest.cs" />
+    <Compile Include="System\AddOrUpdateShipperRequest.cs" />
+    <Compile Include="System\AddOrUpdateVehicleRequest.cs" />
+    <Compile Include="System\AddQuotedPriceRequest.cs" />
+    <Compile Include="System\AddRegionRequest.cs" />
+    <Compile Include="System\AddTransportationLineRequest.cs" />
+    <Compile Include="System\AddWMS_CustomerRequest.cs" />
+    <Compile Include="System\DeleteQuetedPriceRequest.cs" />
+    <Compile Include="System\DeleteShipperRegionCoveredRequest.cs" />
+    <Compile Include="System\DeleteVehicleRequest.cs" />
+    <Compile Include="System\GetCustomerByConditionRequest.cs" />
+    <Compile Include="System\GetCustomerByConditionResponse.cs" />
+    <Compile Include="System\GetProjectCustomersOrShippersRequest.cs" />
+    <Compile Include="System\GetQuotedPriceByConditionRequest.cs" />
+    <Compile Include="System\GetSegmentDetailByCustomerOrShipperRequest.cs" />
+    <Compile Include="System\GetSegmentsByConditionRequest.cs" />
+    <Compile Include="System\GetShipperAllInfoRequest.cs" />
+    <Compile Include="System\GetTransportationLinesByConditionRequest.cs" />
+    <Compile Include="System\GetTransportationLinesByConditionResponse.cs" />
+    <Compile Include="System\GetUserProjectRoleRequest.cs" />
+    <Compile Include="System\GetWMS_CustomerByConditionRequest.cs" />
+    <Compile Include="System\GetWMS_CustomerByConditionResponse.cs" />
+    <Compile Include="System\LogRequest.cs" />
+    <Compile Include="System\ManageShipperEmailInfoRequest.cs" />
+    <Compile Include="System\ManageShipperRegionCoveredRequest.cs" />
+    <Compile Include="System\RoleRequest.cs" />
+    <Compile Include="System\SegmentDetailRequest.cs" />
+    <Compile Include="System\AddSegmentRequest.cs" />
+    <Compile Include="System\DeleteAttachmentRequest.cs" />
+    <Compile Include="System\GetAttachmentByIDRequest.cs" />
+    <Compile Include="System\GetAttachmentsByGroupIDRequest.cs" />
+    <Compile Include="System\GetCustomerByCustomerRequest.cs" />
+    <Compile Include="System\GetMenuByProjectRoleIDRequest.cs" />
+    <Compile Include="System\GetProjectByProjectIdRequest.cs" />
+    <Compile Include="System\GetRoleByProjectIDRequest.cs" />
+    <Compile Include="System\GetSegmentAndDetailResponse.cs" />
+    <Compile Include="System\GetShippersByConditionRequest.cs" />
+    <Compile Include="System\GetShippersByConditionResponse.cs" />
+    <Compile Include="System\GetUserByCheckLoginRequest.cs" />
+    <Compile Include="System\GetUserByUserIdRequest.cs" />
+    <Compile Include="System\GetUserProjectsRequest.cs" />
+    <Compile Include="System\GetUsersByConditionRequest.cs" />
+    <Compile Include="System\GetUsersByConditionResponse.cs" />
+    <Compile Include="System\SegmentRequest.cs" />
+    <Compile Include="System\SetProjectCustomerOrShipperSegmentRequest.cs" />
+    <Compile Include="System\SetProjectCustomerOrShipperSegmentRequest2.cs" />
+    <Compile Include="System\SetProjectCustomerOrShippersRequest.cs" />
+    <Compile Include="System\SetProjectRoleMenuRequest.cs" />
+    <Compile Include="System\SetProjectRoleRequest.cs" />
+    <Compile Include="System\SetProjectUserCustomersRequest.cs" />
+    <Compile Include="System\SetSegmentStateRequest.cs" />
+    <Compile Include="System\SetTransportationLineStateRequest.cs" />
+    <Compile Include="System\SetUserProjectRoleRequest.cs" />
+    <Compile Include="System\ShipperRequest.cs" />
+    <Compile Include="System\UserRequest.cs" />
+    <Compile Include="System\UserWarehouseRequest.cs" />
+    <Compile Include="System\UserWarehouseResponest.cs" />
+    <Compile Include="WebApi\DeliveryOrderManagementRequest.cs" />
+    <Compile Include="WebApi\DeliveryOrderManagementResponse.cs" />
+    <Compile Include="WebApi\Express\ApiRequest.cs" />
+    <Compile Include="WebApi\Express\ApiResponse.cs" />
+    <Compile Include="WebApi\Express\DPCreateOrderRequest.cs" />
+    <Compile Include="WebApi\Express\DPCreateOrderResponse.cs" />
+    <Compile Include="WebApi\Express\ExpressRequest.cs" />
+    <Compile Include="WebApi\Express\ExpressResponse.cs" />
+    <Compile Include="WebApi\Express\YDRequest.cs" />
+    <Compile Include="WebApi\Express\YDResponse.cs" />
+    <Compile Include="WebApi\GetOrderStatusRequest.cs" />
+    <Compile Include="WebApi\VehicleLocationRequest.cs" />
+    <Compile Include="WebApi\WXPODRequest.cs" />
+    <Compile Include="WebApi\YtoRequest.cs" />
+    <Compile Include="WebApi\YtoResponse.cs" />
+    <Compile Include="WMS\ASNs\AddASNandASNDetailRequest.cs" />
+    <Compile Include="WMS\ASNs\ASNAndASNDetail.cs" />
+    <Compile Include="WMS\ASNs\GetASNByConditionRequest.cs" />
+    <Compile Include="WMS\ASNs\GetASNByConditionResponse.cs" />
+    <Compile Include="WMS\ASNs\GetASNByIDResponse.cs" />
+    <Compile Include="WMS\ASNs\GetASNDetailByConditionResponse.cs" />
+    <Compile Include="WMS\ASNs\GetASNNewBoxLabelByConditionRequest.cs" />
+    <Compile Include="WMS\ASNs\GetASNNewBoxLabelByConditionResponse.cs" />
+    <Compile Include="WMS\BarCode\GetBarCodeByConditionRequest.cs" />
+    <Compile Include="WMS\BarCode\GetBarCodeByConditionResponse.cs" />
+    <Compile Include="WMS\DeliverConfirm\AddDeliverAndDetailRequest.cs" />
+    <Compile Include="WMS\DeliverConfirm\GetDeliverByConditionRequest.cs" />
+    <Compile Include="WMS\DeliverConfirm\GetDeliverByConditionResponse.cs" />
+    <Compile Include="WMS\IntelligentWarehouse\PickUpGoodsManagementRequest.cs" />
+    <Compile Include="WMS\IntelligentWarehouse\PickUpGoodsManagementResponse.cs" />
+    <Compile Include="WMS\IntelligentWarehouse\ShelvesPanelRequest.cs" />
+    <Compile Include="WMS\IntelligentWarehouse\ShelvesPanelResponse.cs" />
+    <Compile Include="WMS\Inventory\AddInventroyRequest.cs" />
+    <Compile Include="WMS\Inventory\GetInventoryBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Inventory\GetInventoryBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Inventory\GetReplenishmentAndReplenishmentDetailsResponse.cs" />
+    <Compile Include="WMS\Inventory\GetReplenishmentByConditionRequest.cs" />
+    <Compile Include="WMS\Inventory\GetReplenishmentByConditionResponse.cs" />
+    <Compile Include="WMS\Inventory\GetReplenishmentDetailByConditionRequest.cs" />
+    <Compile Include="WMS\Inventory\GetReplenishmentDetailByConditionResponse.cs" />
+    <Compile Include="WMS\Inventory\ReplenishmentAndReplenishmentDetail.cs" />
+    <Compile Include="WMS\JCApi\JCAPiRequest.cs" />
+    <Compile Include="WMS\JCApi\JCAPiResponse.cs" />
+    <Compile Include="WMS\LogOperation\GetLogOperationByConditionRequest.cs" />
+    <Compile Include="WMS\LogOperation\GetLogOperationByConditionResponse.cs" />
+    <Compile Include="WMS\Machining\GetMachiningByConditionRequest.cs" />
+    <Compile Include="WMS\Machining\GetMachiningByConditionResponse.cs" />
+    <Compile Include="WMS\Order\GetWaveByConditionRequest.cs" />
+    <Compile Include="WMS\Order\GetWaveByConditionResponse.cs" />
+    <Compile Include="WMS\Order\InventoryOfOutboundRequest.cs" />
+    <Compile Include="WMS\Order\OrderAndDetailModel.cs" />
+    <Compile Include="WMS\Order\OrderShipmentRequest.cs" />
+    <Compile Include="WMS\Order\OrderShipmentResponse.cs" />
+    <Compile Include="WMS\Order\OutboundInstructionsRequest.cs" />
+    <Compile Include="WMS\Order\OutboundInstructionsResponse.cs" />
+    <Compile Include="WMS\Order\ExpressPackeResponse.cs" />
+    <Compile Include="WMS\PreOrders\ManualAllocationRequest.cs" />
+    <Compile Include="WMS\Order\AddPackageAndDetailRequest.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderRequest.cs" />
+    <Compile Include="WMS\PreOrders\PreOrderResponse.cs" />
+    <Compile Include="WMS\Order\GetOrderByConditionRequest.cs" />
+    <Compile Include="WMS\Order\GetOrderByConditionResponse.cs" />
+    <Compile Include="WMS\Order\GetOrderAndOrderDetailByConditionRequest.cs" />
+    <Compile Include="WMS\Order\GetOrderAndOrderDetailByConditionResponse.cs" />
+    <Compile Include="WMS\Inventory\AddAdjustmentandAdjustmentDetailRequest.cs" />
+    <Compile Include="WMS\Inventory\AdjustmentAndAdjustmentDetail.cs" />
+    <Compile Include="WMS\Inventory\GetAdjustmentByConditionRequest.cs" />
+    <Compile Include="WMS\Inventory\GetAdjustmentByConditionResponse.cs" />
+    <Compile Include="WMS\Inventory\GetAdjustmentDetailByConditionRequest.cs" />
+    <Compile Include="WMS\Inventory\GetAdjustmentDetailByConditionResponse.cs" />
+    <Compile Include="WMS\Print\GetPrintByConditionRequest.cs" />
+    <Compile Include="WMS\Print\GetPrintByConditionResponse.cs" />
+    <Compile Include="WMS\Product\AddProductExeclRequest.cs" />
+    <Compile Include="WMS\Product\AddProductExeclResponse.cs" />
+    <Compile Include="WMS\Product\GetProductByConditionRequest.cs" />
+    <Compile Include="WMS\Product\GetProductByConditionResponse.cs" />
+    <Compile Include="WMS\Product\EditSKUProductRequest.cs" />
+    <Compile Include="WMS\Product\QuerySKUProductResponse.cs" />
+    <Compile Include="WMS\Receipt\AddASNAndASNDetailRequest.cs" />
+    <Compile Include="WMS\Receipt\AddReceiptAndReceiptDetailResponse.cs" />
+    <Compile Include="WMS\Receipt\DeleteReceiptRequest.cs" />
+    <Compile Include="WMS\Receipt\GetAsnByConditionRequest.cs" />
+    <Compile Include="WMS\Receipt\GetAsnByConditionResponse.cs" />
+    <Compile Include="WMS\Receipt\GetReceiptAndReceriptDetailsResponse.cs" />
+    <Compile Include="WMS\Receipt\GetReceiptByConditionRequest.cs" />
+    <Compile Include="WMS\Receipt\GetReceiptByConditionResponse.cs" />
+    <Compile Include="WMS\Receipt\GetReceiptByIDResponse.cs" />
+    <Compile Include="WMS\Receipt\AddReceiptAndReceiptDetailRequest.cs" />
+    <Compile Include="WMS\Receipt\GetReceiptDetailByConditionRequest.cs" />
+    <Compile Include="WMS\Receipt\GetReceiptDetailByConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetInspectionReportBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetInspectionReportBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetInventoryBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetInventoryBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetReportExpressBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetReportExpressBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetSkuBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetSkuBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetSKUChangeBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetSKUChangeBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetSkuInAndOutBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetSkuInAndOutBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetInventoryChangeBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetInventoryChangeBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetWarehouseStorageDensityBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetWarehouseStorageDensityBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetReportTableBySearchConditionRequest.cs" />
+    <Compile Include="WMS\Report\GetReportTableBySearchConditionResponse.cs" />
+    <Compile Include="WMS\Report\GetWorkingStatisRequest.cs" />
+    <Compile Include="WMS\Report\GetWorkingStatisResponse.cs" />
+    <Compile Include="WMS\SettlementManagement\GetSettlementByConditionResponse.cs" />
+    <Compile Include="WMS\SettlementManagement\GetSettlementByConditionRequest.cs" />
+    <Compile Include="WMS\Shelves\GetReceiptByConditionRequest.cs" />
+    <Compile Include="WMS\Shelves\GetReceiptByConditionResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WMS\Shelves\GetShelvesByConditionRequest.cs" />
+    <Compile Include="WMS\Receipt\GetAsnOrReceiptOrDetailByConditionResponse.cs" />
+    <Compile Include="WMS\Receipt\GetAsnOrReceiptOrDetailByConditionRequest.cs" />
+    <Compile Include="WMS\Shelves\GetShelvesByConditionResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WMS\Storer\GetStorerByConditionRequest.cs" />
+    <Compile Include="WMS\Template\GetTemplateByConditionRequest.cs" />
+    <Compile Include="WMS\Template\GetTemplateByConditionResponse.cs" />
+    <Compile Include="WMS\Warehouse\AddOrUpdateWarehouseAreaRequest.cs" />
+    <Compile Include="WMS\Warehouse\AddOrUpdateWarehouseLocationRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseAreaByIDRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseAreaByIDResponse.cs" />
+    <Compile Include="WMS\Warehouse\AddOrUpdateWarehouseRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseByConditionResponse.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseByConditonRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseByIDRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseByIDResponse.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseLocationByIDRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseLocationByIDResponse.cs" />
+    <Compile Include="WMS\Warehouse\GetWLocationByConditonRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWLocationByConditionResponse.cs" />
+    <Compile Include="WMS\Warehouse\AddLocationRequest.cs" />
+    <Compile Include="WMS\Warehouse\WarehouseAllocateRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetWarehouseCheckByConditionResponse.cs" />
+    <Compile Include="WMS\Warehouse\GetWareHouseCheckByConditonRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetGoodsShelfByConditonRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetGoodsShelfByConditionResponse.cs" />
+    <Compile Include="WMS\Warehouse\GetQRCodeByConditonRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetQRCodeByConditionResponse.cs" />
+    <Compile Include="WMS\Warehouse\GetProductWarningByConditonRequest.cs" />
+    <Compile Include="WMS\Warehouse\GetProductWarningByConditionResponse.cs" />
+    <Compile Include="YXDBJRPrint\YXDRBJPODManagementResponse.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IntelligentWarehouse\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Runbow.TWS.Common\Runbow.TWS.Common.csproj">
+      <Project>{a8de5d57-c805-44c0-955a-79995e3b2466}</Project>
+      <Name>Runbow.TWS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Runbow.TWS.Entity\Runbow.TWS.Entity.csproj">
+      <Project>{99059584-b657-4baf-8d7a-1160879646da}</Project>
+      <Name>Runbow.TWS.Entity</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

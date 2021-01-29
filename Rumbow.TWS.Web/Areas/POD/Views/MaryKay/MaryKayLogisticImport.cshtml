@@ -1,0 +1,75 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+
+<script type="text/javascript">
+
+    var fileImportClick = function () {
+        if ($('#importExcel').val() === '') {
+            Runbow.TWS.Alert("请选择要导入的Excel");
+            return false;
+        }
+
+        var exp = /.xls$|.xlsx$/;
+        var fileImport = $('#fileImport').clone();
+        if (exp.exec($('#importExcel').val()) == null) {
+            Runbow.TWS.Alert("请选择Excel格式的文件");
+            $('#importExcel').remove();
+            $(this).before(fileImport);
+            return false;
+        };
+
+        $.ajaxFileUpload({
+            url: '/POD/MaryKay/MaryKayLogisticImport',
+            secureuri: false,
+            fileElementId: 'importExcel',
+            dataType: 'json',
+            data: {},
+            success: function (data, status) {
+                $("#outPutResult").html(data.result);
+            },
+            error: function (data, status, e) {
+                Runbow.TWS.Alert('导入跟踪失败');
+                WebPortal.MessageMask.Close();
+            }
+        });
+    };
+
+
+</script>
+
+<style>
+    #main
+    {
+        width: 800px;
+    }
+</style>
+
+<div style="width: 730px;">
+    <fieldset>
+        <legend>玫琳凯物流跟踪信息覆盖更新说明
+        </legend>
+        <div id="importInstructionDiv">
+            1.更新的Excel文件必须是从本系统导出<br />
+            2.导出的Excel文件表头结构不能破坏<br />
+            3.覆盖更新的字段有：<br />
+            A:<span style="color: red;">创建时间</span>
+            B:<span style="color: red;">跟踪时间</span>
+            C:<span style="color: red;">签收时间</span>
+            D:<span style="color: red;">跟踪状态</span>
+            E:<span style="color: red;">责任归属</span>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>选择Excel导入运单信息
+        </legend>
+        <div id="importDiv">
+            <input type="file" id="importExcel" class="fileImport" name="importExcel" />
+            <input type="submit" value="导入" class="fileImport" onclick="return fileImportClick();" />
+        </div>
+    </fieldset>
+</div>
+<fieldset>
+    <legend>执行结果</legend>
+     <div id="outPutResult">
+        
+    </div>
+</fieldset>

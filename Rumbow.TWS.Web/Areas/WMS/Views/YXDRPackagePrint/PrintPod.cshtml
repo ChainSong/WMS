@@ -1,0 +1,375 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.YXDRBJPrintPodModel
+<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@{
+    ViewBag.Title = "PrintPod";
+}
+<style>
+    .only_for_print
+    {
+        /*display: none;*/
+        display: block;
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+
+    .noprint
+    {
+        display: none;
+    }
+
+    .bor > td
+    {
+        border: 2px solid #000000;
+    }
+
+    .border-table
+    {
+        border-collapse: collapse;
+        border: none;
+    }
+
+        .border-table > td
+        {
+            border: solid #000 1px;
+        }
+
+    #boxlist tr td
+    {
+        text-align: center;
+        font-size: 14px;
+    }
+</style>
+
+<script type="text/javascript">
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法   
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+
+        else if (how == '打印...')
+            jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+
+        else
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+    }
+    //返回（防止新增箱返回后没刷新）
+    function PackageID()
+    {
+        var OrderID=@ViewBag.OrderID;
+        if(OrderID=='0')
+        {
+            history.go(-1);
+        }
+        else
+        {
+            location.href = "/WMS/OrderManagement/YXDRPackage/?ID=" + OrderID;
+        }
+    }
+</script>
+
+<div class="actionButtonDiv" style="padding-top: 60px;">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    @*<input type="button" value="返回" class="btn btn-success" onclick="PackageID()">*@
+</div>
+<h3>POD打印</h3>
+@if (Model.EnumerableYXDRPodInfo != null && Model.EnumerableYXDRPodInfo.Any())
+{
+
+    var i = 0;
+
+    //获取customerid
+    var cust1 = Model.EnumerableYXDRPodInfo.Select(m => m.OrderNumber).FirstOrDefault();
+    var cust2 = "";
+    if (!string.IsNullOrEmpty(cust1))
+    {
+        cust2 = cust1.Substring(2, 2);
+    }
+
+    foreach (var item in Model.EnumerableYXDRPodInfo)
+    {
+        var netw = 0;
+        var netw2 = "";
+        var time1 = @item.Estimatdischargetime.ToString();
+        var time2 = Convert.ToDateTime(time1).ToString("MM月dd日");//客户要求到货日期
+        var time3 = Convert.ToDateTime(time1).ToString("yyyy/MM/dd");
+        i++;
+        var page = "page" + i;
+    <div id="@page" class="only_for_print pagestyle" style="padding-top:20px;" >
+        @*上海仓*@
+        @if (item.Warehouse == "YXDR")
+        {
+            <table style="border: 0px solid">
+                <tr>
+                    <td>
+                        <img id="logoimage" src="../../../../Image/logo.jpg" /></td>
+                    <td>
+                        <h4>上海虹迪物流科技有限公司运单</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td>编号:@item.ExternOrderNumber.ToString()</td>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 22px; text-align: center">*@item.OrderNumber.ToString()*</td>
+                </tr>
+                <tr>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 22px; text-align: center">*@item.ExternOrderNumber.ToString()*</td>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 22px; text-align: center">*@item.ShipToKey.ToString()*</td>
+                </tr>
+            </table>
+        }
+@*北京仓*@
+        else if (item.Warehouse == "YXDR-BJ")
+        {
+            <table style="border: 0px solid">
+                <tr>
+                    <td rowspan="2">
+                        <img id="logoimage" src="../../../../Image/logo.jpg" /></td>
+                    <td>
+                        <h4>上海虹迪物流科技有限公司运单</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td>编号:@item.ExternOrderNumber.ToString()</td>
+                </tr>
+            </table>
+        }
+@*其他未特殊要求的仓库*@
+        else
+        {
+            <table style="border: 0px solid">
+                <tr>
+                    <td rowspan="2">
+                        <img id="logoimage" src="../../../../Image/logo.jpg" /></td>
+                    <td>
+                        <h4>上海虹迪物流科技有限公司运单</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td>编号:@item.ExternOrderNumber.ToString()</td>
+                </tr>
+            </table>
+        }
+
+        <table style="border: 2px solid">
+            <tr>
+                <td rowspan="4" style="width: 10px">发货方</td>
+                <td>发货代码:</td>
+                <td style="width: 25%"></td>
+                <td rowspan="4" style="width: 10px">承运商</td>
+                <td style="font-weight: bold; width: 25%">@item.Warehousecompany</td>
+                <td rowspan="4" style="width: 10px">收货方</td>
+                <td>收货代码:</td>
+                <td style="width: 26%">@item.ShipToKey</td>
+            </tr>
+            <tr>
+                <td>单位名称:</td>
+                <td style="font-weight: bold">@item.Warehousecompany</td>
+                <td style="font-weight: bold">项目团队:Haddad项目</td>
+                <td>单位名称:</td>
+                <td style="font-weight: bold">@item.Company</td>
+            </tr>
+            <tr>
+                <td>单位地址:</td>
+                <td style="font-weight: bold; width: 130px">@item.Warehouseaddress</td>
+                <td>tel:@item.Warehousephone</td>
+                <td>单位地址:</td>
+                <td style="width: 130px; font-weight: bold">@item.AddressLine1</td>
+            </tr>
+            <tr>
+                <td>联系方式:</td>
+                <td style="font-weight: bold">@item.Warehousephone</td>
+                <td style="font-weight: bold">mob:@item.Warehousephone&nbsp;&nbsp;@item.Warehousecontact</td>
+                <td>联系方式:</td>
+                <td style="font-weight: bold">@item.Contact1<br />@item.Receivingcontact</td>
+            </tr>
+
+        </table>
+        @*上海*@
+        @if (item.Warehouse == "YXDR")
+        {
+            <table style="border: 2px solid; border-top: 0px; border-bottom: 0px">
+
+                <tr>
+                    <td>物品名称</td>
+                    <td>箱数</td>
+                    <td>件数</td>
+                    <td>体积</td>
+                    <td>重量</td>
+                    <td>备注</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">APP</td>
+                    <td style="text-align: center">@item.sumBox</td>
+                    <td rowspan="2">@item.sumNum</td>
+                    <td style="text-align: center">@item.volume&nbsp;&nbsp;&nbsp;立方米</td>
+
+            @*        @if (item.NetWeight.Contains("."))
+                    {
+                        netw = item.NetWeight.IndexOf(".");
+                        netw2 = item.NetWeight.Substring(0, netw + 2);
+                        <td rowspan="2">@netw2</td>
+                    }
+                    else
+                    {
+                        <td rowspan="2">@item.NetWeight</td>
+                    }*@
+                    <td rowspan="2">@item.NetWeight</td>
+                    <td style="font-weight: bold" rowspan="2">客户要求到货日期:@time2</td>
+                </tr>
+                <tr>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 25px; text-align: center">*@item.sumBox.ToString(".0")*</td>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 18px; text-align: center">*@item.volume*</td>
+                </tr>
+            </table>
+        }
+        else if (item.Warehouse == "YXDR-BJ")
+        {
+            <table style="border: 2px solid; border-top: 0px; border-bottom: 0px">
+
+                <tr>
+                    <td>物品名称</td>
+                    <td>箱数</td>
+                    <td>件数</td>
+                    <td>体积</td>
+                    <td>重量</td>
+                    <td>备注</td>
+                </tr>
+                <tr>
+                    <td>APP</td>
+                    <td style="text-align: center">@item.sumBox</td>
+                    <td>@item.sumNum</td>
+                    <td style="text-align: center">@item.volume&nbsp;&nbsp;&nbsp;立方米</td>
+                  @*  @if (item.NetWeight.Contains("."))
+                    {
+                        netw = item.NetWeight.IndexOf(".");
+                        netw2 = item.NetWeight.Substring(0, netw + 2);
+                        <td>@netw2</td>
+                    }
+                    else
+                    { 
+                        <td>@item.NetWeight</td>
+                    }*@
+                    <td>@item.NetWeight</td>
+                    <td style="font-weight: bold">客户要求到货日期:@time2</td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <table style="border: 2px solid; border-top: 0px; border-bottom: 0px">
+
+                <tr>
+                    <td>物品名称</td>
+                    <td>箱数</td>
+                    <td>件数</td>
+                    <td>体积</td>
+                    <td>重量</td>
+                    <td>备注</td>
+                </tr>
+                <tr>
+                    <td>APP</td>
+                    <td style="text-align: center">@item.sumBox</td>
+                    <td>@item.sumNum</td>
+                    <td style="text-align: center">@item.volume&nbsp;&nbsp;&nbsp;立方米</td>
+                   @* @if (item.NetWeight.Contains("."))
+                    {
+                        netw = item.NetWeight.IndexOf(".");
+                        netw2 = item.NetWeight.Substring(0, netw + 2);
+                        <td>@netw2</td>
+                    }
+                    else
+                    { 
+                        <td>@item.NetWeight</td>
+                    }*@
+                    <td>@item.NetWeight</td>
+                    <td style="font-weight: bold">客户要求到货日期:@time2</td>
+                </tr>
+            </table>
+        }
+
+        <table style="border: 2px solid; border-bottom: 0px">
+            <tr>
+                <td rowspan="3" style="width: 10px">运输要求</td>
+                <td>发货日期:</td>
+                <td>客户要求到货日期</td>
+                <td rowspan="2">运输方式:&nbsp;<label><input type="checkbox" value="" checked="checked" />汽运&nbsp;</label><label><input type="checkbox" value="" />铁路&nbsp;</label><label><input type="checkbox" value="" />空运</label></td>
+            </tr>
+            <tr>
+                <td style="font-weight: bold">@time3</td>
+                <td style="font-weight: bold">@time3</td>
+            </tr>
+            <tr>
+                <td>包装方式:&nbsp;<label><input type="checkbox" value="" checked="checked" />纸箱&nbsp;</label><label><input type="checkbox" value="" />编织袋</label></td>
+                <td>支付方式:&nbsp;<label><input type="checkbox" value="" />预付&nbsp;</label><label><input type="checkbox" value="" />到付</label></td>
+                <td>特殊要求:&nbsp;<label><input type="checkbox" value="" />紧急运输&nbsp;</label><label><input type="checkbox" value="" />整车运输</label></td>
+            </tr>
+        </table>
+        <table style="border: 2px solid; border-bottom: 0px">
+            <tr>
+                <td style="width: 10px">发货方签章</td>
+                <td style="width: 30%"></td>
+                <td style="width: 10px">承运商签章</td>
+                <td style="width: 30%"></td>
+                <td style="width: 10px">收货方签章</td>
+                <td>收货人姓名:<br />
+                    <br />
+                    收货人身份证号:<br />
+                    <br />
+                    签收日期:&nbsp;&nbsp;20&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;日
+                </td>
+            </tr>
+        </table>
+        <table style="border: 2px solid">
+            <tr>
+                <td style="width: 10px">发货方记事</td>
+                <td style="width: 50px"></td>
+                <td style="width: 10px">承运方记事</td>
+                <td>
+                    <table style="border: 1px solid">
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>送货注意事项:</li>
+                                    <li>1、货物价值高，请务必保证货物安全</li>
+                                    <li>2、按照回单要求的日期到货，到货前请提前预约;</li>
+                                    <li>3、送货完成后请检查回单是否签收完好，是否盖章，日期是否正确，回单上如果有记载异常信息请及时反馈给我司，<br />
+                                        并在我司指导下调查解决，确认完毕后请及时将回单返回如下联系人 </li>
+                                    @* <li>4、如有异常情况及时通知虹迪物流，异常情况联系人:王政，联系电话：13524638193</li>*@
+                                    <li>4、如有异常情况及时通知虹迪物流，异常情况联系人:@item.Warehousecontact，联系电话：@item.Warehousephone</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="width: 10px">货物签收情况</td>
+                <td style="width: 60px"></td>
+
+            </tr>
+        </table>
+
+
+
+    </div>   
+
+    
+    }
+
+}
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

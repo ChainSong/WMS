@@ -1,0 +1,171 @@
+﻿@model Runbow.TWS.Web.Areas.CRM.Models.CrmViewInfoViewModel
+@using (Html.BeginForm())
+{
+    
+        if (Model.CRMInfo != null)
+        {
+           @Html.HiddenFor(m => m.TypeID);
+        <fieldset>
+        <legend>个人信息 personal information</legend>
+            <table>
+               
+                <tr>
+                    
+                    <td class="TableColumnTitle" style="width:10%">姓名：</td><td style="width:25%">@Model.CRMInfo.CustomerName</td>
+                    <td class="TableColumnTitle" style="width:10%">性别：</td><td style="width:25%">@Model.CRMInfo.Sex</td>
+                    <td class="TableColumnTitle" style="width:10%">出生日期：</td><td style="width:25%">@Convert.ToDateTime(Model.CRMInfo.Date0fBirth).ToString("yyyy-MM-dd")</td>
+                    
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width:10%">年龄：</td><td style="width:25%">@Model.CRMInfo.Age</td>
+                    <td class="TableColumnTitle" style="width:10%">联系电话：</td><td style="width:25%">@Model.CRMInfo.Phone</td>
+                    <td class="TableColumnTitle" style="width:10%">婚否：</td><td style="width:25%">@Model.CRMInfo.IsMarry</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width:10%">项目: </td><td style="width:25%">@Model.CRMInfo.ProjectName</td>
+                    <td class="TableColumnTitle" style="width:10%">所在城市：</td><td style="width:25%">@Model.CRMInfo.City</td>
+                    <td class="TableColumnTitle" style="width:10%">建档日期：</td><td style="width:25%">@Model.CRMInfo.CreateTime</td>
+                    
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle" style="width:10%">更新日期：</td><td style="width:25%">@Model.CRMInfo.UpdateTime</td>
+                    <td class="TableColumnTitle" style="width:10%">学历：</td><td style="width:25%">@Model.CRMInfo.EducationalBackground</td>
+                    <td class="TableColumnTitle" style="width:10%">籍贯：</td><td style="width:25%">@Model.CRMInfo.NativePlace</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">工作单位：</td><td  colspan="11">@Model.CRMInfo.WorkUnit</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">在岗时间：</td><td  colspan="11">@Model.CRMInfo.OnTime</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">工作年限：</td><td colspan="11">@Model.CRMInfo.WorkingLife</td>
+                </tr>
+
+                <tr>
+                    <td class="TableColumnTitle">工作经历：</td><td colspan="11">
+                    @Model.CRMInfo.WorkExperience
+                    </td>
+                </tr>
+                </table>
+              </fieldset>
+            
+            <fieldset>
+                <legend>家庭信息 family information</legend>
+            <table>
+                
+                <tr>
+                    <td style="text-align:left"  class="TableColumnTitle">家庭组成：</td><td colspan="2">@Model.CRMInfo.FamilyComposition</td>
+                    <td style="text-align:left"  class="TableColumnTitle">家庭地址：</td><td colspan="2">@Model.CRMInfo.HomeAddress</td>
+                </tr>
+            
+            
+                <tr>
+                    <td  class="TableColumnTitle">家庭成员信息（包括家庭成员个人爱好）：</td><td colspan="5">@Model.CRMInfo.FamilyInformation</td>
+                </tr>
+             </table>
+            </fieldset>
+            
+            <fieldset><legend>需求信息  special needs information</legend>
+            <table>
+               
+                <tr>
+                    <td  class="TableColumnTitle" style="width:10%">个人爱好：</td><td style="width:25%">@Model.CRMInfo.PersonalHobbies</td>
+                    <td  class="TableColumnTitle" style="width:10%">餐饮喜好：</td><td style="width:25%">@Model.CRMInfo.FoodPreferences</td>
+                    <td  class ="TableColumnTitle" style="width:10%">着装喜好：</td><td style="width:25%">@Model.CRMInfo.Dress</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle">业余消遣：</td><td colspan="5">@Model.CRMInfo.Hobby</td>
+                </tr>
+                </table>
+           </fieldset>
+            
+            <fieldset><legend>与AD/Nike的关系信息   the relationship with AD or Nike</legend>
+            <table>
+               
+                <tr>
+                    <td  class="TableColumnTitle" style="width:10%">任职公司：</td><td style="width:25%">@Model.CRMInfo.TakeOfficeCompany</td>
+                    <td  class="TableColumnTitle" style="width:10%">负责板块：</td><td style="width:25%">@Model.CRMInfo.SectionResponsibleFor</td>
+                    <td  class="TableColumnTitle" style="width:10%">直接上司：</td><td style="width:25%">@Model.CRMInfo.DirectSupervisor</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle" style="width:10%">下属团队：</td><td style="width:25%">@Model.CRMInfo.Team</td>
+                    <td  class="TableColumnTitle" style="width:10%">薪资待遇：</td><td style="width:25%">@Model.CRMInfo.SalaryTreatment</td>
+                    <td  class="TableColumnTitle" style="width:10%">个人口碑：</td><td style="width:25%">@Model.CRMInfo.PersonalReputation</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle">对目前的工作满意度：</td><td colspan="5">@Model.CRMInfo.TheCurrentJobSatisfaction</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle">与RUNBOW的接触时间：</td><td colspan="5">@Model.CRMInfo.WithRunbowContactTime</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle">与RUNBOW的接触经历：</td><td colspan="5">@Model.CRMInfo.WithRunbowContactExperience</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle">与项目供应商的接触时间：</td><td colspan="5">@Model.CRMInfo.WithProjectsupplierContactTime</td>
+                </tr>
+                <tr>
+                    <td  class="TableColumnTitle">与其他3PL的接触情况：</td><td colspan="5">@Model.CRMInfo.WithOther3PLContact</td>
+                </tr>
+            </table>
+           </fieldset>
+        }
+    if (Model.CRMTrackInfoList != null)
+    {
+    <fieldset>
+        <legend>跟踪信息</legend>
+            @{
+                var list = Model.CRMTrackInfoList.ToList();
+                for(int i = 0 ;i < list.Count; i++)
+                {
+                var CrmTrack = list[i];
+
+                var count = i + 1;
+                    
+                    
+         <fieldset> 
+        <legend>跟踪信息 @count &nbsp&nbsp&nbsp @Html.ActionLink("编辑", "CrmTrackSing", new { id = CrmTrack.ID,typeid=Model.TypeID})/<a id="DeleteCrmTrack" class="" href="#" data-id="@CrmTrack.ID" >删除</a></legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle" style="width:10%">拜访人: </td><td  style="width:25%">@CrmTrack.VisitPeople</td>
+                    <td class="TableColumnTitle" style="width:10%">拜访时间:</td><td style="width:25%">@Convert.ToDateTime(CrmTrack.VisitTime).ToString("yyyy-MM-dd")</td>
+                    <td class="TableColumnTitle" style="width:10%">拜访地点:</td><td style="width:25%"> @CrmTrack.VisitPlace</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">拜访形式:</td><td colspan="5"> @CrmTrack.VisitForm</td>
+                    
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">赠送礼品:</td><td colspan="5"> @CrmTrack.GiftsArticles</td>
+                </tr> 
+                <tr> 
+                    <td class="TableColumnTitle">拜访人员对客户的评价:</td><td colspan="5"> @CrmTrack.VisitToCustomerEvaluation</td>
+                </tr> 
+                 <tr>
+                    <td class="TableColumnTitle">拜访人员反馈拜访情况: </td><td colspan="5">@CrmTrack.VisitingPersonnelFeedbackVisit</td>
+                </tr>
+                <tr>
+
+                    <td class="TableColumnTitle">日常项目客户沟通记录:</td><td colspan="5"> @CrmTrack.ProjectCustomerCommunication</td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">项目日常运作所获得该客户支持与协助记录: </td><td colspan="5">@CrmTrack.CustomerSupportAndAssistance</td>
+                </tr>
+            </table>
+            </fieldset>
+            <br />
+                    
+                    
+                }
+            }
+            
+          
+           
+        
+        
+        
+    </fieldset>
+    <div style="width:100%;text-align:center"><input type="button" value="返回"id="btnReturn" /></div>
+    }
+}

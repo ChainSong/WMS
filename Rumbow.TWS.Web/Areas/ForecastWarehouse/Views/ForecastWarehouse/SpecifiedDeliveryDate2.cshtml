@@ -1,0 +1,36 @@
+﻿@model Runbow.TWS.Web.Areas.ForecastWarehouse.Models.ForecastOrdersModel
+ @Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@*预报订单查询页面*@
+@Html.ValidationSummary(true, "")
+
+@using (Html.BeginForm())
+{
+  
+    @Html.HiddenFor(m => m.States)
+    @Html.HiddenFor(m => m.WID)
+    <fieldset>
+    <legend>查询条件</legend>
+    <table>
+     
+         <tr>
+          
+            <td class="TableColumnTitle">
+                 @Html.LabelFor(m => m.PickTime)
+            </td>
+            <td>
+               @Html.CalendarFor(model => model.PickTime)
+            </td>  
+               
+             <td colspan="2">
+                 <input type="submit" value="确定" id="query" />
+             </td>
+        </tr>
+        
+    </table>
+   @* <div class="actionButtonDiv">
+                <input type="submit" value="查询" id="query" />
+
+    </div>*@
+</fieldset>
+   
+}

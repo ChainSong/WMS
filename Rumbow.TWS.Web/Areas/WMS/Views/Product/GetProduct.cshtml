@@ -1,0 +1,260 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Product.QueryProductModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{ 
+    <div>
+        <fieldset>
+            <legend>基础信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">货主</td>
+                    <td>
+                        @Model.productStorerInfo.StorerID
+                    </td>
+                    <td class="TableColumnTitle">SKU</td>
+                    <td>
+                        @Model.productStorerInfo.SKU
+                    </td>
+                    <td class="TableColumnTitle">状态</td>
+                    <td>
+                        @Model.productStorerInfo.Status
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">货品名称</td>
+                    <td>
+                        @Model.productStorerInfo.GoodsName
+                    </td>
+                    <td class="TableColumnTitle">货品种类</td>
+                    <td>
+                        @Model.productStorerInfo.GoodsType
+                    </td>
+                    <td class="TableColumnTitle">SKU分类</td>
+                    <td>
+                        @Model.productStorerInfo.SKUClassification
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">SKU分组</td>
+                    <td>
+                        @Model.productStorerInfo.SKUGroup
+                    </td>
+                    <td class="TableColumnTitle">制造商SUK</td>
+                    <td>
+                        @Model.productStorerInfo.ManufacturerSKU
+                    </td>
+                    <td class="TableColumnTitle">零售商SKU</td>
+                    <td>
+                        @Model.productStorerInfo.RetailSKU
+                    </td>
+
+
+
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">可替换SKU</td>
+                    <td>
+                        @Model.productStorerInfo.ReplaceSKU
+                    </td>
+                    <td class="TableColumnTitle">箱组</td>
+                    <td>
+                        @Model.productStorerInfo.BoxGroup
+                    </td>
+                    <td class="TableColumnTitle">包装</td>
+                    <td>
+                        @Model.productStorerInfo.Packing
+                    </td>
+
+
+
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">ABC分类</td>
+                    <td>
+                        @Model.productStorerInfo.Grade
+                    </td>
+                    <td class="TableColumnTitle">国家</td>
+                    <td>
+                        @Model.productStorerInfo.Country
+                    </td>
+                    <td class="TableColumnTitle">制造商</td>
+                    <td>
+                        @Model.productStorerInfo.Manufacturer
+                    </td>
+
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">危险代码</td>
+                    <td>
+                        @Model.productStorerInfo.DangerCode
+                    </td>
+                    <td class="TableColumnTitle">描述</td>
+                    <td colspan="5">
+                        @Model.productStorerInfo.Remark
+                    </td>
+                </tr>
+            </table>
+
+        </fieldset>
+        <fieldset>
+            <legend>包装信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">容积</td>
+                    <td>
+                        @Model.productStorerInfo.Volume
+                    </td>
+                    <td class="TableColumnTitle">标准容积</td>
+                    <td>
+                        @Model.productStorerInfo.StandardVolume
+                    </td>
+                    <td class="TableColumnTitle">重量</td>
+                    <td>
+                        @Model.productStorerInfo.Weight
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">标准重量</td>
+                    <td>
+                        @Model.productStorerInfo.StandardWeight
+                    </td>
+                    <td class="TableColumnTitle">净重</td>
+                    <td>
+                        @Model.productStorerInfo.NetWeight
+                    </td>
+                    <td class="TableColumnTitle">标准净重</td>
+                    <td>
+                        @Model.productStorerInfo.StandardNetWeight
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">单价</td>
+                    <td>
+                        @Model.productStorerInfo.Price
+                    </td>
+                    <td class="TableColumnTitle">实际单价</td>
+                    <td>
+                        @Model.productStorerInfo.ActualPrice
+                    </td>
+                    <td class="TableColumnTitle">成本</td>
+                    <td>
+                        @Model.productStorerInfo.Cost
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">实际成本</td>
+                    <td>
+                        @Model.productStorerInfo.ActualCost
+                    </td>
+                    <td class="TableColumnTitle">标准订货成本</td>
+                    <td>
+                        @Model.productStorerInfo.StandardOrderingCost
+                    </td>
+                    <td class="TableColumnTitle">运输成本</td>
+                    <td>
+                        @Model.productStorerInfo.ShipmentCost
+                    </td>
+                </tr>
+
+
+            </table>
+
+
+        </fieldset>
+        <fieldset>
+            <legend>包装信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">质检地</td>
+                    <td>
+                        @Model.productStorerInfo.QcInSpectionLoc
+                    </td>
+                    <td class="TableColumnTitle">质检合格率</td>
+                    <td>
+                        @Model.productStorerInfo.QCPercentage
+                    </td>
+                    <td class="TableColumnTitle">质检Uom</td>
+                    <td>
+                        @Model.productStorerInfo.ReceiptQcUom
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">质检是否合格</td>
+                    <td>
+                        @if (Model.productStorerInfo.IsQcEligible == 0)
+                        {
+
+                        }
+
+
+                    </td>
+
+                </tr>
+            </table>
+
+        </fieldset>
+        <fieldset>
+            <legend>策略信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">放货区域</td>
+                    <td>
+                        @Model.productStorerInfo.PutArea
+                    </td>
+                    <td class="TableColumnTitle">放货代码</td>
+                    <td>
+                        @Model.productStorerInfo.PutCode
+                    </td>
+                    <td class="TableColumnTitle">放置规则</td>
+                    <td>
+                        @Model.productStorerInfo.PutRule
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">策略</td>
+                    <td>
+                        @Model.productStorerInfo.PutStrategy
+                    </td>
+                    <td class="TableColumnTitle">分配规则</td>
+                    <td>
+                        @Model.productStorerInfo.AllocateRule
+                    </td>
+                    <td class="TableColumnTitle">拣货代码</td>
+                    <td>
+                        @Model.productStorerInfo.PickedCode
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </fieldset>
+        <fieldset>
+            <legend>货品信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">品名类别</td>
+                    <td>
+                        @Model.productStorerInfo.SKUType
+                    </td>
+                    <td class="TableColumnTitle">货品颜色</td>
+                    <td>
+                        @Model.productStorerInfo.Color
+                    </td>
+                    <td class="TableColumnTitle">货品尺寸</td>
+                    <td>
+                        @Model.productStorerInfo.Size
+                    </td>
+                </tr>
+
+
+            </table>
+
+        </fieldset>
+        <div class="actionButtonDiv">
+            <input type="button" value="返回" id="ReturnButton" class="btn btn-success" />
+            @*   <input type="button" value="编辑" id="EditButton" />*@
+        </div>
+    </div>
+}

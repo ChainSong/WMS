@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+
+@*<link href="~/CSS/Monitoring.css" rel="stylesheet" />
+<script src="~/JS/jquery-1.8.3.min.js"></script>
+<script src="~/JS/highcharts/highcharts.js"></script>
+<script src="~/JS/Home/Index.js"></script>
+<script src="~/JS/highcharts/exporting.js"></script>
+<script src="~/JS/highcharts/highcharts-3d.js"></script>
+<script src="~/JS/jquery.datetimepicker.js"></script>*@
+@using (Html.BeginForm())
+{
+    <div class="row" id="headers">
+        <div class="col-xs-12 col-md-3">
+            <img src="~/Img/logo.jpg" />
+        </div>
+
+        <div class="col-xs-12 col-md-6">
+            <h1>Nike Beijing Digital SDC Real-time Monitor</h1>
+        </div>
+        <div class="col-xs-12 col-md-3 div3">
+            <a href="javascript:void(0);" id="refresh">Refresh</a>
+            <a href="~/Home/AddElectricNumerical">Modify</a> <label style="margin-left:10px" id="time"></label>
+        </div>
+    </div>
+    <div id="content">
+        @*  <div class="col-xs-12 col-md-12 circular">
+                <div id="CarbonEmissions"></div>
+            </div>*@
+        <div class="row" id="content1">
+            <div class="col-md-5 graphics zuo" id="Efficiency"> </div>
+            <div class="col-md-6 graphics you" id="WeeksOrders"> </div>
+        </div>
+        <div class="row" id="content2">
+            <div class="col-md-5  graphics zuo" id="TimelyRate"> </div>
+            <div class="col-md-6 graphics you" id="OrderQuantity"> </div>
+
+        </div>
+
+    </div>
+}
+
