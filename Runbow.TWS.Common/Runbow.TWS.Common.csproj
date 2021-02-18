@@ -160,12 +160,6 @@
     <None Include="Library\NPOI.OpenXml4Net.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CSRedis\CSRedis.csproj">
-      <Project>{d35e185e-a7e1-41e1-846c-21944f56074f}</Project>
-      <Name>CSRedis</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
