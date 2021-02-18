@@ -225,6 +225,10 @@
     <Content Include="Views\Receipt\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CSRedis\CSRedis.csproj">
+      <Project>{d35e185e-a7e1-41e1-846c-21944f56074f}</Project>
+      <Name>CSRedis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Runbow.TMS.MessageContracts\Runbow.TWS.MessageContracts.csproj">
       <Project>{16f15667-9682-4d12-8780-db1173e5a678}</Project>
       <Name>Runbow.TWS.MessageContracts</Name>
