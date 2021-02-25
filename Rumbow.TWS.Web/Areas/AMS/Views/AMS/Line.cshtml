@@ -1,0 +1,119 @@
+﻿@model  Runbow.TWS.Web.Areas.AMS.Models.GenBoxNumberViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StatUpLoadTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndUpLoadTime)
+    @Html.HiddenFor(m => m.Check, "SelectedIDs")
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">线路名称</td>
+                <td><input type="text" /></td>
+                <td class="TableColumnTitle">线路代码</td>
+                <td><input type="text" /></td>
+                <td class="TableColumnTitle">承运商</td>
+                <td>
+                    <select>
+                        <option value="sf">顺丰</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">起运省份</td>
+                <td><input type="text" /></td>
+                <td class="TableColumnTitle">起运城市</td>
+                <td><input type="text" /></td>
+                <td class="TableColumnTitle">起运区县</td>
+                <td><input type="text" /></td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">到达省份</td>
+                <td><input type="text" /></td>
+                <td class="TableColumnTitle">到达城市</td>
+                <td><input type="text" /></td>
+                <td class="TableColumnTitle">到达区县</td>
+                <td><input type="text" /></td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="btnSave" />
+            <input type="button" value="新增线路" id="birth" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>
+        线路列表
+        @if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
+        {
+            @Html.Raw("(" + Model.AMSUploadCollection.Count() + ")");
+        }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>线路名称@*@Html.CheckBox("selectAll", "onclick=selectAll")*@</th>
+                <th>线路代码</th>
+                <th>快递承运商</th>
+                <th>起运省份</th>
+                <th>起运城市</th>
+                <th>起运区县</th>
+                <th>到达省份</th>
+                <th>到达城市</th>
+                <th>到达区县</th>
+                <th>参考距离(KM)</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>上海北京</td>
+                <td>DCC01001</td>
+                <td>顺丰快递</td>
+                <td>上海</td>
+                <td>上海</td>
+                <td>浦东新区 </td>
+                <td>北京</td>
+                <td>北京</td>
+                <td>亦庄</td>
+                <td>1239</td>
+                <td>
+                    <a href="#" class="btn btn-info btn-sm" style="color:dodgerblue;">编辑</a>
+                </td>
+            </tr>
+            @*@if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
+            {
+                foreach (var ams in Model.AMSUploadCollection)
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBox("check" + ams.ID.ToString(), new { data_ID = ams.ID, @class = "checkForSelect" })
+                            <a class="attachmentClass" href="GetAttachment/@ams.ID" target="_blank">@ams.FileName</a>
+                        </td>
+                        <td>
+                            @ams.FileType
+                        </td>
+                        <td>
+                            @ams.Creator
+                        </td>
+                        <td>
+                            @ams.CreateTime
+                        </td>
+                        @if (ams.Status.ToString() == "True")
+                        {
+                            <td>已验证</td>
+                        }
+                        else
+                        {
+                            <td>未验证</td>
+                        }
+                        <td id="@ams.ID.ToString()">
+                            @ams.OrderNo
+                        </td>
+                    </tr>
+                }
+            }*@
+        </tbody>
+    </table>
+</fieldset>

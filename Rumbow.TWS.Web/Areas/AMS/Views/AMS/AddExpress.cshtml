@@ -1,0 +1,110 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@model  Runbow.TWS.Web.Areas.AMS.Models.QueryReplyDocumentViewModel
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StatUpLoadTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndUpLoadTime)
+    @Html.HiddenFor(m => m.PageIndex)
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">客户名称</td>
+                <td>
+                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, "==请选择==")
+                </td>
+                <td class="TableColumnTitle">运单状态</td>
+                <td>
+                    <select style="width:150px">
+                        <option>已出库</option>
+                        <option>待分配</option>
+                        <option selected="selected">待下单</option>
+                        <option >运输中</option>
+                        <option>已签收</option>
+                    </select>
+                </td>
+                <td class="TableColumnTitle">发货日期</td>
+                <td>
+                    @Html.CalendarRange("UpLoadTime", "calendarRange")
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">运单号</td>
+                <td>
+                    @Html.TextAreaFor(m => m.SearchCondition.Numbers, new { style = "width:95%" })
+                </td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="btnSave" />
+            <input type="button" value="下单" id="btnFP" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>
+        运单列表
+        @if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
+        {
+            @Html.Raw("(" + Model.AMSUploadCollection.Count() + ")");
+        }
+    </legend>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th class="TableColumnTitle">@Html.CheckBox("selectAll", "onclick=selectAll")运单号</th>
+                <th class="TableColumnTitle">发货日期</th>
+                <th class="TableColumnTitle">承运商</th>
+                <th class="TableColumnTitle">起运城市</th>
+                <th class="TableColumnTitle">目的城市</th>
+                <th class="TableColumnTitle">运单状态</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Html.CheckBox("check1", new { data_ID = 1, @class = "checkForSelect" })600674301</td>
+                <td>2021-02-20</td>
+                <td>顺丰快递</td>
+                <td>上海</td>
+                <td>北京</td>
+                <td>待下单</td>
+            </tr>
+            @*@if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
+                {
+                    foreach (var ams in Model.AMSUploadCollection)
+                    {
+                        <tr>
+                            <td>
+                                <a class="attachmentClass" href="../GetAttachment/@ams.ID" data-id="@ams.ID">@ams.FileName</a>
+                            </td>
+                            <td>
+                                @ams.FileType
+                            </td>
+                            <td>
+                                @ams.Creator
+                            </td>
+                            <td>
+                                @ams.CreateTime
+                            </td>
+                            @if (ams.Status.ToString() == "True")
+                            {
+                                <td>已验证</td>
+                            }
+                            else
+                            {
+                                <td>未验证</td>
+                            }
+
+                            @if (Model.Type == 2)
+                            {
+                                <td>
+                                    @ams.OrderNo
+                                </td>
+                            }
+                        </tr>
+                    }
+                }*@
+        </tbody>
+    </table>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
