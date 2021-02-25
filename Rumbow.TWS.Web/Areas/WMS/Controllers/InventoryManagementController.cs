@@ -4827,6 +4827,28 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 vm.AdjustmentAndAdjustmentDetails = new AdjustmentAndAdjustmentDetail();
                 vm.AdjustmentAndAdjustmentDetails.adjustment = new Adjustment();
                 //vm.AdjustmentAndAdjustmentDetails.adjustment.Warehouse = WarehouseName;
+                if (customerID != null)
+                {
+                    if (base.UserInfo.UserType == 0)
+                    {
+                        vm.AdjustmentAndAdjustmentDetails.adjustment.CustomerID = base.UserInfo.CustomerOrShipperID;
+                    }
+                    else if (base.UserInfo.UserType == 2)
+                    {
+                        if (customerID.HasValue)
+                        {
+                            vm.AdjustmentAndAdjustmentDetails.adjustment.CustomerID = customerID;
+                        }
+                        else
+                        {
+                            var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
+                            if (customerIDs != null && customerIDs.Count() == 1)
+                            {
+                                vm.AdjustmentAndAdjustmentDetails.adjustment.CustomerID = customerIDs.First();
+                            }
+                        }
+                    }
+                }
             }
             if (ViewType == 2)
             {
@@ -4848,28 +4870,6 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 ViewBag.Specificationslist = SpecificationsList;
             }
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
-            if (customerID != null)
-            {
-                if (base.UserInfo.UserType == 0)
-                {
-                    vm.AdjustmentAndAdjustmentDetails.adjustment.CustomerID = base.UserInfo.CustomerOrShipperID;
-                }
-                else if (base.UserInfo.UserType == 2)
-                {
-                    if (customerID.HasValue)
-                    {
-                        vm.AdjustmentAndAdjustmentDetails.adjustment.CustomerID = customerID;
-                    }
-                    else
-                    {
-                        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
-                        if (customerIDs != null && customerIDs.Count() == 1)
-                        {
-                            vm.AdjustmentAndAdjustmentDetails.adjustment.CustomerID = customerIDs.First();
-                        }
-                    }
-                }
-            }
 
             //IEnumerable<WMSConfig> wmsCompany;
             //if (customerID == 103)

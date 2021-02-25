@@ -21,7 +21,7 @@
                     var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
                 }
                 <td class="TableColumnTitle" style="width: 11%;">
-                    <label>客户</label>
+                    <label>客户/供应商</label>
                 </td>
                 <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
                 <td class="TableColumnTitle" style="width: 11%;">
@@ -143,6 +143,7 @@
                                             {
                                                 <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="outbound(@item.CustomerID,'@item.Warehouse','@item.IDS')">生成出库单</label>
                                             }
+                                            <label data-id=" " style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="AddShrinkage(@item.CustomerID,'@item.Warehouse','@item.IDS')">添加缩率</label>
 
 
                                         }

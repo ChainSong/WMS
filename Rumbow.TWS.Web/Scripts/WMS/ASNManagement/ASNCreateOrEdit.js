@@ -503,7 +503,7 @@ function AddASNAndASNDetails() {
         showMsg("请选择预入库单类型!", "4000");
         return;
     }
-    var ExpectDate = $('#OrderTime').val();
+    var ExpectDate = $('#ExpectDate').val();
     if (ExpectDate == "") {
         showMsg("请选择预入库日期!", "4000");
         return;
@@ -685,9 +685,15 @@ function FieldSetToJson() {
                     //}
                     if (tds[i].childNodes[1].type == 'checkbox') {
                         r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + (tds[i].childNodes[1].checked == true ? 1 : 0) + "\",";
+                    } else if (tds[i].childNodes[1].type == 'text/javascript' && tds[i].childNodes[3].type == 'text') {
+                        r += "\"" + tds[i].childNodes[3].id.trim() + "\"\:\"" + tds[i].childNodes[3].value + "\",";
                     }
                     else {
-                        r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + tds[i].childNodes[1].value + "\",";
+                        if (tds[i].childNodes[1].value == '新增') {
+                            r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + 1 + "\",";
+                        } else {
+                            r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + tds[i].childNodes[1].value + "\",";
+                        }
                     }
                 }
             }

@@ -197,7 +197,7 @@
                             }
                             @if (Model.ViewType == 0)
                             {
-                                <th style="width: 120px;">制造商SKU</th>
+                                @*<th style="width: 120px;">制造商SKU</th>*@
                             }
                         </tr>
                     }
@@ -214,63 +214,71 @@
                             </td>
                             @foreach (var showColumn in dynamicShowDetailColumns)
                             {
-                                <td style="width:auto;" class="@showColumn.DbColumnName">
-                                    @{
-                                        switch (showColumn.Type)
-                                        {
-                                            case "CheckBox":
-                                                @Html.Raw("N")
-                                                break;
-                                            case "DropDownList":
-                                                var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
+                            <td style="width:auto;" class="@showColumn.DbColumnName">
+                                @{
+                                    switch (showColumn.Type)
+                                    {
+                                        case "CheckBox":
+                                            @Html.Raw("N")
+                                            break;
+                                        case "DropDownList":
+                                            var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
 
-                                                @Html.DropDownList(showColumn.DbColumnName, list, new { @class = "form-control", @style = "width:100%" })
-                                                break;
-                                            case "DateTime":
-                                                @Html.Calendar(showColumn.DbColumnName, "form-control calendarRangeReWrite2")
-                                                break;
-                                            case "DateTimeWithTime":
-                                                @Html.CalendarDateTime(showColumn.DbColumnName, "form-control calendarRangeReWrite2")
-                                                break;
-                                            default:
-                                                if (showColumn.DbColumnName == "SKU")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" onkeydown="GetSkuList(this)" class="form-control skuChildren" />
-                                                }
-                                                else if (showColumn.DbColumnName == "GoodsName")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" disabled="disabled" class="form-control" />
-                                                }
-                                                else if (showColumn.DbColumnName == "UPC")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" class="form-control UPCChildren" />
-                                                }
-                                                else if (showColumn.DbColumnName == "QtyExpected")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" class="form-control QtyInput" onpropertychange='replaceNotNumber(this)' oninput='replaceNotNumber(this)' />
-                                                }
-                                                else if (showColumn.DbColumnName == "BatchNumber")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" class="form-control BatchNumber" />
-                                                }
-                                                else if (showColumn.DbColumnName == "BoxNumber")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" class="form-control BoxNumber" />
-                                                }
-                                                else if (showColumn.DbColumnName == "str2")
-                                                {
-                                                    <input type="text" value="" style="width:100%;" class="form-control UPCChildren" />
-                                                }
-                                                else
-                                                {
-                                                    <label class="@showColumn.DbColumnName"></label>
-                                                }
-                                                break;
-                                        }
-
-
+                                            @Html.DropDownList(showColumn.DbColumnName, list, new { @class = "form-control", @style = "width:100%" })
+                                            break;
+                                        case "DateTime":
+                                            @Html.Calendar(showColumn.DbColumnName, "form-control calendarRangeReWrite2")
+                                            break;
+                                        case "DateTimeWithTime":
+                                            @Html.CalendarDateTime(showColumn.DbColumnName, "form-control calendarRangeReWrite2")
+                                            break;
+                                        default:
+                                            if (showColumn.DbColumnName == "SKU")
+                                            {
+                                                <input type="text" value="" style="width:100%;" onkeydown="GetSkuList(this)" class="form-control skuChildren" />
+                                            }
+                                            else if (showColumn.DbColumnName == "GoodsName")
+                                            {
+                                                <input type="text" value="" style="width:100%;" disabled="disabled" class="form-control" />
+                                            }
+                                            else if (showColumn.DbColumnName == "UPC")
+                                            {
+                                                <input type="text" value="" style="width:100%;" class="form-control UPCChildren" />
+                                            }
+                                            else if (showColumn.DbColumnName == "QtyExpected")
+                                            {
+                                                <input type="text" value="" style="width:100%;" class="form-control QtyInput" onpropertychange='replaceNotNumber(this)' oninput='replaceNotNumber(this)' />
+                                            }
+                                            else if (showColumn.DbColumnName == "BatchNumber")
+                                            {
+                                                <input type="text" value="" style="width:100%;" class="form-control BatchNumber" />
+                                            }
+                                            else if (showColumn.DbColumnName == "BoxNumber")
+                                            {
+                                                <input type="text" value="" style="width:100%;" class="form-control BoxNumber" />
+                                            }
+                                            else if (showColumn.DbColumnName == "str2")
+                                            {
+                                                <input type="text" value="" style="width:100%;" class="form-control str2" />
+                                            }
+                                            else if (showColumn.DbColumnName == "str4")
+                                            {
+                                                <input type="text" value="" style="width:100%;" class="form-control str4" />
+                                            }
+                                            else if (showColumn.DbColumnName == "DateTime1")
+                                            {
+                                                @Html.Calendar(showColumn.DbColumnName, "form-control DateTime1",Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")))
+                                            }
+                                            else
+                                            {
+                                                <label class="@showColumn.DbColumnName"></label>
+                                            }
+                                            break;
                                     }
-                                </td>
+
+
+                                }
+                            </td>
                             }
                         </tr>
 
@@ -411,7 +419,7 @@
                                             }
                                         </td>
                                     }
-                                    <td class="制造商SKU">@item.ManufacturerSKU</td>
+                                    @*<td class="制造商SKU">@item.ManufacturerSKU</td>*@
                                 </tr>
                             }
                         }

@@ -141,14 +141,14 @@ namespace Runbow.TWS.Web.Areas.System.Controllers
             WMS_CustomerService service = new WMS_CustomerService();
             vm.StorerID = cuslist;
             vm.ViewType = ViewType != null ? (int)ViewType : 2;
-            vm.StorerKey = "必填";
-            vm.City = "必填";
-            vm.Company = "必填";
-            vm.CompanyCode = "必填";
-            vm.UserDef10 = "必填";
-            vm.AddressLine1 = "必填";
-            vm.Contact1 = "必填";
-            vm.PhoneNum1 = "必填";
+            //vm.StorerKey = "必填";
+            //vm.City = "必填";
+            //vm.Company = "必填";
+            //vm.CompanyCode = "必填";
+            //vm.UserDef10 = "必填";
+            //vm.AddressLine1 = "必填";
+            //vm.Contact1 = "必填";
+            //vm.PhoneNum1 = "必填";
             bool isShowUserDef2 = true;
             if (id != null)
             {

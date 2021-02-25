@@ -21,11 +21,11 @@
                 <td>
                     @Html.DropDownListFor(m => m.CustomerID, Model.StorerID, new { @class = "form-control" })
                 </td>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.StorerKey)</td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.StorerKey)</td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.StorerKey, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.StorerKey, new { @class = "form-control", @style = "width:100%",@placeholder="必填" })
                     }
                     else
                     {
@@ -45,11 +45,11 @@
                         @Model.Country
                     }
                 </td>
-                <td class="TableColumnTitle" style="width:11%;">@Html.LabelFor(model => model.City)</td>
+                <td class="TableColumnTitle" style="width:11%;"><span style="color:red;">* </span>@Html.LabelFor(model => model.City)</td>
                 <td style="width:22%;">
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.City, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.City, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {
@@ -69,33 +69,33 @@
                 </td>
             </tr>
             <tr>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.Company)</td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.Company)</td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.Company, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.Company, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {
                         @Model.Company
                     }
                 </td>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.UserDef10)</td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.UserDef10)</td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.UserDef10, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.UserDef10, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {
                         @Model.UserDef10
                     }
                 </td>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.CompanyCode)</td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.CompanyCode)</td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.CompanyCode, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.CompanyCode, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {
@@ -104,33 +104,33 @@
                 </td>
             </tr>
             <tr>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.AddressLine1)</td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.AddressLine1)</td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.AddressLine1, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.AddressLine1, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {
                         @Model.AddressLine1
                     }
                 </td>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.Contact1) </td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.Contact1) </td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.Contact1, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.Contact1, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {
                         @Model.Contact1
                     }
                 </td>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.PhoneNum1)</td>
+                <td class="TableColumnTitle"><span style="color:red;">* </span>@Html.LabelFor(model => model.PhoneNum1)</td>
                 <td>
                     @if (Model.ViewType != 0)
                     {
-                        @Html.TextBoxFor(model => model.PhoneNum1, new { @class = "form-control", @style = "width:100%" })
+                        @Html.TextBoxFor(model => model.PhoneNum1, new { @class = "form-control", @style = "width:100%", @placeholder = "必填" })
                     }
                     else
                     {

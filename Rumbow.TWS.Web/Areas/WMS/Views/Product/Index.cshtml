@@ -17,34 +17,28 @@
         <legend>查询条件 </legend>
         <table id="BasicInfo">
             <tr>
-                <td class="TableColumnTitle" style="width: 11%;"><label>客户</label></td>
+                <td class="TableColumnTitle" style="width: 11%;"><label>客户/供应商</label></td>
                 <td style="width: 13%;">
                     @Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, "==全部==", new { @class = "form-control" })
                 </td>
-                <td class="TableColumnTitle" style="width: 11%;"><label>分类</label></td>
-                <td style="width: 13%;">
-                    @Html.DropDownListFor(m => m.ProductSKU.SKUClassification, Model.SKUClass, "==全部==", new { @class = "form-control" })
-                </td>
+
                 <td class="TableColumnTitle" style="width: 11%;"><label>SKU</label></td>
                 <td style="width: 13%;">
                     @Html.TextAreaFor(m => m.ProductSKU.SKU, new { @class = "form-control" })
                     @*@Html.TextBoxFor(m => m.ProductSKU.SKU, new { style = "width:100%", @class = "form-control" })*@
                 </td>
-                <td class="TableColumnTitle"><label>品名类别</label></td>
+                <td class="TableColumnTitle"><label>材料分类</label></td>
                 <td style="width: 13%;">
-                    @Html.TextAreaFor(m => m.ProductSKU.Article, new { @class = "form-control" })
+                    @Html.TextAreaFor(m => m.ProductSKU.GoodsType, new { @class = "form-control" })
                     @*@Html.TextBoxFor(m => m.ProductSKU.Article, new { style = "width:100%", @class = "form-control" })*@
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;"><label>加放分类</label></td>
+                <td style="width: 13%;">
+                    @Html.TextAreaFor(m => m.ProductSKU.SKUGroup, new { @class = "form-control" })
+                    @*@Html.DropDownListFor(m => m.ProductSKU.SKUClassification, Model.SKUGroup, "==全部==", new { @class = "form-control" })*@
                 </td>
             </tr>
             <tr>
-                <td class="TableColumnTitle" style="width: 11%;"><label>UPC</label></td>
-                <td colspan="1">
-                    @Html.TextBoxFor(m => m.ProductSKU.UPC, new { style = "width:100%", @class = "form-control" })
-                </td>
-                <td class="TableColumnTitle"><label>货品尺寸</label></td>
-                <td colspan="1">
-                    @Html.TextBoxFor(m => m.ProductSKU.Size, new { style = "width:100%", @class = "form-control" })
-                </td>
                 <td class="TableColumnTitle"><label>描述</label></td>
                 <td colspan="1">
                     @Html.TextBoxFor(m => m.ProductSKU.Remark, new { style = "width:100%", @class = "form-control" })
@@ -80,39 +74,13 @@
                     {
                         <th id="OperateTh">操作</th>
                     }
-                    <th>客户</th>
+                    <th>客户/供应商</th>
                     <th>SKU</th>
-                    <th>货品名称</th>
-                    <th>UPC</th>
-                    <th>品名类别</th>
-                    <th>货品尺寸</th>
-                    <th>体积</th>
-                    @if (ctype != null
-                        && ctype.Any()
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "Bridge" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()) != null
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "Bridge" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()).Any()
-                        )
-                    {
-                        <th>有效期(日)</th>
-                        <th>重量(kg)</th>
-                    }
-                    else
-                    {
-                        <th>有效期(月)</th>
-                    }
-                    
-                    @*@if (Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault() == 81 || Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault() == 69)*@
-                    @if (ctype != null
-                        && ctype.Any()
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" || c.Code == "NIKE-Return" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()) != null
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" || c.Code== "NIKE-Return" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()).Any()
-                    )
-                    {
-                        <th>BU</th>
-                        <th>价格</th>
-                        <th>安全扣</th>
-                        <th>羽绒服</th>
-                    }
+                    <th>货品名称</th> 
+                    <th>材料分类</th>
+                    <th>加放分类</th>
+                    <th>模型</th>
+                     
                 </tr>
             </thead>
             <tbody>
@@ -142,34 +110,10 @@
                     {
                         <td>@crminfo.SKU</td>
                     }
-                    <td>@crminfo.GoodsName</td>
+                    <td>@crminfo.GoodsType</td>
                     <td>@crminfo.UPC</td>
-                    <td>@crminfo.Str10</td>
-                    <td>@crminfo.Str9</td>
-                    <td>@crminfo.Volume</td>
-                    <td>@crminfo.Int1</td>
-                    @if (ctype != null
-                        && ctype.Any()
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "Bridge" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()) != null
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "Bridge" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()).Any()
-                        )
-                    {
-                        <td>@crminfo.Weight</td>
-                    }
-                    else
-                    { }
-
-                    @if (ctype != null
-                        && ctype.Any()
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" || c.Code == "NIKE-Return" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()) != null
-                        && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" || c.Code == "NIKE-Return" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()).Any()
-                        )
-                    {
-                        <td>@crminfo.Division</td>
-                        <td>@crminfo.Str2</td>
-                        <td>@crminfo.Str3</td>
-                        <td>@crminfo.Str4</td>
-                    }
+                    <td>@crminfo.SKUGroup</td>
+                    <td>@crminfo.Str10</td> 
                 </tr>
                     }
                 }
@@ -192,7 +136,7 @@
             选择Excel导入SKU
         </legend>
         <div id="importDiv">
-            <label>客户：</label>@Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, new { @id = "StorerID", @class = "form-control", style = "width:200px;padding-bottom:1px" })
+            <label>客户/供应商：</label>@Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, new { @id = "StorerID", @class = "form-control", style = "width:200px;padding-bottom:1px" })
             <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
             <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
             <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" />

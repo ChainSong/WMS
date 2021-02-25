@@ -22,6 +22,7 @@ using Runbow.TWS.Entity.WMS.Log;
 using Runbow.TWS.Entity.WMS;
 using SMedia = System.Media;
 using Runbow.TWS.Entity.WMS.Receipt;
+using System.Web.Script.Serialization;
 
 namespace Runbow.TWS.Web.Areas.WMS.Controllers
 {
@@ -1744,7 +1745,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IList<ASN> asn = new List<ASN>();
             IList<ASNDetail> asnDetails = new List<ASNDetail>();
             var responseJsonFieldsets = jsonlist<ASN>(JsonField);
-
+            //List<ASN> responseJsonFieldsets = new List<ASN>();
+            //responseJsonFieldsets.Add(responseJsonFieldset);
             //if (responseJsonFieldsets.Count == 0)
             //{
             //    responseJsonFieldsets.Add(
@@ -2072,9 +2074,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 return Json(new { Message = "转入库单失败!", IsSuccess = false });
             }
         }
+        public static T jsonlistWeb<T>(string str)
+        {
+            return JsonConvert.DeserializeObject<T>(str);
+        }
         public static List<T> jsonlist<T>(string str)
         {
-            return JsonConvert.DeserializeObject<List<T>>(str);
+
+            JavaScriptSerializer Serializer = new JavaScriptSerializer();
+            List<T> objs = Serializer.Deserialize<List<T>>(str);
+            return objs;
+            //return JsonConvert.DeserializeObject<List<T>>(str);
         }
         //批量导入
         [HttpPost]

@@ -24,5 +24,10 @@ namespace Runbow.TWS.Entity
         public string Article { get; set; }
         //货品尺寸
         public string Size { get; set; }
+        //货品尺寸
+        public string GoodsType { get; set; }
+
+        //货品尺寸
+        public string SKUGroup { get; set; }
     }
 }
