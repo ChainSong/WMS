@@ -1,5 +1,5 @@
 ﻿@model Runbow.TWS.Web.Areas.System.Models.ShipperListViewModel
-           <link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
 @using (Html.BeginForm())
 {
     <fieldset>
@@ -36,9 +36,9 @@
         </table>
         <div class="actionButtonDiv">
             <input type="submit" value="查询" class="btn btn-success" id="searchButton" />
-            <input type="button" onclick="window.location.href = '/System/Shipper/Create'" value="新增"  class="btn btn-success" id="btnAdd" />
-            <input type="button" onclick="window.location.href = '/System/Shipper/ShipperRelatedInfo'" value="承运商信息配置"  class="btn btn-success" id="btnShipperInfoSet" />
-           @*  <input type="button" onclick="window.location.href = '/System/Shipper/ShiperSegment'" value="配置"  class="btn btn-success" id="btnShipper" />*@
+            <input type="button" onclick="window.location.href = '/System/Shipper/Create'" value="新增" class="btn btn-success" id="btnAdd" />
+            @*<input type="button" onclick="window.location.href = '/System/Shipper/ShipperRelatedInfo'" value="承运商信息配置"  class="btn btn-success" id="btnShipperInfoSet" />
+        <input type="button" onclick="window.location.href = '/System/Shipper/ShiperSegment'" value="配置"  class="btn btn-success" id="btnShipper" />*@
         </div>
     </fieldset>
 
@@ -86,8 +86,8 @@
                         <td>
                             @Html.ActionLink("编辑", "Edit", new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })
                           
-                            &nbsp;
-                             @Html.ActionLink("段位设置", "ShiperSegment", new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })
+                            @*&nbsp;
+                             @Html.ActionLink("段位设置", "ShiperSegment", new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })*@
                           
                             &nbsp;
                             @Html.ActionLink("车辆管理","VehicleManagement",  new { id = shipper.ID }, new {@class="btn btn-info btn-sm",style="color:#fff;" })

@@ -1453,6 +1453,7 @@
     <Content Include="Image\star.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Image\trackinfo.png" />
     <Content Include="Image\waiting.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1841,8 +1842,12 @@
     <Content Include="Areas\WMS\Views\OrderManagement\JitePackage.cshtml" />
     <Content Include="Areas\WMS\Views\OrderManagement\PrintExpressYto.cshtml" />
     <Content Include="Areas\WMS\Views\OrderManagement\PrintExpressYd.cshtml" />
-    <Content Include="Areas\WMS\Views\ReceiptManagement\IndexFG.cshtml" />
-    <Content Include="Areas\WMS\Views\ReceiptManagement\ReceiptCreateFG.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\Line.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\PodAssign.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\AddExpress.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\ExpressTrack.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\CompanyTrack.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\ASPOPTrack.cshtml" />
     <None Include="Properties\PublishProfiles\bob.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />

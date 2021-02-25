@@ -403,5 +403,270 @@ namespace Runbow.TWS.Web.Areas.AMS.Controllers
 
             return new EmptyResult();
         }
+
+        /// <summary>
+        /// 线路管理
+        /// </summary>
+        [HttpGet]
+        public ActionResult Line()
+        {
+            GenBoxNumberViewModel vm = new GenBoxNumberViewModel();
+            vm.SearchCondition = new AMSSearchCondition();
+            vm.PageIndex = 0;
+            vm.PageCount = 0;
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                .Select(c => new SelectListItem { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            vm.SearchCondition.StatUpLoadTime = DateTime.Now.AddDays(-7);
+            vm.SearchCondition.StateID = 0;
+            return View(vm);
+        }
+        [HttpPost]
+        public ActionResult Line(GenBoxNumberViewModel vm, int? PageIndex)
+        {
+
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                .Select(c => new SelectListItem { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            //var CustomerText = Json(vm.Customers.Select(p => new { p.Text})).ToJsonString();
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in vm.Customers)
+            {
+                sb.Append("'" + i.Text + "',");
+            }
+            var response = new AMSUploadService().QueryGenBoxNumber(new GenBoxNumberRequest()
+            {
+                PageIndex = PageIndex ?? 0,
+                PageSize = UtilConstants.PAGESIZE,
+                SearchCondition = vm.SearchCondition,
+                Customers = sb.ToString().Substring(0, sb.Length - 1).ToString(),
+            });
+            if (response.IsSuccess)
+            {
+                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+            }
+            return View(vm);
+        }
+
+
+        /// <summary>
+        /// 快递分配
+        /// </summary>
+        [HttpGet]
+        public ActionResult PodAssign()
+        {
+            QueryReplyDocumentViewModel vm = new QueryReplyDocumentViewModel();
+            vm.SearchCondition = new AMSSearchCondition();
+            vm.Type = 0;
+            vm.PageIndex = 0;
+            vm.PageCount = 0;
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                        .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            return View(vm);
+        }
+        [HttpPost]
+        public ActionResult PodAssign(QueryReplyDocumentViewModel vm, int? PageIndex)
+        {
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in vm.Customers)
+            {
+                sb.Append("'" + i.Text + "',");
+            }
+
+            var response = new AMSUploadService().QueryAMSUpload(new QueryAMSUploadRequests()
+            {
+                PageIndex = PageIndex ?? 0,
+                PageSize = UtilConstants.PAGESIZE,
+                SearchCondition = vm.SearchCondition,
+                Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
+            });
+
+            if (response.IsSuccess)
+            {
+                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+                vm.PageCount = response.Result.PageCount;
+                vm.PageIndex = response.Result.PageIndex;
+            }
+            return View(vm);
+        }
+
+        /// <summary>
+        /// 快递交接
+        /// </summary>
+        [HttpGet]
+        public ActionResult AddExpress()
+        {
+            QueryReplyDocumentViewModel vm = new QueryReplyDocumentViewModel();
+            vm.SearchCondition = new AMSSearchCondition();
+            vm.Type = 0;
+            vm.PageIndex = 0;
+            vm.PageCount = 0;
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                        .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            return View(vm);
+        }
+        [HttpPost]
+        public ActionResult AddExpress(QueryReplyDocumentViewModel vm, int? PageIndex)
+        {
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in vm.Customers)
+            {
+                sb.Append("'" + i.Text + "',");
+            }
+
+            var response = new AMSUploadService().QueryAMSUpload(new QueryAMSUploadRequests()
+            {
+                PageIndex = PageIndex ?? 0,
+                PageSize = UtilConstants.PAGESIZE,
+                SearchCondition = vm.SearchCondition,
+                Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
+            });
+
+            if (response.IsSuccess)
+            {
+                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+                vm.PageCount = response.Result.PageCount;
+                vm.PageIndex = response.Result.PageIndex;
+            }
+            return View(vm);
+        }
+
+        /// <summary>
+        /// 快递跟踪
+        /// </summary>
+        [HttpGet]
+        public ActionResult ExpressTrack()
+        {
+            QueryReplyDocumentViewModel vm = new QueryReplyDocumentViewModel();
+            vm.SearchCondition = new AMSSearchCondition();
+            vm.Type = 0;
+            vm.PageIndex = 0;
+            vm.PageCount = 0;
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                        .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            return View(vm);
+        }
+        [HttpPost]
+        public ActionResult ExpressTrack(QueryReplyDocumentViewModel vm, int? PageIndex)
+        {
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in vm.Customers)
+            {
+                sb.Append("'" + i.Text + "',");
+            }
+
+            var response = new AMSUploadService().QueryAMSUpload(new QueryAMSUploadRequests()
+            {
+                PageIndex = PageIndex ?? 0,
+                PageSize = UtilConstants.PAGESIZE,
+                SearchCondition = vm.SearchCondition,
+                Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
+            });
+
+            if (response.IsSuccess)
+            {
+                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+                vm.PageCount = response.Result.PageCount;
+                vm.PageIndex = response.Result.PageIndex;
+            }
+            return View(vm);
+        }
+
+
+        /// <summary>
+        /// 对接各个快递公司
+        /// </summary>
+        [HttpGet]
+        public ActionResult CompanyTrack()
+        {
+            QueryReplyDocumentViewModel vm = new QueryReplyDocumentViewModel();
+            vm.SearchCondition = new AMSSearchCondition();
+            vm.Type = 0;
+            vm.PageIndex = 0;
+            vm.PageCount = 0;
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                        .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            return View(vm);
+        }
+        [HttpPost]
+        public ActionResult CompanyTrack(QueryReplyDocumentViewModel vm, int? PageIndex)
+        {
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in vm.Customers)
+            {
+                sb.Append("'" + i.Text + "',");
+            }
+
+            var response = new AMSUploadService().QueryAMSUpload(new QueryAMSUploadRequests()
+            {
+                PageIndex = PageIndex ?? 0,
+                PageSize = UtilConstants.PAGESIZE,
+                SearchCondition = vm.SearchCondition,
+                Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
+            });
+
+            if (response.IsSuccess)
+            {
+                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+                vm.PageCount = response.Result.PageCount;
+                vm.PageIndex = response.Result.PageIndex;
+            }
+            return View(vm);
+        }
+
+        /// <summary>
+        /// 对接各个快递公司
+        /// </summary>
+        [HttpGet]
+        public ActionResult ASPOPTrack()
+        {
+            QueryReplyDocumentViewModel vm = new QueryReplyDocumentViewModel();
+            vm.SearchCondition = new AMSSearchCondition();
+            vm.Type = 0;
+            vm.PageIndex = 0;
+            vm.PageCount = 0;
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                        .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            return View(vm);
+        }
+        [HttpPost]
+        public ActionResult ASPOPTrack(QueryReplyDocumentViewModel vm, int? PageIndex)
+        {
+            vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
+                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in vm.Customers)
+            {
+                sb.Append("'" + i.Text + "',");
+            }
+
+            var response = new AMSUploadService().QueryAMSUpload(new QueryAMSUploadRequests()
+            {
+                PageIndex = PageIndex ?? 0,
+                PageSize = UtilConstants.PAGESIZE,
+                SearchCondition = vm.SearchCondition,
+                Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
+            });
+
+            if (response.IsSuccess)
+            {
+                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+                vm.PageCount = response.Result.PageCount;
+                vm.PageIndex = response.Result.PageIndex;
+            }
+            return View(vm);
+        }
+
     }
 }

@@ -1,0 +1,81 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@model  Runbow.TWS.Web.Areas.AMS.Models.QueryReplyDocumentViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<link href="~/Assets/Layui/layui/css/layui.css" rel="stylesheet" />
+<script src="~/Assets/Layui/layui/layui.js"></script>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>对接各个快递公司</legend>
+</fieldset>
+<ul class="layui-timeline">
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">3月15日</h3>
+            <p>
+                下单到顺丰快递系统，返回面单打印信息<i class="layui-icon"></i>
+                <br>
+            </p>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <h3 class="layui-timeline-title">3月22日</h3>
+            <p>根据顺丰快递单号抓取路由轨迹信息</p>
+            <ul>
+                <li>&nbsp;</li>
+            </ul>
+        </div>
+    </li>
+    <li class="layui-timeline-item">
+        <i class="layui-icon layui-timeline-axis"></i>
+        <div class="layui-timeline-content layui-text">
+            <div class="layui-timeline-title">其它</div>
+        </div>
+    </li>
+</ul>
+
+
+<script>
+    layui.config({
+        base: '../../../Assets/Layui/layui_exts/',
+    }).extend({
+        excel: 'excel',
+    });
+    layui.use(['form', 'layer', 'excel'], function () {
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery,
+            excel = layui.excel;
+
+        jQuery.support.cors = true;
+
+        var timestart;//计算开始用时
+        var timeend;//计算结束用时
+        var loading;//弹出层下标，用来关闭提示框
+
+        //获取当前日期字符串
+        function getCurrentTimeStr() {
+            var isTime = new Date();
+            var y = isTime.getFullYear();
+            var m = isTime.getMonth();
+            var d = isTime.getDate();
+            var h = isTime.getHours();
+            var mi = isTime.getMinutes();
+            var s = isTime.getSeconds();
+            m = m + 1;
+            var str = "";
+            str += y;
+            str += (m + "").length < 2 ? ("0" + m) : m;
+            str += (d + "").length < 2 ? ("0" + d) : d;
+            str += (h + "").length < 2 ? ("0" + h) : h;
+            str += (mi + "").length < 2 ? ("0" + mi) : mi;
+            str += (s + "").length < 2 ? ("0" + s) : s;
+            return str;
+        }
+    })
+
+</script>
