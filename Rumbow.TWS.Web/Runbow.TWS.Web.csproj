@@ -1846,6 +1846,8 @@
     <Content Include="Areas\AMS\Views\AMS\PodAssign.cshtml" />
     <Content Include="Areas\AMS\Views\AMS\AddExpress.cshtml" />
     <Content Include="Areas\AMS\Views\AMS\ExpressTrack.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\CompanyTrack.cshtml" />
+    <Content Include="Areas\AMS\Views\AMS\ASPOPTrack.cshtml" />
     <None Include="Properties\PublishProfiles\bob.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
