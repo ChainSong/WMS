@@ -229,11 +229,11 @@
             return false;
         }
         if (!yanzhen()) {
-            showMsg("请检查SKU、期望数量是否填写完整！", 4000);
+            showMsg("请检查产品编码、期望数量是否填写完整！", 4000);
             return false;
         }
         if (!SameSKU()) {
-            showMsg("SKU不能重复!", 4000);
+            showMsg("产品编码不能重复!", 4000);
             return;
         }
         var PreOrderJson = PreOrder();
@@ -977,6 +977,7 @@ $(".skucheck").live("keydown", function () {
     $('.skucheck').autocomplete({
         source: function (request, response) {
             if (request.term.length > 5) {
+
                 $.ajax({
                     url: "/WMS/Product/GetSKUlist",
                     type: "POST",
@@ -1104,7 +1105,8 @@ function PreOrder() {
                 var tds = row[j].getElementsByTagName("td");
                 if (tds[i].className.trim() != "TableColumnTitle" && tds[i].innerHTML.trim() != "") {
                     if (tds[i].childNodes[1].type == 'select-one') {
-                        r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + (tds[i].childNodes[1][1].value.trim()) + "\",";
+                        //r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + (tds[i].childNodes[1][1].value.trim()) + "\",";
+                        r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + (tds[i].childNodes[1].value) + "\",";
                     }
                     else {
                         if (i != 1) {

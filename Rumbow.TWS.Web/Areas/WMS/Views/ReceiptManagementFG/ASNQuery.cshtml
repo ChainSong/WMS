@@ -1,0 +1,82 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+ <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                 @{
+    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                }
+                 <td class="TableColumnTitle">预入库单号</td>
+                <td>@Html.TextAreaFor(m=>m.ASNCondition.ASNNumber, new { @class="form-control"})</td>
+                <td class="TableColumnTitle">客户</td>
+                <td>@Html.DropDownListFor(m=>m.ASNCondition.CustomerID,CustomerList,"==请选择==",new { @class="form-control"})</td>
+            </tr>
+        </table>
+      <div class="actionButtonDiv">
+          <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+          </div>
+ </fieldset>  
+    <fieldset>  
+        <legend>ASN列表</legend>
+<div id="statusBackDiv">
+         <table id="ASNTable">
+            <thead>
+            <tr>
+                <th>ASN单号</th>
+                <th>货主</th>
+                <th>状态</th>
+                <th>创建时间</th>               
+            </tr>
+            </thead>
+            <tbody>
+                  @if (Model.ASNCollection != null && Model.ASNCollection.Any())
+                  {
+                      foreach (var asn in Model.ASNCollection)
+                      {
+                          <tr id="@asn.ASNNumber">
+                              <td>@asn.ASNNumber</td>
+                              <td>@asn.CustomerName</td>
+                              <td>
+                                  @switch (@asn.Status)
+                                  {
+                                      case -1:
+                                          @Html.Label("取消");
+                                                           break;
+                                      case 1:
+                                                           @Html.Label("新增");
+                                                           break;
+                                      case 5:
+                                                           @Html.Label("已生成入库单");
+                                                           break;
+                                      case 9:
+                                                           @Html.Label("完成");
+                                                           break;       
+                                      default:
+                                                           break;
+                                  }
+                              </td>
+                              <td>@asn.CreateTime</td>
+                              <td style="display:none">@asn.ID</td>
+                              <td style="display:none">@asn.ExternReceiptNumber</td>
+                              <td style="display:none">@asn.CustomerID</td>
+                              <td style="display:none">@asn.ASNType</td>
+                          </tr>
+                      
+                      }
+                  }
+
+            </tbody>
+        </table>
+    
+      @Html.Pager(Model.PageIndex, Model.PageCount, "")
+     <div class="actionButtonDiv">          
+        <input type="button"  class="btn btn-success"  value="确定" id="statusBackOK"  />
+        <input type="button"  class="btn btn-success"  value="返回" id="statusBackReturn"  />
+     </div>
+     </div>
+        </fieldset> 
+}

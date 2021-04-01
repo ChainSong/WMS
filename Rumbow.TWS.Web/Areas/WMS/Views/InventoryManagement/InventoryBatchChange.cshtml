@@ -19,7 +19,7 @@
                                                             var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
                 }
                 <td class="TableColumnTitle" style="width: 11%;">
-                    <label>客户</label></td>
+                    <label>客户/供应商</label></td>
                 <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
                 <td class="TableColumnTitle" style="width: 11%;">
                     <label>仓库</label></td>
@@ -79,12 +79,12 @@
 
                         <th id="OperateTh" style="display: none;">操作</th>
                         <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
-                        <th>客户</th>
+                        <th>客户/供应商</th>
                         <th>仓库</th>
                         <th>库区&nbsp;|&nbsp;库位</th>
-                        <th>SKU</th>
+                        <th>产品编码</th>
                         <th>货品名称</th>
-                        <th>UPC</th>
+                        <th>条码</th>
                         <th>货品等级</th>
                         <th>库存状态</th>
                         <th>数量</th>

@@ -160,6 +160,7 @@
     <Compile Include="System\TransportationLineService.cs" />
     <Compile Include="System\UserService.cs" />
     <Compile Include="System\WMS_CustomerService.cs" />
+    <Compile Include="UnitAndSpecifications\UnitAndSpecificationsService.cs" />
     <Compile Include="WebApi\ExpressService.cs" />
     <Compile Include="WebApi\HaddadService.cs" />
     <Compile Include="WebApi\UpdateStatusService.cs" />

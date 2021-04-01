@@ -1256,16 +1256,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         }
         [HttpPost]
         //根据库位获取sku 数量 货品等级 货品描述等
-        public ActionResult GetInventoryskuList(string CustomerID, string location, string sku, string upc, string goodstype, string batchnumber, string boxnumber, string warehouse, string Unit, string Specifications,string StoreCode)
+        public ActionResult GetInventoryskuList(string CustomerID, string location, string sku, string upc, string goodstype, string batchnumber, string boxnumber, string warehouse, string Unit, string Specifications, string StoreCode)
         {
             //sku = sku;
             goodstype = goodstype == null ? "" : goodstype;
+            location = location == null ? "" : location.Trim();
             batchnumber = batchnumber == null ? "" : batchnumber;
             boxnumber = boxnumber == null ? "" : boxnumber;
             Unit = Unit == null ? "" : Unit;
             Specifications = Specifications == null ? "" : Specifications;
             AdjustmentManagementService service = new AdjustmentManagementService();
-            var inventory = service.GetInventoryLocationList(location.Substring(location.IndexOf('|') + 1), warehouse, CustomerID,StoreCode).Result;
+            var inventory = service.GetInventoryLocationList(location.Substring(location.IndexOf('|') + 1), warehouse, CustomerID, StoreCode).Result;
             //if (string.IsNullOrEmpty(sku) && string.IsNullOrEmpty(batchnumber) && string.IsNullOrEmpty(boxnumber) && (string.IsNullOrEmpty(Unit) && string.IsNullOrEmpty(Specifications)))
             //{
             //    return Json(inventory.Select(t => new { GoodsType = t.GoodsType, GoodsName = t.GoodsName, qty = t.Qty, SKU = t.SKU, BatchNumber = t.BatchNumber, BoxNumber = t.BoxNumber, Unit = t.Unit, Specifications = t.Specifications }).Distinct(), JsonRequestBehavior.AllowGet);
@@ -1598,6 +1599,21 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         {
             return JsonConvert.DeserializeObject<List<T>>(str);
         }
+
+        public ActionResult InventoryWarning()
+        {
+            IndexViewModel vm = new IndexViewModel();
+            //var inventory = service.GetInventoryLocationList(location.Substring(location.IndexOf('|') + 1), warehouse, CustomerID).Result;
+            //return new AdjustmentManagementService().CheckAdjustData(request);
+            var respone = new InventoryManagementService().GetInventoryWarning();
+            if (respone.IsSuccess)
+            {
+                vm.InventoryCollection = respone.Result.InventoryCollection;
+            }
+
+            return View(vm);
+        }
+
         /// <summary>
         /// 验证保存的调整数据是否合法
         /// </summary>
@@ -1624,7 +1640,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         /// <param name="WarehouseName"></param>
         /// <returns></returns>
         [HttpPost]
-        public string AddAdjustAndAdjustDetail(string JsonTable, long CustomerID, string CustomerName, string AdjustmentType, DateTime adjustmenttime, string AdjustmentReason, string JsonField, long WarehouseID, String WarehouseName, string AdID, string AdjustmentRemark,string StoreCode)
+        public string AddAdjustAndAdjustDetail(string JsonTable, long CustomerID, string CustomerName, string AdjustmentType, DateTime adjustmenttime, string AdjustmentReason, string JsonField, long WarehouseID, String WarehouseName, string AdID, string AdjustmentRemark, string StoreCode)
         {
             var responseJsonFieldsets = jsonlist<Adjustment>(JsonField);
             AddAdjustmentandAdjustmentDetailRequest request = new AddAdjustmentandAdjustmentDetailRequest();
@@ -1891,7 +1907,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             return response.Result;
         }
         //检查导入数据
-        private string CheckImportsData(DataSet ds,long customerid)
+        private string CheckImportsData(DataSet ds, long customerid)
         {
             string errormsg = "";
             ArrayList skulocation = new ArrayList();
@@ -2021,7 +2037,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                         IList<AdjustmentDetail> adjustmentdetail = new List<AdjustmentDetail>();
                         //DataSet ds = this.GetDataFromExcel(hpf);
                         DataSet ds = EPPlusOperation.ReadExcelToDataSet(hpf);
-                        string res = CheckImportsData(ds,customerid);
+                        string res = CheckImportsData(ds, customerid);
                         if (res != "")
                         {
                             return new { result = "<h3><font color='#FF0000'>批量导入失败！" + res + "</font></h3>", IsSuccess = true }.ToJsonString();
@@ -2293,12 +2309,13 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     }
                 }
             }
+            vm.InventorySearchCondition.str20 = "产品";
             ViewBag.AreaLists = Areas.Where(c => c.Value == vm.InventorySearchCondition.Warehouse).Select(c => new SelectListItem() { Value = c.Text.ToString(), Text = c.Text }); ;
             #region   //获取门店列表            
             try
             {
                 IEnumerable<WMS_Customer> WMSCustomerList = ApplicationConfigHelper.GetAllCustomerByID(CustomerListID.FirstOrDefault());
-                List<SelectListItem> storerlist=new List<SelectListItem>();
+                List<SelectListItem> storerlist = new List<SelectListItem>();
                 foreach (var item in WMSCustomerList)
                 {
                     storerlist.Add(new SelectListItem() { Value = item.StorerKey, Text = item.StorerKey });
@@ -5422,7 +5439,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 };
                 invents.Add(inventory);
                 WMS_Log_Operation operation = new WMS_Log_Operation();
-                
+
                 operation.MenuName = "库存管理";
                 operation.Operation = "库存批次修改";
                 operation.OrderType = "InventoryBatchChange";
@@ -5446,7 +5463,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             var respone = new InventoryManagementService().UpdateInventoryBatch(request);
             if (respone.IsSuccess)
             {
-                 new LogOperationService().AddLogOperation(logs);//写日志
+                new LogOperationService().AddLogOperation(logs);//写日志
             }
 
             return respone.Result;
@@ -5462,7 +5479,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             List<WMS_Log_Operation> logs = new List<WMS_Log_Operation>();
             try
             {
-                string url = UtilConstants.JCSendAPIAddress + "CheckSendAgain?outbizcode="+ AdjustmentNumber;
+                string url = UtilConstants.JCSendAPIAddress + "CheckSendAgain?outbizcode=" + AdjustmentNumber;
                 string res = this.HTTPGet(url);
                 listResponses = jsonlist<JCAPiResponse>(res);
                 foreach (var item in listResponses)
@@ -5520,7 +5537,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
             //返回内容
             string retString = myStreamReader.ReadToEnd();
-            return retString;           
+            return retString;
         }
 
     }

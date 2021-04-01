@@ -238,6 +238,13 @@ namespace Runbow.TWS.Entity
         /// </summary>
         [EntityPropertyExtension("Location", "Location")]
         public string Location { get; set; }
+
+        /// <summary>
+        /// Model
+        /// </summary>
+        [EntityPropertyExtension("Model", "Model")]
+        public string Model { get; set; }
+        
         #endregion Model
     }
 }

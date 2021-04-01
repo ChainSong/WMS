@@ -483,10 +483,10 @@
 
 var box = {
     仓库ID: 'WarehouseID',
-    收货单行号: 'LineNumber', SKU: 'SKU', SKU行号: 'SKULineNumber',
-    货品名称: 'GoodsName', 货品等级: 'GoodsType', UPC: 'UPC',
+    收货单行号: 'LineNumber', 产品编码: 'SKU', 产品行号: 'SKULineNumber',
+    货品名称: 'GoodsName', 货品等级: 'GoodsType', 条码: 'UPC',
     期望数量: 'QtyExpected', 实际数量: 'QtyReceived', 库区: 'Area',
-    库位: 'Location', 备注: 'Remark', 客户ID: 'CustomerID', 客户名称: 'CustomerName', 批次号: 'BatchNumber',
+    库位: 'Location', 备注: 'Remark', 客户ID: 'CustomerID', "客户/供应商": 'CustomerName', 批次号: 'BatchNumber',
     收货单号: 'ReceiptNumber', 外部单号: 'ExternReceiptNumber', ASNID: 'ASNID', ASNNumber: 'ASNNumber',
     RDID: 'RDID', RID: 'RID', 仓库: 'Warehouse', 托号: 'BoxNumber', 生产日期: 'DateTime1', 单位: 'Unit', 规格: 'Specifications'
 };

@@ -127,10 +127,15 @@ namespace Runbow.TWS.Dao.WMS
         /// <returns></returns>
         public bool AddshelvesAndInventory(IEnumerable<ReceiptReceiving> Request, string UserName)
         {
+            string Proc = "Proc_WMS_AddshelvesAndInventory";
+            //if (Request != null && Request.First().Model == "产品")
+            //{
+
+            //}
             using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
             {
                 string message = "";
-                SqlCommand cmd = new SqlCommand("[Proc_WMS_AddshelvesAndInventory]", conn);
+                SqlCommand cmd = new SqlCommand(Proc, conn);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@Receipt", Request.Select(p => new ReceiptReceivingToDb(p)));
                 cmd.Parameters[0].SqlDbType = SqlDbType.Structured;
@@ -408,6 +413,17 @@ namespace Runbow.TWS.Dao.WMS
             if (SearchCondition.str3 != null)
             {
                 sb.Append(" and R.str3 like '%" + SearchCondition.str3.Trim() + "%'");
+            }
+
+
+            if (!string.IsNullOrEmpty(SearchCondition.Model) && SearchCondition.Model == "产品")
+            {
+                sb.Append(" and R.ReceiptType like '%" + SearchCondition.Model.Trim() + "%'");
+            }
+            else
+            {
+                sb.Append(" and R.ReceiptType like '%" + SearchCondition.Model.Trim() + "%'");
+
             }
             return sb.ToString();
         }
@@ -739,8 +755,84 @@ ON r.SKU=s.SKU WHERE  rid =  " + id + @";
             }
         }
 
+        public string AddInventoryFG(string id, string UserName, string ProcName)
+        {
+            try
+            {
+                string sql = "select * from WMS_ReceiptFG where id = " + id;
+                var receipt = this.ExecuteDataTableBySqlString(sql).ConvertToEntity<Receipt>();
+                if (receipt == null)
+                {
+                    return "订单不存在";
+                }
+                if (receipt.Status == 9)
+                {
+                    return "订单已入库，请刷新界面";
+                }
+                //if (receipt.Where(a => a.Location.Length < 2).Count() > 0)
+                //{
+                //    return "添加失败,库区和库位不能为空，请检查上架单";
+                //}
+                //string WarehousId = receiptreceiving.FirstOrDefault().Warehouse;
+                //string CustomerId = receiptreceiving.FirstOrDefault().CustomerID.ToString();
 
-        public string AddInventory(string id, string UserName,string ProcName)
+                #region 验证是否取消
+                //string externreceiptnumber = receiptreceiving.FirstOrDefault().ExternReceiptNumber.ToString();
+                //string warehouse = receiptreceiving.FirstOrDefault().Warehouse.ToString();
+                //string result = new DeliverConfirmAccessor().ValidOrderCancel(externreceiptnumber, Convert.ToInt64(CustomerId), ProcName, warehouse, 3);
+                //if (!string.IsNullOrEmpty(result))
+                //{
+                //    return "已取消，无法加入库存";
+                //}
+                #endregion
+                StringBuilder AddInventory = new StringBuilder();
+                AddInventory.Append(@" insert into WMS_Inventory_" + receipt.CustomerID + @"  ( [RRID]
+      ,[ReceiptNumber]
+      ,[Warehouse]
+      ,[Area]
+      ,[Location]
+      ,[SuperID]
+      ,[CustomerID]
+      ,[CustomerName]
+      ,[SKU]
+      ,[UPC]
+      ,[GoodsName]
+      ,[GoodsType]
+      ,[Qty]
+      ,[InventoryType]
+      ,[RelatedID]
+      ,[BoxNumber]
+      ,[BatchNumber]
+      ,[Unit]
+      ,[Specifications]
+      ,[Creator]
+      ,[CreateTime]) 
+      select 0,WMS_ReceiptFG.ReceiptNumber,WMS_ReceiptFG.WarehouseName,Area,Location,0,WMS_ReceiptFG.CustomerID,WMS_ReceiptFG.CustomerName,SKU,UPC,
+      GoodsName,GoodsType,QtyReceived,1,0,BoxNumber,BatchNumber,Unit,Specifications,'" + UserName + @"',GETDATE()
+      from WMS_ReceiptFG left join WMS_ReceiptDetailFG
+      on WMS_ReceiptFG.ID =WMS_ReceiptDetailFG.RID where Status !=9 and  WMS_ReceiptFG.id=" + id);
+
+                AddInventory.Append("  update WMS_ReceiptFG set Status = 9 where Status !=9 and  id =" + id);
+
+                int i = this.ScanExecuteNonQuery(AddInventory.ToString());
+                //    string SuccessSql = @" SELECT i.ID 
+                //FROM[dbo].[wms_inventory_" + CustomerId + @"] i 
+                //LEFT JOIN wms_receiptreceiving r2 ON i.rrid = r2.id 
+                //WHERE r2.rid = " + id;
+                //var SuccessCount = this.ExecuteDataTableBySqlString(SuccessSql).ConvertToEntityCollection<ReceiptReceiving>();
+                if (i > 0)
+                {
+                    return "成功";
+                }
+                return "失败,请检查上架单";
+            }
+            catch (Exception e)
+            {
+
+                return "添加失败" + e.Message;
+            }
+        }
+        public string AddInventory(string id, string UserName, string ProcName,string Model)
         {
             try
             {
@@ -765,7 +857,7 @@ ON r.SKU=s.SKU WHERE  rid =  " + id + @";
                 string externreceiptnumber = receiptreceiving.FirstOrDefault().ExternReceiptNumber.ToString();
                 string warehouse = receiptreceiving.FirstOrDefault().Warehouse.ToString();
                 string result = new DeliverConfirmAccessor().ValidOrderCancel(externreceiptnumber, Convert.ToInt64(CustomerId), ProcName, warehouse, 3);
-                if(!string.IsNullOrEmpty(result))
+                if (!string.IsNullOrEmpty(result))
                 {
                     return "已取消，无法加入库存";
                 }
@@ -801,7 +893,7 @@ ON r.SKU=s.SKU WHERE  rid =  " + id + @";
                        [unit], 
                        [specifications], 
                        datetime1, 
-                       datetime2,str1,str3,str2,str4) 
+                       datetime2,str1,str3,str2,str4,str20) 
           (SELECT id, 
                   r2.[receiptnumber], 
                   warehouse, 
@@ -824,7 +916,7 @@ ON r.SKU=s.SKU WHERE  rid =  " + id + @";
                   r2.datetime1, 
                   r2.datetime2 ,
                   r2.str1,
-                  (SELECT  r.str3 FROM dbo.WMS_Receipt r WHERE r.ID=" + id + @"),r2.str2,str4
+                  (SELECT  r.str3 FROM dbo.WMS_Receipt r WHERE r.ID=" + id + @"),r2.str2,str4,'"+Model+@"'
            FROM   [dbo].wms_receiptreceiving r2  
            WHERE  1 = 1 
                   AND rid = " + id + @") 

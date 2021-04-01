@@ -47,6 +47,40 @@ namespace Runbow.TWS.Biz
             return response;
         }
 
+
+        /// <summary>
+        /// 查询SKU
+        /// </summary>
+        /// <returns></returns>
+        public Response<GetProductByConditionResponse> QuerySKUProductFG(GetProductByConditionRequest request)
+        {
+            Response<GetProductByConditionResponse> response = new Response<GetProductByConditionResponse>();
+            if (request == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("sp_wms_GetSKU request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                int RowCount = 0;
+                response.Result = new ProductAccessor().QuerySKUProductInfoFG(request.SearchCondition, request.PageIndex, request.PageSize, out RowCount);
+                response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                response.Result.PageIndex = request.PageIndex;
+                response.Result.RowCount = RowCount;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
         /// <summary>
         /// 查询详细SKU
         /// </summary>
@@ -77,6 +111,37 @@ namespace Runbow.TWS.Biz
 
             return response;
         }
+
+        /// <summary>
+        /// 查询详细SKU
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Response<QuerySKUProductResponse> GetSKUProductFG(string ID)
+        {
+            Response<QuerySKUProductResponse> response = new Response<QuerySKUProductResponse>() { Result = new QuerySKUProductResponse() };
+            if (ID == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("sp_wms_GetSKU request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                response.Result = new ProductAccessor().QuerySKUProductFG(ID);
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
         /// <summary>
         /// 编辑添加SKU
         /// </summary>
@@ -93,6 +158,34 @@ namespace Runbow.TWS.Biz
                 IList<ProductStorerInfo> ProductStorer = new List<ProductStorerInfo>();
                 ProductStorer.Add(request.Info);
                 response.Result.Info = new ProductAccessor().GetSKUProductInfo(ProductStorer);
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// 编辑添加SKU
+        /// </summary>
+        /// <returns></returns>
+        public Response<EditSKUProductRequest> EditSKUProductFG(EditSKUProductRequest request)
+        {
+            Response<EditSKUProductRequest> response = new Response<EditSKUProductRequest>() { Result = new EditSKUProductRequest() };
+            // Response<EditSKUProductRequest> response = new Response<EditSKUProductRequest>();
+            // response.Result = new EditSKUProductRequest();        //结果集初始化
+
+            try
+            {
+                ProductStorerInfo Product = new ProductStorerInfo();
+                IList<ProductStorerInfo> ProductStorer = new List<ProductStorerInfo>();
+                ProductStorer.Add(request.Info);
+                response.Result.Info = new ProductAccessor().GetSKUProductInfoFG(ProductStorer);
                 response.IsSuccess = true;
             }
             catch (Exception ex)

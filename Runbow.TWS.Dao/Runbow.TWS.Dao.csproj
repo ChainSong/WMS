@@ -170,6 +170,7 @@
     <Compile Include="ShipperManagement\DriverManagementAccessor.cs" />
     <Compile Include="ShipperManagement\VehicleManagementAccessor.cs" />
     <Compile Include="System\WMS_CustomerAccessor.cs" />
+    <Compile Include="UnitAndSpecifications\UnitAndSpecificationsAccessor.cs" />
     <Compile Include="WebApi\ExpressAccessor.cs" />
     <Compile Include="WebApi\HaddadServiceAccessor.cs" />
     <Compile Include="WebApi\UpdateStatusServiceAccessor.cs" />

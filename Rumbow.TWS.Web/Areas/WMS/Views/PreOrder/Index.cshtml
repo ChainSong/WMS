@@ -336,12 +336,11 @@
     </fieldset>
 }
 
-<fieldset style="margin-top: 100px;">
+@*<fieldset style="margin-top: 100px;">
     <legend>预出库信息导入说明</legend>
     <div id="importInstructionDiv">
         1.模板中有模拟数据，请按照demo填写<br />
         2.尽量不要长时间段的导入,减轻服务器压力
-        @*<a class="btn btn-primary" href="C:\Users\Administrator\Desktop\上架导入模板.xlsx" onclick="javascript:void(0);">导出</a>*@
     </div>
 </fieldset>
 
@@ -366,7 +365,7 @@
     </legend>
     <div id="outPutResult">
     </div>
-</fieldset>
+</fieldset>*@
 
 <div id="DisInfo" style="display: none">
     <table>
@@ -393,8 +392,8 @@
                 @*<th>ID</th>*@
                 <th>外部单号</th>
                 <th>SKU</th>
-                <th>Article</th>
-                <th>Size</th>
+                @*<th>Article</th>
+                <th>Size</th>*@
                 <th>缺货数量</th>
             </tr>
         </thead>
@@ -420,8 +419,8 @@
         @*<td>{{:POID}}</td>*@
         <td>{{:ExternOrderNumber}}</td>
         <td>{{:SKU}}</td>
-        <td>{{:Article}}</td>
-        <td>{{:Size}}</td>
+        @*<td>{{:Article}}</td>
+        <td>{{:Size}}</td>*@
         <td>{{:QTY}}</td>
     </tr>
 </script>

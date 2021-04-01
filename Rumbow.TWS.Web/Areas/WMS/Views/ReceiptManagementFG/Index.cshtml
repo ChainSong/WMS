@@ -1,0 +1,423 @@
+﻿@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@using Runbow.TWS.Entity;
+@model Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@{
+    var shipmentprinttype1 = "未发送";
+    var shipmentprinttype2 = "已发送";
+    //IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+    //var notKeyColumns = Model.Config.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition).ToList();
+    //IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.Order).ToList();
+    //int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+    //var showColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.DbColumnName != "ReceiptStatusName" && c.DbColumnName != "ReceiptTypeName").Union(notKeyColumns.Where(c => c.IsShowInList)).OrderBy(c => c.Order) : Model.Config.ColumnCollection.Where(c => c.IsShowInList).Union(notKeyColumns.Where(c => c.IsShowInList)).OrderBy(c => c.Order);
+
+    var cols = 4;
+    IList<Column> dynamicSearchColumns = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition == true).OrderBy(i => i.Order).Union(Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition == true).OrderBy(i => i.Order).ToList()).ToList();
+    IList<Column> dynamicShowColumns = Model.Config1.ColumnCollection.Where(c => c.IsShowInList == true && c.DbColumnName != "ReceiptTypeName" && c.DbColumnName != "ReceiptStatusName").OrderBy(i => i.Order).ToList();
+
+    var dynamicSearchColumnRows = dynamicSearchColumns.Count % cols == 0 ? dynamicSearchColumns.Count / cols : dynamicSearchColumns.Count / cols + 1;
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.SearchCondition.StartCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.EndCreateTime)
+    @Html.HiddenFor(m => m.SearchCondition.CompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.StartCompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndCompleteDate)
+    @Html.HiddenFor(m => m.SearchCondition.StartReceiptDate)
+    @Html.HiddenFor(m => m.SearchCondition.EndReceiptDate)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime1)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime2)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime3)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime4)
+    @Html.HiddenFor(m => m.SearchCondition.StartDateTime5)
+    @Html.HiddenFor(m => m.SearchCondition.EndDateTime5)
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>入库单查询条件</legend>
+        <table>
+            @{
+                var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+            }
+            @{
+                for (int i = 0; i < dynamicSearchColumnRows; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < cols; j++)
+                        {
+                            var index = i * cols + j;
+                            if (index >= dynamicSearchColumns.Count)
+                            {
+
+                            }
+                            else
+                            {
+                                var column = dynamicSearchColumns[index];
+                                //查询条件默认值
+                                var o = typeof(ReceiptSearchCondition).GetProperty(column.DbColumnName).GetValue(Model.SearchCondition);
+                                //查询model类别名,前台name，查询取值用，命名不规范，多此一举，写规范点不行吗
+                                var scName = typeof(Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel).GetProperties().Where(a => a.PropertyType == typeof(ReceiptSearchCondition)).Select(a => a.Name).FirstOrDefault();
+
+                                <td class="TableColumnTitle">
+                                    @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                                </td>
+                                <td>
+                                    @{
+                                        if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                        {
+                                            //时间name一律以Start或End加字段名格式
+                                            var startTime = typeof(ReceiptSearchCondition).GetProperty("Start" + column.DbColumnName).GetValue(Model.SearchCondition);
+                                            var endTime = typeof(ReceiptSearchCondition).GetProperty("End" + column.DbColumnName).GetValue(Model.SearchCondition);
+
+                                            if (column.Type == "DateTime")
+                                            {
+                                                @Html.CalendarRange(column.DbColumnName, "calendarRange form-control calendarRangeReWrite", (DateTime?)startTime, (DateTime?)endTime)
+                                            }
+                                            else
+                                            {
+                                                @Html.CalendarRangeDateTime(column.DbColumnName, "calendarRange form-control calendarRangeReWrite", (DateTime?)startTime, (DateTime?)endTime)
+                                            }
+
+                                        }
+                                        else if (column.Type == "DropDownList")
+                                        {
+                                            //除客户和仓库外，其他下拉取值全部以字段名加s结尾
+                                            var list = new List<SelectListItem>();
+                                            if (column.DbColumnName == "CustomerID")
+                                            {
+                                                list = CustomerList.ToList();
+                                            }
+                                            else if (column.DbColumnName == "WarehouseID")
+                                            {
+                                                list = WarehouseList.ToList();
+                                            }
+                                            else
+                                            {
+                                                list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                            }
+                                            @Html.DropDownList(scName + "." + column.DbColumnName, list, "==请选择==", new { @class = "form-control" })
+                                        }
+                                        else if (column.Type == "CheckBox")
+                                        {
+                                            @Html.CheckBox(scName + "." + column.DbColumnName, new { })
+                                        }
+                                        else if (column.Type == "TextArea")
+                                        {
+                                            @Html.TextArea(scName + "." + column.DbColumnName, o == null ? "" : o.ToString(), new { @class = "form-control" })
+                                        }
+                                        else if (column.Type == "RegionPicker")
+                                        {
+                                            if (column.DbColumnName == "StartCityName")
+                                            {
+                                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                                <a id="startCityClear" href="#">清空</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                                <a id="endCityClear" href="#">清空</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBox(scName + "." + column.DbColumnName, o == null ? "" : o.ToString(), new { @class = "form-control" })
+                                        }
+                                    }
+                                </td>
+
+                            }
+                        }
+                    </tr>
+                }
+            }
+
+            @if (ViewBag.ProjectName == "Akzo")
+            {
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>发运场景类型</label>
+                    </td>
+                    <td>@Html.DropDownListFor(m => m.SearchCondition.str7, Model.OrderShipmentTypeList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                    <td class="TableColumnTitle">
+                        <label>是否已经发送打印</label>
+                    </td>
+                    <td>@Html.DropDownListFor(m => m.SearchCondition.Int3, Model.OrderSendPrintTypeList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                </tr>
+            }
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新增" id="addButton" name="Action" />
+            @*<input type="submit" class="btn btn-success" value="导出入库单" id="exportButtom" name="Action" />*@
+            @*<input type="submit" class="btn btn-success" value="导出上架单" id="exportButton" name="Action" />*@
+            <input type="submit" class="btn btn-success" value="导出上架信息" id="exportShelvesButton" name="Action" />
+            <input style="display: none;" type="button" class="btn btn-success" value="批量状态回退" id="statusBack" name="Action" title=""
+                   data-container="body" data-toggle="popover" data-placement="right" data-content="<font color='red'>请勾选入库单!</font>"
+                   data-html="true" />
+            <input type="button" class="btn btn-success" value="批量打印" id="printButton" @*onclick="javascript:window.location.href='/WMS/ReceiptManagementFG/PrintShelves'"*@ />
+            @*<input type="button" class="btn btn-success" value="发送上架任务" id="ReceiptTask" />*@
+            @if (((ViewBag.CustomerID) == null ? 0 : (long)ViewBag.CustomerID) == 81)
+            {
+                <input type="button" class="btn btn-success" value="推送鲸仓" id="ReceiptSend" />
+            }
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            入库单列表
+            @if (Model.ReceiptCollection != null && Model.ReceiptCollection.Any())
+            {
+                @Html.Raw("(" + Model.ReceiptCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll;  min-height: 180px">
+            <table id="resultTable" style="width: 130%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="width: 50px;">操作</th>
+                        <th class="checkBoxHead">
+                            @Html.CheckBox("selectAll", new { @class = "btn btn-success" })
+                        </th>
+                        <th style="width: 150px">
+                            入库单号
+                        </th>
+                        @foreach (var column in dynamicShowColumns)
+                        {
+                            <th style="width: 170px">
+                                @column.DisplayName
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ReceiptCollection != null && Model.ReceiptCollection.Any())
+                    {
+                        foreach (var receipt in Model.ReceiptCollection)
+                        {
+                            var tdd = "operateTD" + @receipt.ID;
+                            <tr id="@receipt.ReceiptNumber">
+                                <td style="position: relative">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        @*@if (@receipt.Status == 5)
+                                            {
+                                                <div style="text-align: center; width: 75px; float: left; border: solid 1px; background-color: #f0ad4e; border-radius: 3px; cursor: pointer; color: white;"></div>
+                                            }*@
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="printPick('@receipt.ID')">打印</label>
+                                        @*@if(@receipt.ReceiptType!="退料入库"){
+                                            <label   style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="GenerateBarCode('@receipt.ID')">生成条码</label>
+                                            }else{
+                                                <label   style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="ScanBarCode('@receipt.ID')">扫描条码</label>
+                                            }*@
+                                        @*<a href="/WMS/ReceiptManagementFG/GenerateBarCode?ID=@receipt.ID&ViewType=0">生成条码</a>*@
+                                        @*@{ if (@receipt.Status == 1)
+                                               {
+                                                <label   style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="editButton('@receipt.ID','@receipt.CustomerID')">编辑</label>
+                                               }
+                                            }*@
+                                        @{if (receipt.Status == 1 || receipt.Status == 5)
+                                            {
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="Shelves('@receipt.ID','@receipt.ReceiptType')">上架</label>
+                                            }
+                                        }
+
+                                        @*此处判断状态是否为9（已入库状态），为9则不显示“状态回退按钮”*@
+                                        @{ if (receipt.Status != -1 && receipt.Status != 9)
+                                            {
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="statusBackClick(@receipt.ID,@receipt.Status)">状态回退</label>
+                                            }
+                                            if (((string)ViewBag.ProjectName) == "HABA")
+                                            {
+                                                <label style="cursor: pointer;" class="btn btn-primary btn-xs" onclick="UpdateVolume(@receipt.ID)">更新体积</label>
+                                            }
+                                        }
+                                        @{if (receipt.Status == 1 && (long)ViewBag.CustomerID == 103)
+                                            {
+                                                <label style="cursor: pointer;" class="btn btn-danger btn-xs printPick" onclick="BackCloseBox('@receipt.ExternReceiptNumber')">回退装箱</label>
+                                            }
+                                        }
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                </td>
+                                <td>
+                                    @Html.CheckBox(receipt.ID.ToString(), new { data_Status = receipt.Status, data_ID = receipt.ID, data_CustomerID = receipt.CustomerID, data_WarehouseID = receipt.WarehouseID, data_ReceiptNumber = receipt.ReceiptNumber, @class = "checkForSelect btn btn-success" })
+                                </td>
+                                <td style="width: 130px">
+                                    <a href="/WMS/ReceiptManagementFG/ReceiptCreate/?ID=@receipt.ID&ViewType=3&CustomerID=@receipt.CustomerID">@receipt.ReceiptNumber</a>
+                                </td>
+                                @{
+                                    foreach (var column in dynamicShowColumns)
+                                    {
+                                        var o = typeof(Receipt).GetProperty(column.DbColumnName).GetValue(receipt);
+                                        <td class="@column.DbColumnName">
+                                            @if (o != null)
+                                            {
+                                                switch (column.Type)
+                                                {
+                                                    case "DateTime":
+                                                        var temp = (DateTime?)o;
+                                                        if (temp.HasValue)
+                                                        {
+                                                            @temp.Value;
+                                                        }
+                                                        break;
+                                                    case "DateTimeWithTime":
+                                                        var temp1 = (DateTime?)o;
+                                                        if (temp1.HasValue)
+                                                        {
+                                                            @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                        }
+                                                        break;
+                                                    case "CheckBox":
+                                                        if (int.Parse(o.ToString()) == 1)
+                                                        {
+                                                            @Html.Raw("Y")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.Raw("N")
+                                                        }
+                                                        break;
+                                                    case "DropDownList":
+                                                        if (column.DbColumnName == "CustomerName" || column.DbColumnName == "WarehouseName")
+                                                        {
+                                                            @o.ToString();
+                                                        }
+                                                        else
+                                                        {
+                                                            var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                                            @(list.SingleOrDefault(a => a.Value == o.ToString()).Text ?? "")
+                                                        }
+                                                        break;
+                                                    default:
+                                                        if (column.DbColumnName == "ReceiptNumber")
+                                                        {
+                                                            <a href="/WMS/ReceiptManagementFG/ReceiptCreate/?ID=@receipt.ID&ViewType=3&CustomerID=@receipt.CustomerID">@receipt.ReceiptNumber</a>
+                                                            @*<a href="/WMS/ASNManagement/ASNCreateOrEdit/?ID=@receipt.ASNID&ViewType=0">@receipt.ASNNumber</a>*@
+                                                        }
+                                                        else if (column.DbColumnName == "ASNNumber")
+                                                        {
+                                                            <a href="/WMS/ASNManagementFG/ASNCreateOrEdit/?ID=@receipt.ASNID&ViewType=0">@receipt.ASNNumber</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            @o.ToString()
+                                                        }
+                                                        break;
+                                                }
+                                            }
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+    @*<fieldset style="margin-top: 100px;">
+        <legend>导入提示</legend>
+        <div>
+            1,请先查询出需要更新的入库单，并且导出，进行修改<br>
+            2,只能更新状态为待上架的入库单<br>
+            3,入库单主信息中：客户，仓库，入库日期，入库单状态，入库类型，完成日期，备注等字段不能批量更新<br>
+            4,入库单明细信息中：客户，行号，SKU，ASN预计数量，实收数量等字段不能批量更新
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            选择Excel批量更新入库单信息
+        </legend>
+        <div id="importDiv">
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+            <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+        </div>
+    </fieldset>
+    <fieldset style="margin-top: 20px;">
+        <legend>
+            导入结果
+        </legend>
+        <div id="outPutResult">
+        </div>
+    </fieldset>*@
+    <div id="statusBackDiv" style="display: none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width: 100px">退回状态</td>
+                <td>@Html.DropDownList("backStatusid", Model.Statuss, "==请选择==", new { @class = "form-control", @style = "width:200px" })</td>
+                @*.Where(m=>m.Value.ObjectToInt32()<1*@
+            </tr>
+            <tr style="display: none">
+                <td>@Html.TextBox("StatusbackID", "")</td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="actionButtonDiv">
+            <input type="button" class="btn btn-success" value="确定" id="statusBackOK" />
+            <input type="button" class="btn btn-success" value="返回" id="statusBackReturn" />
+        </div>
+    </div>
+    <div id="BackStatusReturnDiv" style="display: none; color: #564c4c">
+        <div class="actionButtonDiv">
+            <label id="BackReturn" style="font-size: 30px; color: blue; text-align: center"></label>
+            <br>
+            <br>
+            <br>
+            <br>
+            <input type="button" class="btn btn-success" style="vertical-align: middle" value="确定" id="statusBackOK02" />
+        </div>
+    </div>
+
+    <!--用于更新体积弹框-->
+    <div id="UpdateVolumeDiv" style="display:none">
+        <table>
+            <tr>
+                <td class="TableColumnTitle" style="width:100px">请输入体积</td>
+                <td><input style="width:180px;" class="form-control" id="tdVolume" onkeyup="changeNum(this)" maxlength="10" />&nbsp;m<sup>3</sup></td>
+            </tr>
+            <tr style="display:none">
+                <td><input type="hidden" id="UpdateReceiptID" /></td>
+            </tr>
+        </table>
+        <p style="text-align:center">提示：体积单位为立方米，保留2位小数</p>
+        <br />
+        <br />
+        <br />
+        <br />
+        <div style="text-align:center">
+            <input type="button" class="btn btn-success" value="确定" id="UpdateVolumeOK" />
+            <input type="button" class="btn btn-success" value="返回" id="UpdateVolumeOKCancel" />
+        </div>
+    </div>
+
+
+    <div id="OrderCheck01Div" style="display: none">
+        <table id="OrderCheck01">
+            <thead>
+                <tr>
+                    <th style="width:30%">单号</th>
+                    <th style="width:20%">状态</th>
+                    <th style="width:50%">返回结果</th>
+                </tr>
+            </thead>
+            <tbody id="OrderCheck01Body">
+                <tr></tr>
+            </tbody>
+        </table>
+    </div>
+}

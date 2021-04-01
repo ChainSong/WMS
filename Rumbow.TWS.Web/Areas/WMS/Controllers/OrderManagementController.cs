@@ -240,6 +240,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             ViewBag.WorkStation = WorkStation;
             var getOrderByConditionRequest = new GetOrderByConditionRequest();
             getOrderByConditionRequest.SearchCondition = vm.SearchCondition;
+            getOrderByConditionRequest.SearchCondition.Model = "物料";
             getOrderByConditionRequest.PageSize = UtilConstants.PAGESIZE;
             getOrderByConditionRequest.PageIndex = 0;
             var getOrderByConditionResponse = new OrderManagementService().GetOrderHeaderByCondition(getOrderByConditionRequest);
@@ -1080,7 +1081,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             DataTable dt = new DataTable();
             DataColumn dc = new DataColumn();
             dc = dt.Columns.Add("单号", typeof(string));
-            dc = dt.Columns.Add("SKU", typeof(string));
+            dc = dt.Columns.Add("产品编码", typeof(string));
             dc = dt.Columns.Add("差异数量", typeof(string));
             IList<OrderBackStatus> Orders = new List<OrderBackStatus>();
             try
@@ -1117,7 +1118,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     {
                         DataRow dr = dt.NewRow();
                         dr["单号"] = item.OrderNumber;
-                        dr["SKU"] = item.SKU;
+                        dr["产品编码"] = item.SKU;
                         dr["差异数量"] = item.QtyPicked - item.Qty;
                         dt.Rows.Add(dr);
 
@@ -1379,6 +1380,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
             var getOrderByConditionRequest = new GetOrderByConditionRequest();
             getOrderByConditionRequest.SearchCondition = vm.SearchCondition;
+            getOrderByConditionRequest.SearchCondition.Model = "物料";
             getOrderByConditionRequest.PageSize = UtilConstants.PAGESIZE;
             getOrderByConditionRequest.PageIndex = PageIndex ?? 0;
             var getOrderByConditionResponse = new OrderManagementService().GetOrderHeaderByCondition(getOrderByConditionRequest);
@@ -3054,7 +3056,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                 //先比较SKU是否在订单
                                 if (OrderCollection.Where(a => a.str1 == SKU).Count() < 0)
                                 {
-                                    sb.Append("订单不存在该SKU:" + SKU + "</br>");
+                                    sb.Append("订单不存在该产品编码:" + SKU + "</br>");
                                 }
                                 else
                                 {
@@ -3069,7 +3071,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                         }
                                         catch
                                         {
-                                            sb.Append("SKU:" + SKU + "的数量格式有误！</br>");
+                                            sb.Append("产品编码:" + SKU + "的数量格式有误！</br>");
                                         }
                                     }
                                     //订单数量
@@ -3077,7 +3079,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                     int DifferenceQty = orderqty - boxqty;
                                     if (DifferenceQty != 0)
                                     {
-                                        sb.Append("SKU:" + SKU + ",差异" + DifferenceQty + "</br>");
+                                        sb.Append("产品编码:" + SKU + ",差异" + DifferenceQty + "</br>");
                                     }
                                 }
                             }
@@ -3102,7 +3104,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                     PackageInfo pack = new PackageInfo();
                                     pack.OrderNumber = OrderKey[0];
                                     pack.str1 = item["箱号"].ToString();
-                                    pack.str2 = item["SKU"].ToString();
+                                    pack.str2 = item["产品编码"].ToString();
                                     pack.Int1 = Convert.ToInt32(item["Qty"].ToString());
                                     if (dtpodetail.Columns.Contains("箱型"))
                                     {

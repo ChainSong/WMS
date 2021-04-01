@@ -17,7 +17,7 @@
                     var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
                 }
                 <td class="TableColumnTitle">
-                    <label>客户</label>
+                    <label>客户/供应商</label>
                 </td>
                 <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
                 <td class="TableColumnTitle">
@@ -30,20 +30,20 @@
                 <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.Area, AreaList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
             </tr>
             <tr>
-                    <td class="TableColumnTitle">
-                        <label>出库日期</label>
-                    </td>
-                    <td>@Html.CalendarRange("CompleteDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteDate, @Model.SearchCondition.EndCompleteDate)</td>
-                    <td class="TableColumnTitle">
-                        <label>出库单状态</label>
-                    </td>
-                    <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.OrderStatus.Where(c => c.Text != "取消"), "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
-                    <td class="TableColumnTitle">
-                        <label>出库类型</label>
-                    </td>
-                    <td>@Html.DropDownListFor(m => m.SearchCondition.OrderType, Model.OrderType, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>出库日期</label>
+                </td>
+                <td>@Html.CalendarRange("CompleteDate", "calendarRange form-control calendarRangeReWrite", @Model.SearchCondition.StartCompleteDate, @Model.SearchCondition.EndCompleteDate)</td>
+                <td class="TableColumnTitle">
+                    <label>出库单状态</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.OrderStatus.Where(c => c.Text != "取消"), "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                <td class="TableColumnTitle">
+                    <label>出库类型</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.OrderType, Model.OrderType, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
 
-                </tr>
+            </tr>
             <tr>
                 <td class="TableColumnTitle">
                     <label>出库单号</label>
@@ -57,10 +57,10 @@
                         <label>库位</label>
                     </td>
                     <td>@Html.TextAreaFor(m => m.SearchCondition.Location, new { @style = "width:100%", @class = "form-control"})</td>*@
-                <td class="TableColumnTitle">
-                    <label>客户代码</label>
-                </td>
-                <td>@Html.TextAreaFor(m => m.SearchCondition.str4, new { @class = "form-control", style = "width:100%" })</td>
+                @*<td class="TableColumnTitle">
+                        <label>客户代码</label>
+                    </td>
+                    <td>@Html.TextAreaFor(m => m.SearchCondition.str4, new { @class = "form-control", style = "width:100%" })</td>*@
             </tr>
             @*<tr>
                     <td class="TableColumnTitle">

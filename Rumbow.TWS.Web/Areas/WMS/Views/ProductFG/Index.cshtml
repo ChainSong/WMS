@@ -1,0 +1,382 @@
+﻿@Url.FrameworkJs("jquery.validate.min.js", "jquery.validate.unobtrusive.min.js")
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.Product.ProductModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<link href="~/Assets/Layui/layui/css/layui.css" rel="stylesheet" />
+<script src="~/Assets/Layui/layui/layui.js"></script>
+@using (Html.BeginForm())
+{
+    @Html.Hidden("searchFlag", Session["searchFlag"]);
+    @Html.HiddenFor(m => m.PageIndex)
+
+    <fieldset>
+        <legend>查询条件 </legend>
+        <table id="BasicInfo">
+            <tr>
+                <td class="TableColumnTitle" style="width: 11%;"><label>客户/供应商</label></td>
+                <td style="width: 13%;">
+                    @Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, "==全部==", new { @class = "form-control" })
+                </td>
+
+                <td class="TableColumnTitle" style="width: 11%;"><label>产品编码</label></td>
+                <td style="width: 13%;">
+                    @Html.TextAreaFor(m => m.ProductSKU.SKU, new { @class = "form-control" })
+                    @*@Html.TextBoxFor(m => m.ProductSKU.SKU, new { style = "width:100%", @class = "form-control" })*@
+                </td>
+                <td class="TableColumnTitle"><label> 产品大类  </label></td>
+                <td style="width: 13%;">
+                    @Html.TextAreaFor(m => m.ProductSKU.GoodsType, new { @class = "form-control" })
+                    @*@Html.TextBoxFor(m => m.ProductSKU.Article, new { style = "width:100%", @class = "form-control" })*@
+                </td>
+                <td class="TableColumnTitle" style="width: 11%;"><label>产品分组</label></td>
+                <td style="width: 13%;">
+                    @Html.TextAreaFor(m => m.ProductSKU.SKUGroup, new { @class = "form-control" })
+                    @*@Html.DropDownListFor(m => m.ProductSKU.SKUClassification, Model.SKUGroup, "==全部==", new { @class = "form-control" })*@
+                </td>
+            </tr>
+            @*<tr>
+                    <td class="TableColumnTitle"><label>描述</label></td>
+                    <td colspan="1">
+                        @Html.TextBoxFor(m => m.ProductSKU.Remark, new { style = "width:100%", @class = "form-control" })
+                    </td>
+                </tr>*@
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" value="查询" id="submitButton" class="btn btn-success" />
+            @if (Session["searchFlag"] == null)
+            {
+                <input type="button" value="新增" id="AddButton" class="btn btn-success" />
+            }
+            <input type="button" value="导出" id="exportButton" class="btn btn-success" />
+        </div>
+    </fieldset>
+}
+<fieldset>
+    <legend>
+        SKU列表
+        @if (Model.IEnumerableSearchCondition != null && Model.IEnumerableSearchCondition.Any())
+        {
+            @Html.Raw("(" + Model.RowCount + ")");
+        }
+        @{
+            var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
+        }
+    </legend>
+    <div id="tables" style="overflow-X: scroll; min-height: 180px">
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    @if (Session["searchFlag"] == null)
+                    {
+                        <th id="OperateTh">操作</th>
+                    }
+                    <th>客户/供应商</th>
+                    <th>产品编码</th>
+                    <th>货品名称</th>
+                    <th>产品大类</th>
+                    <th>产品分组</th>
+                    <th>制造商条码</th>
+                    @*<th>模型</th>*@
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.IEnumerableSearchCondition != null && Model.IEnumerableSearchCondition.Any())
+                {
+                    foreach (var crminfo in Model.IEnumerableSearchCondition)
+                    {
+                        var tdd = "operateTD" + @crminfo.ID;
+                        <tr>
+                            @if (Session["searchFlag"] == null)
+                            {
+                                <td style="position: relative">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs EditorButton editSettledPod" data-id="@crminfo.ID">编辑</label>
+                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" data-skuid="@crminfo.ID">添加PUC</label>*@
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton" onclick="deleteSKU('@crminfo.ID','@crminfo.StorerID',this)">删除</label>
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                </td>
+                            }
+                            <td>@crminfo.CustomerName</td>
+                            @if (Session["searchFlag"] == null)
+                            {
+                                <td><a href="/WMS/Product/AddProduct/?ID=@crminfo.ID&typeid=2&CustomerId=@crminfo.StorerID">@crminfo.SKU</a></td>
+                            }
+                            else
+                            {
+                                <td>@crminfo.SKU</td>
+                            }
+                            <td>@crminfo.GoodsName</td>
+                            <td>@crminfo.SKUClassification</td>
+                            <td>@crminfo.SKUGroup</td>
+                            <td>@crminfo.ManufacturerSKU</td>
+                            @*<td>@crminfo.Str10</td>*@
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+@if (Session["searchFlag"] == null)
+{
+    @*<fieldset style="margin-top: 100px;">
+            <legend>SKU批量导入说明</legend>
+            <div id="importInstructionDiv">
+                1.模板中有模拟数据，请按照demo填写<br />
+                2.尽量不要长时间段的导入,减轻服务器压力
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>
+                选择Excel导入产品
+            </legend>
+            <div id="importDiv">
+                <label>客户/供应商：</label>@Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, new { @id = "StorerID", @class = "form-control", style = "width:200px;padding-bottom:1px" })
+                <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
+                <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+                <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" />
+
+            </div>
+            <fieldset style="margin-top: 20px;">
+                <legend>导入结果</legend>
+                <div id="outPutResult"></div>
+            </fieldset>
+        </fieldset>*@
+}
+
+<script>
+    layui.config({
+        base: '../../../Assets/Layui/layui_exts/',
+    }).extend({
+        excel: 'excel',
+    });
+    layui.use(['form', 'layer', 'excel'], function () {
+        var form = layui.form,
+            layer = parent.layer === undefined ? layui.layer : top.layer,
+            $ = layui.jquery,
+            excel = layui.excel;
+
+        jQuery.support.cors = true;
+
+        var timestart;//计算开始用时
+        var timeend;//计算结束用时
+        var loading;//弹出层下标，用来关闭提示框
+        $("#exportButton").on("click", function () {
+            //弹出loading
+            loading = layer.msg('数据导出中，请稍候', { icon: 16, time: false, shade: 0.8 });
+            timestart = Date.now();
+            var searchData =
+            {
+                StorerID: $("#ProductSKU_StorerID option:selected").val(),
+                SKUClassification: $("#ProductSKU_SKUClassification option:selected").val(),
+                SKU: $("#ProductSKU_SKU").val(),
+                UPC: $("#ProductSKU_UPC").val(),
+                Article: $("#ProductSKU_Article").val(),
+                Size: $("#ProductSKU_Size").val(),
+                Remark: $("#ProductSKU_Remark").val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/WMS/Product/GetSKUProductInfo',
+                data: {
+                    requestData: JSON.stringify(searchData),
+                    page: 1,
+                    limit: 1
+                },
+                success: function (res) {
+                    var count = res.count;//第一次请求获取总行数
+                    console.log("总行数：" + count);
+                    if (count > 50000) {
+                        layer.msg('当前查询数据量超出限制(50000)，无法导出！');
+                        return;
+                    }
+                    var pagenum = 1000;//分段获取的行数
+                    var times = Math.ceil(res.count / pagenum);//分段获取的次数
+                    var arrs = new Array();//定义集合
+                    timestart = Date.now();
+                    getData(times, pagenum, arrs);
+                }, error: function (res) {
+                    layer.close(loading);
+                    layer.alert('获取数据失败');
+                }
+            });
+        });
+
+        //递归调用后台获取数组拼接
+        //times:递归次数
+        //limit:分段获取行数
+        //arrs：拼接的数组
+        function getData(times, limit, arrs) {
+            console.log("次数：" + times);
+            var searchData = {
+                StorerID: $("#ProductSKU_StorerID option:selected").val(),
+                SKUClassification: $("#ProductSKU_SKUClassification option:selected").val(),
+                SKU: $("#ProductSKU_SKU").val(),
+                UPC: $("#ProductSKU_UPC").val(),
+                Article: $("#ProductSKU_Article").val(),
+                Size: $("#ProductSKU_Size").val(),
+                Remark: $("#ProductSKU_Remark").val()
+            };
+            $.ajax({
+                url: '/WMS/Product/GetSKUProductInfo',
+                type: 'POST',
+                data: {
+                    requestData: JSON.stringify(searchData),
+                    page: times,
+                    limit: limit
+                },
+                dataType: 'json',
+                success: function (res) {
+                    var data = res.data;
+                    arrs.push.apply(arrs, data);
+                    console.log("行数:" + arrs.length);
+                    if (res.count > limit && times > 1) {
+                        getData(times - 1, limit, arrs);
+                    } else {
+                        callback(arrs);
+                    }
+                }, error: function (res) {
+                    console.log(res);
+                    layer.close(loading);
+                    layer.alert('获取数据失败');
+                }
+            });
+        }
+
+        //导出EXCEL数组数据
+        function callback(arrs) {
+            console.log("数组长度：" + arrs.length);
+            timeend = Date.now();
+            var spent = (timeend - timestart) / 1000;
+            console.log('获取数据耗时 ' + spent + ' s');
+            timestart = Date.now();
+            data = excel.filterExportData(arrs, {
+                CustomerName: 'CustomerName',
+                SKU: 'SKU',
+                GoodsName: 'GoodsName',
+                UPC: 'UPC',
+                Category: 'Str10',
+                Size: 'Str9',
+                Volume: 'Volume',
+                EffectDay: 'Int1',
+                EffectMonth: 'Int1',
+                Weight: 'Weight',
+                Price: 'Str2',
+                SafetyClasp: 'Str3',
+                Jacket: 'Str4',
+                Division: 'Division',
+                GenderAge: 'GenderAge',
+                Hanger: 'Hanger',
+                SilHouette: 'SilHouette',
+                CategoryText: 'CategoryText',
+                GlblCatSumCode: 'GlblCatSumCode',
+                GlblCatSum: 'GlblCatSum',
+                SeasonCode: 'SeasonCode',
+                seasonYear: 'seasonYear',
+                CategoryCode: 'CategoryCode',
+                SubCategoryCode: 'SubCategoryCode'
+            });
+            // 重点2！！！一般都需要加一个表头，表头的键名顺序需要与最终导出的数据一致
+            data.unshift({
+                CustomerName: '客户',
+                SKU: 'SKU',
+                GoodsName: '货品名称',
+                UPC: 'UPC',
+                Category: '品名类别',
+                Size: '货品尺寸',
+                Volume: '体积',
+                EffectDay: '有效期(日)',
+                EffectMonth: '有效期(月)',
+                Weight: '重量(kg)',
+                Price: '价格',
+                SafetyClasp: '安全扣',
+                Jacket: '羽绒服',
+                Division: 'BU',
+                GenderAge: 'GenderAge',
+                Hanger: 'Hanger',
+                SilHouette: 'SilHouette',
+                CategoryText: 'CategoryText',
+                GlblCatSumCode: 'GlblCatSumCode',
+                GlblCatSum: 'GlblCatSum',
+                SeasonCode: 'SeasonCode',
+                seasonYear: 'seasonYear',
+                CategoryCode: 'CategoryCode',
+                SubCategoryCode: 'SubCategoryCode'
+            });
+            //设置样式的函数，传入设置的范围，表头样式
+            excel.setExportCellStyle(data, 'A1:X1', {
+                s: {
+                    fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "F3F3F3" } },
+                    alignment: {
+                        horizontal: 'center',
+                        vertical: 'center'
+                    },
+                    font: { sz: 12, bold: true }
+                }
+            });
+            //设置样式的函数，传入设置的范围，单元格边框样式
+            excel.setExportCellStyle(data, 'A1:X' + data.length, {
+                s: {
+                    border: {
+                        top: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }, bottom: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }, left: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }, right: {
+                            style: 'thin', color: { rgb: "000000" }
+                        }
+                    }
+                }
+            });
+            // 意思是：A列100px，B/C列120px，M列150px，其他列80px
+            var colConf = excel.makeColConfig({
+                'A': 100,
+                'B': 120,
+                'C': 120,
+                'X': 150
+            }, 80);
+            excel.exportExcel({
+                sheet1: data
+            }, 'SKU信息导出' + getCurrentTimeStr() + '.xlsx', 'xlsx', {
+                    extend: {
+                        '!cols': colConf
+                    }
+                });
+            timeend = Date.now();
+            spent = (timeend - timestart) / 1000;
+            console.log('导出耗时 ' + spent + ' s');
+            layer.close(loading);
+        }
+
+        //获取当前日期字符串
+        function getCurrentTimeStr() {
+            var isTime = new Date();
+            var y = isTime.getFullYear();
+            var m = isTime.getMonth();
+            var d = isTime.getDate();
+            var h = isTime.getHours();
+            var mi = isTime.getMinutes();
+            var s = isTime.getSeconds();
+            m = m + 1;
+            var str = "";
+            str += y;
+            str += (m + "").length < 2 ? ("0" + m) : m;
+            str += (d + "").length < 2 ? ("0" + d) : d;
+            str += (h + "").length < 2 ? ("0" + h) : h;
+            str += (mi + "").length < 2 ? ("0" + mi) : mi;
+            str += (s + "").length < 2 ? ("0" + s) : s;
+            return str;
+        }
+    })
+
+</script>
+

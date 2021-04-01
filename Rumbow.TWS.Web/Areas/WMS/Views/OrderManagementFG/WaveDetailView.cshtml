@@ -1,0 +1,67 @@
+﻿@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.WaveModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>波次单主信息</legend>
+        <table id="table_body">
+            <tr>
+                <td class="TableColumnTitle"><label>波次号</label></td>
+                <td style="width: 20%;">
+                    @Model.WaveCollection.First().WaveNumber
+                </td>
+                <td class="TableColumnTitle"><label>客户</label> </td>
+                <td style="width: 20%;">
+                    @Model.WaveCollection.First().CustomerName
+                </td>
+                <td class="TableColumnTitle"><label>仓库</label></td>
+                <td style="width: 20%;">
+                    @Model.WaveCollection.First().WarehouseName
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>
+            明细信息
+        </legend>
+        <table id="Newtable">
+            <thead>
+                <tr>
+                    <th>行号</th>
+                    <th>订单号</th>
+                    <th>预入库单号</th>
+                    <th>外部单号</th>
+                    <th>快递公司</th>
+                    <th>快递单号</th>
+                </tr>
+            </thead>
+            <tbody id="Newtbody">
+                @if (Model.WaveDetailCollection != null && Model.WaveDetailCollection.Any())
+                {
+                    foreach (var detail in Model.WaveDetailCollection)
+                    {
+                        <tr>
+                            <td>@detail.LineNumber</td>
+                            <td>@detail.OrderNumber</td>
+                            <td>@detail.PreOrderNumber</td>
+                            <td>@detail.ExternOrderNumber</td>
+                            <td>@detail.ExpressCompany</td>
+                            <td>@detail.ExpressKey</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </fieldset>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="返回" id="returnButton" onclick="window.location.href='/WMS/OrderManagement/Wave'" />
+    </div>
+}

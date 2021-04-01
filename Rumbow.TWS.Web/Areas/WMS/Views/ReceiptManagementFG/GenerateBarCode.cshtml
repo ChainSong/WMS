@@ -1,0 +1,312 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.PopupJs()
+@Url.jsrender()
+@Url.Json2()
+@using Runbow.TWS.Common;
+<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/jquery.qrcode.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+    function OpenBarcode(OrderID,DetailID,SKU) {//获取barcode
+        $.post("/WMS/ReceiptManagement/GetBarCode", { OrderID: OrderID, DetailID: DetailID, SKU: SKU, Type: "入库单" }, function (result) {
+            $.each(result, function (i, obj) {
+                $("#tbody_" + DetailID).append("<tr><td>" + obj["SKU"] + "</td><td>" + obj["BarCode"] + "</td></tr>");
+                openPopup("BarcodePop", true, 1000, 600, '', "barcode_"+DetailID, function () {
+
+                });
+                $("#popupLayer_BarcodePop")[0].style.top = "50px";
+                $("#popupInlineDiv").css('height', '580px');
+                $("#popupInlineDiv").css('overflow', 'auto');
+            });
+        }, "json");
+        
+    }
+
+    function SubBarcode()//生成barcode
+    {
+        var data = [];
+        $.each($("#Newtable tbody").children(), function (i, obj) {
+            //判断check是否勾选
+            if ($(obj).find("input:checkbox:eq(0)").attr('checked') != "checked")
+            { return true;}
+            var SurplusCount = $(obj).find("input:text:eq(0)").val();
+            var QtyExpected = $(obj).find("span:eq(0)").text();
+            var barCount = $(obj).find("a:eq(0)").html();
+
+            SurplusCount = parseInt(SurplusCount);
+            QtyExpected = parseInt(QtyExpected);
+            barCount = parseInt(barCount);
+            if ($(obj).css('display')=="none") { return true;}
+            if (isNaN(SurplusCount) || isNaN(QtyExpected) || isNaN(barCount)) {
+                showMsg("请填写正确数字", "4000");
+                return false;
+            }
+            if (SurplusCount > (QtyExpected - barCount)) {
+                showMsg("第"+(i+1)+"行数量不能大于生成剩余数量", "4000");
+                return false;
+            }
+            var ID = parseInt($(obj).find("input:hidden:eq(1)").val());
+            var ReceiptNumber = $(obj).find("input:hidden:eq(2)").val();
+            var DetailID = parseInt($(obj).find("input:hidden:eq(3)").val());
+            var CustomerID = parseInt($(obj).find("input:hidden:eq(4)").val());
+            var CustomerName = $(obj).find("input:hidden:eq(5)").val();
+            var WarehouseID = parseInt($(obj).find("input:hidden:eq(6)").val());
+            var WarehouseName = $(obj).find("input:hidden:eq(7)").val();
+            var SKU = $(obj).find("input:hidden:eq(8)").val();
+            var info = new Object();
+            info.SKU = SKU;
+            info.Type = "入库单";
+            info.OrderID = ID;
+            info.OrderNumber = ReceiptNumber;
+            info.DetailID = DetailID;
+            info.CustomerID = CustomerID;
+            info.CustomerName = CustomerName;
+            info.WarehouseID = WarehouseID;
+            info.WarehouseName = WarehouseName;
+            info.Count = SurplusCount;
+            data.push(info);
+        });
+        if (data != null && data.length > 0) {
+            layer.confirm('<font size="4">确认是否批量生成条码？</font>', {
+                btn: ['确定', '放弃'], icon: 3, area: ['400px', '200px'], shift: 0, closeBtn: 1,
+                //shade: [0.8, '#393D49'],
+                title: ['提示', 'font-size:18px;']
+                //按钮
+            }, function (index) {
+                layer.close(index);
+                $.post("/WMS/ReceiptManagement/GeneraateBarCodeByJson", { json: JSON.stringify(data) }, function (result) {
+                    if (result == "") {
+                        window.location.href = "/WMS/ReceiptManagement/GenerateBarCode?ID=" + $("#ReceiptID").val();
+                    } else {
+                        showMsg(result, "4000");
+                    }
+                });
+            });
+        } else {
+            showMsg("请选择明细！", "4000");
+        }
+    }
+
+    $(document).ready(function () {
+        $(".Ooperation").live("mouseover", function () {
+            $(this).prev()[0].style.display = "none";
+        });
+        $(".Ooperation").live("mouseenter", function () {
+            $(this).prev()[0].style.display = "";
+        })
+        $(".Adiv").live("mouseleave", function () {
+            $(this)[0].style.display = "none";
+        })
+        $("tr").live("mouseenter", function () {
+            $(".Adiv").each(function (a, b) {
+                $(b)[0].style.display = "none";
+
+            })
+        })
+        $('#selectAll').click(function () {
+            var checkBoxs = $("#Newtable tbody input[type='checkbox']");
+
+            if ($(this).attr("checked") === "checked") {
+                checkBoxs.attr("checked", "checked");
+            } else {
+                checkBoxs.removeAttr("checked");
+            }
+
+        });
+        $("#Newtable tbody input[type='checkbox']").live('click', function () {
+            RefreshIDs();
+        });
+    });
+    var RefreshIDs = function () {
+        var checkBoxs = $("#Newtable tbody input[type='checkbox']");
+        var length = checkBoxs.length;
+        var checked = 0;
+        checkBoxs.each(function () {
+            if ($(this).attr("checked") === "checked") {
+                checked++;
+            }
+        });
+
+        if (checked == checkBoxs.length) {
+            $('#selectAll').attr("checked", "checked");
+        } else {
+            $('#selectAll').removeAttr("checked");
+        }
+    }
+
+    function printBarCode(DetailID) {
+        window.location.href = "/WMS/ReceiptManagement/PrintBarCode?DetailIDs=" + DetailID;
+    }
+    function BatchPrintBarCode() {
+        var str = '';
+        $('.checkForSelect').each(function (index) {
+            if ($(this).attr('checked') === 'checked') {
+                str += "'" + $(this).attr('data-id') + "'" + ",";
+            }
+        });
+        if (str == "") {
+            showMsg("请选择打印明细", "4000");
+            return;
+        }
+        window.location.href = "/WMS/ReceiptManagement/PrintBarCode?DetailIDs=" + str.substring(0, str.length - 1);
+    }
+</script>
+<style>
+    strong {
+        padding: 0;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .only_for_print {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .noprint {
+        display: none;
+    }
+</style>
+@model Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.IndexViewModel
+@{
+    
+}
+<input type="hidden" id="ReceiptID" value="@Model.receipt.ID" />
+<fieldset>
+    <legend>入库单主信息                        
+    </legend>
+    <table id="FieldReceiptID">
+        <tr>
+            <td class="TableColumnTitle">
+                <label>入库单号</label></td>
+            <td style="width: 20%;" id="label_ReceiptNumber">
+                @Model.receipt.ReceiptNumber
+            </td>
+
+            <td class="TableColumnTitle">
+                <label>入库日期</label>
+
+            </td>
+            <td style="width: 20%;">
+                @Model.receipt.ReceiptDate.DateTimeToString("yyyy-MM-dd")
+            </td>
+            <td class="TableColumnTitle">
+                <label>完成日期</label>
+            </td>
+            <td style="width: 20%;">
+                @Model.receipt.CompleteDate.DateTimeToString("yyyy-MM-dd")
+            </td>
+
+        </tr>
+        <tr>
+            <td class="TableColumnTitle">
+                <label>备注</label></td>
+            <td colspan="5" style="width: 90%;" id="label_Remark">
+                @Model.receipt.Remark</td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset>
+    <legend>明细信息</legend>
+    <div id="NewDiv" style="overflow-X: scroll;">
+        <table id="Newtable" style="table-layout: fixed;">
+
+            <thead>
+                <tr>
+                    <th style="width: 50px;">操作</th>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    <th>客户</th>
+                    <th>仓库</th>
+                    <th>SKU</th>
+                    <th>数量</th>
+                    <th>生成BarCode数量</th>
+                    <th>已生成数量</th>
+                </tr>
+            </thead>
+            <tbody id="Newtbody">
+                @if (Model.ReceiptDetailCollection != null && Model.ReceiptDetailCollection.Any())
+                {
+                    foreach (var receipt in Model.ReceiptDetailCollection)
+                    {
+                        var div_id = "barcode_" + @receipt.ID;
+                        var tbody_id = "tbody_" + @receipt.ID;
+                        @*if (Model.BarCodeCollection != null && Model.BarCodeCollection.Any()) {
+                            barCount = Model.BarCodeCollection.Where(c => c.DetailID == receipt.ID).Count();
+                            
+                        }*@
+                        <tr style="display:none;">
+                                <td>
+                                    <div id="@div_id" style="overflow:auto">
+                                        <table style="table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th>SKU</th>
+                                                    <th>条码</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="@tbody_id">
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        var SurplusCount = @receipt.QtyExpected - @receipt.BarCodeCount;
+                       
+                        
+                        
+                    <tr id="@receipt.ID">
+                        <td style="position: relative">
+                            <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                <label   style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="printBarCode('@receipt.ID')">打印</label>
+                                    <label   style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="OpenBarcode('@Model.receipt.ID','@receipt.ID','@receipt.SKU')">条码明细</label>
+                                @*<label id="labelRemove2" style="cursor: pointer;" class="btn btn-primary btn-xs printPick">删除</label>*@
+                            </div>
+                            <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                        </td>
+                        <td>
+                            @Html.CheckBox(@receipt.ID.ToString(), new { data_ID = @receipt.ID, data_name = @receipt.BoxNumber, @class = "checkForSelect" })
+                        </td>
+                        <td>
+                            @Model.receipt.CustomerName
+                        </td>
+                        <td>
+                            @Model.receipt.WarehouseName
+                        </td>
+                        <td>
+                            @receipt.SKU
+                        </td>
+                        <td>
+                            <span>@receipt.QtyExpected</span>
+                        </td>
+                        <td>
+                            <input type="hidden" value="@Model.receipt.ID" />
+                            <input type="hidden" value="@Model.receipt.ReceiptNumber" />
+                            <input type="hidden" value="@receipt.ID" />
+                            <input type="hidden" value="@Model.receipt.CustomerID" />
+                            <input type="hidden" value="@Model.receipt.CustomerName" />
+                            <input type="hidden" value="@Model.receipt.WarehouseID" />
+                            <input type="hidden" value="@Model.receipt.WarehouseName" />
+                            <input type="hidden" value="@receipt.SKU" />
+                            <input type="text" value="@SurplusCount" class="form-control" />
+                        </td>
+                        <td>
+                            
+                            <a onclick="OpenBarcode('@Model.receipt.ID','@receipt.ID','@receipt.SKU')">@receipt.BarCodeCount</a>
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+<div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="生成条码" onclick="SubBarcode()" />
+        <input type="button" class="btn btn-success" value="批量打印" onclick="BatchPrintBarCode()" />
+   @*         <input type="button" class="btn btn-success" value="返回" onclick="location.href = document.referrer;" />*@
+            <input type="button" class="btn btn-success" value="返回" onclick="history.go(-1)" />
+    </div>

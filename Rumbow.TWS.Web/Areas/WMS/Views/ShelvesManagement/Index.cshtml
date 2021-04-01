@@ -62,32 +62,7 @@
             }
             <tr>
                 <td class="TableColumnTitle">
-                    <label>入库单号</label>
-                </td>
-                <td style="width: 21%;">
-                    @Html.TextAreaFor(m => m.Condition.ReceiptNumber, new { @class = "form-control", style = "width:100%" })
-                </td>
-                <td class="TableColumnTitle">
-                    <label>外部单号</label>
-                </td>
-                <td style="width: 21%;">
-                    @Html.TextAreaFor(m => m.Condition.ExternReceiptNumber, new Dictionary<string, object>()
-                   {
-                           {"class","form-control"},
-                           {"style","width:100%"},
-                           {"ng-model",Model.Condition.ExternReceiptNumber},
-                   })
-                </td>
-                <td class="TableColumnTitle">
-                    <label>入库日期</label>
-                </td>
-                <td style="width: 21%;">
-                    @Html.CalendarRange("StorageTime", "calendarRange form-control calendarRangeReWrite", Model.Condition.StartStorageTime, Model.Condition.EndStorageTime)
-                </td>
-            </tr>
-            <tr>
-                <td class="TableColumnTitle">
-                    <label>客户</label>
+                    <label>客户/供应商</label>
                 </td>
                 <td>
                     @Html.DropDownListFor(m => m.Condition.CustomerID, Model.Customers, "==请选择==", new { @class = "form-control", @style = "width:100%" })
@@ -99,25 +74,52 @@
                     @Html.DropDownListFor(m => m.Condition.WarehouseID, Model.WarehouseList, "==请选择==", new { @class = "form-control", @style = "width:100%" })
                 </td>
                 <td class="TableColumnTitle">
+                    <label>入库单号</label>
+                </td>
+                <td style="width: 13%;">
+                    @Html.TextAreaFor(m => m.Condition.ReceiptNumber, new { @class = "form-control", style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle">
+                    <label>外部单号</label>
+                </td>
+                <td style="width: 13%;">
+                    @Html.TextAreaFor(m => m.Condition.ExternReceiptNumber, new Dictionary<string, object>()
+                   {
+                           {"class","form-control"},
+                           {"style","width:100%"},
+                           {"ng-model",Model.Condition.ExternReceiptNumber},
+                   })
+                </td>
+               
+            </tr>
+            <tr>
+
+                <td class="TableColumnTitle">
+                    <label>入库日期</label>
+                </td>
+                <td style="width: 13%;">
+                    @Html.CalendarRange("StorageTime", "calendarRange form-control calendarRangeReWrite", Model.Condition.StartStorageTime, Model.Condition.EndStorageTime)
+                </td>
+                <td class="TableColumnTitle">
                     <label>上架状态</label>
                 </td>
                 <td>
                     @Html.DropDownListFor(m => m.Condition.ShelvesState, Model.ReceiptStatus, "==请选择==", new { @class = "form-control", @style = "width:100%" })
                 </td>
-            </tr>
-            <tr>
                 <td class="TableColumnTitle">
                     <label>创建日期</label>
                 </td>
-                <td style="width: 21%;">
+                <td style="width: 13%;">
                     @Html.CalendarRange("CreateTime", "calendarRange form-control calendarRangeReWrite", Model.Condition.StartCreateTime, Model.Condition.EndCreateTime)
                 </td>
                 <td class="TableColumnTitle">
-                    <label>门店代码</label>
+                    <label> </label>
                 </td>
-                <td style="width: 21%;">
-                    @Html.TextBoxFor(m => m.Condition.str3, new { @class = "form-control", style = "width:100%" })
+                <td style="width: 13%;">
                 </td>
+            </tr>
+            <tr>
+              
             </tr>
         </table>
         <div class="actionButtonDiv">
@@ -152,14 +154,12 @@
                         <th style="width: 150px">收货单号</th>
                         <th style="width: 150px">外部单号</th>
                         <th>入库日期</th>
-                        <th>客户</th>
+                        <th>客户/供应商</th>
                         <th>仓库名称</th>
                         <th>上架日期</th>
                         <th>入库单状态</th>
-                        <th>门店代码</th>
                         <th>创建人</th>
                         <th>创建时间</th>
-                        <th>总件数</th>
                     </tr>
                 </thead>
                 <tbody id="editTable">
@@ -226,10 +226,8 @@
                                         <td class="Status"></td>
                                         break;
                                 }
-                                <td class="str3">@item.str3</td>
                                 <td class="Creator">@item.Creator</td>
                                 <td class="CreateTime">@item.CreateTime</td>
-                                <td class="">@item.str13</td>
                             </tr>
                         }
                     }
@@ -245,7 +243,7 @@
         <table id="showtable"></table>
         <input type="button" value="关闭" onclick="    CloseDiv()" />
     </div>
-    <fieldset style="margin-top: 100px;">
+    @*<fieldset style="margin-top: 100px;">
         <legend>上架信息导入说明</legend>
         <div id="importInstructionDiv">
             1.模板中有模拟数据，请按照demo填写
@@ -288,9 +286,9 @@
             <input type="button" class="btn btn-success" value="确定" id="intelligentDispatchOK" />
             <input type="button" class="btn btn-success" value="取消" id="intelligentDispatchRT" />
         </div>
-    </div>
+    </div>*@
 }
-<fieldset class="AfterTop">
+@*<fieldset class="AfterTop">
     <legend>
         选择Excel导入上架信息
     </legend>
@@ -308,7 +306,7 @@
     </legend>
     <div id="outPutResult">
     </div>
-</fieldset>
+</fieldset>*@
 <div id="Abnormals" style="display: none">
     <table>
         <tr>

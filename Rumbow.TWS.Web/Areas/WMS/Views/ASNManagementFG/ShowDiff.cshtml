@@ -1,0 +1,218 @@
+﻿<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="nest" id="asdlose">
+                <div class="title-alt">
+                    <h3>
+                        箱数统计
+                    </h3>
+                    <div class="titleClose">
+                    </div>
+                    <div class="titleToggle">
+                        <a class="nav-toggle-alt" href="#asd">
+                            <span class="entypo-up-open"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="body-nest" id="asd">
+                    <section id="flip-scroll">
+                        <div id="tables" style="">
+                            <table id="Newtable" class="table table-bordered table-striped cf">
+                                <thead>
+                                    <tr>
+                                        <th>期望总箱数</th>
+                                        <th>入库总箱数</th>
+                                        <th>差异箱数</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ var diffQty1 = Model.ReceiveTotalBox.ReceiveTotalBox - Model.ExpectTotalBox.ExpectTotalBox;
+                                        var diffQtyShow1 = diffQty1 > 0 ? ("+" + diffQty1) : "" + diffQty1;
+                                        <tr>
+
+                                            <td>@Model.ExpectTotalBox.ExpectTotalBox </td>
+                                            <td>@Model.ReceiveTotalBox.ReceiveTotalBox</td>
+                                            <td>@diffQtyShow1</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="nest" id="asdlose">
+                <div class="title-alt">
+                    <h3>
+                        件数统计
+                    </h3>
+                    <div class="titleClose">
+                    </div>
+                    <div class="titleToggle">
+                        <a class="nav-toggle-alt" href="#asd">
+                            <span class="entypo-up-open"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="body-nest" id="asd">
+                    <section id="flip-scroll">
+                        <div id="tables" style="">
+                            <table id="Newtable" class="table table-bordered table-striped cf">
+                                <thead>
+                                    <tr>
+                                        <th>期望总件数</th>
+                                        <th>入库总件数</th>
+                                        <th>差异件数</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ var diffQty2 = Model.ReceiveTotalSKU.ReceiveTotalSKU - Model.ExpectTotalSKU.ExpectTotalSKU;
+                                        var diffQtyShow2 = diffQty2 > 0 ? ("+" + diffQty2) : "" + diffQty2;
+                                        <tr>
+
+                                            <td>@Model.ExpectTotalSKU.ExpectTotalSKU </td>
+                                            <td>@Model.ReceiveTotalSKU.ReceiveTotalSKU</td>
+                                            <td>@diffQtyShow2</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nest" id="asdlose">
+                <div class="title-alt">
+                    <h3>
+                        箱件数统计
+                        @if (Model.ASNScanBoxSKUCollection != null && Model.ASNScanBoxSKUCollection.Any())
+                        {
+                            @Html.Raw("(" + Model.ASNScanBoxSKUCollection.Count() + ")");
+                        }
+                    </h3>
+                    <div class="titleClose">
+                    </div>
+                    <div class="titleToggle">
+                        <a class="nav-toggle-alt" href="#asd">
+                            <span class="entypo-up-open"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="body-nest" id="asd">
+                    <section id="flip-scroll">
+                        <div id="tables" style="">
+                            <table id="Newtable" class="table table-bordered table-striped cf">
+                                <thead>
+                                    <tr>
+                                        <th>箱号</th>
+                                        <th>期望总件数</th>
+                                        <th>入库总件数</th>
+                                        <th>差异件数</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ASNScanBoxSKUCollection != null && Model.ASNScanBoxSKUCollection.Any())
+                                    {
+                                        foreach (var crminfo in Model.ASNScanBoxSKUCollection)
+                                        {
+
+                                            var diffQty = crminfo.ReceiveBoxSKU - crminfo.ExpectBoxSKU;
+                                            var diffQtyShow = diffQty > 0 ? ("+" + diffQty) : "" + diffQty;
+                                            <tr>
+                                                <td>@crminfo.str2</td>
+                                                <td>@crminfo.ExpectBoxSKU</td>
+                                                <td>@crminfo.ReceiveBoxSKU</td>
+                                                <td>@diffQtyShow</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nest" id="asdlose">
+                <div class="title-alt">
+                    <h3>
+                        箱明细列表
+                        @if (Model.ASNScanBoxDetailSKUCollection != null && Model.ASNScanBoxDetailSKUCollection.Any())
+                        {
+                            @Html.Raw("(" + Model.ASNScanBoxDetailSKUCollection.Count() + ")");
+                        }
+                    </h3>
+                    <div class="titleClose">
+                    </div>
+                    <div class="titleToggle">
+                        <a class="nav-toggle-alt" href="#asd">
+                            <span class="entypo-up-open"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="body-nest" id="asd">
+                    <section id="flip-scroll">
+                        <div id="tables" style=" min-height: 180px">
+                            <table id="Newtable" class="table table-bordered table-striped cf">
+                                <thead>
+                                    <tr>
+                                        <th>箱号</th>
+                                        <th>SKU</th>
+                                        <th>期望数量</th>
+                                        <th>入库数量</th>
+                                        <th>差异数量</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ASNScanBoxDetailSKUCollection != null && Model.ASNScanBoxDetailSKUCollection.Any())
+                                    {
+                                        foreach (var crminfo in Model.ASNScanBoxDetailSKUCollection)
+                                        {
+
+                                            var diffQty = crminfo.BoxDetailSKU - crminfo.ExpectBoxDetailSKU;
+                                            var diffQtyShow = diffQty > 0 ? ("+" + diffQty) : "" + diffQty;
+                                            var colorRed = diffQty == 0 ? "" : "background-color:red";
+                                            <tr style="@colorRed">
+                                                <td>@crminfo.str2</td>
+                                                <td>@crminfo.SKU</td>
+                                                <td>@crminfo.ExpectBoxDetailSKU</td>
+                                                <td>@crminfo.BoxDetailSKU</td>
+                                                <td>@diffQtyShow</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+

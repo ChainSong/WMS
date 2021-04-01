@@ -1,0 +1,622 @@
+﻿<!--引入vue本地文件-->
+<script src="~/Assets/Vue/lrgvue.js"></script>
+<!-- 引入饿了么样式 -->
+@*<link href="~/Assets/Vue/elementui.css" rel="stylesheet" />*@
+<!-- 引入饿了么组件库 -->
+@*<script src="~/Assets/Vue/elementui.js"></script>*@
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+
+
+<div id="OrderShipmentApp">
+    <div class="headerdiv">
+        <el-card>
+            <strong slot="header">发运单查询条件</strong>
+            <el-form :inline="true" :model="Model" label-width="100px" label-position="left" size="medium">
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <el-form-item label="客户：">
+                            <el-select v-model="Model.CustomerID" placeholder="请选择" id="CustomerID">
+                                <el-option v-for="item in CustomerList" :label="item.Text" :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="仓库：">
+                            <el-select v-model="Model.WarehouseID" placeholder="请选择" clearable>
+                                <el-option v-for="item in WarehouseList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="运单日期：">
+                            <el-date-picker v-model="Model.StartCreateTime"
+                                            type="date" :editable="false"
+                                            placeholder="开始日期">
+                            </el-date-picker>
+                            至
+                            <el-date-picker v-model="Model.EndCreateTime"
+                                            type="date" :editable="false"
+                                            placeholder="结束日期">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <el-form-item label="运单号：">
+                            <el-input v-model="Model.ShipmentNumber" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="外部单号：">
+                            <el-input v-model="Model.ExternOrderNumber" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="运单状态：">
+                            <el-select v-model="Model.Status" placeholder="请选择" clearable>
+                                <el-option v-for="item in StatusList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="发运场景：">
+                            <el-select v-model="Model.Type" placeholder="请选择" clearable>
+                                <el-option v-for="item in TypeList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <div style="text-align:center">
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="ToSearch">查询</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-card>
+    </div>
+    <div style="height:5px;"></div>
+    <div class="detaildiv">
+        <el-card>
+            <strong slot="header">发运单列表({{count}})</strong>
+            <el-table :data="ShipmentList"
+                      style="width: 100%" size="medium" border>
+                <el-table-column type="expand">
+                    <template slot-scope="scope">
+                        <el-table :data="scope.row.OrderList" border style="width: 100%" size="medium">
+                            <el-table-column label="外部单号"
+                                             prop="ExternOrderNumber" width="*">
+                            </el-table-column>
+                            <el-table-column label="订单类型"
+                                             width="*">
+                                <template slot-scope="scope">
+                                    <span>{{GenOrderType(scope.row)}}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="订单状态"
+                                             width="*">
+                                <template slot-scope="scope">
+                                    <span>{{GenOrderStatus(scope.row)}}</span>
+                                </template>
+                            </el-table-column>
+
+                        </el-table>
+                    </template>
+                </el-table-column>
+                <el-table-column label="仓库"
+                                 prop="WarehouseName" width="90">
+                </el-table-column>
+                <el-table-column label="运单号"
+                                 prop="ShipmentNumber" width="240">
+                </el-table-column>
+                <el-table-column label="发运状态"
+                                 prop="Status" width="150">
+                    <template slot-scope="scope">
+                        <span>{{GenShipStatus(scope.row.Status)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="运单类型"
+                                 width="90">
+                    <template slot-scope="scope">
+                        <span>{{GenShipType(scope.row.Type)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="创建时间"
+                                 width="170">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.CreateTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="打印消息仓库发送时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.PrintTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="打印消息发送SAP时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.DateTime1)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="货物离场仓库发送时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.GoodsissueTime)}}</span>
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="货物离场发送SAP时间"
+                                 width="180">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.DateTime2)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" fixed="left" width="230">
+                    <template slot-scope="scope">
+                        <el-button v-show="scope.row.Type==1" :disabled="scope.row.Status>1" size="mini" v-on:click="ToSendPrint(scope.row)" type="primary">发送打印</el-button>
+                        <el-button v-show="scope.row.Type==1" :disabled="scope.row.Status>2||scope.row.Status<2" size="mini" v-on:click="ToSendGoodsissue(scope.row)" type="primary">发送货物离场</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br />
+            <div>
+                <el-pagination v-on:size-change="handleSizeChange"
+                               v-on:current-change="handleCurrentChange"
+                               :current-page.sync="page"
+                               :page-size="20"
+                               layout="total, prev, pager, next"
+                               :total="TotalCount">
+                </el-pagination>
+            </div>
+        </el-card>
+
+
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var vue1 = new Vue({
+        el: '#OrderShipmentApp',
+        data: {
+            CustomerList: [],//客户下拉
+            WarehouseList: [],//仓库下拉
+            StatusList: [],//状态下拉
+            TypeList: [],//类型下拉
+            PreOrderStatusList: [],//预出库的状态
+            OrderStatusList: [],//出库单状态
+            AsnStatusList: [],//预入库单状态
+            ReceiptStatusList: [],//入库单状态
+            Model: {
+                CustomerID: '',
+                WarehouseID: '',
+                Status: '',
+                ShipmentNumber: '',
+                ExternOrderNumber: '',
+                OrderNumber: '',
+                StartCreateTime: '',
+                EndCreateTime: ''
+            },
+
+            ShipmentList: [],
+
+            limit: 10,
+            page: 1,
+            TotalCount: 100,
+            loading: false,
+
+        },
+        created: function () {
+            let customerID = this.GetQueryString('customerID');
+            //console.log(customerID)
+            this.ToGetOrderShipmentWhere(customerID);
+        },
+
+        computed: {
+            //查询的列表条数
+            count: function () {
+                return this.ShipmentList.length;
+            },
+
+        },
+        methods: {
+            //页面记载获去下拉框的值
+            ToGetOrderShipmentWhere: function (customerID) {
+                $.ajax({
+                    type: "POST",
+                    url: "/WMS/OrderManagement/GetOrderShipmentWhere",
+                    data: {
+                        customerID: customerID
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            vue1.CustomerList = data.data.CustomerList;
+                            vue1.WarehouseList = data.data.WarehouseList;
+                            vue1.StatusList = data.data.StatusList;
+                            vue1.TypeList = data.data.TypeList;
+                            vue1.Model.CustomerID = data.data.SearchCondition.CustomerID + '';
+                            vue1.Model.StartCreateTime = data.data.SearchCondition.StartCreateTime;
+                            vue1.Model.EndCreateTime = data.data.SearchCondition.EndCreateTime;
+                            vue1.PreOrderStatusList = data.data.PreOrderStatusList;
+                            vue1.OrderStatusList = data.data.OrderStatusList;
+                            vue1.AsnStatusList = data.data.AsnStatus;
+                            vue1.ReceiptStatusList = data.data.ReceiptStatus;
+                            vue1.ToSearch();
+
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                });
+            },
+
+            ToSearch: function () {
+                if (vue1.Model.CustomerID) {
+                    vue1.loading = true;
+                    $.ajax({
+                        type: "POST",
+                        url: "/WMS/OrderManagement/GetOrderShipmentList",
+                        data: {
+                            requestData: JSON.stringify(vue1.Model),
+                            page: vue1.page,
+                            limit: vue1.limit
+                        },
+                        success: function (data) {
+                            let res = JSON.parse(data)
+                            //console.log(res)
+                            if (res.code == 0) {
+                                vue1.ShipmentList = res.data;
+                                vue1.TotalCount = res.count;
+                                //vue1.loading = false;
+                            }
+                            else {
+                                vue1.ShipmentList = [];
+                                vue1.TotalCount = 0;
+                                //vue1.loading = false;
+                            }
+                        },
+                        error: function (err) {
+                            //vue1.loading = false;
+                            console.log(err)
+                        }
+                    });
+                }
+                else {
+                    alert(JSON.stringify(vue1.Model))
+                    layer.tips('请先选择客户', '#CustomerID');
+                }
+
+            },
+
+            //发送打印消息
+            ToSendPrint: function (row) {
+                //判断当前状态是否可以发送打印消息
+                //console.log(row)
+                if (row.Status != 1) {
+                    layer.alert('当前状态不允许发送打印，请刷新界面！', { icon: 2 });
+                    return;
+                }
+                if (row.OrderList.length <= 0) {
+                    layer.alert('该运单下面没有订单，请联系IT！', { icon: 2 });
+                    return;
+                }
+                //判断是入库还是出库
+                //判断运单下面的订单是否都已经是9状态
+                let isStatus = true;
+                let IsAsnorOrder = 0;
+                if (row.OrderList[0].str2 == "销售退货") {//入库的
+                    IsAsnorOrder = 1;
+                    for (var i = 0; i < row.OrderList.length; i++) {
+                        if (row.OrderList[i].Int4 != 9) {
+                            isStatus = false;
+                            break;
+                        }
+                    }
+                    if (isStatus == false) {
+                        layer.alert('该运单中存未入库完成的订单，请检查！', { icon: 2 });
+                        return;
+                    }
+
+                } else {//出库的
+                    IsAsnorOrder = 2;
+                    for (var i = 0; i < row.OrderList.length; i++) {
+                        if (row.OrderList[i].Int2 != 9) {
+                            isStatus = false;
+                            break;
+                        }
+                    }
+                    if (isStatus == false) {
+                        layer.alert('该运单中存未出库完成的订单，请检查！', { icon: 2 });
+                        return;
+                    }
+                }
+               
+                //if (isStatus == false) {
+                //    layer.alert('该运单中存未完成的订单，请检查！', { icon: 2 });
+                //    return;
+                //}
+
+                layer.confirm('确认是否发送打印消息？', {
+                    btn: ['确定', '取消'] //按钮
+                    , title: ['提示', 'font-size:18px;']
+                }, function (index) {
+                    layer.close(index)
+                    $.ajax({
+                        type: "Post",
+                        url: "/WMS/OrderManagement/SendS14ShipmentPrint",
+                        data: {
+                            "ID": row.ID,
+                            "Type": IsAsnorOrder
+                        },
+                        async: "false",
+                        success: function (data) {
+                            let res = JSON.parse(data);
+                            if (res.code == 0) {
+                                layer.alert('S1-4场景打印消息发送成功！', { icon: 1 }, function (sss) {
+                                    layer.closeAll();
+                                    vue1.ToSearch();//成功之后刷新一下table
+                                });
+                            }
+                            else {
+                                layer.alert('S1-4打印消息发送失败：' + res.msg, { icon: 2 });
+                            }
+                        },
+                        error: function (msg) {
+                            layer.alert('S1-4打印消息发送失败,网络错误！', { icon: 2 });
+                        }
+
+                    });
+
+                }, function (index2) {
+                    layer.close(index2)
+                });
+
+            },
+            //发送货物离场消息
+            ToSendGoodsissue: function (row) {
+                //判断当前状态
+                if (row.Status != 2) {
+                    layer.alert('当前状态不允许发送货物离场，请刷新界面！', { icon: 2 });
+                    return;
+                }
+                if (row.OrderList.length <= 0) {
+                    layer.alert('该运单下面没有订单，请联系IT！', { icon: 2 });
+                    return;
+                }
+                //判断运单下面的订单是否都已经是9状态
+                let isStatus = true;
+                let IsAsnorOrder = 0;
+                if (row.OrderList[0].str2 == "销售退货") {//入库的
+                    IsAsnorOrder = 1;
+                    for (var i = 0; i < row.OrderList.length; i++) {
+                        if (row.OrderList[i].Int4 != 9) {
+                            isStatus = false;
+                            break;
+                        }
+                    }
+                    if (isStatus == false) {
+                        layer.alert('该运单中存未入库完成的订单，请检查！', { icon: 2 });
+                        return;
+                    }
+
+                } else {//出库的
+                    IsAsnorOrder = 2;
+                    for (var i = 0; i < row.OrderList.length; i++) {
+                        if (row.OrderList[i].Int2 != 9) {
+                            isStatus = false;
+                            break;
+                        }
+                    }
+                    if (isStatus == false) {
+                        layer.alert('该运单中存未出库完成的订单，请检查！', { icon: 2 });
+                        return;
+                    }
+                }
+
+
+
+
+                //for (var i = 0; i < row.OrderList; i++) {
+                //    if (row.OrderList[i].Int2 != 9) {
+                //        isStatus = false;
+                //        break;
+                //    }
+                //}
+                //if (isStatus == false) {
+                //    layer.alert('该运单存在未出库的订单，请检查！', { icon: 2 });
+                //    return;
+                //}
+
+                layer.confirm('确认是否发送货物离场消息？', {
+                    btn: ['确定', '取消'] //按钮
+                    , title: ['提示', 'font-size:18px;']
+                }, function (index) {
+                    layer.close(index)
+                    $.ajax({
+                        type: "Post",
+                        url: "/WMS/OrderManagement/SendS14ShipmentGoodsissue",
+                        data: {
+                            "ID": row.ID,
+                            "Type": IsAsnorOrder
+                        },
+                        async: "false",
+                        success: function (data) {
+                            let res = JSON.parse(data);
+                            if (res.code == 0) {
+                                layer.alert('S1-4场景货物离场消息发送成功！', { icon: 1 }, function (sss) {
+                                    layer.closeAll();
+                                    vue1.ToSearch();//成功之后刷新一下table
+                                });
+                            }
+                            else {
+                                layer.alert('S1-4场景货物离场消息发送失败：' + res.msg, { icon: 2 });
+                            }
+                        },
+                        error: function (msg) {
+                            layer.alert('S1-4货物离场发送失败,网络错误！', { icon: 2 });
+                        }
+
+                    });
+
+                }, function (index2) {
+                    layer.close(index2)
+                });
+
+            },
+            handleSizeChange: function (val) {
+                this.limit = val;
+                this.ToSearch();
+            },
+            handleCurrentChange: function (val) {
+                this.page = val;
+                this.ToSearch();
+            },
+            GetQueryString: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            },
+            //直接传字符串进来
+            ChangeDateStr: function (str) {
+                if (str == '' || str == null) {
+                    return '';
+                }
+                let jsondate = str.replace("/Date(", "").replace(")/", "");
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                } else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hour + ":" + minutes + ":" + second;
+            },
+            //得到运单状态的中文显示
+            GenShipStatus: function (val) {
+                if (val == "" || val == null || val == 0) {
+                    return "";
+                } else {
+                    let text = "";
+                    for (var i = 0; i < vue1.StatusList.length; i++) {
+                        if (vue1.StatusList[i].Value == val) {
+                            text = vue1.StatusList[i].Text;
+                            break;
+                        }
+                    }
+                    return text;
+                }
+            },
+            //得到运单类型的中文显示
+            GenShipType: function (val) {
+                if (val == "" || val == null || val == 0) {
+                    return "";
+                } else {
+                    let text = "";
+                    for (var i = 0; i < vue1.TypeList.length; i++) {
+                        if (vue1.TypeList[i].Value == val) {
+                            text = vue1.TypeList[i].Text;
+                            break;
+                        }
+                    }
+                    return text;
+                }
+            },
+            //订单当前的状态
+            GenOrderStatus: function (row) {
+                let text = "";
+                //判断是ZLR入库单还是出库单
+
+                //出库单
+                if (row.Int2 != 0) {//int2是order表的状态
+                    for (var i = 0; i < vue1.OrderStatusList.length; i++) {
+                        if (vue1.OrderStatusList[i].Value == row.Int2) {
+                            text = vue1.OrderStatusList[i].Text;
+                            break;
+                        }
+                    }
+                } else if (row.Int1 != 0) {//int1是preorder表的状态
+                    for (var a = 0; a < vue1.PreOrderStatusList.length; a++) {
+                        if (vue1.PreOrderStatusList[a].Value == row.Int1) {
+                            text = vue1.PreOrderStatusList[a].Text;
+                            break;
+                        }
+                    }
+                }
+                else if (row.Int4 != 0) {
+                    for (var a = 0; a < vue1.ReceiptStatusList.length; a++) {
+                        if (vue1.ReceiptStatusList[a].Value == row.Int4) {
+                            text = vue1.ReceiptStatusList[a].Text;
+                            break;
+                        }
+                    }
+                }
+                else if (row.Int3 != 0) {
+                    for (var a = 0; a < vue1.AsnStatusList.length; a++) {
+                        if (vue1.AsnStatusList[a].Value == row.Int3) {
+                            text = vue1.AsnStatusList[a].Text;
+                            break;
+                        }
+                    }
+                }
+                return text;
+            },
+            GenOrderType: function (row) {
+                let text = "";
+                if (row.str1 != "") {
+                    text = row.str1;
+                } else if (row.str2 != "") {
+                    text = row.str2;
+                }
+                return text;
+            }
+
+        },
+    })
+
+
+
+</script>
+
+<style scoped>
+    /*表头样式*/
+    .el-table__header tr,
+    .el-table__header th {
+        padding: 0;
+        height: 40px;
+        color: #333333;
+        font-family: 微软雅黑;
+    }
+    /*表体样式*/
+    .el-table__body tr td {
+        padding: 0;
+        height: 35px;
+        font-family: 微软雅黑
+    }
+
+    #OrderShipmentApp {
+        height: 100%;
+        overflow-y: auto;
+    }
+</style>

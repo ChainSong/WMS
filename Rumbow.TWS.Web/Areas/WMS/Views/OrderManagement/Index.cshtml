@@ -56,9 +56,9 @@
                 </td>
                 <td style="width: 15%;">@Html.TextAreaFor(m => m.SearchCondition.PreOrderNumber, new { @class = "form-control", style = "width:100%" })</td>
                 <td class="TableColumnTitle">
-                    <label>波次号</label>
+                    <label>出库日期</label>
                 </td>
-                <td style="width: 15%;">@Html.TextAreaFor(m => m.SearchCondition.WaveNumber, new { @class = "form-control", style = "width:100%" })</td>
+                <td>@Html.CalendarRange("OrderTime", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartOrderTime, @Model.SearchCondition.EndOrderTime)</td>
             </tr>
             <tr>
                 @{
@@ -84,15 +84,12 @@
                 </td>
                 <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.OrderStatus.Where(c => c.Text != "取消"), "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
             </tr>
-            <tr>
+            @*<tr>
                 <td class="TableColumnTitle">
                     <label>创建日期</label>
                 </td>
                 <td>@Html.CalendarRangeDateTime("CreateTime", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartCreateTime, @Model.SearchCondition.EndCreateTime)</td>
-                <td class="TableColumnTitle">
-                    <label>出库日期</label>
-                </td>
-                <td>@Html.CalendarRange("OrderTime", "calendarRange  form-control calendarRangeReWrite", @Model.SearchCondition.StartOrderTime, @Model.SearchCondition.EndOrderTime)</td>
+               
                 <td class="TableColumnTitle">
                     <label>收货单位</label>
                 </td>
@@ -101,7 +98,7 @@
                     <label>备注</label>
                 </td>
                 <td>@Html.TextBoxFor(m => m.SearchCondition.str11, new { @class = "form-control", style = "width:100%" })</td>
-            </tr>
+            </tr>*@
             @*  <tr>
                     <td  class="TableColumnTitle"><label>单SKU/多SKU</label></td>
                      <td >@Html.DropDownListFor(m=>m.SearchCondition.IsSkuOne,Model.Skucounts,"==请选择==",new { @class="form-control",style="width:100%"})</td>
@@ -110,7 +107,7 @@
                      <td class="TableColumnTitle"><label>快递单号</label></td>
                      <td>@Html.TextAreaFor(m=>m.SearchCondition.ExpressNumber, new { @class="form-control",style="width:100%"})</td>
                 </tr>*@
-            <tr>
+            @*<tr>
                 <td class="TableColumnTitle">
                     <label>省份</label>
                 </td>
@@ -123,13 +120,10 @@
                     <label>区县</label>
                 </td>
                 <td>@Html.TextBoxFor(m => m.SearchCondition.District, new { @class = "form-control", style = "width:100%" })</td>
-                <td class="TableColumnTitle">
-                    <label>其它单号</label>
-                </td>
-                <td>@Html.TextBoxFor(m => m.SearchCondition.str15, new { @class = "form-control", style = "width:100%" })</td>
-            </tr>
+               
+            </tr>*@
 
-            <tr>
+            @*<tr>
                 <td class="TableColumnTitle">
                     <label>是否打印</label>
                 </td>
@@ -152,7 +146,7 @@
                     </td>
                     <td>@Html.DropDownListFor(m => m.SearchCondition.IsGetExpressNumber, Model.IsGetExpressNumber, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
                 }
-            </tr>
+            </tr>*@
             @* <tr>
                     <td class="TableColumnTitle"><label>收货人</label></td>
                     <td style="width: 16%;">@Html.TextBoxFor(m=>m.SearchCondition.Consignee, new { @class="form-control",style="width:100%"})</td>
@@ -239,45 +233,45 @@
         @*<p id="moreCondition" style="background-color: #e8eef4; width: 60px">展开︾</p>*@
         <div class="actionButtonDiv">
             <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
-            <input type="button" class="btn btn-success" value="新增" id="addButton" />
+            @*<input type="button" class="btn btn-success" value="新增" id="addButton" />*@
             <input type="submit" class="btn btn-success" value="导出" id="exportButton" name="Action" />
             @*<input type="submit" class="btn btn-success" value="合并" id="unionButton" name="Action"/>*@
             <input type="button" class="btn btn-success" value="批量打印" id="printButton" />
-            @if (Model.OrderCollection.Select(m => m.CustomerName.ToString()).FirstOrDefault() != "NIKE-Return")
+            @*@if (Model.OrderCollection.Select(m => m.CustomerName.ToString()).FirstOrDefault() != "NIKE-Return")
             {
                 <input type="button" class="btn btn-success" value="批量打印面单" id="printExpButton" />
-            }
-            <input type="button" class="btn btn-success" value="批量汇总打印" id="printSumButton" />
-            <input type="button" class="btn btn-success" value="批量拣货" id="pickButton" />
-            <input type="button" class="btn btn-success" value="批量复检" id="repickButton" />
+            }*@
+            @*<input type="button" class="btn btn-success" value="批量汇总打印" id="printSumButton" />*@
+            @*<input type="button" class="btn btn-success" value="批量拣货" id="pickButton" />*@
+            @*<input type="button" class="btn btn-success" value="批量复检" id="repickButton" />*@
             @*<input type="button" class="btn btn-success" value="交接" id="deliverButton" />*@
-            <input type="button" class="btn btn-success" value="批量导出箱清单" id="ExportAllBoxlist" />
-            <input type="button" class="btn btn-success" value="批量打印托运单" id="printAllpod" />
-            <input type="button" class="btn btn-success" value="批量汇总打印托运单" id="btnPrintSumAllpod" />
+            @*<input type="button" class="btn btn-success" value="批量导出箱清单" id="ExportAllBoxlist" />*@
+            @*<input type="button" class="btn btn-success" value="批量打印托运单" id="printAllpod" />*@
+            @*<input type="button" class="btn btn-success" value="批量汇总打印托运单" id="btnPrintSumAllpod" />*@
             <input type="button" class="btn btn-success" value="批量出库" id="outButton" />
             <input type="button" class="btn btn-success" value="批量导出差异" id="ExportDiffButton" />
-            @if (ViewBag.ProjectName == "Bridge")
+            @*@if (ViewBag.ProjectName == "Bridge")
             {
                 <input type="button" class="btn btn-success" value="批量打印出库单" id="btnBatchPrintOutOrder" />
-            }
+            }*@
             @*<input type="button" class="btn btn-success" value="智能出库" id="intelligentDispatch" />*@
             <input style="display: none;" type="button" class="btn btn-success" value="批量状态回退" id="backButton" />
-            @if (ViewBag.ProjectName == "延锋百利得")
+            @*@if (ViewBag.ProjectName == "延锋百利得")
             {
                 <input type="button" class="btn btn-success" value="导入回单流水号" id="btnShowImport" onclick="window.location.href='ImportReturnNo'" />
                 <input type="button" class="btn btn-success" value="批量打印出库单" id="btnBatchPrintOrder" />
-            }
+            }*@
             <input type="button" class="btn btn-success" value="状态统计" id="StatusStatis" />
-            @if (((ViewBag.CustomerID) == null ? 0 : (long)ViewBag.CustomerID) == 81)
+            @*@if (((ViewBag.CustomerID) == null ? 0 : (long)ViewBag.CustomerID) == 81)
             {
                 <input type="button" class="btn btn-success" value="推送鲸仓" id="OrderSend" />
                 <input type="button" class="btn btn-success" value="推送出库确认鲸仓" id="OrderConfirmSend" />
-            }
+            }*@
             <!--阿克苏发送场景5的print-->
-            @if (ViewBag.ProjectName == "Akzo")
+            @*@if (ViewBag.ProjectName == "Akzo")
             {
                 <input type="button" class="btn btn-success" value="发送打印消息" id="shipmentPrint" />
-            }
+            }*@
         </div>
     </fieldset>
     <fieldset>
@@ -361,12 +355,12 @@
                                 <td style="position: relative" class="OoperationTD">
                                     <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
                                         <label style="cursor: pointer;@orderstatus" class="btn btn-primary btn-xs print" onclick="print(@order.ID,this)">打印</label>
-                                        <label style="cursor: pointer;@orderstatus2" class="btn btn-primary btn-xs PickOrConfirm" onclick="PickOrConfirm(@order.ID,'Pick',this)">拣货</label>
-                                        <label style="cursor: pointer;@orderstatus3" class="btn btn-primary btn-xs PickOrConfirm" onclick="PickOrConfirm(@order.ID,'Confirm',this)">复检</label>
+                                        @*<label style="cursor: pointer;@orderstatus2" class="btn btn-primary btn-xs PickOrConfirm" onclick="PickOrConfirm(@order.ID,'Pick',this)">拣货</label>*@
+                                        @*<label style="cursor: pointer;@orderstatus3" class="btn btn-primary btn-xs PickOrConfirm" onclick="PickOrConfirm(@order.ID,'Confirm',this)">复检</label>*@
                                         <label style="cursor: pointer;@orderstatus4" class="btn btn-primary btn-xs PickOrConfirm" onclick="Package(@order.ID,'Package',this)">包装</label>
                                         @*<label style="cursor: pointer;@orderstatus4" class="btn btn-primary btn-xs PickOrConfirm"  onclick="BarCodePackage(@order.ID)">条码包装</label>*@
-                                        <label style="cursor: pointer;@orderstatus7" class="btn btn-primary btn-xs" onclick="UpdateVolume(@order.ID)">更新体积</label>
-                                        <label style="cursor: pointer;@orderstatus6" class="btn btn-primary btn-xs" onclick="CheckDiff(@order.ID)">查看差异</label>
+                                        @*<label style="cursor: pointer;@orderstatus7" class="btn btn-primary btn-xs" onclick="UpdateVolume(@order.ID)">更新体积</label>*@
+                                        @*<label style="cursor: pointer;@orderstatus6" class="btn btn-primary btn-xs" onclick="CheckDiff(@order.ID)">查看差异</label>*@
                                         @if (order.Status != 9)
                                         {
                                             <label style="cursor: pointer;@orderstatus6" class="btn btn-primary btn-xs statusBack" onclick="statusBack(@order.ID,this)">状态回退</label>
@@ -621,12 +615,11 @@
             <input type="button" class="btn btn-success" value="取消" id="intelligentDispatchRT" />
         </div>
     </div>
-    <fieldset style="margin-top: 100px;">
+    @*<fieldset style="margin-top: 100px;">
         <legend>包装信息导入说明</legend>
         <div id="importInstructionDiv">
             1.模板中有模拟数据，请按照demo填写<br />
             2.尽量不要长时间段的导入,减轻服务器压力
-            @*<a class="btn btn-primary" href="C:\Users\Administrator\Desktop\上架导入模板.xlsx" onclick="javascript:void(0);">导出</a>*@
         </div>
     </fieldset>
     <fieldset>
@@ -638,9 +631,6 @@
             @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, new { @id = "StorerID", @class = "form-control", @style = "width:120px;padding-bottom:1px" })
             <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
             <input type="submit" value="导入" style="margin-top: -9px" class="btn btn-primary" onclick="return fileImportClick();" />
-            @*这里下载模板写死路径，后面可能要改*@
-            @*<a class="btn btn-primary" id="portButtonTemplet" style="margin-top: -9px; text-decoration: none; color: white" href="../../Areas/WMS/Template/包装信息导入模板.xls" onclick="javascript:void(0);">下载模板</a>*@
-            @* href="http://www.runbow.com.cn:8092/demo/预出库模板.xlsx" *@
             <input type="submit" value="下载模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
         </div>
     </fieldset>
@@ -650,7 +640,7 @@
         </legend>
         <div id="outPutResult">
         </div>
-    </fieldset>
+    </fieldset>*@
 
 
 

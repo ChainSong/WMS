@@ -48,13 +48,15 @@ namespace Runbow.TWS.Dao.WMS
 
 
                 return this.ExecuteDataTableBySqlString(@"   SELECT *,COUNT(*) OVER( order  by CustomerID) AS TotalCount FROM (SELECT ROW_NUMBER() OVER (" + sqlOrderByType + @") RowID, CustomerID,(SELECT ID FROM dbo.WMS_Warehouse WHERE WarehouseName=i.warehouse) AS WarehouseID,p.Int1,CustomerName,max(RelatedID) as RelatedID , i.Warehouse,i.Area,i.Location,i.SKU,i.GoodsName,i.GoodsType 
-, InventoryType, sum(Qty) Qty,ISNULL(i.BatchNumber,'') BatchNumber, ISNULL(i.BoxNumber,'') BoxNumber, ISNULL(i.Unit,'') Unit, ISNULL(i.Specifications,'') Specifications, ISNULL(i.UPC,'') UPC, i.DateTime1,i.str3, (SELECT convert(varchar, ii.ID) + ',' FROM WMS_Inventory_" + SearchCondition.CustomerID + @"(NOLOCK) ii
+, InventoryType,
+(select top 1 ManufacturerSKU from WMS_Product where WMS_Product.SKU=i.SKU) ManufacturerSKU
+,sum(Qty) Qty,ISNULL(i.BatchNumber,'') BatchNumber, ISNULL(i.BoxNumber,'') BoxNumber, ISNULL(i.Unit,'') Unit, ISNULL(i.Specifications,'') Specifications, ISNULL(i.UPC,'') UPC, i.DateTime1,i.str3, (SELECT convert(varchar, ii.ID) + ',' FROM WMS_Inventory_" + SearchCondition.CustomerID + @"(NOLOCK) ii
   WHERE ii.InventoryType =i.InventoryType and ii.Warehouse = i.Warehouse and ii.Area = i.Area and ii.Location = i.Location and ii.SKU = i.SKU and ii.GoodsType = i.GoodsType  and isnull(ii.BatchNumber, '') = isnull(i.BatchNumber, '') and isnull(ii.BoxNumber, '') = isnull(i.BoxNumber, '')
   and isnull(ii.Unit, '') = isnull(i.Unit, '') and isnull(ii.Specifications, '') = isnull(i.Specifications, '')
    and isnull(ii.UPC, '') = isnull(i.UPC, '')  and isnull(ii.DateTime1, '') = isnull(i.DateTime1, '')
   FOR XML PATH('')) AS IDS
  from dbo.WMS_Inventory_" + SearchCondition.CustomerID + @"(NOLOCK)i left join WMS_Product(NOLOCK)  p ON i.CustomerID = p.StorerID AND i.SKU = p.SKU
- where 1 = 1 and Qty> 0  and isnull(p.Str8,'') <> '02' " + sqlWhere + @"
+ where 1 = 1 and Qty> 0   " + sqlWhere + @"
  group by CustomerID,CustomerName,i.GoodsName,i.Warehouse,i.Area,i.Location,i.SKU,i.GoodsType,InventoryType,ISNULL(i.BatchNumber,''),ISNULL(i.BoxNumber,''),ISNULL(i.Unit,''),ISNULL(i.Specifications,''),p.Int1,ISNULL(i.UPC,''),i.DateTime1,i.str3
   ) R
 ORDER BY R.CustomerID
@@ -441,6 +443,10 @@ ORDER BY R.CustomerID
             {
                 sb.Append(" AND i.CustomerID = ").Append(SearchCondition.CustomerID);
             }
+            if (!string.IsNullOrEmpty(SearchCondition.str20))
+            {
+                sb.Append(" AND i.Str20 = '").Append(SearchCondition.str20+"'");
+            }
             if (SearchCondition.CustomerID == 0 && SearchCondition.CustomerIDs != null)
             {
                 IEnumerable<string> numbers = Enumerable.Empty<string>();
@@ -701,6 +707,25 @@ ORDER BY R.CustomerID
             DataSet ds = this.ExecuteDataSet("Proc_WMS_GetAkzoInventoryMoveConfirm");
             response.AdjustCollection = ds.Tables[0].ConvertToEntityCollection<Adjustment>();
             response.AdjustDetailCollection = ds.Tables[1].ConvertToEntityCollection<AdjustmentDetail>();
+            return response;
+        }
+
+        /// <summary>
+        /// 库存移动上传数据查询
+        /// </summary>
+        /// <returns></returns>
+        public GetInventoryBySearchConditionResponse GetInventoryWarning()
+        {
+            GetInventoryBySearchConditionResponse response = new GetInventoryBySearchConditionResponse();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(@" select * from (select CustomerID,CustomerName,Warehouse,SKU,GoodsName,SUM(Qty) Qty,(select top 1 ISNULL(Grade,0) from WMS_Product where 
+            WMS_Inventory_108.SKU=WMS_Product.SKU)  QtyWarning from WMS_Inventory_108 
+            where InventoryType =1 and CustomerID=108  
+            group by CustomerID,CustomerName,GoodsName,Warehouse,SKU)  i
+            where (i.Qty<=i.QtyWarning or i.QtyWarning !=0)");
+            DataTable dt = this.ScanDataTable(stringBuilder.ToString());
+            response.InventoryCollection = dt.ConvertToEntityCollection<Inventorys>();
+            //response.AdjustDetailCollection = ds.Tables[1].ConvertToEntityCollection<AdjustmentDetail>();
             return response;
         }
 

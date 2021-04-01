@@ -247,7 +247,19 @@ namespace Runbow.TWS.Web.Common
 
             return returnConfig;
         }
-
+        /// <summary>
+        /// 刷新下拉列表框
+        /// </summary>
+        public static void RefreshGetGetWMS_UnitAndSpecifications_Config(long? ProjectID, long? CustomerID, long? WarehouseID)
+        {
+            ConfigService service = new ConfigService();
+            var config = service.GetWMS_UnitAndSpecifications_Config(ProjectID, CustomerID, WarehouseID).Result;
+            lock (lockobject)
+            {
+                CacheHelper.Remove("WMS_UnitAndSpecifications_Config" + ProjectID + CustomerID + WarehouseID);
+                CacheHelper.Insert("WMS_UnitAndSpecifications_Config" + ProjectID + CustomerID + WarehouseID, config);
+            }
+        }
         public static Region GetParentRegionByChildRegion(long regionID, int TargetGrade)
         {
             var regions = GetRegions();

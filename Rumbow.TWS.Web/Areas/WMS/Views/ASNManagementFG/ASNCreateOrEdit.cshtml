@@ -1,0 +1,466 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@Url.PopupJs()
+@Url.FrameworkJs("ajaxfileupload.js")
+@using Runbow.TWS.Common;
+@Html.Partial("MsgMask")
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@{
+    //new
+    var cols = 3;
+    IList<Runbow.TWS.Entity.Column> dynamicViewColumns = Model.Config1.ColumnCollection.Where(c => c.ForView == true).OrderBy(o => o.Order).ToList(); //.Union(Model.Config2.ColumnCollection.Where(c => c.ForView == true).OrderBy(o => o.Order))
+    IList<Runbow.TWS.Entity.Column> dynamicShowDetailColumns = Model.Config2.ColumnCollection.Where(c => c.IsShowInList == true).OrderBy(o => o.Order).ToList();
+
+    var dynamicViewColumnRows = dynamicViewColumns.Count % cols == 0 ? dynamicViewColumns.Count / cols : dynamicViewColumns.Count / cols + 1;
+}
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.AsnandDetails.asn.CustomerID);
+    @Html.HiddenFor(m => m.AsnandDetails.asn.Status);
+    @Html.HiddenFor(m => m.ReturnViewType);
+    @Html.HiddenFor(m => m.AsnandDetails.asn.ID, new { id = "ASNIDs" });
+    @Html.HiddenFor(m => m.AsnandDetails.asn.CreateTime, new { id = "Createtime" });
+    @Html.HiddenFor(m => m.AsnandDetails.asn.Creator, new { id = "Creator" });
+    @Html.Hidden("Viewtypes", Model.ViewType);
+    @Html.DropDownList("UnitLists", (IEnumerable<SelectListItem>)ViewBag.UnitList, new { style = "display:none" });
+    @Html.DropDownList("SpecificationsLists", (IEnumerable<SelectListItem>)ViewBag.SpecificationsList, new { style = "display:none" });
+    @Html.DropDownList("UnitAndSpecificationsList", (IEnumerable<SelectListItem>)ViewBag.UnitAndSpecificationsList, new { style = "display:none" });
+    <fieldset>
+        <legend>
+            基本信息
+        </legend>
+        <table>
+            <tbody id="table_body">
+                @*//ViewType: 0查看 1新增 2编辑*@
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                    var ProductLevelList = (IEnumerable<SelectListItem>)ViewBag.ProductLevelList;
+                }
+                @for (int i = 0; i < dynamicViewColumnRows; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < cols; j++)
+                        {
+                            var index = i * cols + j;
+                            if (index >= dynamicViewColumns.Count)
+                            {
+
+                            }
+                            else
+                            {
+                                var column = dynamicViewColumns[index];
+                                //默认值
+                                var o = typeof(Runbow.TWS.Entity.ASN).GetProperty(column.DbColumnName).GetValue(Model.AsnandDetails.asn);
+                                <td class="TableColumnTitle">
+                                    @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                                </td>
+                                <td style="width: 20%;">
+                                    @{
+                                        var adName = typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperties().Where(p => p.PropertyType == typeof(Runbow.TWS.MessageContracts.WMS.ASNs.ASNAndASNDetail)).FirstOrDefault().Name;
+                                        var aName = typeof(Runbow.TWS.MessageContracts.WMS.ASNs.ASNAndASNDetail).GetProperties().Where(p => p.PropertyType == typeof(Runbow.TWS.Entity.ASN)).FirstOrDefault().Name;
+                                        var name = adName + "." + aName + "." + column.DbColumnName;
+
+                                        if (Model.ViewType == 0 || Model.ViewType == 3)
+                                        {
+                                            if (column.Type == "DropDownList")
+                                            {
+                                                if (column.DbColumnName == "CustomerID")
+                                                {
+                                                    @(CustomerList.SingleOrDefault(c => c.Value == o.ToString()).Text ?? "")
+                                                }
+                                                else if (column.DbColumnName == "WarehouseID")
+                                                {
+                                                    @(WarehouseList.SingleOrDefault(c => c.Value == o.ToString()).Text ?? "")
+                                                }
+                                                else
+                                                {
+                                                    var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                                    @(list.SingleOrDefault(c => c.Value == o.ToString()).Text ?? "")
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @o
+                                            }
+                                        }
+                                        else if (Model.ViewType == 1)
+                                        {
+                                            if (column.Type == "DropDownList")
+                                            {
+                                                if (column.DbColumnName == "CustomerID")
+                                                {
+                                                    @Html.DropDownList(name, CustomerList, new { @id = column.DbColumnName, @class = "form-control" })
+                                                }
+                                                else if (column.DbColumnName == "WarehouseID")
+                                                {
+                                                    @Html.DropDownList(name, WarehouseList, new { @id = column.DbColumnName, @class = "form-control" })
+                                                }
+                                                else if (column.DbColumnName == "Status")
+                                                {
+                                                    @Html.TextBox(name, "", new { @readonly = true, @id = column.DbColumnName, @class = "form-control", @style = "width:100%" })
+                                                }
+                                                else
+                                                {
+                                                    var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                                    @Html.DropDownList(name, list, new { @id = column.DbColumnName, @class = "form-control" })
+                                                }
+                                            }
+                                            else if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                            {
+                                                @Html.Calendar(column.DbColumnName, "form-control", (DateTime?)o)
+                                            }
+                                            else
+                                            {
+                                                if (column.DbColumnName == "ASNNumber")
+                                                {
+                                                    @Html.TextBox(name, "", new { @readonly = true, @id = "ASNNumbers", @class = "form-control", @style = "width:100%;" })
+                                                }
+                                                else if (column.DbColumnName == "ExternReceiptNumber")
+                                                {
+                                                    @Html.TextBox(name, "", new { @id = "ExternReceiptNumber", @class = "form-control", @style = "width:100%;" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBox(name, "", new { @id = column.DbColumnName, @class = "form-control", @style = "width:100%;" })
+                                                }
+                                            }
+                                        }
+                                        else if (Model.ViewType == 2)
+                                        {
+                                            if (column.Type == "DropDownList")
+                                            {
+                                                if (column.DbColumnName == "CustomerID")
+                                                {
+                                                    @Html.Hidden(name, o.ToString(), new { id = column.DbColumnName })
+                                                    @Html.TextBoxFor(m => m.AsnandDetails.asn.CustomerName, new { @readonly = true, @id = "CustomerName", @class = "form-control", @style = "width:100%;" })
+                                                }
+                                                else if (column.DbColumnName == "WarehouseID")
+                                                {
+                                                    @Html.Hidden(name, o.ToString(), new { id = column.DbColumnName })
+                                                    @Html.TextBoxFor(m => m.AsnandDetails.asn.WarehouseName, new { @readonly = true, id = "WarehouseName", @class = "form-control", style = "width:100%;" })
+                                                }
+                                                else if (column.DbColumnName == "Status")
+                                                {
+                                                    @(Model.Statuss.SingleOrDefault(c => c.Value == o.ToString()).Text ?? "")
+                                                }
+                                                else
+                                                {
+                                                    var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                                    @Html.DropDownList(name, list, new { @id = column.DbColumnName, @class = "form-control" })
+                                                }
+                                            }
+                                            else if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                            {
+                                                @Html.Calendar(column.DbColumnName, "form-control", (DateTime?)o)
+                                            }
+                                            else
+                                            {
+                                                if (column.DbColumnName == "ASNNumber")
+                                                {
+                                                    @Html.TextBox(name, o.ToString(), new { @readonly = true, @id = "ASNNumber", @class = "form-control", style = "width:100%;" })
+                                                }
+                                                else if (column.DbColumnName == "ExternReceiptNumber")
+                                                {
+                                                    @Html.TextBox(name, o.ToString(), new { @readonly = true, @id = "ExternReceiptNumbers", @class = "form-control", style = "width:100%;" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBox(name, o.ToString(), new { @id = column.DbColumnName, @class = "form-control", @style = "width:100%;" })
+                                                }
+                                            }
+                                        }
+                                    }
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>
+            明细信息
+        </legend>
+        <div id="NewDiv" style="overflow-X: scroll;">
+            <table id="Newtable" style="table-layout: fixed;">
+                <thead>
+                    @{
+                        <tr>
+                            @if (Model.ViewType == 1 || Model.ViewType == 2)
+                            {
+                                <th style="width: 50px;">操作</th>
+                            }
+                            @foreach (var showColumn in dynamicShowDetailColumns)
+                            {
+                                <th>@showColumn.DisplayName</th>
+                            }
+                            @if (Model.ViewType == 0 || Model.ViewType == 3)
+                            {
+                                <th style="width: 120px;">制造商条码</th>
+                            }
+                        </tr>
+                    }
+                </thead>
+                <tbody id="resultTable">
+                    @{
+                        <tr id="trDemo" style="display:none;">
+                            <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    <label style="cursor: pointer; color: white" class="btn btn-primary btn-xs" onclick="Del(this)">删除</label>
+                                    <label @*data-name="@item.LineNumber"*@ style="cursor: pointer;color: white" class="btn btn-primary btn-xs" onclick="addNew()">新增一行</label>
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                            </td>
+                            @foreach (var showColumn in dynamicShowDetailColumns)
+                            {
+                                <td style="width:auto;" class="@showColumn.DbColumnName">
+                                    @{
+                                        switch (showColumn.Type)
+                                        {
+                                            case "CheckBox":
+                                                @Html.Raw("N")
+                                                break;
+                                            case "DropDownList":
+                                                var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
+
+                                                @Html.DropDownList(showColumn.DbColumnName, list, new { @class = "form-control", @style = "width:100%" })
+                                                break;
+                                            case "DateTime":
+                                                @Html.Calendar(showColumn.DbColumnName, "form-control calendarRangeReWrite2")
+                                                break;
+                                            case "DateTimeWithTime":
+                                                @Html.CalendarDateTime(showColumn.DbColumnName, "form-control calendarRangeReWrite2")
+                                                break;
+                                            default:
+                                                if (showColumn.DbColumnName == "SKU")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" onkeydown="GetSkuList(this)" class="form-control skuChildren" />
+                                                }
+                                                else if (showColumn.DbColumnName == "GoodsName")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" disabled="disabled" class="form-control" />
+                                                }
+                                                else if (showColumn.DbColumnName == "UPC")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" class="form-control UPCChildren" />
+                                                }
+                                                else if (showColumn.DbColumnName == "QtyExpected")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" class="form-control QtyInput" onpropertychange='replaceNotNumber(this)' oninput='replaceNotNumber(this)' />
+                                                }
+                                                else if (showColumn.DbColumnName == "BatchNumber")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" class="form-control BatchNumber" />
+                                                }
+                                                else if (showColumn.DbColumnName == "BoxNumber")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" class="form-control BoxNumber" />
+                                                }
+                                                else if (showColumn.DbColumnName == "str2")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" class="form-control str2" />
+                                                }
+                                                else if (showColumn.DbColumnName == "str4")
+                                                {
+                                                    <input type="text" value="" style="width:100%;" class="form-control str4" />
+                                                }
+                                                else if (showColumn.DbColumnName == "DateTime1")
+                                                {
+                                                    @Html.Calendar(showColumn.DbColumnName, "form-control DateTime1", Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd")))
+                                                }
+                                                else
+                                                {
+                                                    <label class="@showColumn.DbColumnName"></label>
+                                                }
+                                                break;
+                                        }
+
+
+                                    }
+                                </td>
+                            }
+                        </tr>
+
+
+                        if (Model.ViewType == 2)
+                        {
+                            foreach (var item in Model.AsnandDetails.asnDetails)
+                            {
+                                <tr>
+                                    <td style="position: relative">
+                                        <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                            <label style="cursor: pointer; color: white" class="btn btn-primary btn-xs" onclick="Del(this)">删除</label>
+                                            <label data-name="@item.LineNumber" style="cursor: pointer;color: white" class="btn btn-primary btn-xs" onclick="addNew()">新增一行</label>
+                                        </div>
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    </td>
+                                    @foreach (var showColumn in dynamicShowDetailColumns)
+                                    {
+                                    <td style="width:auto;" class="@showColumn.DbColumnName">
+                                        @{
+                                            var o = typeof(Runbow.TWS.Entity.ASNDetail).GetProperty(showColumn.DbColumnName).GetValue(item);
+                                            switch (showColumn.Type)
+                                            {
+                                                case "CheckBox":
+                                                    if (o.ObjectToNullableInt32() == 1)
+                                                    {
+                                                        @Html.Raw("Y")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw("N")
+                                                    }
+                                                    break;
+                                                case "DropDownList":
+                                                    var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
+                                                    if (showColumn.DbColumnName == "Specifications")
+                                                    {
+                                                        list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s2").GetValue(Model)).ToList();
+                                                    }
+                                                    if (!string.IsNullOrEmpty(o.ToString()))
+                                                    {
+                                                        for (int a = 0; a < list.Count(); a++)
+                                                        {
+                                                            if (list[a].Text == o.ToString())
+                                                            {
+                                                                list[a].Selected = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        @Html.DropDownList(showColumn.DbColumnName, list, "", new { @class = "form-control", @style = "width:100px" })
+                                                    }
+                                                    else
+                                                    {
+                                                        if (showColumn.DbColumnName == "Specifications")
+                                                        {
+                                                            list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
+                                                        }
+                                                        @Html.DropDownList(showColumn.DbColumnName, list, new { @class = "form-control" })
+                                                    }
+
+                                                    break;
+                                                case "DateTime":
+                                                    var temp = (DateTime?)o;
+                                                    if (temp.HasValue)
+                                                    {
+                                                        @Html.Calendar("cc" + @item.LineNumber, "form-control calendarRangeReWrite2", @temp.Value);
+
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Calendar("cc" + @item.LineNumber, "form-control calendarRangeReWrite2");
+                                                    }
+                                                    break;
+                                                case "DateTimeWithTime":
+                                                    var temp1 = (DateTime?)o;
+                                                    if (temp1.HasValue)
+                                                    {
+                                                        @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                    }
+                                                    break;
+                                                default:
+                                                    if (showColumn.DbColumnName == "SKU")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" onkeydown="GetSkuList(this)" class="form-control skuChildren" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "GoodsName")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" disabled="disabled" class="form-control" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "UPC")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control UPCChildren" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "QtyExpected")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control QtyInput" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "BatchNumber")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control BatchNumber" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "BoxNumber")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control BoxNumber" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "str2")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control UPCChildren" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "str4")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control str4" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>@o.ToString()</label>
+                                                    }
+                                                    break;
+                                            }
+
+
+                                        }
+                                    </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                        else if (Model.ViewType == 0 || Model.ViewType == 3)
+                        {
+                            foreach (var item in Model.AsnandDetails.asnDetails)
+                            {
+                                <tr>
+                                    @foreach (var showColumn in dynamicShowDetailColumns)
+                                    {
+                                        <td class="@showColumn.DbColumnName">
+                                            @{
+                                                var o = typeof(Runbow.TWS.Entity.ASNDetail).GetProperty(showColumn.DbColumnName).GetValue(item);
+                                                if (o != null)
+                                                {
+                                                    @o
+                                                }
+                                            }
+                                        </td>
+                                    }
+                                    <td class="制造商SKU">@item.ManufacturerSKU</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <div class="actionButtonDiv">
+        @if (Model.ViewType == 1)
+        {
+            <input type="button" class="btn btn-success" value="提交" id="submitButton" onclick="AddASNAndASNDetails()" />
+            <input type="button" class="btn btn-success" value="返回" id="returnButton_Add" />
+        }
+        @if (Model.ViewType == 2)
+        {
+            <input type="hidden" value="@Model.AsnandDetails.asnDetails.Count()" id="asndetailcount" />
+            <input type="button" class="btn btn-success" value="提交" id="updateButton" onclick="UpdateASNAndASNDetail()" />
+            <input type="button" class="btn btn-success" value="返回" id="returnButton_Edit" />
+        }
+        @if (Model.ViewType == 3)
+        {
+            <input type="button" class="btn btn-success" value="编辑" id="edit" onclick="edits('@Model.AsnandDetails.asn.ID    ')" />
+            <input type="button" class="btn btn-success" value="继续添加" id="addangians" onclick="addangian()" />
+            <input type="button" class="btn btn-success" value="返回" id="returnButtons" />
+        }
+        @*@if (Model.AsnandDetails.asn.Status == 1 || Model.AsnandDetails.asn.Status == 5)
+                                                {
+                <input type="button" class="btn btn-success" value="转入库单" id="ReceiptButtons"  onclick="Receipt(@Model.AsnandDetails.asn.ID,@Model.AsnandDetails.asn.CustomerID)"/>
+            }*@
+        @if (Model.ViewType == 0)
+        {
+            <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+        }
+    </div>
+}

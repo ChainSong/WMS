@@ -251,6 +251,38 @@ namespace Runbow.TWS.Biz.WMS
                 LogError(ex);
                 response.IsSuccess = false;
                 response.ErrorCode = ErrorCode.Technical;
+            } 
+            return response;
+        }
+
+        /// <summary>
+        /// 查询预入库单明细
+        /// </summary>
+        /// <returns></returns>
+        public Response<int> UpdateAssociateFG(PreOrderRequest request)
+        {
+            Response<int> response = new Response<int>() { Result = 0 };
+            if (request == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("UpdateAssociateFG request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                int RowCount = 0;
+                response.Result = new PreOrderAccessor().UpdateAssociateFG(request.PreOd);
+                //response.Result.PreO = new PreOrder();
+
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
             }
 
             return response;
@@ -750,7 +782,7 @@ namespace Runbow.TWS.Biz.WMS
         /// <param name="search"></param>
         /// <param name="rowcounts"></param>
         /// <returns></returns>    
-        public IEnumerable<CancelOrderInfo> GetCancelOrderList(CancelOrderSearchCondition search,string Proc, out string msg, out int rowcounts)
+        public IEnumerable<CancelOrderInfo> GetCancelOrderList(CancelOrderSearchCondition search, string Proc, out string msg, out int rowcounts)
         {
             msg = "";
             rowcounts = 0;

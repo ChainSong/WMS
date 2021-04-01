@@ -1,0 +1,112 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+@Url.jsrender()
+@model Runbow.TWS.Web.Areas.WMS.Models.Inventory.IndexViewModel
+@*<object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none">*@
+@*</object>*@
+@using (Html.BeginForm())
+{
+    var PorjectName = ViewBag.ProjectName;
+    @*<fieldset>
+            <legend>
+                查询条件
+            </legend>
+            <table>
+                <tr>
+                    @{
+                        var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                        var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                        var AreaList = (IEnumerable<SelectListItem>)ViewBag.AreaList;
+                    }
+                    <td class="TableColumnTitle" style="width: 11%;">
+                        <label>客户/供应商</label>
+                    </td>
+                    <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                    <td class="TableColumnTitle" style="width: 11%;">
+                        <label>仓库</label>
+                    </td>
+                    <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Warehouse, WarehouseList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                    <td class="TableColumnTitle" style="width: 11%;">
+                        <label>库区</label>
+                    </td>
+                    <td style="width: 11%;">@Html.DropDownListFor(m => m.InventorySearchCondition.Area, (IEnumerable<SelectListItem>)ViewBag.AreaLists, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+                    <td class="TableColumnTitle" style="width: 11%;">
+                        <label>库位</label>
+                    </td>
+                    <td style="width: 11%;">@Html.TextBoxFor(m => m.InventorySearchCondition.Location, new { @style = "width:100%", @class = "form-control" })</td>
+
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>库存类型</label>
+                    </td>
+                    <td>@Html.DropDownListFor(m => m.InventorySearchCondition.InventoryType, Model.InventoryTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+
+                    <td class="TableColumnTitle">
+                        <label>SKU</label>
+                    </td>
+                    <td>@Html.TextBoxFor(m => m.InventorySearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
+                    <td class="TableColumnTitle">
+                        <label>批次号</label>
+                    </td>
+                    <td>@Html.TextBoxFor(m => m.InventorySearchCondition.BatchNumber, new { @style = "width:100%", @class = "form-control" })</td>
+                    <td class="TableColumnTitle">
+                        <label>货品等级</label>
+                    </td>
+                    <td>@Html.DropDownListFor(m => m.InventorySearchCondition.GoodsType, Model.GoodsTypes, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
+
+                </tr>
+            </table>
+            <div class="actionButtonDiv">
+                <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            </div>
+        </fieldset>*@
+    <fieldset>
+        <legend>
+            预警库存列表
+            @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+            {
+                @Html.Raw("(" + Model.InventoryCollection.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th id="OperateTh" style="display:none;">操作</th>
+                        <th class="checkBoxHead" style="display:none;">@Html.CheckBox("selectAll")</th>
+                        <th>客户/供应商</th>
+                        <th>仓库</th>
+                        <th>产品编码</th>
+                        <th>货品名称</th>
+                        <th>数量</th>
+                        <th>预警数量</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.InventoryCollection != null && Model.InventoryCollection.Any())
+                    {
+                        int rows = 1;
+                        foreach (var item in Model.InventoryCollection)
+                        {
+
+                            var tdd = "operateTD" + rows;
+                            <tr>
+                                <td>@item.CustomerName</td>
+                                <td>@item.Warehouse</td>
+                                <td>@item.SKU</td>
+                                <td>@item.GoodsName</td>
+                                <td>@item.Qty</td>
+                                <td>@item.QtyWarning</td>
+                                <td>可用库存</td>
+                            </tr>
+                            rows++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
+} 

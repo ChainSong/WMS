@@ -1,0 +1,215 @@
+﻿<script src="../../../../Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/WMS/OrderManagement/PrintOrder.js"></script>
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+@Url.jsrender()
+@Url.Json2()
+@{
+    Layout = null; 
+}
+<style media="print">
+    .Noprint
+    {
+        display: none;
+    }
+
+    .PageNext
+    {
+        page-break-after: always;
+    }
+</style>
+ <div class ="Noprint" style ="text-align :center; height:10px;">
+      <object id="WebBrowser" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none"></object>
+     @*<object id="wb" width="0" height="0" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" style="display: none;"></object>*@
+     <input type="button" name="button-print" value="打印" onclick="PrintOrders()" />
+    @* <input type="button" name="button_setup" value="打印页面设置" onclick="Printsetup()" />
+     <input type="button" name="button_show" value ="打印预览" onclick ="Printpreview()" />*@
+     <input type ="button" name ="button_return" value ="返回" onclick ="history.back()" />
+ </div>
+<div class="Noprint">
+    以下为打印区:<br>
+</div>
+@if (Model.OrderCollection != null && Model.OrderCollection.Any())
+{
+    var ss = 0;
+    foreach (var item in Model.OrderCollection)
+    {
+        var counts = Model.OrderDetailCollection.Where(c => c.POID == item.ID).Count();
+        var i = counts / 10;
+        for (var j = 0; j < i + 1; j++)
+        {
+            ss = ss + 1;
+            var pages = "page" + ss;
+<div id ="@pages" style ="width:100%;height:100%;">
+    <div class ="PageNext" style ="width:100%; height:100%;">
+    <table style ="width:100%;">
+        <tr>
+            <td style ="width:40%; font-weight:bolder; font-size:40px; vertical-align:bottom;text-align:center; ">
+                    <span style ="margin-left :40px;">出库单</span>   
+            </td>
+        </tr>
+    </table>
+    <hr size ="2" noshadowcolor ="black" style ="border:none; border-top:2px solid #000;" />
+                <table style="width: 100%; text-align: left;">
+                <tr>
+                    <td colspan="2" style="font-weight: bold; font-size: 22px;">订单信息 </td>
+                    <td>
+                        @* <div style="width:127px;">
+                            <img style="width:160px;height:160px;padding-top:40px" src="../../../../TotalImage/@item.PictureStr"/>
+                          </div>*@
+                    </td>
+                </tr>
+                <tr style="height: 20px;">
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 25px;" colspan="1">
+                        @item.OrderNumber.ToString()
+                    </td>
+                    <td style="font-family: '3 of 9 Barcode'; font-size: 25px; text-align: left;" colspan="1">
+                        @item.ExternOrderNumber.ToString()
+                    </td>
+                    @*<td style ="font-weight:bold; font-size:30px; " colspan="2">
+                    </td>*@
+                </tr>
+                <tr style="height: 20px;">
+                    <td style="font-weight: bold; font-size: 16px;">出库单号：<strong style="border-bottom: 1px solid #000;">@item.OrderNumber</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 16px;">外部单号：<strong style="border-bottom: 1px solid #000;">@item.ExternOrderNumber</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 16px;">预出库单号：<strong style="border-bottom: 1px solid #000;">@item.PreOrderNumber</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 16px;">出库日期：<strong style="border-bottom: 1px solid #000;">@item.OrderTime</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 16px;">收货人：<strong style="border-bottom: 1px solid #000;">@item.str5</strong>
+                    </td>
+                    <td style="font-weight: bold; font-size: 16px;">联系方式：<strong style="border-bottom: 1px solid #000;">@item.Contact</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold; font-size: 16px;">收货地址：<strong style="border-bottom: 1px solid #000;">@item.Address</strong>
+                    </td>
+                </tr>
+            </table>
+    @*<table style ="width:100%;">
+        <tr>
+            <td colspan ="3" style="font-weight: bold; font-size: 22px;">
+                 订单信息 
+            </td>
+            <td>
+              <div style="width:127px;">
+                <img style="width:160px;height:160px;padding-top:40px" src="../../../../TotalImage/@item.PictureStr"/>
+              </div>
+            </td>
+        </tr>
+        <tr style ="height:28px;">
+            <td style ="font-weight:bold; font-size:16px; text-align:right;">
+                外部单号：
+            </td>
+            <td style ="border-bottom: 1px solid #000; width:22%; text-align:center;">@item.ExternOrderNumber</td>
+            <td style ="font-weight:bold; font-size:16px; text-align:right;">
+                预出库单号：
+            </td>
+            <td style ="border-bottom: 1px solid #000; width:22%; text-align:center;">@item.PreOrderNumber</td>
+        </tr>
+        <tr style ="height:28px;">
+            <td style="font-weight: bold; font-size: 16px; text-align:right;">
+                客户：
+            </td>
+            <td style="border-bottom: 1px solid #000; width: 22%; text-align:center;">@item.CustomerName</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:right;">
+                预出库单状态：
+            </td>
+            <td style="border-bottom: 1px solid #000; width: 22%; text-align:center;">@item.Status</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:right;">
+                预出库日期：
+            </td>
+            <td style="border-bottom: 1px solid #000; width: 22%; text-align:center;">@item.OrderTime</td>
+        </tr>
+    </table>*@
+    <table style ="width:100%; margin-top:20px;">
+        <tr>
+            <td style="font-weight: bold; font-size: 22px; width:16%;">
+                出库单明细
+            </td>
+        </tr>
+    </table>
+    <table border="1" cellspacing="0" cellpadding="0" style ="width:100%; margin-top:20px; border-collapse:collapse;">
+        <tr>
+           @* <td style="font-weight: bold; font-size: 16px; text-align:center;">行号</td>*@
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:15%;">SKU</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:auto">产品名称</td>
+            @*<td style="font-weight: bold; font-size: 16px; text-align:center; width:15%;">制造商SKU</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">产品等级</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">托号</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">批号</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">单位</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">规格</td>*@
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">仓库</td>  
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">库区</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">库位</td>
+            @*<td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">期望数量</td>*@
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">数量</td>
+
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">包装规格</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">料箱规格</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">安全库存</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">整箱数</td>
+            <td style="font-weight: bold; font-size: 16px; text-align:center; width:5%;">散件数</td>
+        </tr>
+        @if (Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any() != null && Model.OrderDetailCollection.Where(c => c.OID == item.ID).Any())
+        {
+            foreach (var items in Model.OrderDetailCollection.Where(c => c.OID == item.ID).Skip(j * 10).Take(10))
+            {
+                int BoxNumber = 0;//整箱数
+                int SpareNumber = 0;//散件数
+                int BoxSpec = 0;//箱规
+                Int32.TryParse(@items.PStr12, out BoxSpec);
+                if (BoxSpec != 0)
+                {
+                    BoxNumber = (Int32)@items.Qty / BoxSpec;
+                    SpareNumber = (Int32)@items.Qty % BoxSpec;
+                }
+                if (items.OID == item.ID)
+                {
+        <tr>
+           @* <td style ="text-align:center;">@items.LineNumber</td>*@
+            <td style ="text-align:center;">@items.SKU</td>
+            <td style ="text-align:center;">@items.GoodsName</td>
+           @* <td style ="text-align:center;">@items.ManufacturerSKU</td>
+            <td style ="text-align:center;">@items.GoodsType</td>
+            <td style ="text-align:center;">@items.BoxNumber</td>
+            <td style ="text-align:center;">@items.BatchNumber</td>
+            <td style ="text-align:center;">@items.Unit</td>
+            <td style ="text-align:center;">@items.Specifications</td>*@
+            <td style ="text-align:center;">@items.Warehouse</td>
+            <td style ="text-align:center;">@items.Area</td>
+            <td style ="text-align:center;">@items.Location</td>
+            <td style ="text-align:center;">@items.Qty</td>
+            @*<td style ="text-align:center;">&nbsp;</td>*@
+            
+            <td style ="text-align:center;">@items.PStr11</td>
+            <td style ="text-align:center;">@items.PStr12</td>
+            <td style ="text-align:center;">@items.PGrade</td>
+            <td style ="text-align:center;">@BoxNumber</td>
+            <td style ="text-align:center;">@SpareNumber</td>
+        </tr>
+                }
+            }
+        }
+    </table>
+    </div>
+                  
+
+    <hr size="1" noshadow color="black" class="Noprint">
+    
+</div>
+        }
+    }
+}
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

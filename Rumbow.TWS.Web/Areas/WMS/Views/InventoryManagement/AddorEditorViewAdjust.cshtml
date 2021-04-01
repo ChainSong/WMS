@@ -64,7 +64,7 @@
                                                       var togoodstypelist = (IEnumerable<SelectListItem>)ViewBag.togoodstypelist;
                     }
                     <td class="TableColumnTitle">
-                        <label>客户</label></td>
+                        <label>客户/供应商</label></td>
                     <td style="width: 20%;" id="label_CustomerID">
                         @if (Model.ViewType == 0)
                         {
@@ -127,14 +127,15 @@
                 </tr>
                 <tr>
                     <td class="TableColumnTitle">
-                        <label id="lblnumber">调整单号</label></td>
+                        <label id="lblnumber">调整单号</label>
+                    </td>
                     <td style="width: 20%;" id="label_AdjustmentNumber">
                         @if (Model.ViewType == 0)
-                        { 
+                        {
                             @Model.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentNumber
                         }
                         else if (Model.ViewType == 1 || Model.ViewType == 2)
-                        { 
+                        {
                             @Html.TextBoxFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentNumber, new
                        {
                            Readonly = "true",
@@ -146,7 +147,8 @@
 
                     </td>
                     <td class="TableColumnTitle">
-                        <label id="lbltime">调整时间</label></td>
+                        <label id="lbltime">调整时间</label>
+                    </td>
                     <td style="width: 20%;" id="label_Adjusttime">
                         @if (Model.ViewType == 0)
                         {
@@ -154,67 +156,71 @@
                         }
                         @if (Model.ViewType == 1 || Model.ViewType == 2)
                         {
-                            @Html.CalendarFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentTime, "AdjustmentTime form-control") 
+                            @Html.CalendarFor(m => m.AdjustmentAndAdjustmentDetails.adjustment.AdjustmentTime, "AdjustmentTime form-control")
                         }
                     </td>
 
-
+                    <td class="TableColumnTitle">
+                        <label style="display: none" id="lblhold"></label>
+                    </td>
+                    <td></td>
                     @*  <td class="TableColumnTitle">
-                        <label style="display: none" id="lblhold">冻结状态</label></td>
-                    <td style="width: 20%">
-                        @if (Model.ViewType == 0)
-                        {
-                            if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1)
-                            {
-                            @Html.Raw("冻结");
-                            }
-                            if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 2)
-                            {
-                            @Html.Raw("已解冻");
-                            }
-                        }
-                        @if (Model.ViewType == 1)
-                        { 
-                            @Html.TextBox("isholdname", "冻结", new { @class = "form-control", id = "ishold", style = "width:100%;display:none", Readonly = "true" });
-                        }
-                        @if (Model.ViewType == 2)
-                        {
-                            @Html.TextBox("isholdname", Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1 ? "冻结" : "已解冻", new { @class = "form-control", id = "ishold", style = "display:none;width:100%;", Readonly = "true" });
-                        }
-                        </td>*@
+            <label style="display: none" id="lblhold">冻结状态</label></td>
+        <td style="width: 20%">
+            @if (Model.ViewType == 0)
+            {
+                if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1)
+                {
+                @Html.Raw("冻结");
+                }
+                if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 2)
+                {
+                @Html.Raw("已解冻");
+                }
+            }
+            @if (Model.ViewType == 1)
+            {
+                @Html.TextBox("isholdname", "冻结", new { @class = "form-control", id = "ishold", style = "width:100%;display:none", Readonly = "true" });
+            }
+            @if (Model.ViewType == 2)
+            {
+                @Html.TextBox("isholdname", Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1 ? "冻结" : "已解冻", new { @class = "form-control", id = "ishold", style = "display:none;width:100%;", Readonly = "true" });
+            }
+            </td>*@
 
                     @if (Model.ViewType == 0 || Model.ViewType == 2)
                     {
                         if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 1)
                         {
-                        <td class="TableColumnTitle">
-                            <label>冻结状态</label>
-                        </td>
-                        <td style="width: 20%">
-                            @Html.Raw("冻结")
-                        </td>
+                            <td class="TableColumnTitle">
+                                <label>冻结状态</label>
+                            </td>
+                            <td style="width: 20%">
+                                @Html.Raw("冻结")
+                            </td>
                         }
                         if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 2)
                         {
-                        <td class="TableColumnTitle">
-                            <label>冻结状态</label>
-                        </td>
-                        <td style="width: 20%">
-                            @Html.Raw("已解冻");
-                        </td>
+                            <td class="TableColumnTitle">
+                                <label>冻结状态</label>
+                            </td>
+                            <td style="width: 20%">
+                                @Html.Raw("已解冻");
+                            </td>
                         }
                         if (Model.AdjustmentAndAdjustmentDetails.adjustment.IsHold == 0)
                         {
-                        <td class="TableColumnTitle">
-                            <label></label>
-                        </td>
-                        <td style="width: 20%"></td>
+                            <td class="TableColumnTitle">
+                                <label></label>
+                            </td>
+                            <td style="width: 20%"></td>
                         }
                     }
                     @if (Model.ViewType == 1)
-                    { 
+                    {
                         <td class="TableColumnTitle">
-                            <label style="display: none" id="lblhold">冻结状态</label></td>
+                            <label style="display: none" id="lblhold">冻结状态</label>
+                        </td>
                         <td style="width: 20%">
                             <label style="display: none" id="ishold">冻结</label>
                             @*@Html.TextBox("isholdname", "冻结", new { @class = "form-control", id = "ishold", style = "width:100%;display:none" })*@
@@ -252,8 +258,8 @@
                         }
                         <th>行号</th>
                         <th>原库位</th>
-                        <th>SKU</th>
-                        <th>UPC</th>
+                        <th>产品编码</th>
+                        <th>条码</th>
                         <th>批次号</th>
                         <th>托号</th>
                         <th>单位</th>

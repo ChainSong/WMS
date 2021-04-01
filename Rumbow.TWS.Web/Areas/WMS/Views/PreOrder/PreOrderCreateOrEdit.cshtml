@@ -445,6 +445,12 @@
                                                             case "UPC":
                                                                 <input type='text' name='upc' style="width:130px" class="form-control upccheck" value='@o.ToString()' />
                                                                 break;
+                                                            case "产品编码":
+                                                                <input type='text' name='sku' onkeydown="GetSkuList(this)" style="width:130px" class="form-control skucheck" value='@o.ToString()' />
+                                                                break;
+                                                            case "条码":
+                                                                <input type='text' name='upc' style="width:130px" class="form-control upccheck" value='@o.ToString()' />
+                                                                break;
                                                             case "产品名称":
                                                                 <input type='text' name='goodsname' readonly="readonly" style="width: 150px" class=' form-control goodsnam' value='@o.ToString()' />
                                                                 break;
@@ -457,7 +463,7 @@
                                                             case "期望数量":
                                                                 <input type='text' name='OpenQty' style="width: 80px" class="form-control" value=" @o.ToString()" oninput="replaceNotNumber(this)" />
                                                                 @*<input type="text"style="width:80px" class="form-control"/>*@
-                                                                break; 
+                                                                break;
                                                             case "行号":
                                                                 @o.ToString();
                                                                 break;
@@ -537,6 +543,12 @@
                                                     case "UPC":
                                                         <input type='text' name='upc' style="width: 130px" class="form-control upccheck" value='' />
                                                         break;
+                                                    case "产品编码":
+                                                        <input type='text' name='sku' onkeydown="GetSkuList(this)" style="width: 130px" class="form-control skucheck" value='' />
+                                                        break;
+                                                    case "条码":
+                                                        <input type='text' name='upc' style="width: 130px" class="form-control upccheck" value='' />
+                                                        break;
                                                     case "可用数量":
                                                         <input type='text' id='inventoryQty00001' name='inventoryQty' readonly='true' style="width: 80px" class=' form-control inventoryQtycss' value='' />
                                                         break;
@@ -572,7 +584,7 @@
                                         }
                                     </td>
                                 }
-                              
+
                             </tr>
                         }
                     }

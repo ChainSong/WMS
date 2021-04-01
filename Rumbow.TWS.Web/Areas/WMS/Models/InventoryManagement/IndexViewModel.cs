@@ -141,6 +141,19 @@ namespace Runbow.TWS.Web.Areas.WMS.Models.Inventory
             }
         }
 
+        public IEnumerable<SelectListItem> Model
+        {
+            get
+            {
+                return new List<SelectListItem>()
+                {
+                    new SelectListItem() { Value = "产品", Text = "产品",Selected=true },
+                    new SelectListItem() { Value = "物料", Text = "物料" },
+
+                };
+            }
+        }
+
         public IEnumerable<SelectListItem> OrderByType
         {
             get

@@ -35,11 +35,18 @@
         if ($("#ReturnViewType").val() == "get") {
             //history.back();
             //post('/WMS/ASNManagement/Index', { IndexViewModel: null, Action: '查询' });
-            var url = $(window.parent.document).find(".active a").attr('href');            url = url.toString().split(',')[2];            url = url.substring(1, url.length - 2);            location.href = url;
+            var url = $(window.parent.document).find(".active a").attr('href');
+            url = url.toString().split(',')[2];
+            url = url.substring(1, url.length - 2);
+            location.href = url;
         } else {
             //history.back();
             //post('/WMS/ASNManagement/Index', { IndexViewModel: null, Action: '查询' });
-            var url = $(window.parent.document).find(".active a").attr('href');            url = url.toString().split(',')[2];            url = url.substring(1, url.length - 2);            location.href = url;        }
+            var url = $(window.parent.document).find(".active a").attr('href');
+            url = url.toString().split(',')[2];
+            url = url.substring(1, url.length - 2);
+            location.href = url;
+        }
         //post('/WMS/ASNManagement/Index', { IndexViewModel: null, Action: '查询' });
     })
 
@@ -596,7 +603,7 @@ function UpdateASNAndASNDetail(asndetailcount) {
     var ASNNumbers = $('#ASNNumber').val();
     var Createtime = $('#Createtime').val();
     var Creator = $('#Creator').val();
-    var ExpectDates = $('#OrderTime').val();
+    var ExpectDates = $('#ExpectDate').val();
 
     if (ExpectDates == "") {
         showMsg("请选择预入库时间!", "4000");
@@ -683,15 +690,17 @@ function FieldSetToJson() {
                     //else {
                     //    r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + tds[i].childNodes[1].value + "\",";
                     //}
-                    if (tds[i].childNodes[1].type == 'checkbox') {
+                    if (tds[i].childNodes.length > 1 && tds[i].childNodes[1].type == 'checkbox') {
                         r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + (tds[i].childNodes[1].checked == true ? 1 : 0) + "\",";
-                    } else if (tds[i].childNodes[1].type == 'text/javascript' && tds[i].childNodes[3].type == 'text') {
+                    } else if (tds[i].childNodes.length > 1 && tds[i].childNodes[1].type == 'text/javascript' && tds[i].childNodes[3].type == 'text') {
                         r += "\"" + tds[i].childNodes[3].id.trim() + "\"\:\"" + tds[i].childNodes[3].value + "\",";
                     }
                     else {
-                        if (tds[i].childNodes[1].value == '新增') {
-                            r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + 1 + "\",";
-                        } else {
+                        if (tds[i].childNodes.length == 0 && tds[i].childNodes[0].value == '新增') {
+                            r += "\"Status\"\:\"" + 1 + "\",";
+                        } else if (tds[i].childNodes.length > 1 && tds[i].childNodes[1].value == '新增') {
+                            r += "\"Status\"\:\"" + 1 + "\",";
+                        } else if (tds[i].childNodes.length > 1) {
                             r += "\"" + tds[i].childNodes[1].id.trim() + "\"\:\"" + tds[i].childNodes[1].value + "\",";
                         }
                     }

@@ -142,6 +142,9 @@ namespace Runbow.TWS.Entity
         [EntityPropertyExtension("IID2", "IID2")]
         public string IID2 { get; set; }
 
+        [EntityPropertyExtension("DefectQty", "DefectQty")]
+        public double DefectQty { get; set; }
+        
         public PreOrderDetail()
         { }
         public PreOrderDetail(PreOrderDetail pod)

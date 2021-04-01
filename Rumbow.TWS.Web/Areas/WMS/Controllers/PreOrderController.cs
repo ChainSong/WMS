@@ -24,6 +24,7 @@ using Runbow.TWS.Entity.WMS.Log;
 using Runbow.TWS.MessageContracts;
 using System.Threading.Tasks;
 using Runbow.TWS.Biz;
+using System.Web.Script.Serialization;
 
 namespace Runbow.TWS.Web.Areas.WMS.Controllers
 {
@@ -137,7 +138,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     var CustomerNames = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3)
                                  .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
                     vm.SearchCondition.CustomerID = customerID;
-                    vm.SearchCondition.CustomerName = CustomerNames.Where(c=>c.Value==customerID.ToString()).FirstOrDefault().Text;
+                    vm.SearchCondition.CustomerName = CustomerNames.Where(c => c.Value == customerID.ToString()).FirstOrDefault().Text;
                 }
                 else
                 {
@@ -151,7 +152,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             vm.SearchCondition.CreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd HH:mm:ss"));
             vm.SearchCondition.EndCreateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss").ObjectToNullableDateTime();
-
+            vm.SearchCondition.Model = "物料";
             var response = new PreOrderService().GetPreOrder(new PreOrderRequest
             {
                 SearchCondition = vm.SearchCondition,
@@ -167,7 +168,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             }
 
             this.GenQueryPodViewModel(vm);
-            
+
             ViewBag.ProjectName = base.UserInfo.ProjectName;
             return View(vm);
         }
@@ -258,6 +259,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             {
                 vm.SearchCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
             }
+            vm.SearchCondition.Model = "物料";
 
             var response = new PreOrderService().GetPreOrder(new PreOrderRequest
             {
@@ -941,7 +943,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                         int Rows_counts = 1;
                         if (productList.Where(c => (c.SKU == podetails.SKU)).Count() == 0)
                         {
-                            return new { result = "<h3><font color='#FF0000'>第【" + Rows_counts + "】行的SKU【" + podetails.SKU + "】在系统中不存在！</font></h3>", IsSuccess = false }.ToJsonString();
+                            return new { result = "<h3><font color='#FF0000'>第【" + Rows_counts + "】行的产品编码【" + podetails.SKU + "】在系统中不存在！</font></h3>", IsSuccess = false }.ToJsonString();
                         }
                         Rows_counts++;
                         if (ctype != null && ctype.Count() > 0 && IsInt1)
@@ -1795,7 +1797,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 o.WarehouseId = long.Parse(o.Warehouse);
                 o.Warehouse = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetCacheInfo()
                     .Where(c => (c.CustomerID == CustomerID && c.UserID == base.UserInfo.ID && CustomerListTemp.Contains(c.CustomerID.Value)))
-                    .Where (c => c.WarehouseID == int.Parse(o.Warehouse))
+                    .Where(c => c.WarehouseID == int.Parse(o.Warehouse))
                     .Select(c => c.WarehouseName).FirstOrDefault();
                 o.CreateTime = DateTime.Now;
                 o.Creator = base.UserInfo.Name;
@@ -1820,7 +1822,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 od.WarehouseId = long.Parse(WarehouseID.ToString());
                 od.Warehouse = Runbow.TWS.Web.Common.ApplicationConfigHelper.GetCacheInfo()
                     .Where(c => (c.CustomerID == CustomerID && c.UserID == base.UserInfo.ID && CustomerListTemp.Contains(c.CustomerID.Value)))
-                    .Where (c => c.WarehouseID == int.Parse(WarehouseID.ToString()))
+                    .Where(c => c.WarehouseID == int.Parse(WarehouseID.ToString()))
                     .Select(c => c.WarehouseName).FirstOrDefault();
                 od.PreOrderNumber = PreOrderNumber;
                 od.ExternOrderNumber = ExternOrderNumber;
@@ -2823,7 +2825,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 IEnumerable<DistributionInformation> DisInfo = null;
                 if (response.Result.SearchCondition.Count() > 0)
                 {
-                    response.Result.SearchCondition.GroupBy(q => new { q.CustomerID, q.WarehouseId }).Each((i, g) => 
+                    response.Result.SearchCondition.GroupBy(q => new { q.CustomerID, q.WarehouseId }).Each((i, g) =>
                     this.AutomaticAllocation(g.Select(a => new PreOrderIds { ID = a.ID }), g.First().CustomerID.Value, g.First().WarehouseId.Value, ref DisInfo));
                     new LogOperationService().AddLogOperation(logs);
                     //Cord By Young
@@ -3080,6 +3082,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             ITransData transDataInstance = Activator.CreateInstance(Type.GetType(transDataInstanceName), parameters) as ITransData;
             transData = transDataInstance.TransData(ref message);
         }
+
         /// <summary>
         /// 指定分配参数
         /// </summary>
@@ -3237,11 +3240,59 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         //    return settledConfig.InstanceName;
         //}
         [HttpPost]
+        public JsonResult GetAssociateFG(string ID)
+        {
+            try
+            {
+
+                var response = new PreOrderService().GetPreOrderAndDetail(new PreOrderRequest() { SearchCondition = new PreOrderSearchCondition() { ID = long.Parse(ID) } });
+                if (response != null)
+                {
+                    return Json(new { Code = 1, data = response.Result }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception)
+            {
+                //throw;
+            }
+
+            return Json(new { Code = 0 }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult UpdateAssociateFG(string OrderNumber, string JsonStr)
+        {
+            try
+            {
+                //序列化操作
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                //var json = new { name = "fxhl", age = 23 };
+                //string str = jss.Serialize(json);
+                //反序列化操作
+                var PreOrderDetails = jss.Deserialize<IEnumerable<PreOrderDetail>>(JsonStr);
+                PreOrderDetails.Each((a, b) => { b.ExternOrderNumber = OrderNumber; b.Creator = base.UserInfo.Name; });
+                var response = new PreOrderService().UpdateAssociateFG(new PreOrderRequest() { PreOd = PreOrderDetails });
+                if (response != null)
+                {
+                    return Json(new { Code = 1, data = response.Result }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception)
+            {
+                //throw;
+            }
+
+            return Json(new { Code = 0 }, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+
+        [HttpPost]
         public ActionResult GetBatchlist(string sku, long? CustomerID, string Warehouse, string BatchNumber, string GoodsType, string BoxNumber, string Unit, string Specifications, string UPC)
         {
             try
             {
-                Warehouse=ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && c.WarehouseID == long.Parse(Warehouse)).FirstOrDefault().WarehouseName;
+                Warehouse = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && c.WarehouseID == long.Parse(Warehouse)).FirstOrDefault().WarehouseName;
                 BatchNumber = BatchNumber == "请选择" ? null : BatchNumber;
                 BoxNumber = BoxNumber == "请选择" ? null : BoxNumber;
                 Unit = Unit == "请选择" ? null : Unit;
@@ -3257,7 +3308,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             {
                 //throw;
             }
-          
+
             return Json(new { Sku = string.Empty, BatchNumber = string.Empty }, JsonRequestBehavior.AllowGet);
         }
 
@@ -3308,8 +3359,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             }
             foreach (var receiptDetail in columnReceiptDetail)
             {
-                if (receiptDetail.DisplayName != "客户" && receiptDetail.DisplayName != "预出库单号" && receiptDetail.DisplayName != "仓库编号" 
-                    && receiptDetail.DisplayName != "产品名称" && receiptDetail.DisplayName != "行号" && receiptDetail.DisplayName != "可用数量" 
+                if (receiptDetail.DisplayName != "客户" && receiptDetail.DisplayName != "预出库单号" && receiptDetail.DisplayName != "仓库编号"
+                    && receiptDetail.DisplayName != "产品名称" && receiptDetail.DisplayName != "行号" && receiptDetail.DisplayName != "可用数量"
                     && receiptDetail.DisplayName != "已分配数量")
                 {
                     dtReceiptDetail.Columns.Add(receiptDetail.DisplayName, typeof(string));
@@ -3325,7 +3376,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             DataRow dr11 = dtReceiptDetail.NewRow();
             dr11["外部单号"] = "test" + DateTime.Now.ToString("yyyyMMdd") + "001";
             dr11["仓库"] = warehousename;
-            dr11["SKU"] = "10000000005031";
+            dr11["产品编码"] = "10000000005031";
             dr11["产品等级"] = "A品";
             dr11["期望数量"] = 10;
             dtReceiptDetail.Rows.Add(dr11);
@@ -3791,7 +3842,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
                 drs["入库单号"] = "RE1032020030000001";
                 drs["箱号"] = "2020031400006";
-                drs["SKU"] = "00091204257864";
+                drs["产品编码"] = "00091204257864";
                 drs["货品等级"] = "A品";
                 drs["期望数量"] = "10";
                 dtGoodsType.Rows.Add(drs);
@@ -3880,7 +3931,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                 {
                                     ASNNumber = ds.Tables[0].Rows[i]["入库单号"].ToString(),
                                     str2 = ds.Tables[0].Rows[i]["箱号"].ToString(),
-                                    SKU = ds.Tables[0].Rows[i]["SKU"].ToString(),
+                                    SKU = ds.Tables[0].Rows[i]["产品编码"].ToString(),
                                     QtyExpected = double.Parse(ds.Tables[0].Rows[i]["期望数量"].ToString()),
                                     GoodsType = ds.Tables[0].Rows[i]["货品等级"].ToString()
                                 });
@@ -3900,7 +3951,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                 var CountSKU = new ASNManagementService().ExternKeyCheck_TH(item.SKU, "", "", "6", CustomerID);
                                 if (CountSKU == 0)
                                 {
-                                    return new { result = "<h3><font color='#FF0000'>SKU：" + item.SKU + "不存在!</font></h3>", IsSuccess = false }.ToJsonString();
+                                    return new { result = "<h3><font color='#FF0000'>产品编码：" + item.SKU + "不存在!</font></h3>", IsSuccess = false }.ToJsonString();
                                 }
                                 //产品等级
                                 var CountGoodsType = new ASNManagementService().ExternKeyCheck_TH(item.GoodsType, "", "", "7", CustomerID);
@@ -3912,7 +3963,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                 var CountSKUorReceiptNumber = new ASNManagementService().ExternKeyCheck_TH(item.ASNNumber, item.SKU, "", "8", CustomerID);
                                 if (CountSKUorReceiptNumber == 0)
                                 {
-                                    return new { result = "<h3><font color='#FF0000'>入库单号：" + item.ASNNumber + "中，SKU" + item.SKU + "不存在!</font></h3>", IsSuccess = false }.ToJsonString();
+                                    return new { result = "<h3><font color='#FF0000'>入库单号：" + item.ASNNumber + "中，产品编码" + item.SKU + "不存在!</font></h3>", IsSuccess = false }.ToJsonString();
                                 }
                                 ///判断入库单状态是否可以进行操作，当状态为未上架 5，上架中 3 ，已上架 9 可以进行操作
                                 var CountStatus = new ASNManagementService().ExternKeyCheck_TH(item.ASNNumber, "", "", "9", CustomerID);
@@ -3928,7 +3979,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                             }
                             else if (response.SuccessMessage.ToString().Contains("失败，进行变更的数量与订单数量总和不符"))
                             {
-                                return new { result = "<h3><font color='#FF0000'>批量更新订单品级失败！进行变更的SKU数量与订单SKU数量总和不符！</font></h3>", IsSuccess = false }.ToJsonString();
+                                return new { result = "<h3><font color='#FF0000'>批量更新订单品级失败！进行变更的产品编码数量与订单产品编码数量总和不符！</font></h3>", IsSuccess = false }.ToJsonString();
                             }
                             else
                             {

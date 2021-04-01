@@ -1,0 +1,47 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.UnitAndSpecifications.UnitAndSpecificationsModel
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+
+
+    <input type="hidden" id="Tishi" value="@ViewBag.Tishi" />
+    <div>
+        <fieldset>
+            <legend>基础信息</legend>
+            <table>
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>货主</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @Html.DropDownListFor(m => m.unitAndSpecificationsInfo.CustomerID, Model.CustomerItems, new { @class = "form-control", style = "width:100%" })
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>单位</label>
+                    </td>
+                    <td style="width: 16%;">
+                        @Html.TextBoxFor(m => m.unitAndSpecificationsInfo.Unit, new { @class = "form-control", style = "width:100%" })
+
+                    </td>
+                    <td class="TableColumnTitle">
+                        <label>规格</label>
+                    </td>
+
+                    <td>
+                        @Html.TextBoxFor(m => m.unitAndSpecificationsInfo.Specifications, new { @class = "form-control", style = "width:100%" })
+
+                    </td>
+
+                </tr>
+            </table>
+        </fieldset>
+
+
+        <div class="actionButtonDiv">
+            <input type="submit" value="提交" id="submitButton" class="btn btn-success" />
+            <input type="button" value="返回" id="returnButton" class="btn btn-success" />
+        </div>
+    </div>
+}

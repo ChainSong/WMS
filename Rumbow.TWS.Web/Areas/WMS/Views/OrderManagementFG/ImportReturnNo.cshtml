@@ -1,0 +1,92 @@
+﻿@Html.Partial("MsgMask")
+@Url.FrameworkJs("ajaxfileupload.js")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.OrderManagement.OrderViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+<script type="text/javascript">
+    //包装导入
+    var fileImportClick = function () {
+        if ($('#importExcel').val() === '') {
+            //Runbow.TWS.Alert("请选择要导入的Excel");
+            showMsg("请选择要导入的Excel", 4000);
+            return false;
+        }
+
+        var exp = /.xls$|.xlsx$/;
+        var fileImport = $('#fileImport').clone();
+        if (exp.exec($('#importExcel').val()) == null) {
+            //Runbow.TWS.Alert("请选择Excel格式的文件");
+            showMsg("请选择Excel格式的文件", 4000);
+            //$('#importExcel').remove();
+            $(this).before(fileImport);
+            return false;
+        };
+        var ss = $('#StorerID option:selected').text();
+        var ff = $('#StorerID').val();
+        WebPortal.MessageMask.Show("导入中...");
+        $.ajaxFileUpload({
+            url: "/WMS/OrderManagement/ImportReturnNoExcel",
+            secureuri: false,
+            fileElementId: 'importExcel',
+            type: "POST",
+            dataType: "json",
+            data: {
+                CustomerName: $('#StorerID option:selected').text(),
+                CustomerID: $('#StorerID').val()
+                //$('#StorerID option:selected').text()
+            },
+            success: function (data, status) {
+                WebPortal.MessageMask.Close();
+                if (data.IsSuccess == true) {
+                    $('#outPutResult').html("<h4><font color='#33cc70'>导入成功！<br/>" + data.result + "</font></h4>");
+                } else {
+                    $('#outPutResult').html("<h4><font color='#FF0000'>导入失败！<br/>" + data.result + "</font></h4>");
+                }
+            },
+            error: function (data, status, e) {
+                WebPortal.MessageMask.Close();
+                $('#outPutResult').html("<h4><font color='#FF0000'>导入失败！<br/>" + data.result + "</font></h4>");
+            }
+        });
+        return false;
+    };
+</script>
+
+
+
+@using (Html.BeginForm())
+{
+    <fieldset style="margin-top: 100px;">
+        <legend>回单流水号信息导入说明</legend>
+        <div id="importInstructionDiv">
+            1.模板中有模拟数据，请按照demo填写<br />
+            2.尽量不要长时间段的导入,减轻服务器压力
+            @*<a class="btn btn-primary" href="C:\Users\Administrator\Desktop\上架导入模板.xlsx" onclick="javascript:void(0);">导出</a>*@
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            选择Excel导入回单流水号信息
+        </legend>
+
+        <div id="importDiv">
+            <label>客户：</label>
+            @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, new { @id = "StorerID", @class = "form-control", @style = "width:120px;padding-bottom:1px" })
+            <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%;" />
+            <input type="submit" value="导入" style="margin-top: -9px" class="btn btn-primary" onclick="return fileImportClick();" />
+
+            <a class="btn btn-primary" id="portButtonTemplet" style="margin-top: -9px; text-decoration: none; color: white" href="../../Areas/WMS/Template/回单流水号导入模板.xls" onclick="javascript:void(0);">下载模板</a>
+        </div>
+    </fieldset>
+    <fieldset style="margin-top: 20px;">
+        <legend>
+            导入结果
+        </legend>
+        <div id="outPutResult">
+        </div>
+    </fieldset>
+}

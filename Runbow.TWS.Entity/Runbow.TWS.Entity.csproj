@@ -389,6 +389,7 @@
     <Compile Include="WMS\Order\Order_Detail.cs" />
     <Compile Include="WMS\Order\Order_Express.cs" />
     <Compile Include="WMS\Order\Order_Header.cs" />
+    <Compile Include="WMS\Order\PrintWaveModel.cs" />
     <Compile Include="WMS\Order\WMS_CheckExpress.cs" />
     <Compile Include="WMS\Order\WMS_OrderShipment.cs" />
     <Compile Include="WMS\Order\OrderShipmentSearchCondition.cs" />
@@ -715,6 +716,7 @@
     <Compile Include="WMS\Storer\StorerSearchCondition.cs" />
     <Compile Include="WMS\Storer\Storer.cs" />
     <Compile Include="WMS\Template\SearchCondition.cs" />
+    <Compile Include="WMS\UnitAndSpecifications\UnitAndSpecificationsInfo.cs" />
     <Compile Include="WMS\Warehouse\AreaInfo.cs" />
     <Compile Include="WMS\Warehouse\LocationInfo.cs" />
     <Compile Include="WMS\Warehouse\WarehouseAllocate.cs" />

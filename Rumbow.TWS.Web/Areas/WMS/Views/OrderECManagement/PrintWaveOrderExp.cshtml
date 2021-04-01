@@ -1,0 +1,532 @@
+﻿<link href="~/Scripts/Common/JartoolsPrint.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+<script src="../../../../Scripts/Common/Framework/jquery-1.7.1.min.js"></script>
+<script src="../../../../Scripts/Common/jquery-barcode.js"></script>
+@{
+    /*快递面单*/
+
+    ViewBag.Title = "PrintExp";
+}
+
+@model Runbow.TWS.Entity.WMS.Order.PrintWaveModel
+@using Runbow.TWS.Entity;
+@using Runbow.TWS.Common;
+@using System.Text.RegularExpressions;
+
+<style>
+
+    /*.only_for_print {
+        display: block;
+    }*/
+
+    .Noprint {
+        display: none;
+    }
+
+    .PageNext {
+        page-break-after: always;
+    }
+
+    .shuli {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 11px;
+        line-height: 15px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+
+    .shuli2 {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 11px;
+        line-height: 15px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+
+    .shuli3 {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 10px;
+        line-height: 12px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+
+    .shuli4 {
+        /*padding-left: 5px;*/
+        width: 8%;
+        font-size: 11px;
+        line-height: 36px;
+        border-right: 1px solid #151515;
+        float: left;
+        text-align: center;
+        height: 100%;
+    }
+</style>
+<script type="text/javascript">
+
+    //code128条码
+    $(function () {
+        $.each($(".bcTarget"), function (a, b) {
+            BarcodeC(b, $(b).html());
+        });
+        $.each($(".bcTarget2"), function (a, b) {
+            BarcodeC2(b, $(b).html());
+        });
+        $.each($(".bcTarget3"), function (a, b) {
+            BarcodeC3(b, $(b).html());
+        });
+        $.each($(".bcTarget4"), function (a, b) {
+            BarcodeC4(b, $(b).html());
+        });
+        $.each($(".bcTarget5"), function (a, b) {
+            BarcodeC5(b, $(b).html());
+        });
+    })
+    function BarcodeC(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 55, showHRI: false });
+    }
+    function BarcodeC2(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 33, showHRI: false });
+    }
+    function BarcodeC3(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 30, showHRI: false });
+    }
+    function BarcodeC4(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 20, showHRI: false });
+    }
+    function BarcodeC5(obj, data) {
+        $(obj).empty().barcode(data, "code128", { barWidth: 1, barHeight: 15, showHRI: false });
+    }
+    //更新打印次数
+    function UpdatePrintStatus() {
+        var ids = "";
+        ids = $("#waveIds").val();
+        $.ajax({
+            type: "POST",
+            url: "/WMS/OrderECManagement/UpdateWavePrintStatus",
+            data: {
+                "IDs": ids,
+                "type": 2
+            },
+            async: "false",
+            success: function (data) {
+
+            },
+            error: function (msg) {
+
+            }
+        });
+    }
+
+    function doPrint(how) {
+        //打印文档对象
+        var myDoc = {
+            documents: document,    // 打印页面(div)们在本文档中
+            // 打印时,only_for_print取值为显示
+            classesReplacedWhenPrint: new Array('.only_for_print{display:block}'),
+            copyrights: '杰创软件拥有版权  www.jatools.com'         // 版权声明必须
+        };
+        var jatoolsPrinter = getJatoolsPrinter();
+        // 调用打印方法
+        if (how == '打印预览...') {
+            jatoolsPrinter.printPreview(myDoc);   // 打印预览
+        }
+        else if (how == '打印...') {
+            //document.all.WebBrowser.ExecWB(6, 1);
+            //jatoolsPrinter.print(myDoc, true);   // 打印前弹出打印设置对话框
+        }
+        else if (how == '分批打印') {
+            debugger;
+            //UpdatePrintStatus();
+            let hdOrderCount = $("#hdOrderCount").val();
+            if (hdOrderCount <= 10) {
+                jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+            }
+            else {
+                let count = Math.floor(hdOrderCount / 10);
+                if (hdOrderCount % 10 > 0) {
+                    count++;
+                }
+                var printdivstr = $("#printdiv")[0].innerHTML;
+                $("#tempdiv")[0].innerHTML = printdivstr;
+                $("#printdiv")[0].innerHTML = "";
+                var tempdivs = $("#tempdiv").children('div');
+
+                var tempstr = "";
+                for (var i = 0; i < count; i++) {
+                    tempstr = "";
+                    let startcount = 0;
+                    startcount = i * 10;
+                    let endcount = 0;
+
+                    if (i == count - 1) {
+                        if (hdOrderCount % 10 == 0) {
+                            endcount = startcount + 10;
+                        } else {
+                            endcount = startcount + hdOrderCount % 10;
+                        }
+                    } else {
+                        endcount = startcount + 10;
+                    }
+
+                    for (var j = startcount; j < endcount; j++) {
+                        tempstr += tempdivs[j].outerHTML;
+                    }
+                    $("#printdiv")[0].innerHTML = tempstr;
+
+                    let aaa = "";
+                    jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+                }
+                $("#printdiv")[0].innerHTML = printdivstr;
+
+            }
+        }
+        else {
+            UpdatePrintStatus();
+            jatoolsPrinter.print(myDoc, false);       // 不弹出对话框打印
+        }
+    }
+
+</script>
+<div class="actionButtonDiv" style="padding-top: 10px;text-align:center">
+    <input type="button" value="预览" class="btn btn-success" onclick="doPrint('打印预览...')">
+    <input type="button" value="打印" class="btn btn-success" onclick="doPrint('打印')">
+    @*<input type="button" value="分批打印" class="btn btn-primary" onclick="doPrint('分批打印')">*@
+</div>
+
+@if (Model.WaveHeaderLists != null && Model.WaveHeaderLists.Any() && Model.OrderLists != null && Model.OrderLists.Any())
+{
+    string waveIds = "";
+    Model.WaveHeaderLists.ToList().ForEach((aa) =>
+    {
+        waveIds += aa.ID.ToString() + ",";
+    });
+    waveIds = waveIds.Substring(0, waveIds.Length - 1);
+    <input type="hidden" value="@waveIds" id="waveIds" />
+    <!--波次列表信息-->
+    <table style="font-size:16px;">
+        <thead>
+            <tr style="font-weight:bold">
+                <td>波次号</td>
+                <td>波次中订单数量</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.WaveHeaderLists)
+            {
+                <tr>
+                    <td style="font-size:16px;">@item.WaveNumber</td>
+                    @*<td style="font-size:16px;">@item.Int1.ToString()</td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h4 class="Noprint">
+        以下为打印区:<br>
+    </h4>
+    <input type="hidden" value="@Model.OrderLists.Count()" id="hdOrderCount" />
+    <div id="tempdiv" style="display:none"></div>
+    <br />
+    <div id="printdiv">
+        @{
+            int pindex = 0;//页码索引
+            string pages = "";//页码索引ID
+            string pageclass = "";
+            //only_for_print
+            int hdOrderCount = Model.OrderLists.Count();
+
+            foreach (var item in Model.WaveHeaderLists)
+            {
+                IEnumerable<OrderInfo>
+                    orderInfos = Model.OrderLists.Where(m => m.WaveNumber == item.WaveNumber).ToList();
+                if (orderInfos != null && orderInfos.Any())
+                {
+                    foreach (var oitem in orderInfos)
+                    {
+                        var phone = Regex.Replace(oitem.Contact, "(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                        pindex++;
+                        pages = "page" + pindex.ToString();
+
+                        pageclass = "pageclass" + pindex.ToString();
+
+                        <div id="@pages" class="@pageclass" style="clear:both">
+                            @* <div id="@pages" class='@pageclass' style="clear:both">*@
+                            <div style="border: 1px solid #151515;font-family:微软雅黑;width:365px;height:680px">
+                                <!--logo-->
+                                <div style="width:100%;height:49px;line-height:49px;">
+                                    <div style="float:left;width:30%"><img style="width:100px;height:40px;padding-left:5px;" src="~/Image/sf.jpg" /></div>
+                                    <div style="float:left;width:40%;font-size:30px;text-align:center;font-weight:bold;">&nbsp;</div>
+                                    <div style="float:left;width:30%;text-align:right;padding-right:10px;line-height:45px;">
+                                        @*<img style="width:70px;height:30px;padding-right:5px;" src="~/Image/sfphone.jpg" />*@
+                                        <span style="font-weight:bold;font-size:15px;">@oitem.Int2 / @item.WaveCount</span>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--条码-->
+                                <div style="width:100%;height:96px;">
+                                    <div style="float:left;width:75%;height:100%;border-right:1px solid #151515;">
+                                        <div style="width:100%;padding-top:1mm;padding-left:55px;">
+                                            <div class="bcTarget">@oitem.ExpressNumber.ToString()</div>
+                                        </div>
+                                        <div style="width:100%;text-align:center; font-size:18px;padding-top:3px;">运单号：@oitem.ExpressNumber.ToString()</div>
+                                    </div>
+                                    <div style="float:left;width:25%;text-align:center">
+                                        <div style="font-size:18px;height:28px;line-height:28px;">
+                                            @*@{if (string.IsNullOrEmpty(item.str10))
+                                                    {
+                                                        <span>标准快递</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@item.str10</span>
+                                                    }
+                                                }*@
+                                            <span>标准快递</span>
+
+                                        </div>
+                                        <hr style="border-bottom:1px solid #000;margin:0 ">
+                                        <div style="font-size:14px;">代收货款</div>
+                                        <br />
+                                        <div style="font-size:14px;">￥0元</div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--目的地代码-->
+                                <div style="width:100%;height:49px;">
+                                    <div class="shuli">目<br />的<br />地</div>
+                                    <div style="float:left;width:90%;font-size:40px;padding-left:5px;line-height:45px;padding-top:2px;">@oitem.str12</div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--收件人-->
+                                <div style="width:100%;height:49px;">
+                                    <div class="shuli">收<br />件<br />人</div>
+                                    <div style="float:left;width:90%;font-size:13px;padding-left:5px;padding-right:5px;line-height:15px;padding-top:2px;">
+                                        <div>@oitem.Consignee.GetHidexxxString()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@phone</div>
+                                        <div>
+                                            @oitem.Province&nbsp;&nbsp;@oitem.City&nbsp;&nbsp;@oitem.District&nbsp;&nbsp;
+                                            @oitem.Address
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--寄件人-->
+                                <div style="width:100%;height:49px;">
+                                    <div class="shuli">寄<br />件<br />人</div>
+                                    <div style="float:left;width:90%;padding-left:5px;">
+                                        <div style="float:left;width:70%;border-right:1px solid #151515;height:49px;">
+                                            <div style="float:left;font-size:11px;line-height:16px;width:100%;padding-right:5px;">
+                                                @if (!string.IsNullOrEmpty(oitem.str10))
+                                                {
+                                                    if (oitem.str10 == "Nike官方旗舰店")
+                                                    {
+                                                        <span>Nike官方旗舰店&nbsp;&nbsp;60956000</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@oitem.str10</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>Nike官方旗舰店;&nbsp;&nbsp;60956000</span>
+                                                }
+
+
+                                                @*@{ if (string.IsNullOrEmpty(item.str9) || string.IsNullOrEmpty(item.str7))
+                                                        {
+                                                            <span>3721&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60956000</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@item.str9@item.str7</span>
+                                                        }
+                                                    }*@
+                                                <br />
+                                                <span>@oitem.Warehouse</span>
+                                            </div>
+                                            @*<div style="float:left;font-size:13px;width:29%">
+                                                    原寄地 512
+                                                </div>*@
+                                        </div>
+                                        <div style="float:left;width:30%;text-align:center">
+                                            <div style="font-size:12px;text-align:center">集团转寄协议客户</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                                <!--付款-->
+                                <div style="width:100%;height:37px;font-size:11px;">
+                                    <div style="float:left;width:40%;padding-left:10px;padding-top:2px;">
+                                        <div>付款方式:转第三方付</div>
+                                        <div>月结账号:***749</div>
+                                    </div>
+                                    <div style="float:left;width:60%;padding-top:2px;">
+                                        <div>声明价值:</div>
+                                        @*<div>保费价值:</div>*@
+                                    </div>
+                                    @*<div style="float:left;width:42%;padding-top:4px;">
+                                            <div style="width:100%">
+                                                <div style="float:left; width:50%">计费重量:</div>
+                                                <div style="float:left;width:50%">费用合计:</div>
+                                            </div>
+                                            <div>付款地区:</div>
+                                        </div>*@
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--托寄物-->
+                                <div style="width:100%;height:37px;">
+                                    <div class="shuli3">托<br />寄<br />物</div>
+                                    <div style="float:left;width:90%;font-size:14px;padding-left:15px;">
+
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--备注-->
+                                <div style="width:100%;height:37px;">
+                                    <div class="shuli3" style="padding-top:5px;">备<br />注</div>
+                                    <div style="float:left;width:90%;font-size:10px;padding-left:15px;">
+                                        <div style="float:left;width:35%;border-right:1px solid #151515;height:37px;">
+                                            @if (oitem.OrderType == "预售-FF")
+                                            {
+                                                <span style="font-size:26px;color:red;font-weight:bold">前置件</span>
+                                                @*<br />*@
+                                                @*<span style="font-size:13px;color:red">前置件 - 到柜</span>*@
+                                            }
+                                        </div>
+                                        <div style="float:left;width:35%;border-right:1px solid #151515;height:37px;padding-left:5px;font-size:9px;">
+                                            <div>收件员：</div>
+                                            <div>寄件日期：</div>
+                                            <div>派件员：</div>
+                                        </div>
+                                        <div style="float:left;width:30%;height:37px;">
+                                            <div if;">签收：</div>
+
+                                            <div style="text-align:right;padding-right:5px;">月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<hr style="border-bottom:2px solid #151515;margin:0 ">*@
+                                <div style="height:10px;width:100%;border-top:1px solid #151515;border-bottom:1px solid #151515"></div>
+                                <!--下半部分-->
+                                <div style="width:100%;height:50px">
+                                    <div style="float:left;width:30%;height:50px;">
+                                        <div style="line-height:45px"><img style="width:110px;height:45px;padding-left:5px;padding-top:0px" src="~/Image/sf.jpg" /></div>
+                                        @*<div><img style="width:70px;height:33px;padding-left:10px;" src="~/Image/sfphone.jpg" /></div>*@
+                                    </div>
+                                    <div style="float:left;width:70%">
+                                        <div style="width:100%;padding-top:5px;padding-left:50px;">
+                                            <div class="bcTarget4">@oitem.ExpressNumber.ToString()</div>
+                                        </div>
+                                        <div style="font-size:15px;padding-left:60px;padding-top:0px;">@oitem.ExpressNumber.ToString()</div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+                                <!--收件人-->
+                                <div style="width:100%;height:40px;">
+                                    <div class="shuli4">收</div>
+                                    <div style="float:left;width:90%;font-size:11px;padding-left:5px;padding-right:5px;line-height:12px;padding-top:2px;">
+                                        <div>@oitem.Consignee.GetHidexxxString()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@phone</div>
+                                        <div>
+                                            @oitem.Province&nbsp;&nbsp;@oitem.City&nbsp;&nbsp;@oitem.District&nbsp;&nbsp;
+                                            @oitem.Address
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+                                <!--寄件人-->
+                                <div style="width:100%;height:37px;">
+                                    <div class="shuli4">寄</div>
+                                    <div style="float:left;width:90%;padding-left:5px;">
+                                        <div style="float:left;width:100%;height:37px;">
+                                            <div style="float:left;font-size:11px;line-height:16px;width:100%;padding-right:5px;">
+                                                @*@if (!string.IsNullOrEmpty(oitem.str10))
+                                                {
+                                                    if (oitem.str10 == "Nike官方旗舰店")
+                                                    {
+                                                        <span>Nike官方旗舰店&nbsp;&nbsp;60956000</span>
+                                                    }
+                                                    else
+                                                    {*@
+                                                        <span>@oitem.str10</span>
+                                                    @*}
+                                                }
+                                                else
+                                                {
+                                                    <span>Nike官方旗舰店;&nbsp;&nbsp;60956000</span>
+                                                }*@
+                                                @*@{ if (string.IsNullOrEmpty(item.str9) || string.IsNullOrEmpty(item.str7))
+                                                        {
+                                                            <span>3721&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60956000</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@item.str9@item.str7</span>
+                                                        }
+                                                    }*@
+                                                <br />
+                                                <span>@oitem.Warehouse</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr style="border-bottom:1px solid #151515;margin:0 ">
+
+
+                                <!--最下面条码-->
+                                <div style="width:100%;height:101px;font-size:12px;position:relative">
+                                    <div style="height:20px;">
+                                        <div style="float:left;width:13%;font-size:11px">&nbsp;&nbsp;订单号:</div>
+                                        <div style="float:left;width:63%;">
+                                            <div class="bcTarget5" style="margin-top:2px;">@oitem.ExternOrderNumber</div>
+                                            <div style="width:100%;text-align:center">@oitem.ExternOrderNumber</div>
+                                        </div>
+                                        <div style="float:left;width:24%">
+                                            <div style="font-size:12px;">件数：商品<span>@oitem.Int1</span>件</div>
+                                        </div>
+                                    </div>
+                                    <div style="clear:both; width:100%;height:20px;">&nbsp;&nbsp;配货信息:</div>
+                                    <div style="width:100%;height:30px;line-height:30px;">&nbsp;&nbsp;备注:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;节假日正常派件</div>
+
+                                    <div style="font-size:11px;position:absolute;bottom:0px;width:100%;text-align:center">
+                                        www.sf-express.com&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span style="font-size:12px;">客服电话：95338</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                    }
+
+                }
+
+            }
+        }
+    </div>
+
+}
+else
+{
+    <h3>未查询到需要打印的订单，请检查！</h3>
+}
+
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

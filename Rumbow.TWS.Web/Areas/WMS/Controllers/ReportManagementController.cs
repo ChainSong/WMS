@@ -485,6 +485,182 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             return msg;
         }
 
+
+
+        [HttpGet]   //来货预检差异报表
+        public ActionResult FinancialStatements(long? customerID, long? warehouseID, int? PageIndex)
+        {
+            IndexViewModel vm = new IndexViewModel();
+            vm.ProjectRoleID = base.UserInfo.ProjectID;
+            vm.SearchCondition = new ReceiptSearchCondition();
+            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
+            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
+            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            ViewBag.CustomerList = CustomerList;
+            vm.SearchCondition.StartCompleteDate = Convert.ToDateTime(DateTime.Now.ToShortTimeString()).AddDays(-10);
+            vm.SearchCondition.EndCompleteDate = Convert.ToDateTime(DateTime.Now.ToShortTimeString());
+            if (base.UserInfo.UserType == 0)
+            {
+                vm.SearchCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
+            }
+            else if (base.UserInfo.UserType == 2)
+            {
+                if (customerID.HasValue)
+                {
+                    vm.SearchCondition.CustomerID = customerID;
+                }
+                else
+                {
+                    var customerIDs = ApplicationConfigHelper.GetApplicationCustomer().Where(m => m.UserID == base.UserInfo.ID).Select(c => c.ID);
+                    if (customerIDs != null && customerIDs.Count() == 1)
+                    {
+                        vm.SearchCondition.CustomerID = customerIDs.First();
+                    }
+                }
+            }
+            IEnumerable<SelectListItem> WarehouseList = null;
+            if (vm.SearchCondition.CustomerID == null)
+            {
+                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseName, WarehouseName = t.WarehouseName }).Distinct()
+                                                    .Select(c => new SelectListItem() { Value = c.WarehouseName.ToString(), Text = c.WarehouseName }).Distinct();
+            }
+            else
+            {
+                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.SearchCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseName, WarehouseName = t.WarehouseName }).Distinct()
+                                     .Select(c => new SelectListItem() { Value = c.WarehouseName.ToString(), Text = c.WarehouseName });
+            }
+            var s = ApplicationConfigHelper.GetCacheInfo().Where(a => a.CustomerID == vm.SearchCondition.CustomerID && a.UserID == base.UserInfo.ID).Select(a => a.WarehouseID).FirstOrDefault();
+
+            if (WarehouseList.Count() == 1)
+            {
+                vm.SearchCondition.Warehouse = WarehouseList.Select(c => c.Value).FirstOrDefault();
+            }
+            ViewBag.WarehouseList = WarehouseList;
+            GetReceiptByConditionRequest request = new GetReceiptByConditionRequest();
+            request.SearchCondition = vm.SearchCondition;
+            request.PageSize = UtilConstants.PAGESIZE;
+            request.PageIndex = PageIndex ?? 0;
+            return View(vm);
+        }
+
+        [HttpPost]   //来货预检差异报表
+        public ActionResult FinancialStatements(IndexViewModel vm, int? PageIndex, string Action)
+        {
+            vm.ProjectRoleID = base.UserInfo.ProjectID;
+
+            IEnumerable<WMSConfig> wms = null;
+            try
+            {
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+            }
+            catch (Exception)
+            {
+            }
+
+            if (wms == null)
+            {
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
+            }
+            List<SelectListItem> st = new List<SelectListItem>();
+            foreach (WMSConfig w in wms)
+            {
+                st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
+            }
+            vm.ReceiptTypes = st;
+            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
+            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
+            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            ViewBag.CustomerList = CustomerList;
+            IEnumerable<SelectListItem> WarehouseList = null;
+            if (vm.SearchCondition.CustomerID == null)
+            {
+                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+                                                    .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var i in CustomerListID)
+                {
+                    sb.Append("" + i + ",");
+                }
+                if (sb.Length > 1)
+                {
+                    vm.SearchCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
+                }
+                else
+                {
+                    vm.SearchCondition.CustomerIDs = "0";
+                }
+            }
+            else
+            {
+                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.SearchCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+                                     .Select(c => new SelectListItem() { Value = c.WarehouseName.ToString(), Text = c.WarehouseName });
+            }
+            var s = ApplicationConfigHelper.GetCacheInfo().Where(a => a.CustomerID == vm.SearchCondition.CustomerID && a.UserID == base.UserInfo.ID).Select(a => a.WarehouseID).FirstOrDefault();
+            if (WarehouseList.Count() == 1)
+            {
+                vm.SearchCondition.Warehouse = WarehouseList.Select(c => c.Value).FirstOrDefault();
+            }
+            ViewBag.WarehouseList = WarehouseList;
+            vm.SearchCondition.UserType = base.UserInfo.UserType;
+
+            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
+            var getReceiptByConditionRequest = new GetReceiptByConditionRequest();
+
+            getReceiptByConditionRequest.SearchCondition = vm.SearchCondition;
+            getReceiptByConditionRequest.PageSize = UtilConstants.PAGESIZE;
+            getReceiptByConditionRequest.PageIndex = PageIndex ?? 0;
+
+            Response<GetReceiptDetailByConditionResponse> getReceiptByConditionResponse = new Response<GetReceiptDetailByConditionResponse>();
+
+            if (Action == "导出")
+            {
+                getReceiptByConditionResponse = new ReceiptManagementService().GetFinancialStatementsExport(getReceiptByConditionRequest);
+            }
+            else
+            {
+                getReceiptByConditionResponse = new ReceiptManagementService().GetFinancialStatements(getReceiptByConditionRequest);
+            }
+            if (getReceiptByConditionResponse.IsSuccess)
+            {
+
+                vm.ReceiptDetailCollection2 = getReceiptByConditionResponse.Result.ReceiptDetailCollection3;
+                vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
+                vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
+                if (Action == "导出")
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("<style>td{mso-number-format:\"\\@\";}</style>");
+                    sb.Append("<table border='1' cellspacing='0' cellpadding='0'>");
+                    sb.Append("<tr><td>行号</td><td>预入库单号</td><td>外部单号</td><td>入库日期</td><td>箱号</td><td>产品编码</td><td>期望数量</td><td>扫描数量</td><td>差异数量</td><td>门店代码</td></tr>");
+                    int i = 0;
+                    foreach (var item in vm.ReceiptDetailCollection2)
+                    {
+                        sb.Append("<tr><td>" + i++ + "</td><td>" + item.ASNNumber.ToString() + "</td><td>" + item.ExternReceiptNumber.ToString() + "</td>");
+                        sb.Append("<td>" + item.ReceiptDate.ToString() + "</td><td>" + item.str2.ToString() + "</td><td>" + item.SKU.ToString() + "</td><td>" + item.QtyExpected.ToString() + "</td><td>" + item.QtyReceived.ToString() + "</td><td>" + (item.QtyReceived - item.QtyExpected).ToString() + "</td><td>" + item.str3.ToString() + "</td></tr>");
+                    }
+                    sb.Append("</table>");
+                    ss.HttpResponse Response;
+                    Response = ss.HttpContext.Current.Response;
+                    Response.Charset = "UTF-8";
+                    Response.HeaderEncoding = Encoding.UTF8;
+                    Response.AppendHeader("content-disposition", "attachment;filename=\"" + ss.HttpUtility.UrlEncode("来货预检扫描差异_" + DateTime.Now.ToShortDateString(), Encoding.UTF8) + ".xls\"");
+                    Response.ContentEncoding = Encoding.UTF8;
+                    Response.ContentType = "application/ms-excel";
+                    Response.Write("<meta http-equiv='content-type' content='application/ms-excel; charset=UTF-8'/>" + sb.ToString());
+                    Response.Flush();
+                    Response.End();
+
+
+                }
+                vm.ProjectRoleID = base.UserInfo.ProjectID;
+            }
+            this.GenQueryReceiptViewModel(vm);
+            return View(vm);
+        }
+
+
         /// <summary>
         /// 每日退货收货日报表
         /// </summary>
@@ -1335,7 +1511,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     }
                 }
             }
-
+            IEnumerable<Column> columnReceipt;
+            var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
+            Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_Inventory").Count() == 0)
+            {
+                columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+            }
+            else
+            {
+                columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+            }
             IEnumerable<SelectListItem> WarehouseList = null;
             if (vm.SearchCondition.CustomerID == 0)
             {
@@ -1475,6 +1661,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 }
 
             }
+            IEnumerable<Column> columnReceipt;
+            var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
+            Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_Inventory").Count() == 0)
+            {
+                columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+            }
+            else
+            {
+                columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+            }
             ViewBag.WarehouseList = WarehouseList;
             IEnumerable<WMSConfig> wms = null;
             try
@@ -1517,17 +1714,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 vm.PageCount = response.Result.PageCount;
                 if (Action == "导出")
                 {
-                    IEnumerable<Column> columnReceipt;
-                    var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
-                    Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_Inventory").Count() == 0)
-                    {
-                        columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
-                    }
-                    else
-                    {
-                        columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
-                    }
+                    //IEnumerable<Column> columnReceipt;
+                    //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
+                    //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
+                    //if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_Inventory").Count() == 0)
+                    //{
+                    //    columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+                    //}
+                    //else
+                    //{
+                    //    columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+                    //}
                     //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
                     //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
                     //IEnumerable<Table> tables = module.Tables.TableCollection;
@@ -1537,17 +1734,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 }
                 else if (Action == "快速导出")
                 {
-                    IEnumerable<Column> columnReceipt;
-                    var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
-                    Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_Inventory").Count() == 0)
-                    {
-                        columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
-                    }
-                    else
-                    {
-                        columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
-                    }
+                    //IEnumerable<Column> columnReceipt;
+                    //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
+                    //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
+                    //if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_Inventory").Count() == 0)
+                    //{
+                    //    columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+                    //}
+                    //else
+                    //{
+                    //    columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_Inventory").ColumnCollection;
+                    //}
                     //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.SearchCondition.CustomerID).ProjectCollection.First();
                     //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
                     //IEnumerable<Table> tables = module.Tables.TableCollection;
@@ -1809,10 +2006,11 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
             ViewBag.CustomerList = CustomerList;
             IndexViewModel vm = new IndexViewModel();
-            IEnumerable<WMSConfig> wms = null;
+            List<WMSConfig> wms = new List<WMSConfig>();
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName).ToList();
+                wms.AddRange(ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "_FG").ToList());
             }
             catch (Exception)
             {
@@ -1820,7 +2018,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             if (wms == null)
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType").ToList();
             }
             List<SelectListItem> st = new List<SelectListItem>();
             foreach (WMSConfig w in wms)
@@ -1930,10 +2128,11 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             //    Session["SearchConditionModel"] = null;
             //    Session["SearchConditionModel"] = vm.SearchCondition;
             //}
-            IEnumerable<WMSConfig> wms = null;
+            List<WMSConfig> wms = new List<WMSConfig>();
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName).ToList();
+                wms.AddRange(ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "_FG").ToList());
             }
             catch (Exception)
             {
@@ -1941,7 +2140,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             if (wms == null)
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType").ToList();
             }
             List<SelectListItem> st = new List<SelectListItem>();
             foreach (WMSConfig w in wms)
@@ -2159,7 +2358,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             DataSet ds = new DataSet();
             DataTable dtReceipt = new DataTable();
             dtReceipt.Columns.Add("出库单行号");
-            dtReceipt.Columns.Add("SKU");
+            dtReceipt.Columns.Add("产品编码");
             dtReceipt.Columns.Add("描述");
             dtReceipt.Columns.Add("Article");
             dtReceipt.Columns.Add("尺码");
@@ -2171,7 +2370,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             {
                 DataRow dr = dtReceipt.NewRow();
                 dr["出库单行号"] = item.LineNumber;
-                dr["SKU"] = item.SKU;
+                dr["产品编码"] = item.SKU;
                 dr["描述"] = item.GoodsName;
                 dr["Article"] = item.Article;
                 dr["尺码"] = item.Size;
@@ -2385,18 +2584,19 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         public ActionResult ReportTable(long? customerID, long? warehouseID, long? warehouseAreaID, int? PageIndex)
         {
             ReportTableViewModel vm = new ReportTableViewModel();
-            IEnumerable<WMSConfig> wms = null;
+            List<WMSConfig> wms = new List<WMSConfig>();
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("OrderType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("OrderType_" + base.UserInfo.ProjectName).ToList();
+                wms.AddRange(ApplicationConfigHelper.GetWMS_Config("OrderType_" + base.UserInfo.ProjectName + "_FG").ToList());
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
 
             if (wms == null)
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("OrderType");
+                wms = ApplicationConfigHelper.GetWMS_Config("OrderType").ToList();
             }
             List<SelectListItem> st = new List<SelectListItem>();
             foreach (WMSConfig w in wms)
@@ -2511,19 +2711,21 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             }
             ViewBag.WarehouseList = WarehouseList;
 
-            IEnumerable<WMSConfig> wmss = null;
+            List<WMSConfig> wmss = new List<WMSConfig>();
             try
             {
-                wmss = ApplicationConfigHelper.GetWMS_Config("OrderType_" + base.UserInfo.ProjectName);
+                wmss = ApplicationConfigHelper.GetWMS_Config("OrderType_" + base.UserInfo.ProjectName).ToList();
+                wmss.AddRange(ApplicationConfigHelper.GetWMS_Config("OrderType_" + base.UserInfo.ProjectName + "_FG").ToList());
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
 
             if (wmss == null)
             {
-                wmss = ApplicationConfigHelper.GetWMS_Config("OrderType");
+                wmss = ApplicationConfigHelper.GetWMS_Config("OrderType").ToList();
             }
+
             List<SelectListItem> st = new List<SelectListItem>();
             foreach (WMSConfig w in wmss)
             {
@@ -2867,7 +3069,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     StringBuilder sb = new StringBuilder();
                     sb.Append("<style>td{mso-number-format:\"\\@\";}</style>");
                     sb.Append("<table border='1' cellspacing='0' cellpadding='0'>");
-                    sb.Append("<tr><td>行号</td><td>预入库单号</td><td>外部单号</td><td>入库日期</td><td>箱号</td><td>SKU</td><td>期望数量</td><td>扫描数量</td><td>差异数量</td><td>门店代码</td></tr>");
+                    sb.Append("<tr><td>行号</td><td>预入库单号</td><td>外部单号</td><td>入库日期</td><td>箱号</td><td>产品编码</td><td>期望数量</td><td>扫描数量</td><td>差异数量</td><td>门店代码</td></tr>");
                     int i = 0;
                     foreach (var item in vm.ReceiptDetailCollection2)
                     {
@@ -3910,10 +4112,10 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 dtReceipt.Rows.Add(drReceipt);
             });
 
-            dtReceipt.TableName = "SKU报表信息";
+            dtReceipt.TableName = "产品编码报表信息";
             ds.Tables.Add(dtReceipt);
             //ExportDataToExcelHelper.ExportDataSetToExcel(ds, "SKU报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
-            EPPlusOperation.ExportDataSetByEPPlus(ds, "SKU报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
+            EPPlusOperation.ExportDataSetByEPPlus(ds, "产品编码报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
         private void ExportInventory(GetInventoryBySearchConditionResponse response, IEnumerable<Column> columnReceipt)
@@ -4027,10 +4229,10 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 dtReceipt.Rows.Add(drReceipt);
             });
 
-            dtReceipt.TableName = "SKU进出库日志报表信息";
+            dtReceipt.TableName = "产品编码进出库日志报表信息";
             ds.Tables.Add(dtReceipt);
             //ExportDataToExcelHelper.ExportDataSetToExcel(ds, "SKU进出库日志报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
-            EPPlusOperation.ExportDataSetByEPPlus(ds, "SKU进出库日志报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
+            EPPlusOperation.ExportDataSetByEPPlus(ds, "产品编码进出库日志报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
         private void ExportSkuChange(GetSKUChangeBySearchConditionResponse response, IEnumerable<Column> columnReceipt)
@@ -4055,10 +4257,10 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 dtReceipt.Rows.Add(drReceipt);
             });
 
-            dtReceipt.TableName = "SKU变更报表信息";
+            dtReceipt.TableName = "产品编码变更报表信息";
             ds.Tables.Add(dtReceipt);
             //ExportDataToExcelHelper.ExportDataSetToExcel(ds, "SKU变更报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
-            EPPlusOperation.ExportDataSetByEPPlus(ds, "SKU变更报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
+            EPPlusOperation.ExportDataSetByEPPlus(ds, "产品编码变更报表信息" + DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
         private void ExportInventoryChange(GetInventoryChangeBySearchConditionResponse response, IEnumerable<Column> columnReceipt, String InventoryChangeTypes)

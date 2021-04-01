@@ -1944,6 +1944,15 @@ namespace Runbow.TWS.Dao
             {
                 sb.Append(" AND o.Int5=").Append(SearchCondition.Int5).Append(" ");
             }
+            if (!string.IsNullOrEmpty(SearchCondition.Model) && SearchCondition.Model == "产品")
+            {
+                sb.Append(" AND o.OrderType like '%").Append(SearchCondition.Model).Append("%' ");
+            }
+            else
+            {
+                sb.Append(" AND o.OrderType like '%").Append(SearchCondition.Model).Append("%' ");
+            }
+
             return sb.ToString();
         }
 

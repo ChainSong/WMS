@@ -29,5 +29,8 @@ namespace Runbow.TWS.Entity
 
         //货品尺寸
         public string SKUGroup { get; set; }
+
+        public string Model { get; set; }
+
     }
 }

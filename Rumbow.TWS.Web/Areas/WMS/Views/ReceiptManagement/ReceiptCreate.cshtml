@@ -227,10 +227,7 @@
                     <label>单据类型</label>
                 </td>
                 <td style="width: 20%;" id="label_ASNType">
-                    @if (Model.ViewType != 0)
-                    {
-                        @(Model.ReceiptTypes.SingleOrDefault(m => m.Value == Model.receipt.ReceiptType.ToString()).Text ?? "")
-                    }
+                    
                 </td>
 
                 <td class="TableColumnTitle">
@@ -910,7 +907,7 @@
         }
     </fieldset>
     <div class="actionButtonDiv">
-        @if (Model.ViewType != 1 && Model.ViewType != 0 && Model.receipt.Status == 1)
+        @*@if (Model.ViewType != 1 && Model.ViewType != 0 && Model.receipt.Status == 1)
         {
             //  <input type="button" class="btn btn-success" value="新建标签" id="NewPrint" />
 
@@ -927,13 +924,13 @@
         {
             <input type="button" class="btn btn-success" value="提交" id="submitButton" onclick="AddReceiptAndReceiptDetail()" />
             <input type="button" class="btn btn-success" value="返回" id="ReturnButton_History" />
-            
+
             @Html.Raw("&nbsp;&nbsp;")
         }
         else if (Model.ViewType == 2)
         {
-            <input type="button" class="btn btn-success" value="提交" id="editButton" onclick="EditReceiptAndReceiptDetail(@Model.receipt.ID.ToString())" /> 
-            <input type="button" class="btn btn-success" value="返回" id="returnButtonEdit" /> 
+            <input type="button" class="btn btn-success" value="提交" id="editButton" onclick="EditReceiptAndReceiptDetail(@Model.receipt.ID.ToString())" />
+            <input type="button" class="btn btn-success" value="返回" id="returnButtonEdit" />
             @Html.Raw("&nbsp;&nbsp;")
         }
         else if (Model.ViewType == 3)
@@ -947,11 +944,13 @@
         }
         else if (Model.ViewType == 0)
         {
-            
-            <input type="button" class="btn btn-success" value="返回" id="returnButton_add" />
-          
-        }
 
+
+
+        }*@
+        <input type="button" class="btn btn-success" value="提交" id="submitButton" onclick="AddReceiptAndReceiptDetail()" />
+
+        <input type="button" class="btn btn-success" value="返回" id="returnButton_add" />
     </div>
          
 }

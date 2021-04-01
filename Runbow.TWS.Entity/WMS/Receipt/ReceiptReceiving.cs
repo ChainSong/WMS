@@ -259,6 +259,9 @@ namespace Runbow.TWS.Entity
         [EntityPropertyExtension("LocationS", "LocationS")]
         public string LocationS { get; set; }
 
+        [EntityPropertyExtension("Model", "Model")]
+        public string Model { get; set; }
+
 
     }
 }

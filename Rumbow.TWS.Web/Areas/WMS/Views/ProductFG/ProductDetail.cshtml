@@ -1,0 +1,79 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.Product.QueryProductModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.productStorerInfo.StorerID)
+    @Html.HiddenFor(m => m.productStorerInfo.SKU)
+    <div>
+        <fieldset>
+            <legend>SKU信息</legend>
+            <table id="conditionTable">
+                <tr>
+                    <td class="TableColumnTitle">
+                        <label>货主</label></td>
+                    <td>
+                        @Model.productStorerInfo.StorerName
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">
+                        <label>SKU</label></td>
+                    <td style="width: 21%;">
+                        @Model.productStorerInfo.SKU
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">
+                        <label>品名</label></td>
+                    <td style="width: 21%;">
+                        @Model.productStorerInfo.GoodsName
+                    </td>
+                </tr>
+
+            </table>
+
+        </fieldset>
+        <fieldset>
+            <legend>UPC信息</legend>
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>操作</th>
+                        <th>UPC</th>
+                        <th>UPC名称</th>
+                        <th>UPC类型</th>
+                        <th>UPC数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="position: relative">
+                            <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton">新增</label>
+                                @*<div data-id="@crminfo.ID"   class="editSettledPod">编辑</div>*@
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton">删除</label>
+                                @*<div    onclick="deleteSKU('@crminfo.ID',this)">删除</div>*@
+                            </div>
+                            <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                            @*<div    onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                        </td>
+                        <td>
+                            <input type="text" name="UPC" class="form-control" /></td>
+                        <td>
+                            <input type="text" name="UPCName" class="form-control" /></td>
+                        <td>
+                            <input type="text" name="UPCType" class="form-control" /></td>
+                        <td>
+                            <input type="text" name="UPCNumber" onpropertychange='replaceNotNumber(this)' oninput='replaceNotNumber(this)' class="form-control" /></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </fieldset>
+
+        <div class="actionButtonDiv">
+
+            <input type="button" value="提交" id="submitButton" class="btn btn-success" />
+
+            <input type="button" value="返回" id="returnButton" class="btn btn-success" />
+
+        </div>
+    </div>
+}

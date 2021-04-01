@@ -301,17 +301,37 @@ namespace Runbow.TWS.Biz
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public string AddInventory(string id,string UserName,string ProcName)
+        public string AddInventory(string id,string UserName,string ProcName,string Model)
         {
             string IsSuccess = "";
             try
             {
                 ShelvesManagementAccessor accessor = new ShelvesManagementAccessor();
-                IsSuccess = accessor.AddInventory(id, UserName,ProcName);
+                IsSuccess = accessor.AddInventory(id, UserName,ProcName, Model);
             }
             catch (Exception)
             {
                 IsSuccess = "失败"; 
+            }
+            return IsSuccess;
+        }
+
+        /// <summary>
+        /// 加入库存
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string AddInventoryFG(string id, string UserName, string ProcName)
+        {
+            string IsSuccess = "";
+            try
+            {
+                ShelvesManagementAccessor accessor = new ShelvesManagementAccessor();
+                IsSuccess = accessor.AddInventoryFG(id, UserName, ProcName);
+            }
+            catch (Exception)
+            {
+                IsSuccess = "失败";
             }
             return IsSuccess;
         }

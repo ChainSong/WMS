@@ -148,6 +148,134 @@ namespace Runbow.TWS.Dao.WMS
             return PreOrderAndDetail;
         }
 
+        /// <summary>
+        /// 添加查看 
+        /// </summary>
+        /// <param name="SearchCondition"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="rowCount"></param>
+        /// <returns></returns>
+        public int UpdateAssociateFG(IEnumerable<PreOrderDetail> details)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+
+            StringBuilder GetStr = new StringBuilder();
+            GetStr.Append("select * from WMS_PreOrder where str2 IN ( select top 1 str2 from WMS_PreOrder where   ExternOrderNumber = '" + details.First().ExternOrderNumber + @"')
+             and OrderType = '成品出库'");
+            var GetStrData = this.ScanDataTable(GetStr.ToString()).ConvertToEntity<PreOrderDetail>();
+
+            //判断订单以及订单状态，状态未加入库存就还可以删除
+            StringBuilder GetOrderStatusStr = new StringBuilder();
+            GetOrderStatusStr.Append(@" select * from  WMS_ReceiptFG where [ExternReceiptNumber]='" + GetStrData.ExternOrderNumber + "' ");
+            var GetOrderStatusStrData = this.ScanDataTable(GetStr.ToString()).ConvertToEntity<Receipt>();
+            if (GetOrderStatusStrData != null)
+            {
+                if (GetOrderStatusStrData.Status == 9)
+                {
+                    return 9;
+                }
+                else
+                {
+                    StringBuilder deleteStr = new StringBuilder();
+                    stringBuilder.Append(@" delete from WMS_ReceiptFG where  [ExternReceiptNumber]='" + GetStrData.ExternOrderNumber + "'");
+                    stringBuilder.Append(@" delete from WMS_ReceiptDetailFG where  [ExternReceiptNumber]='" + GetStrData.ExternOrderNumber + "'");
+                }
+            }
+
+            stringBuilder.Append(@" insert into  WMS_ReceiptFG ( [ReceiptNumber]
+           ,[ExternReceiptNumber]
+           ,[CustomerID]
+           ,[CustomerName]
+           ,[WarehouseID]
+           ,[WarehouseName]
+           ,[ReceiptDate]
+           ,[Status]
+           ,[ReceiptType]
+           ,[Creator]
+           ,[CreateTime]
+           ,[CompleteDate]
+           ,[Remark])    select top 1 PreOrderNumber,ExternOrderNumber,CustomerID,CustomerName,(select top 1 ID from WMS_Warehouse where WarehouseName=Warehouse),Warehouse,OrderTime,1,
+	       '加工入库','" + details.FirstOrDefault().Creator + "',GETDATE(),GETDATE(),'' from WMS_PreOrder " +
+         "  where ExternOrderNumber='" + GetStrData.ExternOrderNumber + "' ");
+            int i = 0;
+            foreach (var item in details)
+            {
+                i++;
+                stringBuilder.Append(@" insert into  WMS_ReceiptDetailFG([RID]
+                ,[ReceiptNumber]
+                ,[ExternReceiptNumber]
+                ,[CustomerID]
+                ,[CustomerName]
+                ,[LineNumber]
+                ,[SKU]
+                ,[UPC] 
+                ,[GoodsName]
+                ,[GoodsType]
+                ,[QtyExpected]
+                ,[QtyReceived]
+                , WarehouseID
+                ,[WarehouseName]
+                ,[Area]
+                ,[Location]
+                ,[Creator]
+                ,[CreateTime])    select (select top 1 id from WMS_ReceiptFG where ExternReceiptNumber='" + GetStrData.ExternOrderNumber + @"'
+                 ),PreOrderNumber,ExternOrderNumber,CustomerID,CustomerName,'" + i.ToString().PadLeft(5, '0') + @"' [LineNumber], SKU,UPC,
+	            GoodsName,GoodsType,OriginalQty," + item.OriginalQty + @",(select top 1 ID from WMS_Warehouse where WarehouseName=Warehouse),Warehouse,'' Area, '' Location,'',GETDATE()  from WMS_PreOrderDetail  	   
+	            where  ExternOrderNumber='" + GetStrData.ExternOrderNumber + "'");
+                if (item.DefectQty != 0)
+                {
+                    i++;
+                    stringBuilder.Append(@" insert into  WMS_ReceiptDetailFG([RID]
+                ,[ReceiptNumber]
+                ,[ExternReceiptNumber]
+                ,[CustomerID]
+                ,[CustomerName]
+                ,[LineNumber]
+                ,[SKU]
+                ,[UPC] 
+                ,[GoodsName]
+                ,[GoodsType]
+                ,[QtyExpected]
+                ,[QtyReceived]
+                ,WarehouseID
+                ,[WarehouseName]
+                ,[Area]
+                ,[Location]
+                ,[Creator]
+                ,[CreateTime])    select (select top 1 id from WMS_ReceiptFG where ExternReceiptNumber='" + GetStrData.ExternOrderNumber + @"'
+                 ),PreOrderNumber,ExternOrderNumber,CustomerID,CustomerName,'" + i.ToString().PadLeft(5, '0') + @"' [LineNumber], SKU,UPC,
+	            GoodsName,GoodsType,OriginalQty," + item.DefectQty + @",(select top 1 ID from WMS_Warehouse where WarehouseName=Warehouse),Warehouse,'' Area, '' Location,'" + item.Creator + @"',GETDATE()  from WMS_PreOrderDetail  	   
+	            where  ExternOrderNumber='" + GetStrData.ExternOrderNumber + "'");
+                }
+            }
+
+            foreach (var item in details)
+            {
+                //if (item.GoodsType == "A品")
+                //{
+                stringBuilder.Append(" update WMS_PreOrderDetail set  OriginalQty=" + item.OriginalQty + " where ExternOrderNumber='" + item.ExternOrderNumber + "'and GoodsType='A品' and SKU ='" + item.SKU + "'  ");
+                //}
+                stringBuilder.Append(" update WMS_ReceiptDetailFG set  QtyReceived=" + item.OriginalQty + " where ExternReceiptNumber='" + item.ExternOrderNumber + "' and GoodsType='A品' and SKU ='" + item.SKU + "'  ");
+                stringBuilder.Append(" update WMS_ReceiptDetailFG set  QtyReceived=" + item.DefectQty + " where ExternReceiptNumber='" + item.ExternOrderNumber + "' and GoodsType='B品' and SKU ='" + item.SKU + "'  ");
+            }
+            return this.ScanExecuteNonQuery(stringBuilder.ToString());
+            //PreOrderAndPreOrderDetail PreOrderAndDetail = new PreOrderAndPreOrderDetail();
+            //string sqlWhere = this.GetPreOrderWhere(SearchCondition);
+            //int tempRowCount = 0;
+            //DbParam[] dbParams = new DbParam[]{
+            //    new DbParam("@Where", DbType.String, SearchCondition.ID, ParameterDirection.Input)
+
+            //};
+            //DataSet ds = this.ExecuteDataSet("Proc_WMS_GetPreOrderAndDetail", dbParams);
+            //PreOrderAndDetail.SearchCondition = ds.Tables[0].ConvertToEntity<PreOrderSearchCondition>();
+            //PreOrderAndDetail.PreOd = ds.Tables[1].ConvertToEntityCollection<PreOrderDetail>();
+            //return PreOrderAndDetail;
+        }
+
+
+
         public PreOrderAndPreOrderDetail GetInventoryOfOutbound(InventoryOfOutboundRequest Request)
         {
             string message = "";
@@ -573,6 +701,10 @@ namespace Runbow.TWS.Dao.WMS
             {
                 sb.Append(" AND CustomerID=").Append(SearchCondition.CustomerID).Append(" ");
             }
+            if (SearchCondition.ID != 0)
+            {
+                sb.Append(" AND ID=").Append(SearchCondition.ID).Append(" ");
+            }
             if (!string.IsNullOrEmpty(SearchCondition.CustomerName))
             {
                 sb.Append(" AND CustomerName in ('").Append(SearchCondition.CustomerName).Append("')");
@@ -792,7 +924,14 @@ namespace Runbow.TWS.Dao.WMS
             {
                 sb.Append(" AND Int5=").Append(SearchCondition.Int5).Append(" ");
             }
+            if (!string.IsNullOrEmpty(SearchCondition.Model) && SearchCondition.Model == "产品")
+            {
+                sb.Append(" AND OrderType Like '%").Append(SearchCondition.Model).Append("%' ");
+            }
+            else {
+                sb.Append(" AND OrderType Like '%").Append(SearchCondition.Model).Append("%' ");
 
+            }
             return sb.ToString();
         }
 
@@ -837,8 +976,8 @@ namespace Runbow.TWS.Dao.WMS
                     sda.Fill(ds);
                     message = sda.SelectCommand.Parameters["@message"].Value.ToString();
                     conn.Close();
-                    PreOrderAndDetail.PreO = ds.Tables[ds.Tables.Count - 3].ConvertToEntity<PreOrder>();
-                    PreOrderAndDetail.PreOrderList = ds.Tables[ds.Tables.Count - 3].ConvertToEntityCollection<PreOrder>();
+                    PreOrderAndDetail.PreO = ds.Tables[ds.Tables.Count - 1].ConvertToEntity<PreOrder>();
+                    //PreOrderAndDetail.PreOrderList = ds.Tables[ds.Tables.Count - 3].ConvertToEntityCollection<PreOrder>();
                     return PreOrderAndDetail;
                 }
                 catch (Exception e)

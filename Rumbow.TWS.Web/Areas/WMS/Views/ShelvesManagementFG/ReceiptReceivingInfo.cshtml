@@ -1,0 +1,139 @@
+﻿@model Runbow.TWS.Web.Areas.WMS.Models.ShelvesManagement.ShelvesModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>上架基本信息</legend>
+        <form>
+            <table id="conditionTable">
+                <tr>
+
+                    <td class="TableColumnTitle" style="width: 11%;">入库单号</td>
+                    <td style="width: 21%;">
+                        @Model.storesByGetReceipt.ReceiptNumber
+                    </td>
+                    <td class="TableColumnTitle" style="width: 11%;">外部单号</td>
+                    <td style="width: 21%;">
+                        @Model.storesByGetReceipt.ExternReceiptNumber
+                    </td>
+                    <td class="TableColumnTitle">入库时间</td>
+                    <td>
+                        @Model.storesByGetReceipt.ReceiptDate
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TableColumnTitle">仓库名称</td>
+                    <td>@Model.storesByGetReceipt.WarehouseName</td>
+                    <td class="TableColumnTitle">客户名称</td>
+                    <td>@Model.storesByGetReceipt.CustomerName</td>
+                    <td class="TableColumnTitle">上架状态</td>
+                    @switch (@Model.storesByGetReceipt.Status)
+                    {
+
+                        case 1:
+                            <td>入库</td>
+                            break;
+                        case 5:
+                            <td>待上架</td>
+                            break;
+                        case 9:
+                            <td>上架</td>
+                            break;
+                        case -1:
+                            <td>取消</td>
+                            break;
+                        default:
+                            <td></td>
+                            break;
+                    }
+                </tr>
+            </table>
+        </form>
+
+    </fieldset>
+    <fieldset>
+        <legend>上架列表信息</legend>
+        <table id="resultTable">
+            @*class="table table-striped"*@
+        <thead>
+            <tr>
+                <th>收货单行号</th>
+                <th>SKU</th>
+                <th>SKU行号</th>
+                <th>货品名称</th>
+                <th>货品等级</th>
+                <th>期望数量</th>
+                <th>实际数量</th>
+                <th>单位</th>
+                <th>规格</th>
+                <th>库区</th>
+                <th>库位</th>
+                <th>批次号</th>
+                @if (Model.storesByGetReceipt.CustomerID == "83")
+                {
+                    <th>箱号</th>//永兴东润箱号
+                }
+                else
+                {
+                    <th>托号</th>
+                }
+
+                <th>生产日期</th>
+            </tr>
+        </thead>
+        <tbody id="editTable" style="table-layout: fixed;">
+
+            @if (Model.Shelves != null && Model.Shelves.Any())
+            {
+                foreach (var item in Model.Shelves)
+                {
+                    <tr ToolTip="@item.Remark">
+
+                        <td>@item.LineNumber</td>
+                        <td>@item.SKU</td>
+
+                        <td>@item.SkuLineNumber</td>
+
+                        <td>@item.GoodsName</td>
+                        <td>@item.GoodsType</td>
+
+                        <td>@item.QtyExpected</td>
+                        <td>
+                            @item.QtyReceived
+                        </td>
+                        <td>@item.Unit</td>
+                        <td>@item.Specifications</td>
+
+                        <td>
+                            @item.Area
+                        </td>
+                        <td>
+                            @item.Location
+                        </td>
+                        <td>
+                            @item.BatchNumber
+                        </td>
+                        <td>
+                            @item.BoxNumber
+                        </td>
+                        <td>
+                            @item.DateTime1
+                        </td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <div class="actionButtonDiv">
+        @*<input type="button" class="btn btn-success" id="Ret" value="返回" onclick="history.go(-1)">*@
+        <input type="button" class="btn btn-success" id="Ret" value="返回" onclick="location.href = document.referrer;">
+    </div>
+</fieldset>
+
+}

@@ -186,20 +186,20 @@
             <table id="Newtable" style="table-layout: fixed;">
                 <thead>
                     @{
-                        <tr>
-                            @if (Model.ViewType == 1 || Model.ViewType == 2)
-                            {
-                                <th style="width: 50px;">操作</th>
-                            }
-                            @foreach (var showColumn in dynamicShowDetailColumns)
-                            {
-                                <th>@showColumn.DisplayName</th>
-                            }
-                            @if (Model.ViewType == 0)
-                            {
-                                @*<th style="width: 120px;">制造商SKU</th>*@
-                            }
-                        </tr>
+                    <tr>
+                        @if (Model.ViewType == 1 || Model.ViewType == 2)
+                        {
+                            <th style="width: 50px;">操作</th>
+                        }
+                        @foreach (var showColumn in dynamicShowDetailColumns)
+                        {
+                            <th>@showColumn.DisplayName</th>
+                        }
+                        @if (Model.ViewType == 0 || Model.ViewType == 3)
+                        {
+                            <th style="width: 120px;">制造商条码</th>
+                        }
+                    </tr>
                     }
                 </thead>
                 <tbody id="resultTable">
@@ -297,107 +297,111 @@
                                     </td>
                                     @foreach (var showColumn in dynamicShowDetailColumns)
                                     {
-                                        <td style="width:auto;" class="@showColumn.DbColumnName">
-                                            @{
-                                                var o = typeof(Runbow.TWS.Entity.ASNDetail).GetProperty(showColumn.DbColumnName).GetValue(item);
-                                                switch (showColumn.Type)
-                                                {
-                                                    case "CheckBox":
-                                                        if (o.ObjectToNullableInt32() == 1)
+                                    <td style="width:auto;" class="@showColumn.DbColumnName">
+                                        @{
+                                            var o = typeof(Runbow.TWS.Entity.ASNDetail).GetProperty(showColumn.DbColumnName).GetValue(item);
+                                            switch (showColumn.Type)
+                                            {
+                                                case "CheckBox":
+                                                    if (o.ObjectToNullableInt32() == 1)
+                                                    {
+                                                        @Html.Raw("Y")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw("N")
+                                                    }
+                                                    break;
+                                                case "DropDownList":
+                                                    var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
+                                                    if (showColumn.DbColumnName == "Specifications")
+                                                    {
+                                                        list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s2").GetValue(Model)).ToList();
+                                                    }
+                                                    if (!string.IsNullOrEmpty(o.ToString()))
+                                                    {
+                                                        for (int a = 0; a < list.Count(); a++)
                                                         {
-                                                            @Html.Raw("Y")
+                                                            if (list[a].Text == o.ToString())
+                                                            {
+                                                                list[a].Selected = true;
+                                                                break;
+                                                            }
                                                         }
-                                                        else
-                                                        {
-                                                            @Html.Raw("N")
-                                                        }
-                                                        break;
-                                                    case "DropDownList":
-                                                        var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
+                                                        @Html.DropDownList(showColumn.DbColumnName, list, "", new { @class = "form-control", @style = "width:100px" })
+                                                    }
+                                                    else
+                                                    {
                                                         if (showColumn.DbColumnName == "Specifications")
                                                         {
-                                                            list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s2").GetValue(Model)).ToList();
+                                                            list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
                                                         }
-                                                        if (!string.IsNullOrEmpty(o.ToString()))
-                                                        {
-                                                            for (int a = 0; a < list.Count(); a++)
-                                                            {
-                                                                if (list[a].Text == o.ToString())
-                                                                {
-                                                                    list[a].Selected = true;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            @Html.DropDownList(showColumn.DbColumnName, list, "", new { @class = "form-control", @style = "width:100px" })
-                                                        }
-                                                        else
-                                                        {
-                                                            if (showColumn.DbColumnName == "Specifications")
-                                                            {
-                                                                list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(showColumn.DbColumnName + "s").GetValue(Model)).ToList();
-                                                            }
-                                                            @Html.DropDownList(showColumn.DbColumnName, list, new { @class = "form-control" })
-                                                        }
+                                                        @Html.DropDownList(showColumn.DbColumnName, list, new { @class = "form-control" })
+                                                    }
 
-                                                        break;
-                                                    case "DateTime":
-                                                        var temp = (DateTime?)o;
-                                                        if (temp.HasValue)
-                                                        {
-                                                            @Html.Calendar("cc" + @item.LineNumber, "form-control calendarRangeReWrite2", @temp.Value);
+                                                    break;
+                                                case "DateTime":
+                                                    var temp = (DateTime?)o;
+                                                    if (temp.HasValue)
+                                                    {
+                                                        @Html.Calendar("cc" + @item.LineNumber, "form-control calendarRangeReWrite2", @temp.Value);
 
-                                                        }
-                                                        else
-                                                        {
-                                                            @Html.Calendar("cc" + @item.LineNumber, "form-control calendarRangeReWrite2");
-                                                        }
-                                                        break;
-                                                    case "DateTimeWithTime":
-                                                        var temp1 = (DateTime?)o;
-                                                        if (temp1.HasValue)
-                                                        {
-                                                            @temp1.Value.ToString("yyyy-MM-dd HH:mm")
-                                                        }
-                                                        break;
-                                                    default:
-                                                        if (showColumn.DbColumnName == "SKU")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" onkeydown="GetSkuList(this)" class="form-control skuChildren" />
-                                                        }
-                                                        else if (showColumn.DbColumnName == "GoodsName")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" disabled="disabled" class="form-control" />
-                                                        }
-                                                        else if (showColumn.DbColumnName == "UPC")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control UPCChildren" />
-                                                        }
-                                                        else if (showColumn.DbColumnName == "QtyExpected")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control QtyInput" />
-                                                        }
-                                                        else if (showColumn.DbColumnName == "BatchNumber")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control BatchNumber" />
-                                                        }
-                                                        else if (showColumn.DbColumnName == "BoxNumber")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control BoxNumber" />
-                                                        }
-                                                        else if (showColumn.DbColumnName == "str2")
-                                                        {
-                                                            <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control UPCChildren" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <label>@o.ToString()</label>
-                                                        }
-                                                        break;
-                                                }
-
-
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Calendar("cc" + @item.LineNumber, "form-control calendarRangeReWrite2");
+                                                    }
+                                                    break;
+                                                case "DateTimeWithTime":
+                                                    var temp1 = (DateTime?)o;
+                                                    if (temp1.HasValue)
+                                                    {
+                                                        @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                    }
+                                                    break;
+                                                default:
+                                                    if (showColumn.DbColumnName == "SKU")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" onkeydown="GetSkuList(this)" class="form-control skuChildren" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "GoodsName")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" disabled="disabled" class="form-control" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "UPC")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control UPCChildren" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "QtyExpected")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control QtyInput" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "BatchNumber")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control BatchNumber" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "BoxNumber")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control BoxNumber" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "str2")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control str2" />
+                                                    }
+                                                    else if (showColumn.DbColumnName == "str4")
+                                                    {
+                                                        <input type="text" value=" @o.ToString()" style="width:100%;" class="form-control str4" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>@o.ToString()</label>
+                                                    }
+                                                    break;
                                             }
-                                        </td>
+
+
+                                        }
+                                    </td>
                                     }
                                 </tr>
                             }
@@ -419,7 +423,7 @@
                                             }
                                         </td>
                                     }
-                                    @*<td class="制造商SKU">@item.ManufacturerSKU</td>*@
+                                    <td class="制造商SKU">@item.ManufacturerSKU</td>
                                 </tr>
                             }
                         }

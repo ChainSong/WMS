@@ -136,12 +136,12 @@
         <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
         <input type="button" class="btn btn-success" value="新增" id="addButton" onclick="createasn()" name="Action" />
         <input type="submit" class="btn btn-success" value="导出" id="portButton" name="Action" />
-        <input type="button" class="btn btn-success" value="生成上架库位" id="createShelfLocation" />
-        <input type="button" class="btn btn-success" value="打印箱标贴" id="printShelfLocation" />
+        @*<input type="button" class="btn btn-success" value="生成上架库位" id="createShelfLocation" />*@
+        @*<input type="button" class="btn btn-success" value="打印箱标贴" id="printShelfLocation" />*@
         <input type="button" class="btn btn-success" value="批量完成" id="CompletButton" onclick="CompletALLSelect()" name="Action" style="display: none;" />
         <input type="button" class="btn btn-success" value="批量取消" id="StatusBackButton" onclick="StatusBack()" name="Action" style="display: none;" />
         <input type="button" class="btn btn-success" value="批量转入库单" id="RepcetsButton" onclick="Receipts()" name="Action" />
-        <input type="button" class="btn btn-success" value="状态统计" id="ReceiptStatusStatis" name="Action" />
+        @*<input type="button" class="btn btn-success" value="状态统计" id="ReceiptStatusStatis" name="Action" />*@
     </div>
 </fieldset>
 <fieldset>
@@ -177,13 +177,13 @@
                                 <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
                                     @if (asn.Status == 1)
                                     {
-                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs   edit" onclick="edit('@asn.ID')">编辑</label>*@
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   edit" onclick="edit('@asn.ID')">编辑</label>
                                         <label style="cursor: pointer;" class="btn btn-primary btn-xs   ASNDelete" onclick="ASNDelete('@asn.ID')">取消</label>
-                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs   Receipt" onclick="Receipt('@asn.ID',@asn.CustomerID)">转入库单</label>*@
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Receipt" onclick="Receipt('@asn.ID',@asn.CustomerID)">转入库单</label>
                                     }
                                     @if (asn.Status == 5)
                                     {
-                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs   Receipt"  onclick="Receipt('@asn.ID',@asn.CustomerID)">转入库单</label>*@
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Receipt"  onclick="Receipt('@asn.ID',@asn.CustomerID)">转入库单</label>
                                         <label style="cursor: pointer;" class="btn btn-primary btn-xs   Complet" onclick="Complet('@asn.ID')">完成</label>
                                         <label style="cursor: pointer;" class="btn btn-primary btn-xs   ViewReceipt" onclick="ViewReceipt('@asn.ID','@asn.CustomerID')">查看入库单</label>
                                     }
@@ -257,7 +257,7 @@
     </div>
     @Html.Pager(Model.PageIndex, Model.PageCount, "")
 </fieldset>
-<div style="padding-top: 100px">
+@*<div style="padding-top: 100px">
     <div style="float: left; width: 100%">
         <fieldset>
             <legend>导入提示</legend>
@@ -289,7 +289,7 @@
             </div>
         </fieldset>
     </div>
-</div>
+</div>*@
 <div id="confirm" style="display: none">
     <table>
         <tr>

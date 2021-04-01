@@ -25,12 +25,7 @@
                 <td>@Html.TextBoxFor(m => m.SearchCondition.Description, new { @class = "form-control", style = "width:100%" })</td>
                 <td class="TableColumnTitle"><label>地址</label></td>
                 <td>@Html.TextBoxFor(m => m.SearchCondition.Address, new { @class = "form-control", style = "width:100%" })</td>
-                <td class="TableColumnTitle"><label>州或省份</label></td>
-                <td>
-                    @Html.HiddenFor(m => m.SearchCondition.ProvinceCity, new { @class = "form-control", style = "width:100%" })
-                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "CityTreeID", NameKey = "CityTreeName", TreeKey = "CityTreeKey" })
-                    <a id="EndPlaceClear" href="#">清空</a>
-                </td>
+                 
             </tr>
         </table>
         <div class="actionButtonDiv">
@@ -140,7 +135,7 @@
         @Html.Pager(Model.PageIndex, Model.PageCount, "")
     </fieldset>
     <div>
-        <div style="float:left;width:45%">
+        <div  >
             <fieldset style="margin-top: 100px;">
                 <legend>
                     导入库位信息
@@ -156,7 +151,7 @@
                     <input type="submit" value="下载库位模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
                 </div>
             </fieldset>
-            <fieldset style="margin-top: 30px;width:45%">
+            <fieldset style="margin-top: 30px">
                 <legend>
                     导入结果
                 </legend>
@@ -164,29 +159,6 @@
                 </div>
             </fieldset>
         </div>
-        <div style="float:left;width:45%">
-            <fieldset style="margin-top: 100px;">
-                <legend>
-                    导入库位跟货架关联信息
-                </legend>
-                <div id="importDiv2">
-                    @{
-                        var WarehouseList2 = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
-                        var AreaList2 = (IEnumerable<SelectListItem>)ViewBag.AreaList;
-                    }
-                    @Html.Label("仓库: ")@Html.DropDownListFor(m => m.SearchCondition.ID2, WarehouseList2, "==请选择==", new { @class = "form-control", style = "width:15%;padding-bottom:1px" })
-                    <input type="file" id="importExcel2" name="importExcel2" class="form-control" style="width: 30%;" />
-                    <input type="submit" value="导入" @*class="btn btn-primary"*@ class="btn btn-primary" style="margin-top:-9px;" onclick="return fileImportClick2();" />
-                    <input type="submit" value="下载库位货架关联模板" style="margin-top: -9px;" class="btn btn-primary" name="Action" />
-                </div>
-            </fieldset>
-            <fieldset style="margin-top: 30px;width:45%">
-                <legend>
-                    导入结果
-                </legend>
-                <div id="outPutResult2">
-                </div>
-            </fieldset>
-        </div>
+         
     </div>
 }

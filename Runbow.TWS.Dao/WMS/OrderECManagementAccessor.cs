@@ -102,7 +102,50 @@ namespace Runbow.TWS.Dao
                 }
             }
         }
+        /// <summary>
+        /// 获取要打印的波次拣货信息，1.单品单拣货单，2.多品单拣货单  3面单，4补打
+        /// </summary>
+        /// <param name="IDs"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public PrintWaveModel GetPrintWaveOrder(string IDs, int Type, string ExpressNumber = "")
+        {
+            PrintWaveModel model = new PrintWaveModel();
 
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@IDs", DbType.String, IDs, ParameterDirection.Input),
+                new DbParam("@Type", DbType.Int32, Type, ParameterDirection.Input),
+                 new DbParam("@ExpressNumber", DbType.String, ExpressNumber, ParameterDirection.Input)
+            };
+            DataSet ds = new DataSet();
+            ds = this.ExecuteDataSet("Proc_WMS_GetPrintWaveOrder", dbParams);
+            if (Type == 1)
+            {
+                model.WaveHeaderLists = ds.Tables[0].ConvertToEntityCollection<WMS_Wave>();
+                model.OrderDetailLists = ds.Tables[1].ConvertToEntityCollection<OrderDetailInfo>();
+            }
+            else if (Type == 2)
+            {
+                model.WaveHeaderLists = ds.Tables[0].ConvertToEntityCollection<WMS_Wave>();
+                model.OrderDetailLists = ds.Tables[1].ConvertToEntityCollection<OrderDetailInfo>();
+            }
+            else if (Type == 3)
+            {
+                model.WaveHeaderLists = ds.Tables[0].ConvertToEntityCollection<WMS_Wave>();
+                model.OrderLists = ds.Tables[1].ConvertToEntityCollection<OrderInfo>();
+                //model.OrderLists = ds.Tables[0].ConvertToEntityCollection<OrderInfo>();
+                //model.OrderDetailLists = ds.Tables[1].ConvertToEntityCollection<OrderDetailInfo>();
+            }
+            else if (Type == 4)
+            {
+                model.OrderLists = ds.Tables[0].ConvertToEntityCollection<OrderInfo>();
+            }
+            else if (Type == 5)
+            {
+                model.OrderLists = ds.Tables[0].ConvertToEntityCollection<OrderInfo>();
+            }
+            return model;
+        }
         public DataSet SaveExpressPackage(string ExpressNumber, string PackageType, long CustomerID, string WarehouseName, string PackageCode)
         {
             using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))

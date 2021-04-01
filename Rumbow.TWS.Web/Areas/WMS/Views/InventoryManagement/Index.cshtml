@@ -32,7 +32,7 @@
                         }
                     }
                 }
-                <td class="TableColumnTitle"><label>客户名称</label></td>
+                <td class="TableColumnTitle"><label>客户/供应商</label></td>
                 <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
                 <td class="TableColumnTitle"><label>仓库</label></td>
                 <td>@Html.DropDownListFor(m => m.AdjustmentCondition.Warehouse, WarehouseList, "==请选择==", new { @class = "form-control" })</td>
@@ -67,18 +67,18 @@
                 <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.AdjustmentNumber, new { @class = "form-control" })</td>
                 <td class="TableColumnTitle"><label>SKU</label></td>
                 <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.str18, new { @style = "width:100%", id = "skulist", @class = "form-control" })</td>
-                <td class="TableColumnTitle">
+                @*<td class="TableColumnTitle">
                     <label>调整原因</label>
                 </td>
                 <td style="width: 14%;">@Html.DropDownListFor(m => m.AdjustmentCondition.AdjustmentReason, Model.ADJReasonType, "==请选择==", new { @class = "form-control" })</td>
                 <td class="TableColumnTitle">
                     <label>调整备注</label>
                 </td>
-                <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.Remark, new { @class = "form-control" })</td>
+                <td style="width: 14%;">@Html.TextAreaFor(m => m.AdjustmentCondition.Remark, new { @class = "form-control" })</td>*@
             </tr>
             <tr>
-                <td class="TableColumnTitle"><label>门店代码</label></td>
-                <td>@Html.TextBoxFor(m => m.AdjustmentCondition.str3, new { @style = "width:100%", id = "locationselect", @class = "form-control" })</td>
+                @*<td class="TableColumnTitle"><label>门店代码</label></td>
+                <td>@Html.TextBoxFor(m => m.AdjustmentCondition.str3, new { @style = "width:100%", id = "locationselect", @class = "form-control" })</td>*@
             </tr>
         </table>
         <div class="actionButtonDiv">
@@ -104,8 +104,8 @@
                         <th id="OperateTh" style="width: 50px;">操作</th>
                         <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
                         <th>调整单号</th>
-                        <th>客户</th>
-                        <th>门店代码</th>
+                        <th>客户/供应商</th>
+                        @*<th>门店代码</th>*@
                         <th>创建时间</th>
                         <th>调整时间</th>
                         <th>单据类型</th>
@@ -195,7 +195,7 @@
                             }
                         </td>
                         <td>@adjust.CustomerName</td>
-                        <td>@adjust.str3</td>
+                        @*<td>@adjust.str3</td>*@
                         <td>@adjust.CreateTime</td>
                         <td>@adjust.AdjustmentTime</td>
                         <td>@adjust.AdjustmentType</td>
@@ -244,7 +244,7 @@
     </fieldset>
 
 
-    <div style="padding-top: 100px">
+    @*<div style="padding-top: 100px">
         <div style="float: left; width: 100%">
             <fieldset>
                 <legend>导入提示</legend>
@@ -273,7 +273,7 @@
                 </div>
             </fieldset>
         </div>
-    </div>
+    </div>*@
     <div id="confirm" style="display: none">
         <table>
             <tr>

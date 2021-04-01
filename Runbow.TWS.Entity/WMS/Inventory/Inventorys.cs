@@ -286,7 +286,14 @@ namespace Runbow.TWS.Entity
 
         [EntityPropertyExtension("LocationType", "LocationType")]
         public int LocationType { get; set; }
+
+        [EntityPropertyExtension("QtyWarning", "QtyWarning")]
+        public string QtyWarning { get; set; }
+
+        [EntityPropertyExtension("ManufacturerSKU", "ManufacturerSKU")]
+        public string ManufacturerSKU { get; set; }
         
+
     }
 
 

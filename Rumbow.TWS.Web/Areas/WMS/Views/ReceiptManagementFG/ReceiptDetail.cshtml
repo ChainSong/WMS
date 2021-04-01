@@ -1,0 +1,146 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+@model Runbow.TWS.Web.Areas.WMS.Models.ReceiptManagement.ReceiptDetailViewModel
+@Html.HiddenFor(m => m.ViewType) 
+@using (Html.BeginForm()){
+    <fieldset>
+        <legend>
+            基本信息
+        </legend>
+        <table>
+            <tr>
+                <td class="TableColumnTitle">入库单号</td>
+
+                <td  style="width: 27%;">
+                  
+                   @* @Html.TextBoxFor(m=>m.SearchCondition.ReceiptNumber ,new { @class="form-control"})*@
+                     @if (Model.ViewType!=0)
+                    {
+                  
+                       @Html.TextBoxFor(o=>o.Receipt.ReceiptNumber, new { @class="form-control"})
+                       
+                    }
+                    else
+                    {
+                        @Model.Receipt.ReceiptNumber
+                    }
+
+
+                </td>
+                <td class="TableColumnTitle">外部单号</td>
+                <td  style="width: 27%;">
+                   @* @Html.TextBoxFor(m=>m.ReceiptDetail.ExternReceiptNumber, new { @class="form-control"})*@
+                     @if (Model.ViewType!=0)
+                    {
+                  
+                       @Html.TextBoxFor(o=>o.Receipt.ExternReceiptNumber, new { @class="form-control"})
+                       
+                    }
+                    else
+                    {
+                        @Model.Receipt.ExternReceiptNumber
+                    }
+
+
+                </td>
+                <td class="TableColumnTitle">入库时间</td>
+                <td  style="width: 27%;">
+                    @*@Html.TextBox("122","", new { @class="form-control"})*@
+                     @if (Model.ViewType!=0)
+                    {
+                       @Html.CalendarFor(o=>o.Receipt.ReceiptDate, "form-control")
+                    }
+                    else
+                    {
+                        @Model.Receipt.ReceiptDate
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="TableColumnTitle">入库单类型</td>
+                <td style="width: 27%;">
+                    @*@Html.TextBox("1dd2","", new { @class="form-control"})*@
+                      @if (Model.ViewType!=0)
+                    {
+                         @Html.DropDownListFor(m=>m.Receipt.ReceiptType,Model.ReceiptType, new { @class="form-control",@style="width:60%"})   
+                    }
+                    else
+                    {
+                       @(Model.ReceiptType.SingleOrDefault(o=>o.Value==Model.Receipt.ReceiptType).Text ?? "")
+                    }
+                </td>
+                <td class="TableColumnTitle">入库单状态</td>
+                <td style="width: 27%;">
+                    @*@Html.TextBox("dee","", new { @class="form-control"})*@
+                       @if (Model.ViewType!=0)
+                    {
+                  
+                      @Html.DropDownListFor(m=>m.Receipt.Status,Model.ReceiptStatus, new { @class="form-control",@style="width:60%"})
+                       
+                    }
+                    else
+                    {
+                        @(Model.ReceiptStatus.SingleOrDefault(o=>o.Value==Model.Receipt.Status.ToString()).Text ?? "")
+                    }
+                </td>
+                <td class="TableColumnTitle">完成时间</td>
+                <td style="width: 27%;">
+                    @*@Html.TextBox("dda","",new { @class="form-control"})*@
+                       @if (Model.ViewType!=0)
+                    {
+                  
+                        @Html.CalendarFor(o=>o.Receipt.CompleteDate, "form-control")
+                       
+                    }
+                    else
+                    {
+                        @Model.Receipt.CompleteDate
+                    }
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend>
+            明细列表
+        </legend>
+        <table>
+            <thead>
+            <tr>
+                <th>行号</th>
+                <th>SKU</th>
+                <th>期望数量</th>
+                <th>实际数量</th>
+            </tr>
+            </thead>
+            <tbody>
+                 @if (Model.ReceiptDetailCollection != null && Model.ReceiptDetailCollection.Any())
+                 {
+                     foreach(var receiptDetail in Model.ReceiptDetailCollection )
+                     {
+                         <tr id="@receiptDetail.ReceiptNumber"> 
+                             <td>@receiptDetail.LineNumber</td>
+                             <td>@receiptDetail.SKU</td>
+                             <td>@receiptDetail.QtyExpected</td>
+                             <td>@receiptDetail.QtyReceived</td>
+                             </tr>
+                      }
+                     
+                     
+                 }
+
+            </tbody>
+        </table>
+
+    </fieldset>
+     <div class="actionButtonDiv">
+        @{if(Convert.ToInt32(@ViewData["ViewType"])==1)
+         {
+    <input type="submit" class="btn btn-success" value="提交" id="submitButton" />
+         }
+    <input type="button" class="btn btn-success" value="返回" id="returnButton" />
+        }
+         
+        
+         </div>
+     
+} 

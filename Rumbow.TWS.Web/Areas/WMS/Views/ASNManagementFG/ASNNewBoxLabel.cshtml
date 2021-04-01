@@ -1,0 +1,112 @@
+﻿@*NIKE退货仓-*@
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.ASNNewBoxLabelViewModel
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer-v3.1.1/layer-v3.1.1.js"></script>
+@using (Html.BeginForm())
+{
+    @*@Html.HiddenFor(m => m.SearchCondition.Int3)*@
+    @Html.Hidden("ProjectName", (string)ViewBag.ProjectName)
+    <fieldset>
+        <legend>箱号查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                    var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+                }
+                <td class="TableColumnTitle">
+                    <label>客户</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>仓库</label>
+                </td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.WarehouseID, WarehouseList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td class="TableColumnTitle">
+                    <label>箱号</label>
+                </td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.BoxNumber, new { @class = "form-control", style = "width:100%" })</td>
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+            <input type="button" class="btn btn-success" value="新建箱号" id="newboxButton" />
+            <input type="button" class="btn btn-success" value="批量打印" id="printButton" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            箱号列表
+            @if (Model.ASNNewBoxLabelList != null && Model.ASNNewBoxLabelList.Any())
+            {
+                @Html.Raw("(" + Model.ASNNewBoxLabelList.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll;  min-height: 180px">
+            <table id="resultTable" style="width: 100%; table-layout: fixed;">
+                <thead>
+                    <tr>
+                        <th style="width:8%;font-weight:700;text-align:center;" id="OperateTh">操作</th>
+                        <th style="width:3%;font-weight:700;text-align:center;" class="checkBoxHead">
+                            @Html.CheckBox("selectAll", new { @class = "btn btn-success" })
+                        </th>
+                        <th style="width:10%;font-weight:700;text-align:center;">客户</th>
+                        <th style="width:10%;font-weight:700;text-align:center;">仓库</th>
+                        <th style="width:10%;font-weight:700;text-align:center;">序号</th>
+                        <th style="width:20%;font-weight:700;text-align:center;">外部单号</th>
+                        <th style="width:10%;font-weight:700;text-align:center;">产品等级</th>
+                        <th style="width:10%;font-weight:700;text-align:center;">箱序号</th>
+                        <th style="width:39%;font-weight:700;text-align:center;">箱号</th>
+                        <th style="width:10%;font-weight:700;text-align:center;">打印次数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ASNNewBoxLabelList != null && Model.ASNNewBoxLabelList.Any())
+                    {
+                        foreach (var box in Model.ASNNewBoxLabelList)
+                        {
+                            var tdd = "operateTD" + @box.ID;
+                    <tr id="@box.BoxNumber">
+                        <td style="position: relative">
+                            <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs printPick" onclick="printBox('@box.ID')">打印</label>
+                            </div>
+                            <label style="cursor:pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                        </td>
+                        <td style="text-align:center;">
+                            @Html.CheckBox(box.ID.ToString(), new { data_ID = box.ID, data_CustomerID = box.CustomerID, data_WarehouseID = box.WarehouseID, data_BoxNumber = box.BoxNumber, data_Int1 = box.Int1, data_Int2 = box.Int2, data_str1 = box.str1, data_str2 = box.str2, @class = "checkForSelect btn btn-success" })
+                        </td>
+                        <td style="text-align:center;"><a>@box.CustomerName</a></td>
+                        <td style="text-align:center;"><a>@box.WarehouseName</a></td>
+                        <td style="text-align:center;"><a>@box.ID</a></td>
+                        <td style="text-align:center;"><a>@box.str1</a></td>
+                        <td style="text-align:center;"><a>@box.str2</a></td>
+                        <td style="text-align:center;"><a>@box.Int2</a></td>
+                        <td style="text-align:center;"><a>@box.BoxNumber</a></td>
+                        <td style="text-align:center;"><a>@box.Int1</a></td>
+                    </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.SearchCondition.PageIndex, Model.SearchCondition.PageCount, "")
+
+    </fieldset>
+
+}
+
+    <div style="display:none;" id="NewBoxLabel">
+        <div style="margin-top:10px"><input id="ExternReceiptNumber" type="text" class="form-control" placeholder="外部单号" style="width:90%;margin-left:15px" @*onfocus="BoxNumberFocus()*@ "></div>
+        <div style="margin-top:10px">@Html.DropDownList("GoodsType", Model.ProductLevel, new { @class = "form-control", @style = "width:90%;margin-left:15px", placeholder = "产品等级" })</div>
+        <div style="margin-top:10px"><input id="Newboxnumber" type="text" class="form-control" placeholder="新建箱数量" style="width:90%;margin-left:15px" @*onfocus="NewBoxNumberFocus()"*@></div>
+        <div style="margin-top:10px;margin-right:10px;float:right">
+            <input type="button" class="btn btn-danger btn-lg" value="确定" onclick="NewOkBoxAndNo()" />
+            <input type="button" class="btn btn-default btn-lg" value="取消" onclick="NewCancelBoxAndNo()" />
+        </div>
+    </div>

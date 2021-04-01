@@ -549,7 +549,30 @@ namespace Runbow.TWS.Biz.WMS
 
             return response;
         }
+        public Response<GetInventoryBySearchConditionResponse> GetInventoryWarning()
+        {
+            Response<GetInventoryBySearchConditionResponse> response = new Response<GetInventoryBySearchConditionResponse>() { Result = new GetInventoryBySearchConditionResponse() };
 
+
+            try
+            {
+                InventoryManagementAccessor accessor = new InventoryManagementAccessor();
+
+                response.Result = accessor.GetInventoryWarning();
+
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+        
 
         public Response<GetInventoryBySearchConditionResponse> InventoryCompare(DataSet ds, User u, out string message)
         {

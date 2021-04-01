@@ -122,5 +122,8 @@ namespace Runbow.TWS.Entity
 
         [EntityPropertyExtension("cArea", "cArea")]
         public string cArea { get; set; }
+
+        [EntityPropertyExtension("Model", "Model")]
+        public string Model { get; set; }
     }
 }

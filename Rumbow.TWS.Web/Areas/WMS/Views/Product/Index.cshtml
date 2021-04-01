@@ -22,7 +22,7 @@
                     @Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, "==全部==", new { @class = "form-control" })
                 </td>
 
-                <td class="TableColumnTitle" style="width: 11%;"><label>SKU</label></td>
+                <td class="TableColumnTitle" style="width: 11%;"><label>产品编码</label></td>
                 <td style="width: 13%;">
                     @Html.TextAreaFor(m => m.ProductSKU.SKU, new { @class = "form-control" })
                     @*@Html.TextBoxFor(m => m.ProductSKU.SKU, new { style = "width:100%", @class = "form-control" })*@
@@ -32,7 +32,7 @@
                     @Html.TextAreaFor(m => m.ProductSKU.GoodsType, new { @class = "form-control" })
                     @*@Html.TextBoxFor(m => m.ProductSKU.Article, new { style = "width:100%", @class = "form-control" })*@
                 </td>
-                <td class="TableColumnTitle" style="width: 11%;"><label>加放分类</label></td>
+                <td class="TableColumnTitle" style="width: 11%;"><label>产品分组</label></td>
                 <td style="width: 13%;">
                     @Html.TextAreaFor(m => m.ProductSKU.SKUGroup, new { @class = "form-control" })
                     @*@Html.DropDownListFor(m => m.ProductSKU.SKUClassification, Model.SKUGroup, "==全部==", new { @class = "form-control" })*@
@@ -75,12 +75,13 @@
                         <th id="OperateTh">操作</th>
                     }
                     <th>客户/供应商</th>
-                    <th>SKU</th>
-                    <th>货品名称</th> 
+                    <th>产品编码</th>
+                    <th>货品名称</th>
                     <th>材料分类</th>
-                    <th>加放分类</th>
+                    <th>产品分组</th>
+                    <th>制造商条码</th>
                     <th>模型</th>
-                     
+
                 </tr>
             </thead>
             <tbody>
@@ -95,7 +96,7 @@
                         <td style="position: relative">
                             <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
                                 <label style="cursor: pointer;" class="btn btn-primary btn-xs EditorButton editSettledPod" data-id="@crminfo.ID">编辑</label>
-                                <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" data-skuid="@crminfo.ID">添加PUC</label>
+                                @*<label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" data-skuid="@crminfo.ID">添加PUC</label>*@
                                 <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton" onclick="deleteSKU('@crminfo.ID','@crminfo.StorerID',this)">删除</label>
                             </div>
                             <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
@@ -110,10 +111,11 @@
                     {
                         <td>@crminfo.SKU</td>
                     }
-                    <td>@crminfo.GoodsType</td>
-                    <td>@crminfo.UPC</td>
+                    <td>@crminfo.GoodsName</td>
+                    <td>@crminfo.SKUClassification</td>
                     <td>@crminfo.SKUGroup</td>
-                    <td>@crminfo.Str10</td> 
+                    <td>@crminfo.ManufacturerSKU</td>
+                    <td>@crminfo.Str10</td>
                 </tr>
                     }
                 }
@@ -124,7 +126,7 @@
 </fieldset>
 @if (Session["searchFlag"] == null)
 {
-    <fieldset style="margin-top: 100px;">
+    @*<fieldset style="margin-top: 100px;">
         <legend>SKU批量导入说明</legend>
         <div id="importInstructionDiv">
             1.模板中有模拟数据，请按照demo填写<br />
@@ -133,24 +135,20 @@
     </fieldset>
     <fieldset>
         <legend>
-            选择Excel导入SKU
+            选择Excel导入产品
         </legend>
         <div id="importDiv">
             <label>客户/供应商：</label>@Html.DropDownListFor(m => m.ProductSKU.StorerID, Model.StorerID, new { @id = "StorerID", @class = "form-control", style = "width:200px;padding-bottom:1px" })
             <input type="file" id="importExcel" name="importExcel" class="form-control" style="width: 30%" />
             <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
             <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" />
-            @if (ctype != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()) != null && ctype.Any() && ctype.Where(c => c.Type == "CustomerID" && c.Code == "NIKENFS" && c.Name == Model.IEnumerableSearchCondition.Select(ss => ss.StorerID).FirstOrDefault().ToString()).Any())
-            {
-                <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="更新SKU价格" id="importPriceButton" />
-                <input type="button" style="margin-top: -9px;" class="btn btn-primary" value="更新羽绒服标记" id="importDownCoatButton" />
-            }
+        
         </div>
         <fieldset style="margin-top: 20px;">
             <legend>导入结果</legend>
             <div id="outPutResult"></div>
         </fieldset>
-    </fieldset>
+    </fieldset>*@
 }
 
 <script>

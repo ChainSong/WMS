@@ -55,6 +55,47 @@ namespace Runbow.TWS.Biz
 
             return response;
         }
+
+        public Response<GetReceiptDetailByConditionResponse> GetReceiptByConditionFG(GetReceiptByConditionRequest request)
+        {
+            Response<GetReceiptDetailByConditionResponse> response = new Response<GetReceiptDetailByConditionResponse>() { Result = new GetReceiptDetailByConditionResponse() };
+
+            if (request == null || request.SearchCondition == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetReceiptByConditionRequest request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                ReceiptManagementAccessor accessor = new ReceiptManagementAccessor();
+                int RowCount;
+                //if (request.PageSize > 0)
+                //{
+                response.Result = accessor.GetReceiptByConditionFG(request.SearchCondition, request.PageIndex, request.PageSize, out RowCount);
+                response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                response.Result.PageIndex = request.PageIndex;
+                //}
+                //else
+                //{
+                //    response.Result.PageIndex = 0;
+                //    response.Result.PageCount = 0;
+                //    response.Result.ReceiptCollection = accessor.GetWarehouseByConditionNoPaging(request.SearchCondition);
+                //}
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
         public Response<GetReceiptDetailByConditionResponse> GetShelvesByIDs(string IDs)
         {
             Response<GetReceiptDetailByConditionResponse> response = new Response<GetReceiptDetailByConditionResponse>() { Result = new GetReceiptDetailByConditionResponse() };
@@ -313,6 +354,42 @@ namespace Runbow.TWS.Biz
             return response;
         }
 
+
+
+        public Response<GetReceiptDetailByConditionResponse> GetFinancialStatements(GetReceiptByConditionRequest request)
+        {
+            Response<GetReceiptDetailByConditionResponse> response = new Response<GetReceiptDetailByConditionResponse>() { Result = new GetReceiptDetailByConditionResponse() };
+
+            if (request == null || request.SearchCondition == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetReceiptByConditionRequest request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+
+            try
+            {
+                ReceiptManagementAccessor accessor = new ReceiptManagementAccessor();
+                int RowCount;
+                response.Result = accessor.GetFinancialStatements(request.SearchCondition, request.PageIndex, request.PageSize, out RowCount);
+                response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                response.Result.PageIndex = request.PageIndex;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
+
         public Response<GetReceiptDetailByConditionResponse> ExportReceiptForRPTByCondition(GetReceiptByConditionRequest request)
         {
             Response<GetReceiptDetailByConditionResponse> response = new Response<GetReceiptDetailByConditionResponse>() { Result = new GetReceiptDetailByConditionResponse() };
@@ -373,7 +450,40 @@ namespace Runbow.TWS.Biz
                 ReceiptManagementAccessor accessor = new ReceiptManagementAccessor();
                 response.Result = accessor.ExportAsnScanDiffForRPTByCondition(request.SearchCondition);
                 response.Result.PageIndex = request.PageIndex;
-   
+
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
+
+        public Response<GetReceiptDetailByConditionResponse> GetFinancialStatementsExport(GetReceiptByConditionRequest request)
+        {
+            Response<GetReceiptDetailByConditionResponse> response = new Response<GetReceiptDetailByConditionResponse>() { Result = new GetReceiptDetailByConditionResponse() };
+
+            if (request == null || request.SearchCondition == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetReceiptByConditionRequest request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+
+            try
+            {
+                ReceiptManagementAccessor accessor = new ReceiptManagementAccessor();
+                response.Result = accessor.GetFinancialStatementsExport(request.SearchCondition);
+                response.Result.PageIndex = request.PageIndex;
+
                 response.IsSuccess = true;
             }
             catch (Exception ex)
@@ -498,7 +608,25 @@ namespace Runbow.TWS.Biz
 
             return response;
         }
+        public Response<GetAsnOrReceiptOrDetailByConditionResponse> ReceiptDetailQueryFG(GetAsnOrReceiptOrDetailByConditionRequest request, long ID)
+        {
+            Response<GetAsnOrReceiptOrDetailByConditionResponse> response = new Response<GetAsnOrReceiptOrDetailByConditionResponse>() { Result = new GetAsnOrReceiptOrDetailByConditionResponse() };
+            try
+            {
+                ReceiptManagementAccessor accessor = new ReceiptManagementAccessor();
+                response.Result = accessor.ReceiptDetailQueryFG(request, ID);
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
 
+            return response;
+        }
         public Response<GetAsnOrReceiptOrDetailByConditionResponse> ReceiptDetailAndBarCodeQuery(GetAsnOrReceiptOrDetailByConditionRequest request, long ID)
         {
             Response<GetAsnOrReceiptOrDetailByConditionResponse> response = new Response<GetAsnOrReceiptOrDetailByConditionResponse>() { Result = new GetAsnOrReceiptOrDetailByConditionResponse() };
@@ -842,13 +970,13 @@ namespace Runbow.TWS.Biz
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool UpdateReceiptVolume(string id,string volume, string UserName, out string msg)
+        public bool UpdateReceiptVolume(string id, string volume, string UserName, out string msg)
         {
             msg = "";
             try
             {
                 ReceiptManagementAccessor accessor = new ReceiptManagementAccessor();
-                bool result = accessor.UpdateReceiptVolume(id,volume, UserName, out msg);
+                bool result = accessor.UpdateReceiptVolume(id, volume, UserName, out msg);
                 return result;
             }
             catch (Exception ex)
@@ -900,13 +1028,13 @@ namespace Runbow.TWS.Biz
         /// </summary>
         /// <param name="IDS"></param>
         /// <returns></returns>
-        public Response<string> ReceiptTask(string IDS,string Name)
+        public Response<string> ReceiptTask(string IDS, string Name)
         {
             Response<string> response = new Response<string>();
             string message = "";
             try
             {
-                message = new ReceiptManagementAccessor().ReceiptTask(IDS,Name);
+                message = new ReceiptManagementAccessor().ReceiptTask(IDS, Name);
                 if (message == "")
                 {
                     response.Result = message;

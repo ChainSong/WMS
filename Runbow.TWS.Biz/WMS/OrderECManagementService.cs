@@ -35,6 +35,24 @@ namespace Runbow.TWS.Biz
             }
             return EPR;
         }
+        /// <summary>
+        /// 获取要打印的波次拣货信息，1.单品单拣货单，2.多品单拣货单  3面单，4补打
+        /// </summary>
+        /// <param name="IDs"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public PrintWaveModel GetPrintWaveOrder(string IDs, int Type, string ExpressNumber = "")
+        {
+            try
+            {
+                return new OrderECManagementAccessor().GetPrintWaveOrder(IDs, Type, ExpressNumber);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public DataSet CheckExpress(string ExpressNumber, long CustomerID, string WarehouseName, string Type)
         {
             DataSet EPR = new DataSet();

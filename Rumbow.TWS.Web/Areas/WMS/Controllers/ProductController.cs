@@ -54,6 +54,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             {
                 pc.StorerID = sb.Remove(sb.Length - 1, 1).ToString();
             }
+            pc.Model = "物料";
             vm.ProductSKU = pc;
             var response = new ProductService().QuerySKUProduct(new GetProductByConditionRequest()
             {
@@ -93,6 +94,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     vm.ProductSKU.StorerID = sb.Remove(sb.Length - 1, 1).ToString();
                 }
             }
+            vm.ProductSKU.Model = "物料";
             var response = new ProductService().QuerySKUProduct(new GetProductByConditionRequest()
             {
                 PageIndex = PageIndex ?? 0,
@@ -251,7 +253,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             //新增的时候Articel，Size  20170717
             SearchCondition.Info.Str9 = vm.productStorerInfo.Str9;
-            SearchCondition.Info.Str10 = vm.productStorerInfo.Str10;
+            SearchCondition.Info.Str19 = "物料";
             //新加
             //string customername = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(c => c.State && (c.StoreType == 2 || c.StoreType == 3) && (c.CustomerID == Convert.ToInt64(CustomerId)))
             //                .Select(c => c.Code).First();
@@ -362,7 +364,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                             {
                                 //ID = Convert.ToInt64(ds.Tables[0].Rows[i]["ID"].ToString().Trim()),
                                 StorerID = StorerID,
-                                SKU = ds.Tables[0].Rows[i]["SKU"].ToString().Trim(),
+                                SKU = ds.Tables[0].Rows[i]["产品编码"].ToString().Trim(),
                                 Status = 1,//StatusTable,
                                 GoodsName = ds.Tables[0].Rows[i]["产品名称"].ToString().Trim(),
                                 GoodsType = TypeTable,
@@ -409,15 +411,15 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                 Str9 = ds.Tables[0].Rows[i]["Size"].ToString().Trim(),//新增两列Atricle，Szie 20170717
                                 Str10 = ds.Tables[0].Rows[i]["Article"].ToString().Trim(),
 
-                                Str11=ds.Tables[0].Rows[i]["长度"].ToString().Trim(),
-                                Str12=ds.Tables[0].Rows[i]["宽度"].ToString().Trim(),
-                                Str13=ds.Tables[0].Rows[i]["高度"].ToString().Trim(),
-                                Str14=ds.Tables[0].Rows[i]["安全库存"].ToString().Trim(),
-                                Str15=ds.Tables[0].Rows[i]["箱规格1"].ToString().Trim(),
-                                Str16=ds.Tables[0].Rows[i]["箱规格2"].ToString().Trim(),
-                                Str17=ds.Tables[0].Rows[i]["箱规格3"].ToString().Trim(),
-                                Str18=ds.Tables[0].Rows[i]["箱规格4"].ToString().Trim(),
-                                Str19=ds.Tables[0].Rows[i]["箱规格5"].ToString().Trim()
+                                Str11 = ds.Tables[0].Rows[i]["长度"].ToString().Trim(),
+                                Str12 = ds.Tables[0].Rows[i]["宽度"].ToString().Trim(),
+                                Str13 = ds.Tables[0].Rows[i]["高度"].ToString().Trim(),
+                                Str14 = ds.Tables[0].Rows[i]["安全库存"].ToString().Trim(),
+                                Str15 = ds.Tables[0].Rows[i]["箱规格1"].ToString().Trim(),
+                                Str16 = ds.Tables[0].Rows[i]["箱规格2"].ToString().Trim(),
+                                Str17 = ds.Tables[0].Rows[i]["箱规格3"].ToString().Trim(),
+                                Str18 = ds.Tables[0].Rows[i]["箱规格4"].ToString().Trim(),
+                                Str19 = ds.Tables[0].Rows[i]["箱规格5"].ToString().Trim()
                             });
                         }
                     }
@@ -456,8 +458,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                             {
                                 // ID = Convert.ToInt64(ds.Tables[0].Rows[i]["ID"].ToString().Trim()),
                                 //StorerID = StorerID,
-                                SKU = ds.Tables[1].Rows[i]["SKU"].ToString().Trim(),
-                                UPC = ds.Tables[1].Rows[i]["UPC"].ToString().Trim(),
+                                SKU = ds.Tables[1].Rows[i]["产品编码"].ToString().Trim(),
+                                UPC = ds.Tables[1].Rows[i]["条码"].ToString().Trim(),
                                 UPCName = ds.Tables[1].Rows[i]["UPC名称"].ToString().Trim(),
                                 UPCType = ds.Tables[1].Rows[i]["UPC类型"].ToString().Trim(),
                                 UPCNumber = string.IsNullOrEmpty(ds.Tables[1].Rows[i]["UPC数量"].ToString()) ? 0 : Convert.ToInt32(ds.Tables[1].Rows[i]["UPC数量"].ToString().Trim()),
@@ -570,7 +572,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     var repeat = groupedInfos.GroupBy(a => a.SKU).Where(g => g.Count() >= 2);
                     if (repeat.Count() > 0)
                     {
-                        return new { result = "有重复SKU！", IsSuccess = false }.ToJsonString();
+                        return new { result = "有重复产品编码！", IsSuccess = false }.ToJsonString();
                     }
                     var response = new ProductService().EditSKUProductExecl(new AddProductExeclRequest() { Info = groupedInfos, InfoDetail = pd });
 
@@ -664,7 +666,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     }
                     else
                     {
-                        return new { result = o.ToString() + " 有重复或差异，请检查！", IsSuccess = false }.ToJsonString();    
+                        return new { result = o.ToString() + " 有重复或差异，请检查！", IsSuccess = false }.ToJsonString();
                     }
                 }
                 return new { result = "文件内容为空！", IsSuccess = false }.ToJsonString();

@@ -85,7 +85,7 @@
                     var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
                 }
                 <td class="TableColumnTitle">
-                    <label>客户</label>
+                    <label>客户/供应商</label>
                 </td>
                 <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
                 <td class="TableColumnTitle">
@@ -109,18 +109,18 @@
                 <td class="TableColumnTitle">
                     <label>入库单状态</label>
                 </td>
-                <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.ReceiptStatus.Where(c => c.Text != "取消"), "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.Status, Model.Statuss.Where(c => c.Text != "取消"), "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
             </tr>
             <tr>
                 <td class="TableColumnTitle">
                     <label>入库类型</label>
                 </td>
-                <td>@Html.DropDownListFor(m => m.SearchCondition.ReceiptType, Model.ReceiptType, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.ReceiptType, Model.ReceiptTypes, "==请选择==", new { @class = "form-control", style = "width:100%" })</td>
 
-                <td class="TableColumnTitle">
+                @*<td class="TableColumnTitle">
                     <label>门店代码</label>
                 </td>
-                <td>@Html.TextBoxFor(m => m.SearchCondition.str3, new { @class = "form-control", style = "width:100%" })</td>
+                <td>@Html.TextBoxFor(m => m.SearchCondition.str3, new { @class = "form-control", style = "width:100%" })</td>*@
                 @*<td class="TableColumnTitle">
             <label>入库单号</label>
         </td>

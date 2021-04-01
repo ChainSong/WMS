@@ -365,7 +365,6 @@ namespace Runbow.TWS.Dao.WMS
         }
 
 
-        //导出主表和明细表（这明明是查询，你为何要写导出？ 麻瓜！）
         public GetASNDetailByConditionResponse GetASNandasndetailByCondition(ASNSearchCondition SearchCondition, int pageIndex, int pageSize, out int rowCount)
         {
             GetASNDetailByConditionResponse response = new GetASNDetailByConditionResponse();
@@ -926,6 +925,16 @@ namespace Runbow.TWS.Dao.WMS
                 sb.Append(" AND a.Int5=").Append(SearchCondition.Int5).Append(" ");
 
             }
+            if (!string.IsNullOrEmpty(SearchCondition.Model) && SearchCondition.Model == "产品")
+            {
+                sb.Append(" AND a.ASNType like '%").Append(SearchCondition.Model).Append("%' ");
+            }
+            else
+            {
+                sb.Append(" AND a.ASNType like '%物料%' ");
+
+            }
+
             return sb.ToString();
         }
         /// <summary>

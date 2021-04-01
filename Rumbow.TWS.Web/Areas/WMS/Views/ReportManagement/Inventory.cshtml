@@ -17,7 +17,7 @@
                     var ctype = (IEnumerable<Runbow.TWS.Entity.WMS.WMS_Config_Type>)ViewBag.ctype;
                 }
                 <td class="TableColumnTitle">
-                    <label>客户</label>
+                    <label>客户/供应商</label>
                 </td>
                 <td style="width: 16%;">@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @style = "width:100%", @class = "form-control" })</td>
                 <td class="TableColumnTitle">
@@ -49,14 +49,14 @@
                 </td>
                 <td>@Html.TextAreaFor(m => m.SearchCondition.Location, new { @style = "width:100%", @class = "form-control" })</td>
                 <td class="TableColumnTitle">
-                    <label>SKU</label>
+                    <label>产品编码</label>
                 </td>
                 <td>@Html.TextAreaFor(m => m.SearchCondition.SKU, new { @style = "width:100%", @class = "form-control" })</td>
 
-                <td class="TableColumnTitle">
+                @*<td class="TableColumnTitle">
                     <label>门店代码</label>
                 </td>
-                <td>@Html.TextAreaFor(m => m.SearchCondition.str3, new { @style = "width:100%", @class = "form-control" })</td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.str3, new { @style = "width:100%", @class = "form-control" })</td>*@
                 @*<td class="TableColumnTitle">
             <label>Article</label>
         </td>

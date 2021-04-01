@@ -33,21 +33,21 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         /// </summary>
         /// <param name="AsnNumber"></param>
         /// <returns></returns>
-        public ActionResult ShowDiff(string AsnNumber)
-        {
-            IndexViewModel vm = new IndexViewModel();
-            var response = new ASNManagementService().GetASNScanByAsnNumber(AsnNumber);
-            if (response.IsSuccess)
-            {
-                vm.ExpectTotalBox = response.Result.ExpectTotalBox;
-                vm.ReceiveTotalBox = response.Result.ReceiveTotalBox;
-                vm.ExpectTotalSKU = response.Result.ExpectTotalSKU;
-                vm.ReceiveTotalSKU = response.Result.ReceiveTotalSKU;
-                vm.ASNScanBoxSKUCollection = response.Result.ASNScanBoxSKUCollection;
-                vm.ASNScanBoxDetailSKUCollection = response.Result.ASNScanBoxDetailSKUCollection;
-            }
-            return View(vm);
-        }
+        //public ActionResult ShowDiff(string AsnNumber)
+        //{
+        //    IndexViewModel vm = new IndexViewModel();
+        //    var response = new ASNManagementService().GetASNScanByAsnNumber(AsnNumber);
+        //    if (response.IsSuccess)
+        //    {
+        //        vm.ExpectTotalBox = response.Result.ExpectTotalBox;
+        //        vm.ReceiveTotalBox = response.Result.ReceiveTotalBox;
+        //        vm.ExpectTotalSKU = response.Result.ExpectTotalSKU;
+        //        vm.ReceiveTotalSKU = response.Result.ReceiveTotalSKU;
+        //        vm.ASNScanBoxSKUCollection = response.Result.ASNScanBoxSKUCollection;
+        //        vm.ASNScanBoxDetailSKUCollection = response.Result.ASNScanBoxDetailSKUCollection;
+        //    }
+        //    return View(vm);
+        //}
 
         /// <summary>
         /// 扫描更新数量
@@ -56,218 +56,218 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         /// <param name="str2"></param>
         /// <param name="SKU"></param>
         /// <returns></returns>
-        public string AsnScanQtyUpdate(string AsnNumber, string str2, string SKU)
-        {
-            var response = "";
-            try
-            {
-                response = new ASNManagementService().AsnScanQtyUpdate(AsnNumber, str2, SKU, base.UserInfo.Name);
-            }
-            catch (Exception ex)
-            {
-                response = ex.Message;
-            }
-            return response;
-        }
-        [HttpGet]
-        public ActionResult AsnScanIndex(string AsnNumber)
-        {
-            IndexViewModel vm = new IndexViewModel();
-            var response = new ASNManagementService().GetASNDetailForScanByAsnNumber(AsnNumber);
-            if (response.IsSuccess)
-            {
-                vm.ASNDetailCollection = response.Result.AsnDetailCollection;
-            }
-            return View(vm);
-        }
-        [HttpGet]
-        public ActionResult AsnScanLocationPrint(string AsnNumber)
-        {
-            IndexViewModel vm = new IndexViewModel();
-            var response = new ASNManagementService().GetASNDetailForScanByAsnNumber(AsnNumber);
-            if (response.IsSuccess)
-            {
-                vm.ASNDetailCollection = response.Result.AsnDetailCollection;
-            }
-            return View(vm);
-        }
-        [HttpGet]
-        public ActionResult PopupIndex(int? PageIndex, long? customerID)
-        {
-            Session["ASNConditionModel"] = null;
-            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
-            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
-            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
-            ViewBag.CustomerList = CustomerList;
-            IndexViewModel vm = new IndexViewModel();
-            IEnumerable<WMSConfig> wms = null;
-            try
-            {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
-            }
-            catch (Exception)
-            {
-            }
+        //public string AsnScanQtyUpdate(string AsnNumber, string str2, string SKU)
+        //{
+        //    var response = "";
+        //    try
+        //    {
+        //        response = new ASNManagementService().AsnScanQtyUpdate(AsnNumber, str2, SKU, base.UserInfo.Name);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response = ex.Message;
+        //    }
+        //    return response;
+        //}
+        //[HttpGet]
+        //public ActionResult AsnScanIndex(string AsnNumber)
+        //{
+        //    IndexViewModel vm = new IndexViewModel();
+        //    var response = new ASNManagementService().GetASNDetailForScanByAsnNumber(AsnNumber);
+        //    if (response.IsSuccess)
+        //    {
+        //        vm.ASNDetailCollection = response.Result.AsnDetailCollection;
+        //    }
+        //    return View(vm);
+        //}
+        //[HttpGet]
+        //public ActionResult AsnScanLocationPrint(string AsnNumber)
+        //{
+        //    IndexViewModel vm = new IndexViewModel();
+        //    var response = new ASNManagementService().GetASNDetailForScanByAsnNumber(AsnNumber);
+        //    if (response.IsSuccess)
+        //    {
+        //        vm.ASNDetailCollection = response.Result.AsnDetailCollection;
+        //    }
+        //    return View(vm);
+        //}
+        //[HttpGet]
+        //public ActionResult PopupIndex(int? PageIndex, long? customerID)
+        //{
+        //    Session["ASNConditionModel"] = null;
+        //    var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
+        //    var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
+        //    var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+        //    ViewBag.CustomerList = CustomerList;
+        //    IndexViewModel vm = new IndexViewModel();
+        //    IEnumerable<WMSConfig> wms = null;
+        //    try
+        //    {
+        //        wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
 
-            if (wms == null)
-            {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
-            }
-            List<SelectListItem> st = new List<SelectListItem>();
-            foreach (WMSConfig w in wms)
-            {
-                st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
-            }
-            vm.ASNTypes = st;
-            vm.ASNCondition = new ASNSearchCondition();
-            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
+        //    if (wms == null)
+        //    {
+        //        wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
+        //    }
+        //    List<SelectListItem> st = new List<SelectListItem>();
+        //    foreach (WMSConfig w in wms)
+        //    {
+        //        st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
+        //    }
+        //    vm.ASNTypes = st;
+        //    vm.ASNCondition = new ASNSearchCondition();
+        //    vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
 
-            if (base.UserInfo.UserType == 0)
-            {
-                vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
-            }
-            else if (base.UserInfo.UserType == 2)
-            {
-                if (customerID.HasValue)
-                {
-                    vm.ASNCondition.CustomerID = customerID;
-                }
-                else
-                {
-                    var customerIDs = ApplicationConfigHelper.GetApplicationCustomer().Where(m => m.UserID == base.UserInfo.ID).Select(c => c.ID);
-                    if (customerIDs != null && customerIDs.Count() == 1)
-                    {
-                        vm.ASNCondition.CustomerID = customerIDs.First();
-                    }
-                    else
-                    {
-                        vm.ASNCondition.CustomerID = 0;
-                    }
-                }
-            }
-            IEnumerable<SelectListItem> WarehouseList = null;
-            if (vm.ASNCondition.CustomerID == 0)
-            {
-                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-                                                    .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-                StringBuilder sb = new StringBuilder();
+        //    if (base.UserInfo.UserType == 0)
+        //    {
+        //        vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
+        //    }
+        //    else if (base.UserInfo.UserType == 2)
+        //    {
+        //        if (customerID.HasValue)
+        //        {
+        //            vm.ASNCondition.CustomerID = customerID;
+        //        }
+        //        else
+        //        {
+        //            var customerIDs = ApplicationConfigHelper.GetApplicationCustomer().Where(m => m.UserID == base.UserInfo.ID).Select(c => c.ID);
+        //            if (customerIDs != null && customerIDs.Count() == 1)
+        //            {
+        //                vm.ASNCondition.CustomerID = customerIDs.First();
+        //            }
+        //            else
+        //            {
+        //                vm.ASNCondition.CustomerID = 0;
+        //            }
+        //        }
+        //    }
+        //    IEnumerable<SelectListItem> WarehouseList = null;
+        //    if (vm.ASNCondition.CustomerID == 0)
+        //    {
+        //        WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+        //                                            .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+        //        StringBuilder sb = new StringBuilder();
 
-                foreach (var i in CustomerListID)
-                {
-                    sb.Append("" + i + ",");
-                }
-                if (sb.Length > 1)
-                {
-                    vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-                }
-                else
-                {
-                    vm.ASNCondition.CustomerIDs = "0";
-                }
-            }
-            else
-            {
-                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-                                     .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+        //        foreach (var i in CustomerListID)
+        //        {
+        //            sb.Append("" + i + ",");
+        //        }
+        //        if (sb.Length > 1)
+        //        {
+        //            vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
+        //        }
+        //        else
+        //        {
+        //            vm.ASNCondition.CustomerIDs = "0";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+        //                             .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
 
-            }
-            if (WarehouseList != null)
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (var i in WarehouseList)
-                {
-                    //sb.Append("'" + i.Value + "',");
-                    sb.Append("" + i.Value + ",");
-                }
-                if (sb.Length > 1)
-                {
-                    vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
-                    //vm.ASNCondition.WarehouseID = Int64.Parse(vm.ASNCondition.WarehouseName);
-                }
-            }
-            ViewBag.WarehouseList = WarehouseList;
+        //    }
+        //    if (WarehouseList != null)
+        //    {
+        //        StringBuilder sb = new StringBuilder();
+        //        foreach (var i in WarehouseList)
+        //        {
+        //            //sb.Append("'" + i.Value + "',");
+        //            sb.Append("" + i.Value + ",");
+        //        }
+        //        if (sb.Length > 1)
+        //        {
+        //            vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
+        //            //vm.ASNCondition.WarehouseID = Int64.Parse(vm.ASNCondition.WarehouseName);
+        //        }
+        //    }
+        //    ViewBag.WarehouseList = WarehouseList;
 
-            #region 屏蔽
+        //    #region 屏蔽
 
-            //if (base.UserInfo.UserType == 0)
-            //{
-            //    vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
-            //}
-            //else if (base.UserInfo.UserType == 2)
-            //{
-            //    if (customerID.HasValue)
-            //    {
-            //        vm.ASNCondition.CustomerID = customerID;
-            //    }
-            //    else
-            //    {
-            //        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
-            //        if (customerIDs != null && customerIDs.Count() == 1)
-            //        {
-            //            vm.ASNCondition.CustomerID = customerIDs.First();
-            //        }
-            //    }
-            //}
-            //IEnumerable<SelectListItem> WarehouseList = null;
-            //var WarehouseListAll = ApplicationConfigHelper.GetCacheInfo();
-            //if (vm.ASNCondition.CustomerID == null)
-            //{
-            //    WarehouseList = WarehouseListAll.Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-            //                                        .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            //    StringBuilder sb = new StringBuilder();
+        //    //if (base.UserInfo.UserType == 0)
+        //    //{
+        //    //    vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
+        //    //}
+        //    //else if (base.UserInfo.UserType == 2)
+        //    //{
+        //    //    if (customerID.HasValue)
+        //    //    {
+        //    //        vm.ASNCondition.CustomerID = customerID;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
+        //    //        if (customerIDs != null && customerIDs.Count() == 1)
+        //    //        {
+        //    //            vm.ASNCondition.CustomerID = customerIDs.First();
+        //    //        }
+        //    //    }
+        //    //}
+        //    //IEnumerable<SelectListItem> WarehouseList = null;
+        //    //var WarehouseListAll = ApplicationConfigHelper.GetCacheInfo();
+        //    //if (vm.ASNCondition.CustomerID == null)
+        //    //{
+        //    //    WarehouseList = WarehouseListAll.Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+        //    //                                        .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+        //    //    StringBuilder sb = new StringBuilder();
 
-            //    foreach (var i in CustomerListID)
-            //    {
-            //        sb.Append("" + i + ",");
-            //    }
-            //    if (sb.Length > 1)
-            //    {
-            //        vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-            //    }
-            //    else
-            //    {
-            //        vm.ASNCondition.CustomerIDs = "0";
-            //    }
-            //}
-            //else
-            //{
-            //    WarehouseList = WarehouseListAll.Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-            //                         .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            //}
+        //    //    foreach (var i in CustomerListID)
+        //    //    {
+        //    //        sb.Append("" + i + ",");
+        //    //    }
+        //    //    if (sb.Length > 1)
+        //    //    {
+        //    //        vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        vm.ASNCondition.CustomerIDs = "0";
+        //    //    }
+        //    //}
+        //    //else
+        //    //{
+        //    //    WarehouseList = WarehouseListAll.Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+        //    //                         .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+        //    //}
 
-            //ViewBag.WarehouseList = WarehouseList;
-            //if (CustomerList.Count() == 1)
-            //{
-            //    vm.ASNCondition.CustomerID = CustomerList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-            //}
-            //if (WarehouseList.Count() == 1)
-            //{
-            //    vm.ASNCondition.WarehouseID = WarehouseList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-            //}
+        //    //ViewBag.WarehouseList = WarehouseList;
+        //    //if (CustomerList.Count() == 1)
+        //    //{
+        //    //    vm.ASNCondition.CustomerID = CustomerList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
+        //    //}
+        //    //if (WarehouseList.Count() == 1)
+        //    //{
+        //    //    vm.ASNCondition.WarehouseID = WarehouseList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
+        //    //}
 
-            //vm.ASNCondition.StartExpectDate = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-            //vm.ASNCondition.EndExpectDate = DateTime.Now.ToString("yyyy-MM-dd").ObjectToNullableDateTime();
-            #endregion 
+        //    //vm.ASNCondition.StartExpectDate = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
+        //    //vm.ASNCondition.EndExpectDate = DateTime.Now.ToString("yyyy-MM-dd").ObjectToNullableDateTime();
+        //    #endregion 
 
-            vm.ASNCondition.StartCreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-            vm.ASNCondition.EndCreateTime = DateTime.Now;
-            //vm.ASNCondition.Status = 1;
-            Session["ASNConditionModel"] = vm.ASNCondition;
-            this.GenQueryASNViewModel(vm);
-            GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
-            getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
-            getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-            getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
-            var getReceiptByConditionResponse = new ASNManagementService().GetASNByCondition(getAsnByConditionRequest);
-            if (getReceiptByConditionResponse.IsSuccess)
-            {
-                vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
-                vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
-                vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
-            }
+        //    vm.ASNCondition.StartCreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
+        //    vm.ASNCondition.EndCreateTime = DateTime.Now;
+        //    //vm.ASNCondition.Status = 1;
+        //    Session["ASNConditionModel"] = vm.ASNCondition;
+        //    this.GenQueryASNViewModel(vm);
+        //    GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
+        //    getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
+        //    getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
+        //    getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
+        //    var getReceiptByConditionResponse = new ASNManagementService().GetASNByCondition(getAsnByConditionRequest);
+        //    if (getReceiptByConditionResponse.IsSuccess)
+        //    {
+        //        vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
+        //        vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
+        //        vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
+        //    }
 
-            return View(vm);
-        }
+        //    return View(vm);
+        //}
 
         /// <summary>
         /// ASN预检删除重扫本箱
@@ -275,19 +275,19 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         /// <param name="AsnNumber"></param>
         /// <param name="ScanBoxNumber"></param>
         /// <returns></returns>
-        public string ClearAsnBoxNumber(string AsnNumber, string ScanBoxNumber)
-        {
-            string msg = "";
-            try
-            {
-                msg = new ASNManagementService().ClearAsnBoxNumber(AsnNumber, ScanBoxNumber);
-            }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
-            }
-            return msg;
-        }
+        //public string ClearAsnBoxNumber(string AsnNumber, string ScanBoxNumber)
+        //{
+        //    string msg = "";
+        //    try
+        //    {
+        //        msg = new ASNManagementService().ClearAsnBoxNumber(AsnNumber, ScanBoxNumber);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        msg = ex.Message;
+        //    }
+        //    return msg;
+        //}
 
         /// <summary>
         /// 检查箱差异
@@ -295,15 +295,15 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         /// <param name="AsnNumber"></param>
         /// <param name="ScanBoxNumber"></param>
         /// <returns></returns>
-        public string CheckDiff(string AsnNumber, string ScanBoxNumber)
-        {
-            var response = new ASNManagementService().CheckDiff(AsnNumber, ScanBoxNumber);
-            //if (response == "Diff")
-            //{
-            //    PlayError();
-            //}
-            return response;
-        }
+        //public string CheckDiff(string AsnNumber, string ScanBoxNumber)
+        //{
+        //    var response = new ASNManagementService().CheckDiff(AsnNumber, ScanBoxNumber);
+        //    //if (response == "Diff")
+        //    //{
+        //    //    PlayError();
+        //    //}
+        //    return response;
+        //}
 
         /// <summary>
         /// 检查箱差异退货仓
@@ -311,139 +311,139 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         /// <param name="AsnNumber"></param>
         /// <param name="ScanBoxNumber"></param>
         /// <returns></returns>
-        public JsonResult CheckDiffReturn(string AsnNumber, string ScanBoxNumber)
-        {
-            List<ASNDetail> lists = new List<ASNDetail>();
-            try
-            {
-                lists = new ASNManagementService().CheckDiffReturn(AsnNumber, ScanBoxNumber);
-                if (lists.Count() > 0)
-                {
-                    return Json(new { Code = "1", data = lists });
-                }
-                else
-                {
-                    return Json(new { Code = "0" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { Code = "-1" });
-            }
+        //public JsonResult CheckDiffReturn(string AsnNumber, string ScanBoxNumber)
+        //{
+        //    List<ASNDetail> lists = new List<ASNDetail>();
+        //    try
+        //    {
+        //        lists = new ASNManagementService().CheckDiffReturn(AsnNumber, ScanBoxNumber);
+        //        if (lists.Count() > 0)
+        //        {
+        //            return Json(new { Code = "1", data = lists });
+        //        }
+        //        else
+        //        {
+        //            return Json(new { Code = "0" });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { Code = "-1" });
+        //    }
 
-        }
+        //}
         /// <summary>
         /// 获取ASN预检当前箱总件数
         /// </summary>
         /// <param name="AsnNumber"></param>
         /// <param name="ScanBoxNumber"></param>
         /// <returns></returns>
-        public JsonResult GetAsnScanBoxSum(string AsnNumber, string ScanBoxNumber)
-        {
-            List<ASNDetail> lists = new List<ASNDetail>();
-            try
-            {
-                lists = new ASNManagementService().GetAsnScanBoxSum(AsnNumber, ScanBoxNumber);
-                if (lists.Count() > 0)
-                {
-                    return Json(new { Code = "1", data = lists });
-                }
-                else
-                {
-                    return Json(new { Code = "0" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { Code = "-1" });
-            }
+        //public JsonResult GetAsnScanBoxSum(string AsnNumber, string ScanBoxNumber)
+        //{
+        //    List<ASNDetail> lists = new List<ASNDetail>();
+        //    try
+        //    {
+        //        lists = new ASNManagementService().GetAsnScanBoxSum(AsnNumber, ScanBoxNumber);
+        //        if (lists.Count() > 0)
+        //        {
+        //            return Json(new { Code = "1", data = lists });
+        //        }
+        //        else
+        //        {
+        //            return Json(new { Code = "0" });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { Code = "-1" });
+        //    }
 
-        }
+        //}
         /// <summary>
         /// 导出差异
         /// </summary>
         /// <param name="AsnNumber"></param>
-        public void ExportDiff(string AsnNumber)
-        {
-            IndexViewModel vm = new IndexViewModel();
-            var response = new ASNManagementService().GetASNScanByAsnNumber(AsnNumber);
-            if (response.IsSuccess)
-            {
-                vm.ExpectTotalBox = response.Result.ExpectTotalBox;
-                vm.ReceiveTotalBox = response.Result.ReceiveTotalBox;
-                vm.ExpectTotalSKU = response.Result.ExpectTotalSKU;
-                vm.ReceiveTotalSKU = response.Result.ReceiveTotalSKU;
-                vm.ASNScanBoxSKUCollection = response.Result.ASNScanBoxSKUCollection;
-                vm.ASNScanBoxDetailSKUCollection = response.Result.ASNScanBoxDetailSKUCollection;
-                IEnumerable<ASNScan> TotalBox = null;
-                DataSet ds = new DataSet();
-                DataTable dtTotalBox = new DataTable();
-                DataRow drTotalBox = dtTotalBox.NewRow();
-                dtTotalBox.Columns.Add("期望总箱数");
-                dtTotalBox.Columns.Add("实收总箱数");
-                drTotalBox["期望总箱数"] = vm.ExpectTotalBox.ExpectTotalBox;
-                drTotalBox["实收总箱数"] = vm.ReceiveTotalBox.ReceiveTotalBox;
-                dtTotalBox.Rows.Add(drTotalBox);
-                dtTotalBox.TableName = "总箱数差异";
+        //public void ExportDiff(string AsnNumber)
+        //{
+        //    IndexViewModel vm = new IndexViewModel();
+        //    var response = new ASNManagementService().GetASNScanByAsnNumber(AsnNumber);
+        //    if (response.IsSuccess)
+        //    {
+        //        vm.ExpectTotalBox = response.Result.ExpectTotalBox;
+        //        vm.ReceiveTotalBox = response.Result.ReceiveTotalBox;
+        //        vm.ExpectTotalSKU = response.Result.ExpectTotalSKU;
+        //        vm.ReceiveTotalSKU = response.Result.ReceiveTotalSKU;
+        //        vm.ASNScanBoxSKUCollection = response.Result.ASNScanBoxSKUCollection;
+        //        vm.ASNScanBoxDetailSKUCollection = response.Result.ASNScanBoxDetailSKUCollection;
+        //        IEnumerable<ASNScan> TotalBox = null;
+        //        DataSet ds = new DataSet();
+        //        DataTable dtTotalBox = new DataTable();
+        //        DataRow drTotalBox = dtTotalBox.NewRow();
+        //        dtTotalBox.Columns.Add("期望总箱数");
+        //        dtTotalBox.Columns.Add("实收总箱数");
+        //        drTotalBox["期望总箱数"] = vm.ExpectTotalBox.ExpectTotalBox;
+        //        drTotalBox["实收总箱数"] = vm.ReceiveTotalBox.ReceiveTotalBox;
+        //        dtTotalBox.Rows.Add(drTotalBox);
+        //        dtTotalBox.TableName = "总箱数差异";
 
-                DataTable dtTotalSku = new DataTable();
-                DataRow drTotalSku = dtTotalSku.NewRow();
-                dtTotalSku.Columns.Add("期望总件数");
-                dtTotalSku.Columns.Add("实收总件数");
-                drTotalSku["期望总件数"] = vm.ExpectTotalSKU.ExpectTotalSKU;
-                drTotalSku["实收总件数"] = vm.ReceiveTotalSKU.ReceiveTotalSKU;
-                dtTotalSku.Rows.Add(drTotalSku);
-                dtTotalSku.TableName = "总件数差异";
+        //        DataTable dtTotalSku = new DataTable();
+        //        DataRow drTotalSku = dtTotalSku.NewRow();
+        //        dtTotalSku.Columns.Add("期望总件数");
+        //        dtTotalSku.Columns.Add("实收总件数");
+        //        drTotalSku["期望总件数"] = vm.ExpectTotalSKU.ExpectTotalSKU;
+        //        drTotalSku["实收总件数"] = vm.ReceiveTotalSKU.ReceiveTotalSKU;
+        //        dtTotalSku.Rows.Add(drTotalSku);
+        //        dtTotalSku.TableName = "总件数差异";
 
-                DataTable dtBoxSKU = new DataTable();
-                dtBoxSKU.Columns.Add("箱号");
-                dtBoxSKU.Columns.Add("期望件数");
-                dtBoxSKU.Columns.Add("实收件数");
-                foreach (var item in vm.ASNScanBoxSKUCollection)
-                {
-                    DataRow drBoxSKU = dtBoxSKU.NewRow();
-                    drBoxSKU["箱号"] = item.str2;
-                    drBoxSKU["期望件数"] = item.ExpectBoxSKU;
-                    drBoxSKU["实收件数"] = item.ReceiveBoxSKU;
-                    dtBoxSKU.Rows.Add(drBoxSKU);
-                }
-                dtBoxSKU.TableName = "箱件数差异";
+        //        DataTable dtBoxSKU = new DataTable();
+        //        dtBoxSKU.Columns.Add("箱号");
+        //        dtBoxSKU.Columns.Add("期望件数");
+        //        dtBoxSKU.Columns.Add("实收件数");
+        //        foreach (var item in vm.ASNScanBoxSKUCollection)
+        //        {
+        //            DataRow drBoxSKU = dtBoxSKU.NewRow();
+        //            drBoxSKU["箱号"] = item.str2;
+        //            drBoxSKU["期望件数"] = item.ExpectBoxSKU;
+        //            drBoxSKU["实收件数"] = item.ReceiveBoxSKU;
+        //            dtBoxSKU.Rows.Add(drBoxSKU);
+        //        }
+        //        dtBoxSKU.TableName = "箱件数差异";
 
-                DataTable dtBoxDetailSKU = new DataTable();
-                dtBoxDetailSKU.Columns.Add("箱号");
-                dtBoxDetailSKU.Columns.Add("SKU");
-                dtBoxDetailSKU.Columns.Add("期望数量");
-                dtBoxDetailSKU.Columns.Add("实收数量");
-                foreach (var item in vm.ASNScanBoxDetailSKUCollection)
-                {
-                    DataRow drBoxDetailSKU = dtBoxDetailSKU.NewRow();
-                    drBoxDetailSKU["箱号"] = item.str2;
-                    drBoxDetailSKU["SKU"] = item.SKU;
-                    drBoxDetailSKU["期望数量"] = item.ExpectBoxDetailSKU;
-                    drBoxDetailSKU["实收数量"] = item.BoxDetailSKU;
-                    dtBoxDetailSKU.Rows.Add(drBoxDetailSKU);
-                }
-                dtBoxDetailSKU.TableName = "箱明细差异";
-                ds.Tables.Add(dtTotalBox);
-                ds.Tables.Add(dtTotalSku);
-                ds.Tables.Add(dtBoxSKU);
-                ds.Tables.Add(dtBoxDetailSKU);
-                //ExportDataToExcelHelper.ExportDataSetToExcel(ds, "ASN差异明细_" + AsnNumber.ToString());
-                EPPlusOperation.ExportDataSetByEPPlus(ds, "ASN差异明细_" + AsnNumber.ToString());
-            }
-        }
+        //        DataTable dtBoxDetailSKU = new DataTable();
+        //        dtBoxDetailSKU.Columns.Add("箱号");
+        //        dtBoxDetailSKU.Columns.Add("产品编码");
+        //        dtBoxDetailSKU.Columns.Add("期望数量");
+        //        dtBoxDetailSKU.Columns.Add("实收数量");
+        //        foreach (var item in vm.ASNScanBoxDetailSKUCollection)
+        //        {
+        //            DataRow drBoxDetailSKU = dtBoxDetailSKU.NewRow();
+        //            drBoxDetailSKU["箱号"] = item.str2;
+        //            drBoxDetailSKU["产品编码"] = item.SKU;
+        //            drBoxDetailSKU["期望数量"] = item.ExpectBoxDetailSKU;
+        //            drBoxDetailSKU["实收数量"] = item.BoxDetailSKU;
+        //            dtBoxDetailSKU.Rows.Add(drBoxDetailSKU);
+        //        }
+        //        dtBoxDetailSKU.TableName = "箱明细差异";
+        //        ds.Tables.Add(dtTotalBox);
+        //        ds.Tables.Add(dtTotalSku);
+        //        ds.Tables.Add(dtBoxSKU);
+        //        ds.Tables.Add(dtBoxDetailSKU);
+        //        //ExportDataToExcelHelper.ExportDataSetToExcel(ds, "ASN差异明细_" + AsnNumber.ToString());
+        //        EPPlusOperation.ExportDataSetByEPPlus(ds, "ASN差异明细_" + AsnNumber.ToString());
+        //    }
+        //}
 
         /// <summary>
         /// 播放错误提示音
         /// </summary>
-        public void PlayError()
-        {
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-            SMedia.SoundPlayer player = new SMedia.SoundPlayer();
-            player.SoundLocation = path + "Media\\error.wav";
-            player.Load();
-            player.Play();
-        }
+        //public void PlayError()
+        //{
+        //    string path = AppDomain.CurrentDomain.BaseDirectory;
+        //    SMedia.SoundPlayer player = new SMedia.SoundPlayer();
+        //    player.SoundLocation = path + "Media\\error.wav";
+        //    player.Load();
+        //    player.Play();
+        //}
         //查询和导出
         [HttpPost]
         public ActionResult PopupIndex(IndexViewModel vm, int? PageIndex, string Action)
@@ -532,6 +532,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             vm.ASNCondition.UserType = base.UserInfo.UserType;
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
             var getASNByConditionRequest = new GetASNByConditionRequest();
+            getASNByConditionRequest.SearchCondition.Model = "物料";
+
             if (Action == "查询" || Action == "PopupIndex")
             {
                 getASNByConditionRequest.SearchCondition = vm.ASNCondition;
@@ -810,6 +812,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
             getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
+            getAsnByConditionRequest.SearchCondition.Model = "物料";
+
             getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
             getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
             var getReceiptByConditionResponse = new ASNManagementService().GetASNByCondition(getAsnByConditionRequest);
@@ -866,6 +870,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             vm.ASNCondition.EndCreateTime = DateTime.Now;
             GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
             getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
+            getAsnByConditionRequest.SearchCondition.Model = "物料";
+
             getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
             getAsnByConditionRequest.PageIndex = 0;
             var getReceiptByConditionResponse = new ASNManagementService().GetASNStatusByCondition(getAsnByConditionRequest);
@@ -917,6 +923,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
             getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
+            getAsnByConditionRequest.SearchCondition.Model = "物料";
 
             var getReceiptByConditionResponse = new ASNManagementService().GetASNStatusByCondition(getAsnByConditionRequest);
             if (getReceiptByConditionResponse.IsSuccess)
@@ -1137,6 +1144,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             vm.ASNCondition.UserType = base.UserInfo.UserType;
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
             var getASNByConditionRequest = new GetASNByConditionRequest();
+       
+
             if (Action == "查询" || Action == "Index")
             {
                 getASNByConditionRequest.SearchCondition = vm.ASNCondition;
@@ -1149,6 +1158,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
                 getASNByConditionRequest.PageIndex = 0;
             }
+            getASNByConditionRequest.SearchCondition.Model = "物料";
 
             var getASNByConditionResponse = new ASNManagementService().GetASNDetailByConditionResponse(getASNByConditionRequest);
 
@@ -1294,7 +1304,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
                 DataRow dr11 = dtasnDetail.NewRow();
                 dr11["外部入库单号"] = "XXXXXXXX";
-                dr11["SKU"] = "XXXXXX";
+                dr11["产品编码"] = "XXXXXX";
                 dr11["预收数量"] = "100";
                 dr11["批次号"] = "XXXX";
                 dtasnDetail.Rows.Add(dr11);
@@ -1321,7 +1331,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     asdt.Columns.Add("订单号", typeof(string));
                     asdt.Columns.Add("仓库名称", typeof(string));
                     asdt.Columns.Add("客户", typeof(string));
-                    asdt.Columns.Add("SKU", typeof(string));
+                    asdt.Columns.Add("产品编码", typeof(string));
                     asdt.Columns.Add("预收数量", typeof(string));
                     asdt.Columns.Add("单位", typeof(string));
                     asdt.Columns.Add("物品类型", typeof(string));
@@ -1340,7 +1350,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     dr["订单号"] = "";
                     dr["仓库名称"] = "XXXX仓";
                     dr["客户"] = "";
-                    dr["SKU"] = "";
+                    dr["产品编码"] = "";
                     dr["预收数量"] = "100";
                     dr["单位"] = "件";
                     dr["物品类型"] = "APP";
@@ -1614,7 +1624,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             vm.ASNCondition.UserType = base.UserInfo.UserType;
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
-            var getASNByConditionResponse = new ASNManagementService().GetASNInfos(new GetASNByConditionRequest() { ID = ID });
+            var getASNByConditionResponse = new ASNManagementService().GetASNInfos(new GetASNByConditionRequest() { ID = ID, SearchCondition=new ASNSearchCondition() {  Model="物料"} });
 
 
             if (getASNByConditionResponse.IsSuccess)
@@ -2273,7 +2283,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                         //}
                         if (resualtProList.Where(c => (c.SKU == asndetails.SKU && (c.UPC == asndetails.UPC || string.IsNullOrEmpty(asndetails.UPC)))).Select(m => m.GoodsName).FirstOrDefault() == null)
                         {
-                            return new { result = "第【" + Rows_counts + "】行的SKU或者UPC【" + asndetails.SKU + "】【" + asndetails.UPC + "】在系统中不存在！", IsSuccess = false }.ToJsonString();
+                            return new { result = "第【" + Rows_counts + "】行的产品编码或者条码【" + asndetails.SKU + "】【" + asndetails.UPC + "】在系统中不存在！", IsSuccess = false }.ToJsonString();
                         }
                         //if (ApplicationConfigHelper.GetALLProductStorerList().Where(c => (c.SKU == asndetails.SKU &&  && c.StorerID == customerid.ObjectToInt64())).Select(m => m.GoodsName).FirstOrDefault() == null)
                         //{

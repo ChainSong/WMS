@@ -33,6 +33,26 @@ namespace Runbow.TWS.Dao
             return response;
         }
 
+        public GetReceiptDetailByConditionResponse GetReceiptByConditionFG(ReceiptSearchCondition SearchCondition, int pageIndex, int pageSize, out int rowCount)
+        {
+            GetReceiptDetailByConditionResponse response = new GetReceiptDetailByConditionResponse();
+            string sqlWhere = this.GenGetReceiptWhere(SearchCondition);
+            int tempRowCount = 0;
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+                new DbParam("@PageIndex", DbType.Int32, pageIndex, ParameterDirection.Input),
+                new DbParam("@PageSize", DbType.Int32, pageSize, ParameterDirection.Input),
+                new DbParam("@RowCount", DbType.Int32, tempRowCount, ParameterDirection.Output)
+            };
+
+            DataSet ds = this.ExecuteDataSet("[Proc_WMS_GetReceiptByConditionFG]", dbParams);
+            rowCount = (int)dbParams[3].Value;
+            response.ReceiptCollection = ds.Tables[0].ConvertToEntityCollection<Receipt>();
+            response.ReceiptDetailCollection = ds.Tables[1].ConvertToEntityCollection<ReceiptDetail>();
+            response.ReceiptDetailCollection2 = ds.Tables[2].ConvertToEntityCollection<ReceiptDetail>();
+            return response;
+        }
+
         public GetReceiptDetailByConditionResponse GetShelvesByIDs(string IDs)
         {
             GetReceiptDetailByConditionResponse response = new GetReceiptDetailByConditionResponse();
@@ -188,6 +208,32 @@ namespace Runbow.TWS.Dao
             return response;
         }
 
+
+        /// <summary>
+        /// 导出财务结算报表
+        /// </summary>
+        /// <param name="SearchCondition"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="rowCount"></param>
+        /// <returns></returns>
+        public GetReceiptDetailByConditionResponse GetFinancialStatements(ReceiptSearchCondition SearchCondition, int pageIndex, int pageSize, out int rowCount)
+        {
+            GetReceiptDetailByConditionResponse response = new GetReceiptDetailByConditionResponse();
+            string sqlWhere = this.GenGetAsnScanDiffRPTWhere(SearchCondition);
+            int tempRowCount = 0;
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+                new DbParam("@PageIndex", DbType.Int32, pageIndex, ParameterDirection.Input),
+                new DbParam("@PageSize", DbType.Int32, pageSize, ParameterDirection.Input),
+                new DbParam("@RowCount", DbType.Int32, tempRowCount, ParameterDirection.Output)
+            };
+
+            DataSet ds = this.ExecuteDataSet("Proc_WMS_GetAsnScanDiffForRPT", dbParams);
+            rowCount = (int)dbParams[3].Value;
+            response.ReceiptDetailCollection3 = ds.Tables[0].ConvertToEntityCollection<ReportReceiptReport>();
+            return response;
+        }
         public GetReceiptDetailByConditionResponse ExportReceiptForRPTByCondition(ReceiptSearchCondition SearchCondition)
         {
             GetReceiptDetailByConditionResponse response = new GetReceiptDetailByConditionResponse();
@@ -200,6 +246,19 @@ namespace Runbow.TWS.Dao
             DataSet ds = this.ExecuteDataSet("Proc_WMS_ExportGetReceiptBySearchCondition_Report", dbParams);
             //  rowCount = (int)dbParams[3].Value;
             // ReportReceiptReport
+            response.ReceiptDetailCollection3 = ds.Tables[0].ConvertToEntityCollection<ReportReceiptReport>();
+            return response;
+        }
+
+        public GetReceiptDetailByConditionResponse GetFinancialStatementsExport(ReceiptSearchCondition SearchCondition)
+        {
+            GetReceiptDetailByConditionResponse response = new GetReceiptDetailByConditionResponse();
+            string sqlWhere = this.GenGetAsnScanDiffRPTWhere(SearchCondition);
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input)
+            };
+
+            DataSet ds = this.ExecuteDataSet("Proc_WMS_ExportGetAsnScanDiffBySearchCondition_Report", dbParams);
             response.ReceiptDetailCollection3 = ds.Tables[0].ConvertToEntityCollection<ReportReceiptReport>();
             return response;
         }
@@ -281,6 +340,20 @@ namespace Runbow.TWS.Dao
                 new DbParam("@ID", DbType.Int64, ID, ParameterDirection.Input)
             };
             prc = "Proc_WMS_GetReceiptOrReceiptDetailByCondition_Receipt";
+            DataSet ds = this.ExecuteDataSet(prc, dbParams);
+            response.Receipt = ds.Tables[0].ConvertToEntity<Receipt>();
+            response.ReceiptDetailCollection = ds.Tables[1].ConvertToEntityCollection<ReceiptDetail>();
+            return response;
+        }
+
+        public GetAsnOrReceiptOrDetailByConditionResponse ReceiptDetailQueryFG(GetAsnOrReceiptOrDetailByConditionRequest SearchCondition, long ID)
+        {
+            GetAsnOrReceiptOrDetailByConditionResponse response = new GetAsnOrReceiptOrDetailByConditionResponse();
+            string prc = "";
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@ID", DbType.Int64, ID, ParameterDirection.Input)
+            };
+            prc = "Proc_WMS_GetReceiptOrReceiptDetailByCondition_ReceiptFG";
             DataSet ds = this.ExecuteDataSet(prc, dbParams);
             response.Receipt = ds.Tables[0].ConvertToEntity<Receipt>();
             response.ReceiptDetailCollection = ds.Tables[1].ConvertToEntityCollection<ReceiptDetail>();
@@ -371,7 +444,7 @@ namespace Runbow.TWS.Dao
         /// </summary>
         /// <param name="IDS"></param>
         /// <returns></returns>
-        public string ReceiptTask(string IDS,string Name)
+        public string ReceiptTask(string IDS, string Name)
         {
             using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
             {
@@ -703,6 +776,15 @@ namespace Runbow.TWS.Dao
             {
                 sb.Append(" AND a.Int5=").Append(SearchCondition.Int5).Append(" ");
             }
+            if (!string.IsNullOrEmpty(SearchCondition.Model) && SearchCondition.Model == "产品")
+            {
+                sb.Append(" AND a.ReceiptType like '%").Append(SearchCondition.Model).Append("%' ");
+            }
+            else
+            {
+                sb.Append(" AND a.ReceiptType like '%").Append(SearchCondition.Model).Append("%' ");
+
+            }
             return sb.ToString();
         }
 
@@ -866,7 +948,7 @@ namespace Runbow.TWS.Dao
             //{
             //    sb.Append(" AND ReceiptNumber='").Append(SearchCondition.ReceiptNumber).Append("'");
             //}
-            
+
 
 
             //根据外部单号进行查询
@@ -895,7 +977,7 @@ namespace Runbow.TWS.Dao
                 sb.Append("AND Article like '%" + SearchCondition.Article.Trim() + "%'");
             }
 
-           
+
 
             if (!string.IsNullOrEmpty(SearchCondition.str1))
             {
@@ -1482,7 +1564,7 @@ namespace Runbow.TWS.Dao
         /// <param name="id"></param>
         /// <param name="UserName"></param>
         /// <returns></returns>
-        public bool UpdateReceiptVolume(string id,string Volume, string UserName, out string msg)
+        public bool UpdateReceiptVolume(string id, string Volume, string UserName, out string msg)
         {
             msg = "";
             using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
@@ -1520,7 +1602,7 @@ namespace Runbow.TWS.Dao
 
         public string BackClsoeBox(string ExternReceiptNumber)
         {
-           string  msg = "";
+            string msg = "";
             using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
             {
                 SqlCommand cmd = new SqlCommand("Proc_WMS_BackClsoeBox_RF", conn);
@@ -1542,7 +1624,7 @@ namespace Runbow.TWS.Dao
                 return msg;
             }
         }
-        
+
         /// <summary>
         /// 根据id查询订单头信息
         /// </summary>
@@ -1555,7 +1637,7 @@ namespace Runbow.TWS.Dao
                 string sql = @"SELECT ID,ReceiptNumber,ExternReceiptNumber,ASNID,ASNNumber,CustomerID,CustomerName,WarehouseID,WarehouseName,ReceiptDate,Status,ReceiptType
                             ,Creator,CreateTime,CompleteDate, str1, str2, str3, str4, str5, str6, str7,str8, str9, str10, str11, str12, str13, 
                             str14, str15, str16, str17, str18, str19, str20, DateTime1, DateTime2,DateTime3, DateTime4, DateTime5, Int1, Int2, Int3, Int4, Int5
-                            FROM dbo.WMS_Receipt WHERE ID IN ("+ids+")";
+                            FROM dbo.WMS_Receipt WHERE ID IN (" + ids + ")";
                 return this.ExecuteDataTableBySqlString(sql).ConvertToEntityCollection<Receipt>();
             }
             catch (Exception e)

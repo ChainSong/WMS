@@ -58,6 +58,9 @@ namespace Runbow.TWS.Entity
         public DateTime? EndDateTime4 { get; set; }
         public DateTime? StartDateTime5 { get; set; }
         public DateTime? EndDateTime5 { get; set; }
+
+        public string Model { get; set; }
+
         //public int? Int1 { get; set; }
         //public int? Int2 { get; set; }
         //public int? Int3 { get; set; }

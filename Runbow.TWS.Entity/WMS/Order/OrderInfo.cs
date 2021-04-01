@@ -257,5 +257,11 @@ namespace Runbow.TWS.Entity
         /// </summary>
         [EntityPropertyExtension("PackageNumber", "PackageNumber")]
         public string PackageNumber { get; set; }
+
+        /// <summary>
+        /// 模型
+        /// </summary>
+        [EntityPropertyExtension("Model", "Model")]
+        public string Model { get; set; }
     }
 }

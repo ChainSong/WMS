@@ -352,6 +352,8 @@
     <Compile Include="System\UserRequest.cs" />
     <Compile Include="System\UserWarehouseRequest.cs" />
     <Compile Include="System\UserWarehouseResponest.cs" />
+    <Compile Include="UnitAndSpecifications\UnitAndSpecificationsRequest.cs" />
+    <Compile Include="UnitAndSpecifications\UnitAndSpecificationsResponest.cs" />
     <Compile Include="WebApi\DeliveryOrderManagementRequest.cs" />
     <Compile Include="WebApi\DeliveryOrderManagementResponse.cs" />
     <Compile Include="WebApi\Express\ApiRequest.cs" />

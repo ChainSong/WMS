@@ -133,6 +133,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             var WorkStation = ApplicationConfigHelper.GetCacheInfo().Where(a => a.WarehouseName == sm.SearchCondition.Warehouse && a.OperationType == 2).GroupBy(a => new { a.OperationAreaID, a.Operation }).Select(c => new SelectListItem() { Value = c.Key.OperationAreaID.ToString(), Text = c.Key.Operation });
 
             ViewBag.WorkStation = WorkStation;
+            sm.Condition.Model = "物料";
 
             var response = new ShelvesManagementService().GetReceipt(new Runbow.TWS.MessageContracts.WMS.Shelves.GetReceiptByConditionRequest
             {
@@ -283,6 +284,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 Request.PageIndex = 0;
                 Request.PageSize = 0;
             }
+            Request.Condition.Model = "物料";
+
             var response = new ShelvesManagementService().GetReceipt(Request);
             sm.IsInnerUser = sm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
             sm.ProjectRoleID = base.UserInfo.ProjectRoleID;
@@ -816,10 +819,10 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                            };
                 responses.Each((i, data) =>
                 {
-                    if (resualtProList.Where(c => (c.SKU == data.SKU && (c.UPC == data.UPC || string.IsNullOrEmpty(data.UPC)))).Select(m => m.GoodsName).FirstOrDefault() == null)
+                    if (resualtProList.Where(c => (c.SKU == data.SKU) ).Select(m => m.GoodsName).FirstOrDefault() == null)
                     {
                         validation = false;
-                        result.Append("").Append("第" + (i + 1).ToString() + "行，【" + data.SKU + "】 SKU或者UPC在该客户下不存在！");
+                        result.Append("").Append("第" + (i + 1).ToString() + "行，【" + data.SKU + "】 产品编码不存在！");
                     }
 
                     //校验库存库区是否存在匹配 并且库区属于门店code中配置库区
@@ -837,14 +840,14 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     }
                 });
                 //NIKE 验证库区库位不匹配门店
-                if (base.UserInfo.ProjectName.Equals("NIKE"))
-                {
-                    if (!validation)
-                    {
-                        return new { result = result.ToString(), IsSuccess = IsSuccess }.ToJsonString();
-                        //return false;
-                    }
-                }
+                //if (base.UserInfo.ProjectName.Equals("NIKE"))
+                //{
+                //    if (!validation)
+                //    {
+                //        return new { result = result.ToString(), IsSuccess = IsSuccess }.ToJsonString();
+                //        //return false;
+                //    }
+                //}
 
                 var response = new ShelvesManagementService().InsertReceiptReceiving(new GetShelvesByConditionRequest()
                 {
@@ -940,6 +943,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     operation.OrderNumber = item.ReceiptNumber;
                     operation.ExternOrderNumber = item.ExternReceiptNumber;
                     logs.Add(operation);
+                    item.str20 = "物料";
                 }
                 var response = new ShelvesManagementService().AddshelvesAndInventory(new GetShelvesByConditionRequest()
                 {
@@ -992,7 +996,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 operation.ProjectName = base.UserInfo.ProjectName;
                 operation.OrderID = id.ToString();
                 logs.Add(operation);
-                response = new ShelvesManagementService().AddInventory(id, base.UserInfo.Name, wms.FirstOrDefault().Name);
+                response = new ShelvesManagementService().AddInventory(id, base.UserInfo.Name, wms.FirstOrDefault().Name,"物料");
                 if (response == "成功")
                 {
                     new LogOperationService().AddLogOperation(logs);
@@ -1003,6 +1007,53 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 throw;
             }
             return response;
+        }
+        //加入库存
+        [HttpPost]
+        public JsonResult AddInventoryFG(string id)
+        {
+            string response = "";
+            List<WMS_Log_Operation> logs = new List<WMS_Log_Operation>();
+            try
+            {
+                #region MyRegion
+                IEnumerable<WMSConfig> wms = null;
+                try
+                {
+                    wms = ApplicationConfigHelper.GetWMS_Config("OrderCancel_" + base.UserInfo.ProjectName);
+                }
+                catch
+                {
+
+                }
+                if (wms == null)
+                {
+                    wms = ApplicationConfigHelper.GetWMS_Config("OrderCancel");
+                }
+                #endregion
+
+                WMS_Log_Operation operation = new WMS_Log_Operation();
+                operation.MenuName = "成品入库单管理";
+                operation.Operation = "成品入库单-上架加入库存";
+                operation.OrderType = "ReceiptReceiving";
+                operation.Controller = Request.RawUrl;
+                operation.Creator = base.UserInfo.Name;
+                operation.CreateTime = DateTime.Now;
+                operation.ProjectID = (int)base.UserInfo.ProjectID;
+                operation.ProjectName = base.UserInfo.ProjectName;
+                operation.OrderID = id.ToString();
+                logs.Add(operation);
+                response = new ShelvesManagementService().AddInventoryFG(id, base.UserInfo.Name, wms.FirstOrDefault().Name);
+                if (response == "成功")
+                {
+                    new LogOperationService().AddLogOperation(logs);
+                }
+            }
+            catch (Exception)
+            {
+                //throw;
+            }
+            return Json(new { Code = 1, response = response });
         }
 
         //Nike差异加入库存
@@ -1111,7 +1162,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 DataSet ds = new DataSet();
                 DataTable dt = new DataTable();
                 dt.Columns.Add("入库单号");
-                dt.Columns.Add("SKU");
+                dt.Columns.Add("产品编码");
                 dt.Columns.Add("订单数量");
                 dt.Columns.Add("上架数量");
                 dt.Columns.Add("差异数量");
@@ -1119,7 +1170,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 {
                     DataRow dr = dt.NewRow();
                     dr["入库单号"] = item.ReceiptNumber;
-                    dr["SKU"] = item.SKU;
+                    dr["产品编码"] = item.SKU;
                     dr["订单数量"] = item.QtyExpected;
                     dr["上架数量"] = item.QtyReceived;
                     dr["差异数量"] = item.QtyReceived - item.QtyExpected;
@@ -1314,12 +1365,12 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                         for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                         {
                             ProductSearch ps = new ProductSearch();
-                            ps.SKU = ds.Tables[0].Rows[i]["SKU"].ToString();
-                            ps.UPC = ds.Tables[0].Rows[i]["UPC"].ToString();
+                            ps.SKU = ds.Tables[0].Rows[i]["产品编码"].ToString();
+                            ps.UPC = ds.Tables[0].Rows[i]["条码"].ToString();
                             ListPs.Add(ps);
                         }
                         IEnumerable<ProductSearch> resualtProList = ApplicationConfigHelper.GetSearchProduct(0, ListPs, "UPC");
-                        
+
                         #region
                         for (int j = 0; j < ds.Tables.Count; j++)
                         {
@@ -1348,9 +1399,9 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                     {
                                         return new { result = "第【" + i + "】行,【" + ds.Tables[0].Rows[i]["实际数量"].ToString() + "】 不是数字！", IsSuccess = false }.ToJsonString();
                                     }
-                                    if (resualtProList.Where(c => (c.SKU == ds.Tables[0].Rows[i]["SKU"].ToString() && (c.UPC == ds.Tables[0].Rows[i]["UPC"].ToString() || string.IsNullOrEmpty(ds.Tables[0].Rows[i]["UPC"].ToString())) && c.CustomerName == Customer)).Select(m => m.SKU).FirstOrDefault() == null)// || string.IsNullOrEmpty(c.UPC.ToString())
+                                    if (resualtProList.Where(c => (c.SKU == ds.Tables[0].Rows[i]["产品编码"].ToString() && (c.UPC == ds.Tables[0].Rows[i]["UPC"].ToString() || string.IsNullOrEmpty(ds.Tables[0].Rows[i]["UPC"].ToString())) && c.CustomerName == Customer)).Select(m => m.SKU).FirstOrDefault() == null)// || string.IsNullOrEmpty(c.UPC.ToString())
                                     {
-                                        return new { result = "第【" + i + "】行,【" + ds.Tables[0].Rows[i]["SKU"].ToString() + "】 SKU或者UPC在该客户下不存在！", IsSuccess = false }.ToJsonString();
+                                        return new { result = "第【" + i + "】行,【" + ds.Tables[0].Rows[i]["产品编码"].ToString() + "】 产品编码不存在！", IsSuccess = false }.ToJsonString();
                                     }
                                     if (UnitAndSpecificationsList.Where(c => c.Unit == ds.Tables[0].Rows[i]["单位"].ToString().Trim()).Count() == 0)
                                     {
@@ -1361,8 +1412,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                         ReceiptNumber = ds.Tables[0].Rows[i]["入库单号"].ToString().Trim(),
                                         ExternReceiptNumber = ds.Tables[0].Rows[i]["外部单号"].ToString().Trim(),
                                         LineNumber = ds.Tables[0].Rows[i]["收货单行号"].ToString().Trim(),
-                                        SKU = ds.Tables[0].Rows[i]["SKU"].ToString().Trim(),
-                                        UPC = ds.Tables[0].Rows[i]["UPC"].ToString().Trim(),
+                                        SKU = ds.Tables[0].Rows[i]["产品编码"].ToString().Trim(),
+                                        UPC = ds.Tables[0].Rows[i]["条码"].ToString().Trim(),
                                         SkuLineNumber = (i + 1).ToString().PadLeft(5, '0'),//ds.Tables[0].Rows[i]["SKU行号"].ToString().Trim(),
                                         GoodsName = ds.Tables[0].Rows[i]["货品名称"].ToString().Trim(),
                                         GoodsType = ds.Tables[0].Rows[i]["货品类型"].ToString().Trim(),
@@ -1417,7 +1468,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                                     wms = ApplicationConfigHelper.GetWMS_Config("OrderCancel_" + base.UserInfo.ProjectName);
                                 }
                                 catch
-                                {}
+                                { }
                                 if (wms == null)
                                 {
                                     wms = ApplicationConfigHelper.GetWMS_Config("OrderCancel");

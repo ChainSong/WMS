@@ -1,0 +1,61 @@
+﻿@Url.PopupJs()
+@model Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>查询条件</legend>
+        <table>
+            <tr>
+                @{
+                    var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+                }
+                <td class="TableColumnTitle">客户</td>
+                <td>@Html.DropDownListFor(m => m.SearchCondition.CustomerID, CustomerList, "==请选择==", new { @class = "form-control" })</td>
+                <td class="TableColumnTitle">预出库单号</td>
+                <td>@Html.TextAreaFor(m => m.SearchCondition.PreOrderNumber, new { @class = "form-control" })</td>
+
+            </tr>
+        </table>
+        <div class="actionButtonDiv">
+            <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>预出库单列表</legend>
+        <div id="statusBackDiv">
+            <table id="PreTable">
+                <thead>
+                    <tr>
+                        <th>预出库单号</th>
+                        <th>客户</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.SearchConditionResponse != null && Model.SearchConditionResponse.Any())
+                    {
+                        foreach (var preOrder in Model.SearchConditionResponse.Where(m => m.Status <= 5))
+                        {
+                            <tr id="@preOrder.PreOrderNumber">
+                                <td>@preOrder.PreOrderNumber</td>
+                                <td>@preOrder.CustomerName</td>
+                                <td>
+                                    @Model.PreOrderStatusRead.SingleOrDefault(m => m.Value == @preOrder.Status.ToString()).Text
+                            </td>
+                            <td>@preOrder.CreateTime</td>
+                            <td style="display:none">@preOrder.ID</td>
+                        </tr>
+
+                    }
+                }
+                </tbody>
+            </table>
+            @Html.Pager(Model.PageIndex, Model.PageCount, "")
+        </div>
+    </fieldset>
+}

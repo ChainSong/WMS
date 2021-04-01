@@ -1031,7 +1031,7 @@ function Package(ID, type, obj) {
             return;
         }
     });
-    
+
 }
 
 //function Package(ID, type, obj) {
@@ -1947,72 +1947,187 @@ function Outs(ID, obj) {
         //    });
         //}
         //else {
+        //$.ajax({
+        //    type: "POST",
+        //    url: "/WMS/OrderManagement/CheckDiff",
+        //    data: {
+        //        "id": ID,
+        //    },
+        //    dataType: "json",
+        //    async: false,
+        //    success: function (data) {
+        //        if (data.Code == 2) {
+        //            showMsg("检查差异失败！", 4000);
+        //        }
+        //        else {
+        //            if (data.data.length <= 0) {
         $.ajax({
-            type: "POST",
-            url: "/WMS/OrderManagement/CheckDiff",
+            type: "Post",
+            url: "/WMS/OrderManagement/Outs",
             data: {
-                "id": ID,
+                "ID": ID
             },
-            dataType: "json",
-            async: false,
+            async: "false",
             success: function (data) {
-                if (data.Code == 2) {
-                    showMsg("检查差异失败！", 4000);
+                var a = parseInt(obj.parentNode.parentNode.parentNode.cells.length);
+                if (data == "") {
+                    showMsg("出库完成！", 4000);
+                    obj.parentNode.parentNode.parentNode.cells[7].innerHTML = '已出库';
+                    //ChuKuWanCheng(ID);
+                    obj.parentNode.parentNode.parentNode.cells[a - 1].children.StatusbackCode.value = 9;
+
                 }
                 else {
-                    if (data.data.length <= 0) {
-                        $.ajax({
-                            type: "Post",
-                            url: "/WMS/OrderManagement/Outs",
-                            data: {
-                                "ID": ID
-                            },
-                            async: "false",
-                            success: function (data) {
-                                var a = parseInt(obj.parentNode.parentNode.parentNode.cells.length);
-                                if (data == "") {
-                                    showMsg("出库完成！", 4000);
-                                    obj.parentNode.parentNode.parentNode.cells[7].innerHTML = '已出库'
-                                    obj.parentNode.parentNode.parentNode.cells[a - 1].children.StatusbackCode.value = 9
-                                }
-                                else {
-                                    showMsg("出库失败：" + data, 4000);
-                                }
-                            },
-                            error: function (msg) {
-                                alert(msg.val);
-                            }
-
-                        });
-                    }
-                    else {
-
-                        var html = $("#CheckDifference").render(data.data);
-                        //页面层
-                        layer.open({
-                            title: '<h4 style="color: #ff0000;text-align:center">包装差异如下确认是否出库？</h4>',
-                            type: 1,
-                            skin: 'layui-layer-rim', //加上边框
-                            area: ['550px', '400px'], //宽高
-                            content: showmsgOut(html)
-                        });
-
-                        $("#OrderOutID").val(ID);
-                        TempObj = $(obj);
-
-                    }
-
+                    showMsg("出库失败：" + data, 4000);
                 }
             },
             error: function (msg) {
-                showMsg("检查差异失败！", 4000);
+                alert(msg.val);
             }
+
         });
+        //}
+        //else {
+
+        //    var html = $("#CheckDifference").render(data.data);
+        //    //页面层
+        //    layer.open({
+        //        title: '<h4 style="color: #ff0000;text-align:center">包装差异如下确认是否出库？</h4>',
+        //        type: 1,
+        //        skin: 'layui-layer-rim', //加上边框
+        //        area: ['550px', '400px'], //宽高
+        //        content: showmsgOut(html)
+        //    });
+
+        //    $("#OrderOutID").val(ID);
+        //    TempObj = $(obj);
+
+        //}
+
+        //}
+        //    },
+        //    error: function (msg) {
+        //        showMsg("检查差异失败！", 4000);
+        //    }
+        //});
         //}
 
     });
 
 }
+function ChuKuWanCheng(ID) {
+    $.ajax({
+        type: "Post",
+        url: "/WMS/PreOrder/GetAssociateFG",
+        data: {
+            "ID": ID
+        },
+        async: "false",
+        success: function (data) {
+            //var a = parseInt(obj.parentNode.parentNode.parentNode.cells.length);
+            if (data.Code == "1") {
+                var _html = '';
+                _html = ' <table id="AssociateFG">\
+                <tr>\
+                <td class="TableColumnTitle" style = "width: 100px"  >订单号:</td >\
+                <td class="TableColumnTitle" style="width: 100px" id="OrderNumberFG">'+ data.data.SearchCondition["ExternOrderNumber"] + '</td>\
+        </tr>\
+            <tr>\
+                <td class="TableColumnTitle" style="width: 100px">SKU</td>\
+                <td class="TableColumnTitle" style="width: 100px">成品数量</td>\
+                <td class="TableColumnTitle" style="width: 100px">残次数量</td>\
+            </tr>';
+                for (var i = 0; i < data.data.PreOd.length; i++) {
+
+                    _html += '<tr>\
+                <td  style="width: 100px" id="SKU" >'+ data.data.PreOd[i]["SKU"] + '</td>\
+                <td  style="width: 100px"><input type="text" id="OriginalQty"   value="'+ data.data.PreOd[i]["OriginalQty"] + '"></td>\
+                <td  style="width: 100px"><input type="text" id="DefectQty"   value="0"></td>\
+            </tr>'
+                }
+                _html += '</table >\
+                <br>\
+                <br>\
+                    <div class="actionButtonDiv">\
+                        <input type="button" class="btn btn-success" value="确定" id="AssociateFGSubmit" />\
+                    </div>'
+                //页面层 
+                layer.open({
+                    type: 1,
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['520px', '300px'], //宽高
+                    content: _html
+                });
+            }
+            else {
+            }
+        },
+        error: function (msg) {
+            alert(msg.val);
+        }
+    });
+}
+$("#AssociateFGSubmit").live('click', function () {
+
+    var Jsonstr = getUpdateAssociateFGJson("AssociateFG");
+
+    $.ajax({
+        type: "Post",
+        url: "/WMS/PreOrder/UpdateAssociateFG",
+        data: {
+            "JsonStr": Jsonstr,
+            "OrderNumber": $("#OrderNumberFG")[0].innerText,
+        },
+        async: "false",
+        success: function (data) {
+            //var a = parseInt(obj.parentNode.parentNode.parentNode.cells.length);
+            if (data.Code == "1") {
+
+            }
+            else {
+            }
+        },
+        error: function (msg) {
+            alert(msg.val);
+        }
+    });
+});
+
+function getUpdateAssociateFGJson(TableName) {
+    var txt = "[";
+    var table = document.getElementById(TableName);
+    var row = table.getElementsByTagName("tr");
+    if (row.length > 1) {
+        var r = "{";
+        for (var j = 0; j < row.length; j++) {
+            var col = row[j].getElementsByTagName("td");
+            for (var i = 0; i < col.length; i++) {
+                var tds = row[j].getElementsByTagName("td");
+                if (tds[i].className.trim() != "TableColumnTitle" && tds[i].innerHTML.trim() != "") {
+
+                    if ($(tds[i]).children('input').length > 0) {
+                        r += "\"" + $(tds[i]).children('input')[0].id.trim() + "\"\:\"" + $(tds[i]).children('input')[0].value.trim() + "\",";
+                    }
+                    else {
+                        r += "\"" + $(tds[i])[0].id.trim() + "\"\:\"" + $(tds[i])[0].innerText.trim() + "\",";
+                    }
+
+
+                }
+            }
+        }
+        r = r.substring(0, r.length - 1)
+        r += "}";
+        txt += r;
+    }
+    txt += "]";
+    return txt;
+}
+//function AssociateFGSubmit() {
+
+
+//}
+
 //包装导入 
 var fileImportClick = function () {
     if ($('#importExcel').val() === '') {

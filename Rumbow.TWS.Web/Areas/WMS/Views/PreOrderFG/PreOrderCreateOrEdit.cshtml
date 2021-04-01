@@ -1,0 +1,681 @@
+﻿@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+@Url.jsrender()
+@Url.PopupJs()
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@{
+    var Columns = Model.Config1.ColumnCollection.Where(c => (c.ForView == true));
+
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = Model.Config1.ColumnCollection.Where(c => c.IsSearchCondition).OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+
+    var showColumns = Model.IsInnerUser ? Columns : Columns;//保留可能
+
+    var ColumnsOd = Model.Config2.ColumnCollection.Where(c => (c.ForView == true));
+
+    IList<Runbow.TWS.Entity.Column> dynamicSearchColumnsOd = Model.Config2.ColumnCollection.Where(c => c.IsSearchCondition).OrderBy(c => c.SearchConditionOrder).ToList();
+    int dynamicSearchColumnRowCountOd = dynamicSearchColumnsOd.Count % 3 > 0 ? dynamicSearchColumnsOd.Count / 3 + 1 : dynamicSearchColumnsOd.Count / 3;
+    var showColumnsOd = Model.IsInnerUser ? ColumnsOd : ColumnsOd;//保留可能
+}
+@using (Html.BeginForm("PreOrderCreateOrEdit", "PreOrder", FormMethod.Post, new { @name = "MyForm" }))
+{
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.OrderTime)
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.EndOrderTime)
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.ID)
+    @Html.HiddenFor(m => m.PageIndex)
+    @Html.HiddenFor(m => m.ViewType)
+    @Html.HiddenFor(m => m.ReturnViewType)
+    @Html.HiddenFor(m => m.PreAndDetail.SearchCondition.CustomerID)
+    @Html.Hidden("backFlag", (int)ViewBag.backFlag)
+    <fieldset>
+        <legend>预出库单基本信息</legend>
+        <form>
+            <table id="conditionTable">
+                @for (int i = 0; i < dynamicSearchColumnRowCount; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < 3; j++)
+                        {
+                            var index = i * 3 + j;
+                            if (index >= dynamicSearchColumns.Count)
+                            {
+                                <td colspan="2"></td>
+                            }
+                            else
+                            {
+                                var column = dynamicSearchColumns[i * 3 + j];
+                                var o = typeof(Runbow.TWS.Entity.PreOrderSearchCondition).GetProperty(column.DbColumnName).GetValue(Model.PreAndDetail.SearchCondition);
+                                <td class="TableColumnTitle">
+                                    @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                                </td>
+                                <td>
+                                    @{
+                                        if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                                        {
+                                            if (Model.ViewType == 0 || Model.ViewType == 3)
+                                            {
+                                                @o.ObjectToDateTime().DateTimeToString();
+                                            }
+                                            else if (Model.ViewType == 1)
+                                            {
+                                                @Html.Calendar(column.DbColumnName, "notKeyVal form-control datetimeval")
+                                            }
+                                            else if (Model.ViewType == 2)
+                                            {
+                                                @Html.Calendar(column.DbColumnName, "ExpectDate form-control", o.ObjectToNullableDateTime())
+                                            }
+                                        }
+                                        else if (column.Type == "CheckBox")
+                                        {
+                                            @Html.CheckBox(column.DbColumnName, new { @class = "notKeyVal form-control", id = column.DbColumnName });
+                                        }
+                                        else if (column.Type == "DropDownList" && column.IsKey)
+                                        {
+                                            if (Model.ViewType == 0 || Model.ViewType == 3)
+                                            {
+                                                if (column.DbColumnName == "Status")
+                                                {
+                                                    switch (@o.ToString())
+                                                    {
+                                                        case "1":
+                                                            @Html.Raw("新增")
+                                                            break;
+                                                        case "3":
+                                                            @Html.Raw("库存不足")
+                                                            break;
+                                                        case "5":
+                                                            @Html.Raw("已完成出库单")
+                                                            break;
+                                                        case "9":
+                                                            @Html.Raw("完成")
+                                                            break;
+                                                        case "-1":
+                                                            @Html.Raw("取消")
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @o.ToString();
+                                                }
+                                            }
+                                            else if (Model.ViewType == 1)
+                                            {
+                                                @Html.DropDownList(column.DbColumnName, (IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model).ConvertSimpleType(typeof(IEnumerable<SelectListItem>)), "==请选择==", new { @class = "DropDownList form-control" })
+                                            }
+                                            else if (Model.ViewType == 2)
+                                            {
+                                                var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.PreOrders.PreOrderViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+
+                                                if (o != null && !string.IsNullOrEmpty(o.ToString()))
+                                                {
+                                                    foreach (var l in list)
+                                                    {
+                                                        if (l.Text == o.ToString() || l.Value == o.ToString())
+                                                        {
+                                                            l.Selected = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                @Html.DropDownList(column.DbColumnName, list, "==请选择==", new { @class = "form-control" })
+                                            }
+                                        }
+                                        else if (column.Type == "DropDownList" && !column.IsKey)
+                                        {
+                                            @Html.DropDownList(column.DbColumnName, Model.TrueOrFalse, new { @class = "notKeyVal form-control ", id = column.DbColumnName, @style = "width:100%", type = "DropDownList" });
+                                        }
+                                        else if (column.Type == "RegionPicker")
+                                        {
+                                            if (column.DbColumnName == "StartCityName")
+                                            {
+                                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                                <a id="startCityClear" href="#">清空</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                                <a id="endCityClear" href="#">清空</a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Model.ViewType != 0 && Model.ViewType != 3)
+                                            {
+                                                if (column.DbColumnName == "PreOrderNumber")
+                                                {
+                                                    @Html.TextBox(column.DbColumnName, o, new { @class = "form-control", id = column.DbColumnName, style = "width:100%;", disabled = "disabled" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBox(column.DbColumnName, o, new { @class = "form-control", id = column.DbColumnName, style = "width:100%;" })
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @o.ToString()
+                                            }
+                                        }
+                                    }
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </table>
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend>预出库单明细信息</legend>
+        <div id="NewDiv" style="overflow-X: scroll;">
+            <table id="Newtable" style="width: 110%; table-layout: fixed;">
+                <thead>
+                    @if (Model.ViewType == 0 || Model.ViewType == 3)
+                    {
+                        <tr>
+                            @foreach (var column in showColumnsOd)
+                            {
+                                if (@column.DisplayName.Trim() != "可用数量")
+                                {
+                                    if (@column.DbColumnName == "LineNumber")
+                                    {
+                                        <th style="width: 60px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "SKU")
+                                    {
+                                        <th style="width: 150px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "GoodsName")
+                                    {
+                                        <th style="width: 160px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "GoodsType")
+                                    {
+                                        <th style="width: 110px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "OriginalQty")
+                                    {
+                                        <th style="width: 90px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "InventoryQty")
+                                    {
+                                        <th style="width: 90px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else
+                                    {
+                                        <th style="width: 180px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                }
+                            }
+                        </tr>
+                    }
+                    @if (Model.ViewType == 1 || Model.ViewType == 2)
+                    {
+                        <tr>
+                            <th style="width: 60px">操作</th>
+                            @foreach (var column in showColumnsOd)
+                            {
+                                if (@column.DisplayName.Trim() != "已分配数量" && Model.ViewType == 2)
+                                {
+                                    if (@column.DbColumnName == "LineNumber")
+                                    {
+                                        <th style="width: 60px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "SKU")
+                                    {
+                                        <th style="width: 150px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "GoodsName")
+                                    {
+                                        <th style="width: 160px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "GoodsType")
+                                    {
+                                        <th style="width: 110px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "OriginalQty")
+                                    {
+                                        <th style="width: 90px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "InventoryQty")
+                                    {
+                                        <th style="width: 90px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else
+                                    {
+                                        <th style="width: 180px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                }
+                                else if (Model.ViewType == 1 && @column.DisplayName.Trim() != "已分配数量")
+                                {
+                                    if (@column.DbColumnName == "LineNumber")
+                                    {
+                                        <th style="width: 60px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "SKU")
+                                    {
+                                        <th style="width: 150px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "GoodsName")
+                                    {
+                                        <th style="width: 160px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "GoodsType")
+                                    {
+                                        <th style="width: 110px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "OriginalQty")
+                                    {
+                                        <th style="width: 90px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else if (@column.DbColumnName == "InventoryQty")
+                                    {
+                                        <th style="width: 90px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                    else
+                                    {
+                                        <th style="width: 180px">
+                                            @column.DisplayName
+                                        </th>
+                                    }
+                                }
+                            }
+                        </tr>
+                    }
+                </thead>
+                <tbody id="resultTable">
+                    @if (Model.ViewType == 2)
+                    {
+                        foreach (var item in Model.PreAndDetail.PreOd)
+                        {
+                            var Numbers = "inventoryQty" + item.LineNumber;
+                            var batchs = "batchs" + item.LineNumber;
+                            var boxnumbers = "boxnumber" + item.LineNumber;
+                            <tr>
+                                <td style="position: relative" class="OoperationTD">
+                                    <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" onclick="BreakUp(this,'00001')">新增一行</label>
+                                        @*<div data-id="@crminfo.ID"   class="editSettledPod">编辑</div>*@
+                                        <label style="cursor: pointer;" data-name="@item.LineNumber" class="btn btn-primary btn-xs DelButton" onclick="Del(this)">删除</label>
+                                        @*<div    onclick="deleteSKU('@crminfo.ID',this)">删除</div>*@
+                                    </div>
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                    @*<div    onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                                </td>
+                                @foreach (var column2 in showColumnsOd)
+                                {
+                                    if (column2.DisplayName.Trim() != "已分配数量")
+                                    {
+                                <td style="width: auto" class="@column2.DbColumnName">
+                                    @{
+                                        var o = typeof(Runbow.TWS.Entity.PreOrderDetail).GetProperty(column2.DbColumnName).GetValue(item);
+                                        switch (column2.Type)
+                                        {
+                                            case "CheckBox":
+                                                if (!string.IsNullOrEmpty(o.ToString()))
+                                                {
+                                                    if (o.ObjectToNullableInt32() == 1)
+                                                    {
+                                                        <input type="text" value="Y" class="form-control" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" value="N" class="form-control" />
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    //@Html.Raw("N")
+                                                    <input type="text" value="N" class="form-control" />
+                                                }
+                                                break;
+                                            case "DropDownList":
+                                                if (!column2.IsKey)
+                                                {
+                                                    @Html.ChooseString(o != null && o.ToString() == "1", "Y", "N")
+                                                }
+                                                else
+                                                {
+                                                    if (column2.DbColumnName == "GoodsType")
+                                                    {
+                                                        if (!string.IsNullOrEmpty(@o.ToString()))
+                                                        {
+                                                            var list = Model.selectList.ToList();
+                                                            for (int ss = 0; ss < list.Count(); ss++)
+                                                            {
+                                                                if (list[ss].Text == @o.ToString())
+                                                                {
+                                                                    list[ss].Selected = true;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            @Html.DropDownList(column2.DbColumnName, list, "==请选择==", new { @class = "form-control" })
+                                                        }
+                                                        @*@Html.DropDownList("GoodsType00001", Model.selectList, @o.ToString(), new { @class = "notKeyVal form-control", style = "width:100px", type = "DropDownList" })*@
+                                                    }
+                                                    else if (column2.DbColumnName == "BatchNumber")//batchs
+                                                    {
+                                                        @Html.DropDownList("batchs00001", Model.batchList, @o.ToString(), new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                    }
+                                                    else if (column2.DbColumnName == "BoxNumber")//boxnumber
+                                                    {
+                                                        @Html.DropDownList("boxnumber00001", Model.batchList, @o.ToString(), new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                    }
+                                                    else if (column2.DbColumnName == "Unit")
+                                                    {
+                                                        @Html.DropDownList("Unit00001", Model.UnitList, @o.ToString(), new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                    }
+                                                    else if (column2.DbColumnName == "Specifications")
+                                                    {
+                                                        @Html.DropDownList("Specifications00001", Model.SpecificationsList, @o.ToString(), new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                    }
+                                                    else
+                                                    {
+                                                        //@Html.DropDownList("GoodsType00001", Model.batchList, @o.ToString(), new { @class = "notKeyVal form-control", style = "width:50px", type = "DropDownList" })
+                                                    }
+                                                }
+                                                break;
+                                            case "DateTime":
+                                                var temp = (DateTime?)o;
+                                                if (temp.HasValue)
+                                                {
+                                                    <input type="text" value=" @temp.Value.DateTimeToString()" style="width:130px" class="form-control" />
+                                                }
+                                                break;
+                                            case "DateTimeWithTime":
+                                                var temp1 = (DateTime?)o;
+                                                if (temp1.HasValue)
+                                                {
+                                                    <input type="text" value=" @temp1.Value.ToString("yyyy-MM-dd HH:mm")" style="width:130px" class="form-control" />
+                                                }
+                                                break;
+                                            default:
+                                                switch (column2.DisplayName)
+                                                {
+                                                    case "SKU":
+                                                        <input type='text' name='sku' onkeydown="GetSkuList(this)" style="width:130px" class="form-control skucheck" value='@o.ToString()' />
+                                                        break;
+                                                    case "UPC":
+                                                        <input type='text' name='upc' style="width:130px" class="form-control upccheck" value='@o.ToString()' />
+                                                        break;
+                                                    case "产品编码":
+                                                        <input type='text' name='sku' onkeydown="GetSkuList(this)" style="width:130px" class="form-control skucheck" value='@o.ToString()' />
+                                                        break;
+                                                    case "条码":
+                                                        <input type='text' name='upc' style="width:130px" class="form-control upccheck" value='@o.ToString()' />
+                                                        break;
+                                                    case "产品名称":
+                                                        <input type='text' name='goodsname' readonly="readonly" style="width: 150px" class=' form-control goodsnam' value='@o.ToString()' />
+                                                        break;
+                                                    case "预收数量":
+                                                        <input type="text" value=" @o.ToString()" style="width:130px" class="form-control" />
+                                                        break;
+                                                    case "单价":
+                                                        <input type="text" name="str4" value=" @o.ToString()" style="width:130px" class="form-control" />
+                                                        break;
+                                                    case "可用数量":
+                                                        <input type="text" value="" id="@Numbers" style="width:80px" readonly="readonly" class="form-control" />
+                                                        break;
+                                                    case "期望数量":
+                                                        <input type='text' name='OpenQty' style="width: 80px" class="form-control" value=" @o.ToString()" oninput="replaceNotNumber(this)" />
+                                                        @*<input type="text"style="width:80px" class="form-control"/>*@
+                                                        break;
+                                                    case "行号":
+                                                        @o.ToString();
+                                                        break;
+                                                    default:
+                                                        <input type="text" value=" @o.ToString()" style="width:150px" class="form-control" />
+                                                        break;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                </td>
+                                    }
+                                }
+                                @* <td style="position: absolute; left: 87%; width: 120px; height: 40px">
+                                        <label style="cursor: pointer; color: white" onclick="Del(this)" class="label label-info">删除</label>
+                                        <label   style="cursor: pointer; color:white" class="label label-info" onclick="AddNew(this,'00001')">新增一行</label>
+                                    </td>*@
+                            </tr>
+                        }
+                    }
+                    @if (Model.ViewType == 1)
+                    {
+                        <tr>
+                            <td style="position: relative" class="OoperationTD">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    @*  <label id="labelRemove" style="cursor: pointer; color: white" onclick="Del(this)" class="label label-info">删除</label>
+                                        <label data-name="" style="cursor: pointer; color: white" class="label label-info" onclick="BreakUp(this,'00001')">新增一行</label>*@
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs AddButton" onclick="BreakUp(this,'00001')">新增一行</label>
+                                    @*<div data-id="@crminfo.ID"   class="editSettledPod">编辑</div>*@
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs DelButton" onclick="Del(this)">删除</label>
+                                    @*<div    onclick="deleteSKU('@crminfo.ID',this)">删除</div>*@
+                                </div>
+                                <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                @*<div    onmouseover="ShowsIn('@crminfo.ID',this)">操作类型</div>*@
+                            </td>
+                            @foreach (var column2 in showColumnsOd)
+                            {
+                                if (column2.DbColumnName == "LineNumber")
+                                {
+                                    <td class="@column2.DbColumnName">00001</td>
+                                }
+                                else if (column2.DisplayName.Trim() != "已分配数量" && column2.DisplayName != "行号")
+                                {
+                                    <td class="@column2.DbColumnName">
+                                        @{
+                                            if (column2 != null)
+                                            {
+                                                switch (column2.DisplayName)
+                                                {
+                                                    case "备注":
+                                                        <input type="text" value="" style="width: 160px" class="form-control" />
+                                                        break;
+                                                    case "产品等级":
+                                                        @Html.DropDownList("A品", Model.selectList, new { @class = "notKeyVal form-control", style = "width:100px", type = "DropDownList" })
+                                                        break;
+                                                    case "产品名称":
+                                                        <input type='text' name='goodsname' readonly='true' style="width: 150px" class=' form-control goodsnam' value='' />
+                                                        break;
+                                                    case "批次号":
+                                                        @Html.DropDownList("batchs00001", Model.batchList, new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                        break;
+                                                    case "托号":
+                                                        @Html.DropDownList("boxnumber00001", Model.batchList, new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                        break;
+                                                    case "箱号":
+                                                        @Html.DropDownList("boxnumber00001", Model.batchList, new { @class = "notKeyVal form-control", style = "width:150px", type = "DropDownList" })
+                                                        break;
+                                                    case "单位":
+                                                        @Html.DropDownList("Unit00001", Model.UnitList, new { @class = " form-control", style = "width:150px", type = "DropDownList" })
+                                                        break;
+                                                    case "规格":
+                                                        @Html.DropDownList("Specifications00001", Model.SpecificationsList, new { @class = " form-control", style = "width:150px", type = "DropDownList" })
+                                                        break;
+                                                    case "SKU":
+                                                        <input type='text' name='sku' onkeydown="GetSkuList(this)" style="width: 130px" class="form-control skucheck" value='' />
+                                                        break;
+                                                    case "UPC":
+                                                        <input type='text' name='upc' style="width: 130px" class="form-control upccheck" value='' />
+                                                        break;
+                                                    case "产品编码":
+                                                        <input type='text' name='sku' onkeydown="GetSkuList(this)" style="width: 130px" class="form-control skucheck" value='' />
+                                                        break;
+                                                    case "条码":
+                                                        <input type='text' name='upc' style="width: 130px" class="form-control upccheck" value='' />
+                                                        break;
+                                                    case "可用数量":
+                                                        <input type='text' id='inventoryQty00001' name='inventoryQty' readonly='true' style="width: 80px" class=' form-control inventoryQtycss' value='' />
+                                                        break;
+                                                    case "期望数量":
+                                                        <input type='text' name='OpenQty' style="width: 80px" class="form-control" value='' oninput="replaceNotNumber(this)" />
+                                                        break;
+                                                    case "库区":
+                                                        <input type='text' name='Area' style="width: 130px" class="form-contro " validate="{number:true,messages:{required:'请输入数字'}}" value='' required />
+                                                        break;
+                                                    default:
+                                                        <input type="text" style="width: 150px" class="form-control" placeholder="" value="" />
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                    @if (Model.ViewType == 0)
+                    {
+                        foreach (var item in Model.PreAndDetail.PreOd)
+                        {
+                            <tr>
+                                @foreach (var column2 in showColumnsOd.Where(c => c.DisplayName != "可用数量"))
+                                {
+                                    var o = typeof(Runbow.TWS.Entity.PreOrderDetail).GetProperty(column2.DbColumnName).GetValue(item);
+                                    <td>
+                                        @if (o != null)
+                                        {
+                                            @o.ToString()
+                                        }
+                                    </td>
+                                }
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <div class="actionButtonDiv">
+        @if (Model.PreAndDetail.SearchCondition.Status != 9)
+        {
+            if (Model.ViewType != 0)
+            {
+                <input type="submit" class="btn btn-success" value="提交" id="searchButton" name="Action" />
+            }
+            if (Model.ViewType != 1)
+            {
+                if (Model.ViewType == 0 && Model.ViewType == 3)
+                {
+                    <input type="button" class="btn btn-success" value="自动分配" id="AutomaticAllocation" title="" data-container="body" />
+                    <input type="button" class="btn btn-success" value="手动分配" id="ManualAllocation" />
+                    <input type="button" class="btn btn-success" value="取消" id="Cancel" data-Id="@Model.PreAndDetail.SearchCondition.ID" data-CustomerID="@Model.PreAndDetail.SearchCondition.CustomerID" data-status="@Model.PreAndDetail.SearchCondition.Status" onclick="Cancel(this)" />
+                    <input type="button" class="btn btn-success" value="完成" id="Complete" onclick="Complete('@Model.PreAndDetail.SearchCondition.ID    ')" />
+                }
+            }
+        }
+        @if (Model.ViewType != 1 && @Model.PreAndDetail.SearchCondition.Status >= 5 && Model.Flag != 2)
+        {
+            <input type="button" class="btn btn-success" data-Id="@Model.PreAndDetail.SearchCondition.ID" id="CheckOutboundOrder" value="查看出库单" />
+        }
+        @if (Session["backFlag"].ObjectToInt32() == 0)
+        {
+            <input type="button" class="btn btn-success" id="ReturnHistory" value="返回" />
+        }
+        else
+        {
+            <input type="button" class="btn btn-success" id="ReturnIndex" value="返回" />
+        }
+    </div>
+}
+<div id="DisInfo" style="display: none">
+    <table>
+        <thead>
+            <tr>
+                @*<th>ID</th>*@
+                <th>外部单号</th>
+                <th>客户</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody id="DisInfoBody">
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script id="Evaluation" type="text/x-jsrender">
+    <tr>
+        @*<td>{{:POID}}</td>*@
+        <td>{{:ExternOrderNumber}}</td>
+        <td>{{:Customer}}</td>
+        <td>{{:Note}}</td>
+    </tr>
+</script>
+<div id="CheckOutbound" style="display: none">
+    <table>
+        <thead>
+            <tr>
+                @*<th>ID</th>*@
+                <th>出库单号</th>
+                <th>客户</th>
+                <th>明细数量</th>
+            </tr>
+        </thead>
+        <tbody id="CheckOutboundOrderBody">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script id="CheckOutboundOrderList" type="text/x-jsrender">
+    <tr>
+        @*<td>{{:POID}}</td>*@
+        <td><a href="/WMS/OrderManagement/OrderDetailView/?ID={{:ID}}&ViewType=3">{{:OrderNumber}}</a></td>
+        <td>{{:CustomerName}}</td>
+        <td>{{:DetailCount}}</td>
+    </tr>
+</script>

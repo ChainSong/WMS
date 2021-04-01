@@ -4714,6 +4714,20 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             return new DeliverConfirmService().VilidateDeliverExpress(ExpressNumber, customerID, warehouse);
         }
+
+        /// <summary>
+        /// 面单打印
+        /// </summary>
+        /// <param name="IDs"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public ActionResult PrintWaveOrderExp(string IDs)
+        {
+            PrintWaveModel model = new PrintWaveModel();
+            model = new OrderECManagementService().GetPrintWaveOrder(IDs, 3);
+            return View(model);
+        }
+
         /// <summary>
         /// 交接称重获取待上传信息
         /// </summary>
