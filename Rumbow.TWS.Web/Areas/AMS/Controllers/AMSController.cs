@@ -17,7 +17,6 @@ using System.Data;
 using Runbow.TWS.MessageContracts.AMS;
 using Runbow.TWS.Web.Areas.AMS.Models;
 using System.Text;
-using Runbow.TWS.Common;
 namespace Runbow.TWS.Web.Areas.AMS.Controllers
 {
     public class AMSController : BaseController
