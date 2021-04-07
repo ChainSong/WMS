@@ -8,36 +8,38 @@
 
 @using (Html.BeginForm())
 {
-    @Html.HiddenFor(m => m.SearchCondition.StatUpLoadTime)
-    @Html.HiddenFor(m => m.SearchCondition.EndUpLoadTime)
     @Html.HiddenFor(m => m.PageIndex)
     <fieldset>
         <legend>查询条件</legend>
         <table>
             <tr>
-                <td class="TableColumnTitle">客户名称</td>
+                <td class="TableColumnTitle" style="font-weight:700">成品订单号</td>
                 <td>
-                    @Html.DropDownListFor(m => m.SearchCondition.CustomerID, Model.Customers, "==请选择==")
+                    @Html.TextAreaFor(m => m.packageSearch.PackageNumber, new { @class = "notKeyVal form-control", @style = "width:100%" })
                 </td>
-                <td class="TableColumnTitle">运单状态</td>
+                <td class="TableColumnTitle" style="font-weight:700">出库单号</td>
                 <td>
-                    <select style="width:150px">
-                        <option>已出库</option>
-                        <option>待分配</option>
-                        <option>待下单</option>
-                        <option selected="selected">运输中</option>
-                        <option>已签收</option>
-                    </select>
+                    @Html.TextAreaFor(m => m.packageSearch.OrderNumber, new { @class = "notKeyVal form-control", @style = "width:100%" })
                 </td>
-                <td class="TableColumnTitle">发货日期</td>
+                <td class="TableColumnTitle" style="font-weight:700">快递单号</td>
                 <td>
-                    @Html.CalendarRange("UpLoadTime", "calendarRange")
+                    @Html.TextAreaFor(m => m.packageSearch.ExpressNumber, new { @class = "notKeyVal form-control", @style = "width:100%" })
+                </td>
+                <td class="TableColumnTitle" style="font-weight:700">出库日期</td>
+                <td>
+                    @Html.TextBoxFor(m => m.packageSearch.PackageTime, new { @class = "form-control calendarRangeReWrite", @style = "cursor:pointer;width:10px;", onclick = "ShowCalendar(this)" })
+                    @Html.Raw("~")
+                    @Html.TextBoxFor(m => m.packageSearch.HandoverTime, new { @class = "form-control calendarRangeReWrite", @style = "cursor:pointer;width:10px;", onclick = "ShowCalendar(this)" })
                 </td>
             </tr>
             <tr>
-                <td class="TableColumnTitle">运单号</td>
+                <td class="TableColumnTitle" style="font-weight:700">客户名称</td>
                 <td>
-                    @Html.TextAreaFor(m => m.SearchCondition.Numbers, new { style = "width:95%" })
+                    @Html.DropDownListFor(m => m.packageSearch.Creator, Model.Customers, "==请选择==", new { @class = "form-control", @style = "width:80%" })
+                </td>
+                <td class="TableColumnTitle" style="font-weight:700">跟踪状态</td>
+                <td>
+                    @Html.DropDownListFor(m => m.packageSearch.Status, Model.CurrentStateList, new { @class = "form-control", @style = "width:80%" })
                 </td>
             </tr>
         </table>
@@ -47,73 +49,63 @@
         </div>
     </fieldset>
 }
-<fieldset>
-    <legend>
-        运单列表
-        @if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
-        {
-            @Html.Raw("(" + Model.AMSUploadCollection.Count() + ")");
-        }
-    </legend>
-    <table id="resultTable">
-        <thead>
-            <tr>
-                <th class="TableColumnTitle">运单号</th>
-                <th class="TableColumnTitle">发货日期</th>
-                <th class="TableColumnTitle">承运商</th>
-                <th class="TableColumnTitle">起运城市</th>
-                <th class="TableColumnTitle">目的城市</th>
-                <th class="TableColumnTitle">运单状态</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td style="cursor:pointer" class="TrackInfo">600674301</td>
-                <td>2021-02-20</td>
-                <td>顺丰快递</td>
-                <td>上海</td>
-                <td>北京</td>
-                <td>运输中</td>
-            </tr>
-            @*@if (Model.AMSUploadCollection != null && Model.AMSUploadCollection.Any())
-                {
-                    foreach (var ams in Model.AMSUploadCollection)
+    <fieldset>
+        <legend>
+            成品订单列表
+            @if (Model.packageList != null && Model.packageList.Any())
+            {
+                @Html.Raw("(" + Model.packageList.Count() + ")");
+            }
+        </legend>
+        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th class="TableColumnTitle">成品订单号</th>
+                        <th class="TableColumnTitle">出库单号</th>
+                        <th class="TableColumnTitle">外部单号</th>
+                        <th class="TableColumnTitle">客户</th>
+                        <th class="TableColumnTitle">仓库名称</th>
+                        <th class="TableColumnTitle">出库日期</th>
+                        <th class="TableColumnTitle">快递公司</th>
+                        <th class="TableColumnTitle">快递单号</th>
+                        <th class="TableColumnTitle">跟踪状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="cursor:pointer" class="TrackInfo">TRB21031210800002</td>
+                        <td style="cursor:pointer" class="TrackInfo">OR1082021030000002</td>
+                        <td style="cursor:pointer" class="TrackInfo">111111111</td>
+                        <td>ASPOP</td>
+                        <td>ASPOP仓</td>
+                        <td>2021-03-12</td>
+                        <td>顺丰</td>
+                        <td>SF001112233</td>
+                        <td>运输中</td>
+                    </tr>
+                    @if (Model.packageList != null && Model.packageList.Any())
                     {
+                        foreach (var item in Model.packageList)
+                        {
                         <tr>
-                            <td>
-                                <a class="attachmentClass" href="../GetAttachment/@ams.ID" data-id="@ams.ID">@ams.FileName</a>
-                            </td>
-                            <td>
-                                @ams.FileType
-                            </td>
-                            <td>
-                                @ams.Creator
-                            </td>
-                            <td>
-                                @ams.CreateTime
-                            </td>
-                            @if (ams.Status.ToString() == "True")
-                            {
-                                <td>已验证</td>
-                            }
-                            else
-                            {
-                                <td>未验证</td>
-                            }
-
-                            @if (Model.Type == 2)
-                            {
-                                <td>
-                                    @ams.OrderNo
-                                </td>
-                            }
+                            <td style="cursor:pointer" class="TrackInfo">@item.PackageNumber</td>
+                            <td style="cursor:pointer" class="TrackInfo">@item.OrderNumber</td>
+                            <td style="cursor:pointer" class="TrackInfo">@item.ExternOrderNumber</td>
+                            <td>@item.CustomerName</td>
+                            <td>@item.Warehouse</td>
+                            <td>@item.PackageTime</td>
+                            <td>@item.ExpressCompany</td>
+                            <td>@item.ExpressNumber</td>
+                            <td>@item.Creator</td>
                         </tr>
+                        }
                     }
-                }*@
-        </tbody>
-    </table>
-    @Html.Pager(Model.PageIndex, Model.PageCount, "")
-</fieldset>
+                </tbody>
+            </table>
+        </div>
+        @Html.Pager(Model.PageIndex, Model.PageCount, "")
+    </fieldset>
 
 <div class="body-nest" id="DivShipperType2" style="overflow-x:auto;display:none">
     <section>
@@ -122,6 +114,12 @@
         </div>
     </section>
 </div>
+
+<script type="text/javascript">
+    function ShowCalendar(txt) {
+        $(txt).datepicker({ dateFormat: 'yy-mm-dd', changeYear: true, minDate: new Date(2000, 1, 1), maxDate: '+10y +1d' }).datepicker('show');
+    }
+</script>
 
 <script>
     layui.config({

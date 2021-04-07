@@ -281,5 +281,40 @@ namespace Runbow.TWS.Biz
 
             return response;
         }
+
+
+        /// <summary>
+        /// 成品订单查询
+        /// </summary>
+        public Response<QueryAMSUploadResponses> GetWMS_PackageByCondition(QueryAMSUploadRequests request)
+        {
+            Response<QueryAMSUploadResponses> response = new Response<QueryAMSUploadResponses>() { Result = new QueryAMSUploadResponses() };
+            if (request == null || request.WMS_PackageSearch == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetWMS_PackageByCondition request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                AMSUploadAccessor accessor = new AMSUploadAccessor();
+                int RowCount;
+                response.Result.WMS_PackageCollection = accessor.GetWMS_PackageByCondition(request.WMS_PackageSearch, request.Customers, request.PageIndex, request.PageSize, out RowCount);
+                response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                response.Result.PageIndex = request.PageIndex;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
     }
 }

@@ -374,6 +374,8 @@
     <Compile Include="WMS.WXApp\UpdateProductApproveStatusResponse.cs" />
     <Compile Include="WMS.WXApp\UpdateProductQuantityRequest.cs" />
     <Compile Include="WMS.WXApp\UpdateProductQuantityResponse.cs" />
+    <Compile Include="WMS\DMS\WMS_Package.cs" />
+    <Compile Include="WMS\DMS\WMS_PackageTrack.cs" />
     <Compile Include="WMS\Log\CustomIsoDateTimeConverter.cs" />
     <Compile Include="WMS\Log\LogOperationRFSearchCondition.cs" />
     <Compile Include="WMS\Log\LogOperationSearchCondition.cs" />

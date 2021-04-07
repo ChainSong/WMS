@@ -350,5 +350,27 @@ namespace Runbow.TWS.Dao
             };
             return this.ExecuteDataTable("Proc_GetAmsUploadByID", dbParams).ConvertToEntity<AMSUpload>();
         }
+
+        /// <summary>
+        /// 成品订单查询
+        /// </summary>
+        public IEnumerable<WMS_Package> GetWMS_PackageByCondition(WMS_Package SearchCondition, string Customers, int PageIndex,
+            int PageSize, out int RowCount)
+        {
+
+            string sqlWhere = "'";//this.GenQueryAttachmentSql(SearchCondition, Customers);
+            int tempRowCount = 0;
+            DbParam[] dbParams = new DbParam[]
+            {
+                new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+                new DbParam("@PageIndex", DbType.Int32, PageIndex, ParameterDirection.Input),
+                new DbParam("@PageSize", DbType.Int32, PageSize, ParameterDirection.Input),
+                new DbParam("@RowCount", DbType.Int32, tempRowCount, ParameterDirection.Output)
+            };
+            DataTable dt = this.ExecuteDataTable("Proc_GetWMS_PackageByCondition", dbParams);
+            RowCount = (int)dbParams[3].Value;
+            return dt.ConvertToEntityCollection<WMS_Package>();
+        }
+
     }
 }

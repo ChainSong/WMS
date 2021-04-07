@@ -9,14 +9,16 @@ namespace Runbow.TWS.MessageContracts.AMS
 {
    public  class QueryAMSUploadRequests
    {
-       public AMSSearchCondition SearchCondition { get; set; }
+        public AMSSearchCondition SearchCondition { get; set; }
 
-       public int PageIndex { get; set; }
+        public WMS_Package WMS_PackageSearch { get; set; }
 
-       public int PageSize { get; set; }
+        public int PageIndex { get; set; }
+
+        public int PageSize { get; set; }
         
-       public string Customers { get; set; }
+        public string Customers { get; set; }
 
-       public IEnumerable<long> CustomerIDs { get; set; }
+        public IEnumerable<long> CustomerIDs { get; set; }
    }
 }

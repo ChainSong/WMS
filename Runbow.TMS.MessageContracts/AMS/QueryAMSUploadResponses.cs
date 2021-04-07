@@ -11,6 +11,8 @@ namespace Runbow.TWS.MessageContracts
     {
         public IEnumerable<AMSUpload> AMSUploadCollection { get; set; }
 
+        public IEnumerable<WMS_Package> WMS_PackageCollection { get; set; }
+
         public int PageCount { get; set; }
 
         public int PageIndex { get; set; }
