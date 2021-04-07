@@ -569,7 +569,7 @@ $('select[id=SearchCondition_CustomerID]').live('change', function () {
 
 $("#addButton").live('click', function () {
     var CustomerID = $('#SearchCondition_CustomerID option:selected').val();
-    location.href = "/WMS/ReceiptManagement/ReceiptCreate/?ViewType=1&CustomerID=" + CustomerID
+    location.href = "/WMS/ReceiptManagement/ReceiptCreateFG/?ViewType=1&CustomerID=" + CustomerID
 });
 
 function editButton(ID, CustomerID) {

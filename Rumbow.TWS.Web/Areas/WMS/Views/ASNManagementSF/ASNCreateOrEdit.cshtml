@@ -74,7 +74,7 @@
                                                 }
                                                 else if (column.DbColumnName == "Status")
                                                 {
-                                                          var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "ss").GetValue(Model)).ToList();
+                                                    var list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "ss").GetValue(Model)).ToList();
                                                     @(list.SingleOrDefault(c => c.Value == o.ToString()).Text ?? "")
                                                 }
                                                 else
@@ -456,7 +456,7 @@
         @if (Model.ViewType == 3)
         {
             <input type="button" class="btn btn-success" value="编辑" id="edit" onclick="edits('@Model.AsnandDetails.asn.ID    ')" />
-            <input type="button" class="btn btn-success" value="继续添加" id="addangians" onclick="addangian()" />
+
             <input type="button" class="btn btn-success" value="返回" id="returnButtons" />
         }
         @*@if (Model.AsnandDetails.asn.Status == 1 || Model.AsnandDetails.asn.Status == 5)

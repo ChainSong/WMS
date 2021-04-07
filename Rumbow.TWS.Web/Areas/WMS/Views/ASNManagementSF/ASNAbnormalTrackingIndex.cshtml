@@ -1,0 +1,914 @@
+﻿<!--引入vue本地文件-->
+<script src="~/Assets/Vue/lrgvue.js"></script>
+<!-- 引入饿了么样式 -->
+@*<link href="~/Assets/Vue/elementui.css" rel="stylesheet" />*@
+<!-- 引入饿了么组件库 -->
+@*<script src="~/Assets/Vue/elementui.js"></script>*@
+
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+
+
+
+<div id="app">
+    <div class="headerdiv">
+        <el-card>
+            <strong slot="header">收货异常信息查询条件</strong>
+            <el-form id="headerform" :inline="true" :model="Model" label-width="100px" label-position="left" size="medium">
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <el-form-item label="客户：">
+                            <el-select v-model="Model.CustomerID" placeholder="请选择" id="CustomerID">
+                                <el-option v-for="item in CustomerList" :label="item.Text" :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="仓库：">
+                            <el-select v-model="Model.WarehouseID" placeholder="请选择" clearable>
+                                <el-option v-for="item in WarehouseList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="收货日期：">
+                            <el-date-picker v-model="Model.StartCreateTime" width="40%"
+                                            type="date" :editable="false"
+                                            placeholder="开始日期">
+                            </el-date-picker>
+                            至
+                            <el-date-picker v-model="Model.EndCreateTime"
+                                            type="date" :editable="false"
+                                            placeholder="结束日期">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    @*<el-col :span="6">
+                            <el-form-item label="预入库单号：">
+                                <el-input v-model="Model.ASNNumber" placeholder="" clearable></el-input>
+                            </el-form-item>
+                        </el-col>*@
+                    <el-col :span="6">
+                        <el-form-item label="外部单号：">
+                            <el-input v-model="Model.ExternReceiptNumber" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="箱号：">
+                            <el-input v-model="Model.BoxNumber" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="SKU：">
+                            <el-input v-model="Model.SKU" placeholder="" clearable></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-form-item label="异常类型：">
+                            <el-select v-model="Model.ReasonCode" placeholder="请选择" clearable>
+                                <el-option v-for="item in ASNAbnormalTypeList"
+                                           :key="item.Value"
+                                           :label="item.Text"
+                                           :value="item.Value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <div style="text-align:center">
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="ToAdd" icon="el-icon-circle-plus-outline">新增</el-button>
+                        <el-button type="primary" v-on:click="ToSearch" icon="el-icon-search">查询</el-button>
+                        <el-button type="primary" v-on:click="ToExport" icon="el-icon-s-promotion">导出</el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </el-card>
+    </div>
+    <div style="height:10px;"></div>
+    <div class="detaildiv">
+        <el-card>
+            <strong slot="header">收货异常信息列表</strong>
+            <el-table :data="ASNAbnormalList"
+                      style="width: 100%" size="medium" border>
+                <el-table-column label="收货日期"
+                                 width="120">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateYMD(scope.row.ReceiptTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="登记人"
+                                 prop="Registrant" width="90">
+                </el-table-column>
+
+                <el-table-column label="PO单号"
+                                 prop="ExternReceiptNumber" width="200">
+                </el-table-column>
+                <el-table-column label="索赔箱号"
+                                 prop="BoxNo" width="90">
+                </el-table-column>
+                <el-table-column label="箱号"
+                                 prop="BoxNumber" width="200">
+                </el-table-column>
+                <el-table-column label="SKU"
+                                 width="180" prop="SKU">
+                </el-table-column>
+                <el-table-column label="款号"
+                                 width="150" prop="Article">
+                </el-table-column>
+                <el-table-column label="尺码"
+                                 width="100" prop="Size">
+                </el-table-column>
+                <el-table-column label="计划数量"
+                                 width="100" prop="QtyExpected">
+                </el-table-column>
+                <el-table-column label="实收数量"
+                                 width="100" prop="QtyReceived">
+                </el-table-column>
+                <el-table-column label="差异"
+                                 width="100" prop="QtyDiff">
+                </el-table-column>
+                <el-table-column label="异常类型"
+                                 width="100" prop="ReasonCode">
+                </el-table-column>
+                <el-table-column label="异常备注"
+                                 width="120" prop="Remark">
+                </el-table-column>
+                <el-table-column label="门店"
+                                 width="120" prop="StorerKey">
+                </el-table-column>
+                <el-table-column label="创建人"
+                                 width="120" prop="Creator">
+                </el-table-column>
+                <el-table-column label="创建时间"
+                                 width="170">
+                    <template slot-scope="scope">
+                        <span>{{ChangeDateStr(scope.row.CreateTime)}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" fixed="right" width="200">
+                    <template slot-scope="scope">
+                        <div style="text-align:center">
+                            <el-button size="mini" v-on:click="ToUpdate(scope.row)" type="primary" icon="el-icon-edit">修改</el-button>
+                            <el-button size="mini" v-on:click="ToDelete(scope.row)" type="danger" icon="el-icon-delete">删除</el-button>
+                            @*<el-button  size="mini" v-on:click="" type="primary"></el-button>*@
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <br />
+            <div>
+                <el-pagination v-on:size-change="handleSizeChange"
+                               v-on:current-change="handleCurrentChange"
+                               :current-page.sync="page"
+                               :page-size="30"
+                               layout="total, prev, pager, next"
+                               :total="TotalCount">
+                </el-pagination>
+            </div>
+        </el-card>
+    </div>
+
+    <div id="Adddiv">
+        <el-dialog :title="title" :visible.sync="addisshow" :close-on-click-modal="false" v-on:close="handClose('AddModel')" fullscreen>
+            <div>
+                <el-card>
+                    <el-form :model="AddModel" ref="AddModel" :rules="AddRule" label-position="top" label-width="100px"
+                             size="medium">
+
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="" prop="ID" v-show="false">
+                                    <el-input v-model="AddModel.ID" placeholder="">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="" prop="ASNID" v-show="false">
+                                    <el-input v-model="AddModel.ASNID" placeholder="">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="" prop="ADID" v-show="false">
+                                    <el-input v-model="AddModel.ADID" placeholder="">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="" prop="CustomerID" v-show="false">
+                                    <el-input v-model="AddModel.CustomerID" placeholder="">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="" prop="CustomerName" v-show="false">
+                                    <el-input v-model="AddModel.CustomerName" placeholder="">
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="收货日期：" label-width="100px" prop="ReceiptTime">
+                                    @*<label>收货日期：</label>*@
+                                    <el-date-picker v-model="AddModel.ReceiptTime" type="date"
+                                                    value-format="yyyy-MM-dd" :editable="false" placeholder="请选择收货日期" :disabled="titletype==2">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="登记人：" label-width="100px" prop="Registrant">
+                                    <el-input v-model="AddModel.Registrant" placeholder="请填写登记人" clearable :disabled="titletype==2">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="PO单号：" label-width="100px" prop="ExternReceiptNumber">
+                                    <el-input v-model="AddModel.ExternReceiptNumber" placeholder="请填写PO单号" clearable :disabled="titletype==2">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="索赔箱号：" label-width="100px" prop="BoxNo">
+                                    <el-input v-model="AddModel.BoxNo" placeholder="请填写索赔箱号 如：1" clearable :disabled="titletype==2" oninput="value=value.replace(/[^\d]/g, '')">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="箱号：" label-width="100px" prop="BoxNumber">
+                                    <el-input v-model="AddModel.BoxNumber" placeholder="请填写箱号" clearable :disabled="titletype==2">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="SKU：" label-width="100px" prop="SKU">
+                                    <el-input v-model="AddModel.SKU" placeholder="请填写SKU" clearable :disabled="titletype==2">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-form-item label="计划数量" prop="QtyExpected" v-show="false">
+                                <el-input v-model="AddModel.QtyExpected" placeholder="">
+                                </el-input>
+                            </el-form-item>
+                            <el-form-item label="差异" prop="QtyDiff" v-show="false">
+                                <el-input v-model="AddModel.QtyDiff" placeholder="">
+                                </el-input>
+                            </el-form-item>
+                            <el-col :span="12">
+                                <el-form-item label="实收数量：" label-width="100px" prop="QtyReceived">
+                                    <el-input v-model="AddModel.QtyReceived" placeholder="请填写实收数量" clearable :disabled="titletype==2">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="异常类型：" label-width="100px" prop="ReasonCode">
+                                    <el-select v-model="AddModel.ReasonCode" placeholder="请选择异常类型" :disabled="titletype==2" clearable>
+                                        <el-option v-for="item in ASNAbnormalTypeList"
+                                                   :key="item.Value"
+                                                   :label="item.Text"
+                                                   :value="item.Value"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-form-item label="备注：" label-width="100px" prop="Remark">
+                                    <el-input type="textarea" v-model="AddModel.Remark" placeholder="请填写备注" clearable>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="冻结状态：" label-width="100px" prop="FreeStatus" v-if="titletype==2">
+                                    <el-input v-model="AddModel.FreeStatus" placeholder="请填写冻结状态" clearable>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="上架库位：" label-width="100px" prop="Location" v-if="titletype==2">
+                                    <el-input v-model="AddModel.Location" placeholder="请填写库位" clearable>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="索赔编号：" label-width="100px" prop="ClaimNumber" v-if="titletype==2">
+                                    <el-input v-model="AddModel.ClaimNumber" placeholder="请填写索赔编号" clearable>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="索赔日期：" prop="DateTime1" v-if="titletype==2">
+                                    <el-date-picker v-model="AddModel.DateTime1" type="date"
+                                                    value-format="yyyy-MM-dd" :editable="false" placeholder="请选择索赔日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="冻结单号：" label-width="100px" prop="FreeNumber" v-if="titletype==2">
+                                    <el-input v-model="AddModel.FreeNumber" placeholder="请填写冻结单号" clearable>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-form-item label="NIKE调查结果：" label-width="100px" prop="SurveyResult" v-if="titletype==2">
+                                    <el-input type="textarea" v-model="AddModel.SurveyResult" placeholder="请填写NIKE调查结果" clearable>
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="调整数量：" label-width="100px" prop="QtyAdj" v-if="titletype==2">
+                                    <el-input v-model="AddModel.QtyAdj" placeholder="请填写调整数量" clearable oninput="value=value.replace(/[^\d]/g, '')">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="系统调整结果数量：" label-width="150px" prop="QtyAdjResult" v-if="titletype==2">
+                                    <el-input v-model="AddModel.QtyAdjResult" placeholder="请填写调整结果数量" clearable oninput="value=value.replace(/[^\d]/g, '')">
+                                    </el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="系统调整日期：" prop="AdjTime" v-if="titletype==2">
+                                    <el-date-picker v-model="AddModel.AdjTime" type="date"
+                                                    value-format="yyyy-MM-dd" :editable="false" placeholder="请选择系统调整日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="发送IT调整邮件日期：" prop="SendITTime" v-if="titletype==2">
+                                    <el-date-picker v-model="AddModel.SendITTime" type="date"
+                                                    value-format="yyyy-MM-dd" :editable="false" placeholder="请选择发送IT日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="IT回复上传文件日期：" prop="ITReplyTime" v-if="titletype==2">
+                                    <el-date-picker v-model="AddModel.ITReplyTime" type="date"
+                                                    value-format="yyyy-MM-dd" :editable="false" placeholder="请选择IT回复日期">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <div style="text-align:center">
+                            <el-form-item>
+                                <el-button type="primary" v-on:click="ToAddSubmit('AddModel')" icon="el-icon-circle-check">
+                                    提 交
+                                </el-button>
+                            </el-form-item>
+                        </div>
+                    </el-form>
+                </el-card>
+            </div>
+        </el-dialog>
+    </div>
+</div>
+
+
+<script>
+    var vue1 = new Vue({
+        el: '#app',
+        data: {
+            CustomerList: [],//客户下拉
+            WarehouseList: [],//仓库下拉
+            ASNAbnormalTypeList: [],//异常类型下拉
+            //查询条件model
+            Model: {
+                ASNNumber: '',
+                ExternReceiptNumber: '',
+                CustomerID: '',
+                WarehouseID: '',
+                ReasonCode: '',
+                StartCreateTime: '',
+                EndCreateTime: '',
+                SKU: '',
+                BoxNumber: ''
+            },
+            AddModel: {
+                ID: '',
+                ASNID: '',
+                ADID: '',
+                ASNNumber: '',
+                ExternReceiptNumber: '',
+                CustomerID: '',
+                CustomerName: '',
+                BoxNo: '',
+                SKU: '',
+                //UPC: '',
+                BoxNumber: '',
+                Article: '',
+                Size: '',
+                QtyExpected: '',
+                QtyReceived: '',
+                QtyDiff: '',
+                ReasonCode: '',//异常类型
+                Remark: '',//备注
+                Creator: '',
+                CreateTime: '',
+                Updator: '',
+                UpdateTime: '',
+                Registrant: '',//登记人
+                ReceiptTime: '',//收货时间
+                StorerKey: '',//门店
+                FreeStatus: '',//冻结状态
+                Location: '',//上架库位
+                ClaimNumber: '',//索赔编号
+                FreeNumber: '',//冻结单号
+                SurveyResult: '',//nike调查结果
+                QtyAdj: '',//调整数量
+                QtyAdjResult: '',//系统调整结果
+                AdjTime: '',//系统调整日期
+                SendITTime: '',//发送IT调整邮件日期
+                ITReplyTime: '',//IT回复上传文件时间
+                DateTime1: ''//索赔日期
+            },
+            AddRule: {
+                ID: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ASNID: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ADID: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ASNNumber: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ExternReceiptNumber: [{
+                    required: true, message: 'PO单号不能为空', trigger: 'blur'
+                }],
+                CustomerID: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                CustomerName: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                BoxNo: [{
+                    required: true, message: '索赔箱号不能为空', trigger: 'blur'
+                }],
+                SKU: [{
+                    required: true, message: 'SKU不能为空', trigger: 'blur'
+                }],
+                BoxNumber: [{
+                    required: true, message: '箱号不能为空', trigger: 'blur'
+                }],
+                QtyExpected: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                QtyReceived: [{
+                    required: true, message: '实收数量不能为空', trigger: 'blur'
+                }],
+                QtyDiff: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ReasonCode: [{
+                    required: true, message: '异常类型不能为空', trigger: 'blur'
+                }],
+                Remark: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                Registrant: [{
+                    required: true, message: '登记人不能为空', trigger: 'blur'
+                }],
+                ReceiptTime: [{
+                    required: true, message: '收货日期不能为空', trigger: 'blur'
+                }],
+                StorerKey: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                FreeStatus: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                Location: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ClaimNumber: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                FreeNumber: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                SurveyResult: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                QtyAdj: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                QtyAdjResult: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                AdjTime: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                SendITTime: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                ITReplyTime: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+                DateTime1: [{
+                    required: false, message: '', trigger: 'blur'
+                }],
+
+            },//模型验证
+            ASNAbnormalList: [],
+            limit: 30,
+            page: 1,
+            TotalCount: 0,
+            addisshow: false,
+            title: '',
+            titletype: 1,//1新增2修改
+
+        },
+        created: function () {
+            let customerID = this.GetQueryString('customerID');
+            this.ToGetASNAbnormalWhere(customerID);
+        },
+        methods: {
+            //页面记载获去下拉框的值
+            ToGetASNAbnormalWhere: function (customerID) {
+                $.ajax({
+                    type: "POST",
+                    url: "/WMS/ASNManagement/GetASNAbnormalWhere",
+                    data: {
+                        customerID: customerID
+                    },
+                    success: function (data) {
+                        if (data.code == 0) {
+                            vue1.CustomerList = data.data.CustomerList;
+                            vue1.WarehouseList = data.data.WarehouseList;
+                            vue1.ASNAbnormalTypeList = data.data.ASNAbnormalTypeList;
+                            vue1.Model.CustomerID = data.data.SearchCondition.CustomerID + '';
+                            vue1.Model.StartCreateTime = data.data.SearchCondition.StartCreateTime;
+                            vue1.Model.EndCreateTime = data.data.SearchCondition.EndCreateTime;
+                            vue1.ToSearch();
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                });
+            },
+
+            ToSearch: function () {
+                if (vue1.Model.CustomerID) {
+                    //vue1.loading = true;
+                    $.ajax({
+                        type: "POST",
+                        url: "/WMS/ASNManagement/GetASNAbnormalList",
+                        data: {
+                            requestData: JSON.stringify(vue1.Model),
+                            page: vue1.page,
+                            limit: vue1.limit
+                        },
+                        success: function (res) {
+                            //console.log('异常数据列表')
+                            //let res = JSON.parse(data)
+                            //console.log(res.res)
+                            if (res.res.code == 0) {
+                                vue1.ASNAbnormalList = res.res.data;
+                                vue1.TotalCount = res.res.count;
+                            }
+                            else {
+                                vue1.ASNAbnormalList = [];
+                                vue1.TotalCount = 0;
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err)
+                        }
+                    });
+                }
+                else {
+                    console.log(vue1.Model)
+                    layer.tips('请先选择客户', '#CustomerID');
+                }
+            },
+
+            //导出
+            ToExport: function () {
+                window.location.href = "/WMS/ASNManagement/ExportASNAbnormal?request=" + JSON.stringify(vue1.Model);
+            },
+
+            handleSizeChange: function (val) {
+                this.limit = val;
+                this.ToSearch();
+            },
+            handleCurrentChange: function (val) {
+                this.page = val;
+                this.ToSearch();
+            },
+
+            handClose: function (form) {
+                vue1.$refs[form].resetFields();
+            },
+
+            //打开新增页面
+            ToAdd: function () {
+                if (vue1.Model.CustomerID) {
+                    vue1.title = '新增异常跟踪信息';
+                    vue1.addisshow = true;
+                    vue1.titletype = 1;
+                }
+                else {
+                    layer.tips('请先选择客户', '#CustomerID');
+                }
+            },
+
+            //打开修改页面
+            ToUpdate: function (row) {
+                vue1.title = '修改异常跟踪信息';
+                vue1.addisshow = true;
+                vue1.titletype = 2;
+                //延迟执行，先打开界面，再赋值
+                //vue1.$nextTick(() => {
+                //    console.log('nextTick执行')
+                //});
+                vue1.$nextTick(function () {
+                    console.log(row)
+                    console.log('nextTick执行');
+                    vue1.AddModel.ID = row.ID;
+                    vue1.AddModel.ASNID = row.ASNID;
+                    vue1.AddModel.ADID = row.ADID;
+                    vue1.AddModel.ASNNumber = row.ASNNumber;
+                    vue1.AddModel.ExternReceiptNumber = row.ExternReceiptNumber;
+                    vue1.AddModel.CustomerID = row.CustomerID;
+                    vue1.AddModel.CustomerName = row.CustomerName;
+                    vue1.AddModel.BoxNo = row.BoxNo;
+                    vue1.AddModel.SKU = row.SKU;
+                    vue1.AddModel.BoxNumber = row.BoxNumber;
+                    vue1.AddModel.Article = row.Article;
+                    vue1.AddModel.Size = row.Size;
+                    vue1.AddModel.QtyExpected = row.QtyExpected;
+                    vue1.AddModel.QtyReceived = row.QtyReceived;
+                    vue1.AddModel.QtyDiff = row.QtyDiff;
+                    vue1.AddModel.ReasonCode = row.ReasonCode;//异常类型
+                    vue1.AddModel.Remark = row.Remark;//备注
+                    vue1.AddModel.Creator = row.Creator;
+                    vue1.AddModel.CreateTime = row.CreateTime;
+                    vue1.AddModel.Updator = row.Updator;
+                    vue1.AddModel.UpdateTime = row.UpdateTime;
+                    vue1.AddModel.UpdateTime = row.UpdateTime;
+                    vue1.AddModel.Registrant = row.Registrant;//登记人
+                    vue1.AddModel.ReceiptTime = vue1.ChangeDateYMD(row.ReceiptTime);//收货时间
+                    vue1.AddModel.StorerKey = row.StorerKey;//门店
+                    vue1.AddModel.FreeStatus = row.FreeStatus;//冻结状态
+                    vue1.AddModel.Location = row.Location;//上架库位
+                    vue1.AddModel.ClaimNumber = row.ClaimNumber;//索赔编号
+                    vue1.AddModel.FreeNumber = row.FreeNumber;//冻结单号
+                    vue1.AddModel.SurveyResult = row.SurveyResult;//nike调查结果
+                    vue1.AddModel.QtyAdj = row.QtyAdj;//调整数量
+                    vue1.AddModel.QtyAdjResult = row.QtyAdjResult;//系统调整结果
+                    vue1.AddModel.AdjTime = vue1.ChangeDateYMD(row.AdjTime);//系统调整日期
+                    vue1.AddModel.SendITTime = vue1.ChangeDateYMD(row.SendITTime);//发送IT调整邮件日期
+                    vue1.AddModel.ITReplyTime = vue1.ChangeDateYMD(row.ITReplyTime);//IT回复上传文件时间
+                    vue1.AddModel.DateTime1 = vue1.ChangeDateYMD(row.DateTime1);//索赔日期
+
+                })
+            },
+
+            //删除
+            ToDelete: function (row) {
+                layer.confirm('确认是否删除此条异常记录？', {
+                    btn: ['确定', '取消'] //按钮
+                    , title: ['提示', 'font-size:18px;']
+                }, function (index) {
+                    layer.close(index)
+                    $.ajax({
+                        type: "Post",
+                        url: "/WMS/ASNManagement/DeleteASNAbnormal",
+                        data: {
+                            "ID": row.ID
+                        },
+                        async: "false",
+                        success: function (res) {
+                            if (res.res.code == 0) {
+                                layer.alert('删除成功！', { icon: 1 }, function (sss) {
+                                    layer.closeAll();
+                                    vue1.ToSearch();//成功之后刷新一下table
+                                });
+                            }
+                            else {
+                                layer.alert('删除失败：' + res.res.msg, { icon: 2 });
+                            }
+                        },
+                        error: function (msg) {
+                            layer.alert('S1-4货物离场发送失败,网络错误！', { icon: 2 });
+                        }
+
+                    });
+
+                }, function (index2) {
+                    layer.close(index2)
+                });
+            },
+
+            //新增/修改 提交
+            ToAddSubmit: function (form) {
+                vue1.$refs[form].validate(function (valid) {
+                    if (valid) {
+                        //console.log('提交')
+                        vue1.AddModel.CustomerID = vue1.Model.CustomerID;
+                        //console.log(vue1.AddModel);
+                        $.ajax({
+                            type: "POST",
+                            url: "/WMS/ASNManagement/AddorUpdateASNAbnormal",
+                            data: {
+                                IsSign: vue1.titletype,
+                                requestData: JSON.stringify(vue1.AddModel)
+                            },
+                            success: function (res) {
+                                console.log(res)
+                                if (res.res.code == 0) {
+                                    if (vue1.titletype == 1) {
+                                        layer.alert('新增成功！', { icon: 1 }, function (sss) {
+                                            layer.closeAll();
+                                            vue1.addisshow = false;
+                                            vue1.ToSearch();//成功之后刷新一下table
+                                        });
+                                    } else {
+                                        layer.alert('修改成功！', { icon: 1 }, function (sss) {
+                                            layer.closeAll();
+                                            vue1.addisshow = false;
+                                            vue1.ToSearch();//成功之后刷新一下table
+                                        });
+                                    }
+                                }
+                                else {
+                                    if (vue1.titletype == 1) {
+                                        layer.alert('新增失败！' + res.res.msg, { icon: 2 }, function (sss) {
+                                            layer.closeAll();
+                                        });
+                                    } else {
+                                        layer.alert('修改失败！' + res.res.msg, { icon: 2 }, function (sss) {
+                                            layer.closeAll();
+                                        });
+                                    }
+                                }
+                            },
+                            error: function (err) {
+                                console.log(err)
+                            }
+                        });
+                    }
+                });
+                //ie垃圾不支持es6，那我叫她一点办法都没有
+                //vue1.$refs[form].validate((valid) => {
+                //    if (valid) {
+                //        console.log('提交')
+                //        vue1.AddModel.CustomerID = vue1.Model.CustomerID;
+                //        console.log(vue1.AddModel);
+                //        $.ajax({
+                //            type: "POST",
+                //            url: "/WMS/ASNManagement/AddorUpdateASNAbnormal",
+                //            data: {
+                //                IsSign: vue1.titletype,
+                //                requestData: JSON.stringify(vue1.AddModel)
+                //            },
+                //            success: function (res) {
+                //                console.log(res)
+                //                if (res.res.code == 0) {
+                //                    if (vue1.titletype == 1) {
+                //                        layer.alert('新增成功！', { icon: 1 }, function (sss) {
+                //                            layer.closeAll();
+                //                            vue1.addisshow = false;
+                //                            vue1.ToSearch();//成功之后刷新一下table
+                //                        });
+                //                    } else {
+                //                        layer.alert('修改成功！', { icon: 1 }, function (sss) {
+                //                            layer.closeAll();
+                //                            vue1.addisshow = false;
+                //                            vue1.ToSearch();//成功之后刷新一下table
+                //                        });
+                //                    }
+                //                }
+                //                else {
+                //                    if (vue1.titletype == 1) {
+                //                        layer.alert('新增失败！' + res.res.msg, { icon: 2 }, function (sss) {
+                //                            layer.closeAll();
+                //                        });
+                //                    } else {
+                //                        layer.alert('修改失败！' + res.res.msg, { icon: 2 }, function (sss) {
+                //                            layer.closeAll();
+                //                        });
+                //                    }
+                //                }
+                //            },
+                //            error: function (err) {
+                //                console.log(err)
+                //            }
+                //        });
+                //    }
+                //})
+            },
+
+            GetQueryString: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            },
+            //直接传字符串进来
+            ChangeDateStr: function (str) {
+                if (str == '' || str == null) {
+                    return '';
+                }
+                let jsondate = str.replace("/Date(", "").replace(")/", "");
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                } else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hour + ":" + minutes + ":" + second;
+            },
+            //只要年月日的
+            ChangeDateYMD: function (str) {
+                if (str == '' || str == null) {
+                    return '';
+                }
+                let jsondate = str.replace("/Date(", "").replace(")/", "");
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                } else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                return date.getFullYear() + "-" + month + "-" + currentDate;
+            },
+        },
+
+
+    });
+</script>
+<style scoped>
+
+    .el-select {
+        width: 100%;
+    }
+
+    /*.el-form-item {
+        margin-bottom: 2px;
+    }*/
+
+    #Adddiv .el-date-editor.el-input,
+    .el-date-editor.el-input__inner {
+        width: 100%;
+    }
+
+    #Adddiv input[type="text"], input[type="password"] {
+        width: 100%;
+    }
+
+    .el-dialog__title {
+        font-weight: bold;
+    }
+
+    /*表头样式*/
+    .el-table__header tr,
+    .el-table__header th {
+        padding: 0;
+        height: 40px;
+        color: #333333;
+        font-family: 微软雅黑;
+    }
+    /*表体样式*/
+    .el-table__body tr td {
+        padding: 0;
+        height: 35px;
+        font-family: 微软雅黑
+    }
+
+    .el-card {
+        /*background-color:#e8eef4;*/
+    }
+
+    .el-card__body {
+        padding: 10px 20px;
+    }
+</style>

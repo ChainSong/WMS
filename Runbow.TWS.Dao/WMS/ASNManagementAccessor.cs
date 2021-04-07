@@ -271,6 +271,22 @@ namespace Runbow.TWS.Dao.WMS
             return dt.ConvertToEntityCollection<ASN>();
         }
 
+        public IEnumerable<ASN> GetASNByConditionSF(ASNSearchCondition SearchCondition, int pageIndex, int pageSize, out int rowCount)
+        {
+            string sqlWhere = this.GenGetWhereSF(SearchCondition);
+
+            int tempRowCount = 0;
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+                new DbParam("@PageIndex", DbType.Int32, pageIndex, ParameterDirection.Input),
+                new DbParam("@PageSize", DbType.Int32, pageSize, ParameterDirection.Input),
+                new DbParam("@RowCount", DbType.Int32, tempRowCount, ParameterDirection.Output)
+            };
+            DataTable dt = this.ExecuteDataTable("[Proc_WMS_GetASNByConditionSF]", dbParams);
+            rowCount = (int)dbParams[3].Value;
+            return dt.ConvertToEntityCollection<ASN>();
+        }
+
         /// <summary>
         /// 入库单状态统计查询
         /// </summary>
@@ -333,6 +349,247 @@ namespace Runbow.TWS.Dao.WMS
         }
 
         /// <summary>
+        /// 查询此状态下的所有订单
+        /// </summary>
+        /// <param name="SearchCondition"></param>
+        /// <returns></returns>
+        public int TurnCG(int Id, int CustomerId)
+        {
+            string sqlStr = @" update  WMS_ASNSF set Status=5 where id=" + Id;
+            int i = this.ScanExecuteNonQuery(sqlStr);
+            //DbParam[] dbParams = new DbParam[]{
+            //    new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+            //     new DbParam("@Type",DbType.Int32,type,ParameterDirection.Input),
+            //};
+            //DataTable dt = this.ExecuteDataTable("Proc_WMS_GetReceiptStatusTotalByCondition", dbParams);
+            //return dt.ConvertToEntityCollection<ASN>();
+            return 1;
+        }
+
+        /// <summary>
+        /// 查询此状态下的所有订单
+        /// </summary>
+        /// <param name="SearchCondition"></param>
+        /// <returns></returns>
+        public int TurnASN(int Id, int CustomerId)
+        {
+            StringBuilder sql = new StringBuilder();
+            sql.Append(@"select* from WMS_ASNSF  where ID=" + Id);
+
+            var sqlData = this.ScanDataTable(sql.ToString()).ConvertToEntity<ASN>();
+            if (sqlData.Status == 9)
+            {
+                return 1;
+            }
+
+            StringBuilder sqlStr = new StringBuilder();
+            sqlStr.Append(@" 
+             insert Into WMS_ASN ([ASNNumber]
+             ,[ExternReceiptNumber]
+             ,[CustomerID]
+             ,[CustomerName]
+             ,[WarehouseID]
+             ,[WarehouseName]
+             ,[ExpectDate]
+             ,[Status]
+             ,[ASNType]
+             ,[Creator]
+             ,[CreateTime]
+             ,[Updator]
+             ,[UpdateTime]
+             ,[CompleteDate]
+             ,[Remark]
+             ,[str1]
+             ,[str2]
+             ,[str3]
+             ,[str4]
+             ,[str5]
+             ,[str6]
+             ,[str7]
+             ,[str8]
+             ,[str9]
+             ,[str10]
+             ,[str11]
+             ,[str12]
+             ,[str13]
+             ,[str14]
+             ,[str15]
+             ,[str16]
+             ,[str17]
+             ,[str18]
+             ,[str19]
+             ,[str20]
+             ,[DateTime1]
+             ,[DateTime2]
+             ,[DateTime3]
+             ,[DateTime4]
+             ,[DateTime5]
+             ,[Int1]
+             ,[Int2]
+             ,[Int3]
+             ,[Int4]
+             ,[Int5])
+             select [ASNNumber]
+             ,[ExternReceiptNumber]
+             ,[CustomerID]
+             ,[CustomerName]
+             ,[WarehouseID]
+             ,[WarehouseName]
+             ,[ExpectDate]
+             ,1
+             ,'补料入库-物料'
+             ,[Creator]
+             ,[CreateTime]
+             ,[Updator]
+             ,[UpdateTime]
+             ,[CompleteDate]
+             ,[Remark]
+             ,[str1]
+             ,[str2]
+             ,[str3]
+             ,[str4]
+             ,[str5]
+             ,[str6]
+             ,[str7]
+             ,[str8]
+             ,[str9]
+             ,[str10]
+             ,[str11]
+             ,[str12]
+             ,[str13]
+             ,[str14]
+             ,[str15]
+             ,[str16]
+             ,[str17]
+             ,[str18]
+             ,[str19]
+             ,'物料'
+             ,[DateTime1]
+             ,[DateTime2]
+             ,[DateTime3]
+             ,[DateTime4]
+             ,[DateTime5]
+             ,[Int1]
+             ,[Int2]
+             ,[Int3]
+             ,[Int4]
+             ,[Int5] from WMS_ASNSF where ID=" + Id + @"
+             insert into  WMS_ASNDetail  ([ASNID]
+             ,[ASNNumber]
+             ,[ExternReceiptNumber]
+             ,[CustomerID]
+             ,[CustomerName]
+             ,[LineNumber]
+             ,[SKU]
+             ,[UPC]
+             ,[BoxNumber]
+             ,[BatchNumber]
+             ,[QtyExpected]
+             ,[QtyReceived]
+             ,[QtyReceipt]
+             ,[GoodsType]
+             ,[GoodsName]
+             ,[Unit]
+             ,[Specifications]
+             ,[Creator]
+             ,[CreateTime]
+             ,[Updator]
+             ,[UpdateTime]
+             ,[str1]
+             ,[str2]
+             ,[str3]
+             ,[str4]
+             ,[str5]
+             ,[str6]
+             ,[str7]
+             ,[str8]
+             ,[str9]
+             ,[str10]
+             ,[str11]
+             ,[str12]
+             ,[str13]
+             ,[str14]
+             ,[str15]
+             ,[str16]
+             ,[str17]
+             ,[str18]
+             ,[str19]
+             ,[str20]
+             ,[DateTime1]
+             ,[DateTime2]
+             ,[DateTime3]
+             ,[DateTime4]
+             ,[DateTime5]
+             ,[Int1]
+             ,[Int2]
+             ,[Int3]
+             ,[Int4]
+             ,[Int5])
+             
+             select  @@IDENTITY [ASNID]
+             ,[ASNNumber]
+             ,[ExternReceiptNumber]
+             ,[CustomerID]
+             ,[CustomerName]
+             ,[LineNumber]
+             ,[SKU]
+             ,[UPC]
+             ,[BoxNumber]
+             ,[BatchNumber]
+             ,[QtyExpected]
+             ,[QtyReceived]
+             ,[QtyReceipt]
+             ,[GoodsType]
+             ,[GoodsName]
+             ,[Unit]
+             ,[Specifications]
+             ,[Creator]
+             ,[CreateTime]
+             ,[Updator]
+             ,[UpdateTime]
+             ,[str1]
+             ,[str2]
+             ,[str3]
+             ,[str4]
+             ,[str5]
+             ,[str6]
+             ,[str7]
+             ,[str8]
+             ,[str9]
+             ,[str10]
+             ,[str11]
+             ,[str12]
+             ,[str13]
+             ,[str14]
+             ,[str15]
+             ,[str16]
+             ,[str17]
+             ,[str18]
+             ,[str19]
+             ,[str20]
+             ,[DateTime1]
+             ,[DateTime2]
+             ,[DateTime3]
+             ,[DateTime4]
+             ,[DateTime5]
+             ,[Int1]
+             ,[Int2]
+             ,[Int3]
+             ,[Int4]
+             ,[Int5] from  WMS_ASNDetailSF where ASNID=" + Id);
+            sqlStr.Append(@"update WMS_ASNSF set Status = 9 where ID = " + Id);
+
+            int i = this.ScanExecuteNonQuery(sqlStr.ToString());
+            //DbParam[] dbParams = new DbParam[]{
+            //    new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+            //     new DbParam("@Type",DbType.Int32,type,ParameterDirection.Input),
+            //};
+            //DataTable dt = this.ExecuteDataTable("Proc_WMS_GetReceiptStatusTotalByCondition", dbParams);
+            //return dt.ConvertToEntityCollection<ASN>();
+            return 1;
+        }
+
+        /// <summary>
         /// 根据状态查询订单条件
         /// </summary>
         /// <param name="search"></param>
@@ -378,6 +635,26 @@ namespace Runbow.TWS.Dao.WMS
             };
 
             DataSet ds = this.ExecuteDataSet("Proc_WMS_GetASNandasndetailByCondition", dbParams);
+            rowCount = (int)dbParams[3].Value;
+            response.AsnCollection = ds.Tables[0].ConvertToEntityCollection<ASN>();
+            response.AsnDetailCollection = ds.Tables[1].ConvertToEntityCollection<ASNDetail>();
+            return response;
+        }
+
+
+        public GetASNDetailByConditionResponse GetASNandasndetailByConditionSF(ASNSearchCondition SearchCondition, int pageIndex, int pageSize, out int rowCount)
+        {
+            GetASNDetailByConditionResponse response = new GetASNDetailByConditionResponse();
+            string sqlWhere = this.GenGetWhere(SearchCondition);
+            int tempRowCount = 0;
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@Where", DbType.String, sqlWhere, ParameterDirection.Input),
+                new DbParam("@PageIndex", DbType.Int32, pageIndex, ParameterDirection.Input),
+                new DbParam("@PageSize", DbType.Int32, pageSize, ParameterDirection.Input),
+                new DbParam("@RowCount", DbType.Int32, tempRowCount, ParameterDirection.Output)
+            };
+
+            DataSet ds = this.ExecuteDataSet("[Proc_WMS_GetASNandasndetailByConditionSF]", dbParams);
             rowCount = (int)dbParams[3].Value;
             response.AsnCollection = ds.Tables[0].ConvertToEntityCollection<ASN>();
             response.AsnDetailCollection = ds.Tables[1].ConvertToEntityCollection<ASNDetail>();
@@ -486,6 +763,19 @@ namespace Runbow.TWS.Dao.WMS
             request.asnDetails = ds.Tables[1].ConvertToEntityCollection<ASNDetail>();
             return request;
         }
+
+        public ASNAndASNDetail GetASNInfosSF(int ID)
+        {
+            ASNAndASNDetail request = new ASNAndASNDetail();
+            DbParam[] dbParams = new DbParam[]{
+                new DbParam("@ID", DbType.Int32,ID, ParameterDirection.Input),
+            };
+            DataSet ds = base.ExecuteDataSet("[Proc_WMS_GetASNInfosSF]", dbParams);
+
+            request.asn = ds.Tables[0].ConvertToEntity<ASN>();
+            request.asnDetails = ds.Tables[1].ConvertToEntityCollection<ASNDetail>();
+            return request;
+        }
         /// <summary>
         /// 生成上架库位
         /// </summary>
@@ -519,6 +809,27 @@ namespace Runbow.TWS.Dao.WMS
                     new  DbParam("@ID",DbType.Int32,id,ParameterDirection.Input),
                 };
                 base.ExecuteNoQuery("Proc_WMS_DeleteByID", dbPatams);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 取消操作
+        /// </summary>
+        /// <param name="ASNNumber"></param>
+        /// <returns></returns>
+        public bool ASNDeleteSF(int id)
+        {
+            try
+            {
+                DbParam[] dbPatams = new DbParam[] {
+                    new  DbParam("@ID",DbType.Int32,id,ParameterDirection.Input),
+                };
+                base.ExecuteNoQuery("[Proc_WMS_DeleteByIDSF]", dbPatams);
                 return true;
             }
             catch (Exception)
@@ -937,6 +1248,305 @@ namespace Runbow.TWS.Dao.WMS
 
             return sb.ToString();
         }
+
+
+        /// <summary>
+        /// 条件拼接
+        /// </summary>
+        /// <param name="SearchCondition"></param>
+        /// <returns></returns>
+        private string GenGetWhereSF(ASNSearchCondition SearchCondition)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(SearchCondition.ASNNumber))
+            {
+                IEnumerable<string> numbers = Enumerable.Empty<string>();
+                if (SearchCondition.ASNNumber.IndexOf("\n") > 0)
+                {
+                    numbers = SearchCondition.ASNNumber.Split('\n').Select(s => { return s.Trim(); });
+                }
+                if (SearchCondition.ASNNumber.IndexOf(',') > 0)
+                {
+                    numbers = SearchCondition.ASNNumber.Split(',').Select(s => { return s.Trim(); });
+                }
+                if (numbers != null && numbers.Any())
+                {
+                    numbers = numbers.Where(c => !string.IsNullOrEmpty(c));
+                }
+                if (numbers != null && numbers.Any())
+                {
+                    sb.Append(" and ASNNumber in ( ");
+                    foreach (string s in numbers)
+                    {
+                        sb.Append("'").Append(s).Append("',");
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append(" ) ");
+                }
+                else
+                {
+                    sb.Append(" and ASNNumber  like '%" + SearchCondition.ASNNumber.Trim() + "%' ");
+                }
+                //sb.Append(" AND a.ASNNumber ='").Append(SearchCondition.ASNNumber).Append("' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.ExternReceiptNumber))
+            {
+                IEnumerable<string> numbers = Enumerable.Empty<string>();
+                if (SearchCondition.ExternReceiptNumber.IndexOf("\n") > 0)
+                {
+                    numbers = SearchCondition.ExternReceiptNumber.Split('\n').Select(s => { return s.Trim(); });
+                }
+                if (SearchCondition.ExternReceiptNumber.IndexOf(',') > 0)
+                {
+                    numbers = SearchCondition.ExternReceiptNumber.Split(',').Select(s => { return s.Trim(); });
+                }
+
+                if (numbers != null && numbers.Any())
+                {
+                    numbers = numbers.Where(c => !string.IsNullOrEmpty(c));
+                }
+
+                if (numbers != null && numbers.Any())
+                {
+                    sb.Append(" and ExternReceiptNumber in ( ");
+                    foreach (string s in numbers)
+                    {
+                        sb.Append("'").Append(s).Append("',");
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append(" ) ");
+                }
+                else
+                {
+                    sb.Append(" and ExternReceiptNumber  like '%" + SearchCondition.ExternReceiptNumber.Trim() + "%' ");
+                }
+                //sb.Append(" AND a.ExternReceiptNumber='").Append(SearchCondition.ExternReceiptNumber).Append("' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.ASNType))
+            {
+                sb.Append(" AND a.ASNType='").Append(SearchCondition.ASNType).Append("' ");
+            }
+            if (SearchCondition.Status != 0)
+            {
+                if (SearchCondition.Status == 5)
+                {
+                    sb.Append(" AND a.Status>=").Append(SearchCondition.Status).Append(" ");
+                }
+                else
+                {
+                    sb.Append(" AND a.Status='").Append(SearchCondition.Status).Append("' ");
+                }
+            }
+
+            if (SearchCondition.CustomerID != 0)
+            {
+                sb.Append(" AND a.CustomerID='").Append(SearchCondition.CustomerID).Append("' ");
+            }
+            if (SearchCondition.CustomerID == 0 && SearchCondition.CustomerIDs != null)
+            {
+                IEnumerable<string> numbers = Enumerable.Empty<string>();
+                numbers = SearchCondition.CustomerIDs.Split(',').Select(s => { return s.Trim(); });
+                if (numbers != null && numbers.Any())
+                {
+                    numbers = numbers.Where(c => !string.IsNullOrEmpty(c));
+                }
+                sb.Append(" and a.CustomerID in ( ");
+                foreach (string s in numbers)
+                {
+                    sb.Append("'").Append(s).Append("',");
+                }
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append(" ) ");
+            }
+            if (SearchCondition.StartExpectDate != null)
+            {
+                sb.Append(" AND a.ExpectDate >='").Append(SearchCondition.StartExpectDate.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndExpectDate != null)
+            {
+                sb.Append(" AND a.ExpectDate <='").Append(SearchCondition.EndExpectDate.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            if (SearchCondition.StartCreateTime != null)
+            {
+                sb.Append(" AND a.CreateTime >='").Append(SearchCondition.StartCreateTime.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndCreateTime != null)
+            {
+                sb.Append(" AND a.CreateTime <='").Append(SearchCondition.EndCreateTime.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            //if (SearchCondition.StartCreateTime != null)
+            //{
+            //    sb.Append(" AND a.CreateTime >='").Append(SearchCondition.StartCreateTime.DateTimeToString("yyyy-MM-dd HH:mm:ss.00")).Append("' ");
+            //}
+            //if (SearchCondition.EndCreateTime != null)
+            //{
+            //    sb.Append(" AND a.CreateTime <='").Append(SearchCondition.EndCreateTime.DateTimeToString("yyyy-MM-dd HH:mm:59.99")).Append("' ");
+            //}
+            if (SearchCondition.WarehouseID != 0)
+            {
+                sb.Append(" AND a.WarehouseId='").Append(SearchCondition.WarehouseID).Append("' ");
+            }
+            else
+            {
+                sb.Append(" AND a.WarehouseName in  (select WarehouseName from wms_warehouse where id in ( ").Append(SearchCondition.WarehouseName.Trim()).Append(")) ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str1))
+            {
+                sb.Append(" and str1 like '%" + SearchCondition.str1.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str2))
+            {
+                sb.Append(" and str2 like '%" + SearchCondition.str2.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str3))
+            {
+                sb.Append(" and str3 like '%" + SearchCondition.str3.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str4))
+            {
+                sb.Append(" and str4 like '%" + SearchCondition.str4.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str5))
+            {
+                sb.Append(" and str5 like '%" + SearchCondition.str5.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str6))
+            {
+                sb.Append(" and str6 like '%" + SearchCondition.str6.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str7))
+            {
+                sb.Append(" and str7 like '%" + SearchCondition.str7.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str8))
+            {
+                sb.Append(" and str8 like '%" + SearchCondition.str8.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str9))
+            {
+                sb.Append(" and str9 like '%" + SearchCondition.str9.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str10))
+            {
+                sb.Append(" and str10 like '%" + SearchCondition.str10.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str11))
+            {
+                sb.Append(" and str11 like '%" + SearchCondition.str11.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str12))
+            {
+                sb.Append(" and str12 like '%" + SearchCondition.str12.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str13))
+            {
+                sb.Append(" and str13 like '%" + SearchCondition.str13.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str14))
+            {
+                sb.Append(" and str14 like '%" + SearchCondition.str14.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str15))
+            {
+                sb.Append(" and str15 like '%" + SearchCondition.str15.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str16))
+            {
+                sb.Append(" and str16 like '%" + SearchCondition.str16.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str17))
+            {
+                sb.Append(" and str17 like '%" + SearchCondition.str17.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str18))
+            {
+                sb.Append(" and str18 like '%" + SearchCondition.str18.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str19))
+            {
+                sb.Append(" and str19 like '%" + SearchCondition.str19.Trim() + "%' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.str20))
+            {
+                sb.Append(" and str20 like '%" + SearchCondition.str20.Trim() + "%' ");
+            }
+            if (SearchCondition.StartDateTime1 != null)
+            {
+                sb.Append(" AND a.DateTime1 >='").Append(SearchCondition.StartDateTime1.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndDateTime1 != null)
+            {
+                sb.Append(" AND a.DateTime1 <='").Append(SearchCondition.EndDateTime1.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            if (SearchCondition.StartDateTime2 != null)
+            {
+                sb.Append(" AND a.DateTime2 >='").Append(SearchCondition.StartDateTime2.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndDateTime2 != null)
+            {
+                sb.Append(" AND a.DateTime2 <='").Append(SearchCondition.EndDateTime2.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            if (SearchCondition.StartDateTime3 != null)
+            {
+                sb.Append(" AND a.DateTime3 >='").Append(SearchCondition.StartDateTime3.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndDateTime3 != null)
+            {
+                sb.Append(" AND a.DateTime3 <='").Append(SearchCondition.EndDateTime3.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            if (SearchCondition.StartDateTime4 != null)
+            {
+                sb.Append(" AND a.DateTime4 >='").Append(SearchCondition.StartDateTime4.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndDateTime4 != null)
+            {
+                sb.Append(" AND a.DateTime4 <='").Append(SearchCondition.EndDateTime4.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            if (SearchCondition.StartDateTime5 != null)
+            {
+                sb.Append(" AND a.DateTime5 >='").Append(SearchCondition.StartDateTime5.DateTimeToString("yyyy-MM-dd 00:00:00.00")).Append("' ");
+            }
+            if (SearchCondition.EndDateTime5 != null)
+            {
+                sb.Append(" AND a.DateTime5 <='").Append(SearchCondition.EndDateTime5.DateTimeToString("yyyy-MM-dd 23:59:59.99")).Append("' ");
+            }
+            if (SearchCondition.Int1 != null)
+            {
+                sb.Append(" AND a.Int1=").Append(SearchCondition.Int1).Append(" ");
+
+            }
+            if (SearchCondition.Int2 != null)
+            {
+                sb.Append(" AND a.Int2=").Append(SearchCondition.Int2).Append(" ");
+
+            }
+            if (SearchCondition.Int3 != null)
+            {
+                sb.Append(" AND isnull(a.Int3,'0')=").Append(SearchCondition.Int3).Append(" ");
+
+            }
+            if (SearchCondition.Int4 != null)
+            {
+                sb.Append(" AND a.Int4=").Append(SearchCondition.Int4).Append(" ");
+
+            }
+            if (SearchCondition.Int5 != null)
+            {
+                sb.Append(" AND a.Int5=").Append(SearchCondition.Int5).Append(" ");
+
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.Model) && SearchCondition.Model == "产品")
+            {
+                sb.Append(" AND a.ASNType like '%").Append(SearchCondition.Model).Append("%' ");
+            }
+            else
+            {
+                sb.Append(" AND a.ASNType like '%物料%' ");
+
+            }
+
+            return sb.ToString();
+        }
         /// <summary>
         /// 新增订单及明细
         /// </summary>
@@ -979,6 +1589,49 @@ namespace Runbow.TWS.Dao.WMS
             }
         }
 
+
+        /// <summary>
+        /// 新增订单及明细
+        /// </summary>
+        public string AddasnAndasnDetailSF(AddASNandASNDetailRequest rece)
+        {
+            rece.asnDetails = ReturnNewDt(rece.asnDetails.ToDataTable()).ConvertToEntityCollection<ASNDetail>();
+            using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
+            {
+                string message = "";
+                try
+                {
+                    IList<Receipt> result = new List<Receipt>();
+                    IList<ReceiptDetail> receiptDetail = new List<ReceiptDetail>();
+                    SqlCommand cmd = new SqlCommand("[Proc_WMS_AddASNANDASNDetaliSF]", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Asn", rece.asn.Select(ASN => new WMSASNToDb(ASN)));
+                    cmd.Parameters[0].SqlDbType = SqlDbType.Structured;
+                    cmd.Parameters.AddWithValue("@AsnDetali", rece.asnDetails.Select(asnDetali => new WMSASNDetailToDb(asnDetali)));
+                    cmd.Parameters[1].SqlDbType = SqlDbType.Structured;
+                    cmd.Parameters.AddWithValue("@message", message);
+                    cmd.Parameters[2].SqlDbType = SqlDbType.NVarChar;
+                    cmd.Parameters[2].Direction = ParameterDirection.Output;
+                    cmd.Parameters[2].Size = 500;
+                    cmd.CommandTimeout = 300;
+                    conn.Open();
+
+                    DataSet ds = new DataSet();
+                    SqlDataAdapter sda = new SqlDataAdapter();
+                    sda.SelectCommand = cmd;
+                    sda.Fill(ds);
+                    message = sda.SelectCommand.Parameters["@message"].Value.ToString();
+                    conn.Close();
+                    return message;
+                }
+                catch (Exception ex)
+                {
+                    //return message + "(" + ex.Message + ")";
+                    throw ex;
+                }
+            }
+        }
+
         public int ExternKeyCheck(string keys, string flag, long CustomerID)
         {
 
@@ -988,6 +1641,44 @@ namespace Runbow.TWS.Dao.WMS
                 try
                 {
                     SqlCommand cmd = new SqlCommand("Proc_WMS_ExternKeyCheck", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Asn", keys);
+                    cmd.Parameters[0].SqlDbType = SqlDbType.NVarChar;
+                    cmd.Parameters.AddWithValue("@flag", flag);
+                    cmd.Parameters[1].SqlDbType = SqlDbType.NVarChar;
+                    cmd.Parameters.AddWithValue("@CustomerID", CustomerID);
+                    cmd.Parameters[2].SqlDbType = SqlDbType.BigInt;
+                    cmd.Parameters.AddWithValue("@message", message);
+                    cmd.Parameters[3].SqlDbType = SqlDbType.Int;
+                    cmd.Parameters[3].Direction = ParameterDirection.Output;
+                    cmd.CommandTimeout = 300;
+                    conn.Open();
+
+                    DataSet ds = new DataSet();
+                    SqlDataAdapter sda = new SqlDataAdapter();
+                    sda.SelectCommand = cmd;
+                    sda.Fill(ds);
+                    message = sda.SelectCommand.Parameters["@message"].Value.ObjectToInt32();
+                    conn.Close();
+                    return message;
+                }
+                catch (Exception ex)
+                {
+                    //return message + "(" + ex.Message + ")";
+                    throw ex;
+                }
+            }
+        }
+
+        public int ExternKeyCheckSF(string keys, string flag, long CustomerID)
+        {
+
+            using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
+            {
+                int message = 0;
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("[Proc_WMS_ExternKeyCheckSF]", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Asn", keys);
                     cmd.Parameters[0].SqlDbType = SqlDbType.NVarChar;
@@ -1330,6 +2021,47 @@ namespace Runbow.TWS.Dao.WMS
                     IList<ASN> result = new List<ASN>();
                     IList<ASNDetail> receiptDetail = new List<ASNDetail>();
                     SqlCommand cmd = new SqlCommand("Proc_WMS_UpdateASNANDASNDetali", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Asn", rece.asn.Select(ASN => new WMSASNToDb(ASN)));
+                    cmd.Parameters[0].SqlDbType = SqlDbType.Structured;
+                    cmd.Parameters.AddWithValue("@AsnDetali", rece.asnDetails.Select(asnDetali => new WMSASNDetailToDb(asnDetali)));
+                    cmd.Parameters[1].SqlDbType = SqlDbType.Structured;
+                    cmd.Parameters.Add(new SqlParameter("@return", SqlDbType.Int));
+                    cmd.Parameters["@return"].Direction = ParameterDirection.ReturnValue;
+                    cmd.CommandTimeout = 300;
+                    conn.Open();
+
+                    cmd.ExecuteNonQuery();
+                    rows = Convert.ToInt32(cmd.Parameters["@return"].Value);
+                    if (rows >= 1)
+                    {
+                        istrue = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return istrue;
+        }
+
+        /// <summary>
+        /// 编辑操作
+        /// </summary>
+        /// <param name="rece"></param>
+        /// <returns></returns>
+        public bool UpdateasnAndasnDetailSF(AddASNandASNDetailRequest rece)
+        {
+            bool istrue = false;
+            int rows = 0;
+            using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
+            {
+                try
+                {
+                    IList<ASN> result = new List<ASN>();
+                    IList<ASNDetail> receiptDetail = new List<ASNDetail>();
+                    SqlCommand cmd = new SqlCommand("[Proc_WMS_UpdateASNANDASNDetaliSF]", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Asn", rece.asn.Select(ASN => new WMSASNToDb(ASN)));
                     cmd.Parameters[0].SqlDbType = SqlDbType.Structured;

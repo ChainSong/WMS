@@ -1,0 +1,181 @@
+﻿<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.0.3.min.js"></script>
+<script src="~/Scripts/System/Layer/layer.js"></script>
+<script src="~/Scripts/Common/jquery-barcode.js"></script>
+<script src="~/Scripts/Common/jatoolsPrinter.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.jsrender()
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@using (Html.BeginForm())
+{
+    @Html.Hidden("TempCustomerID", Model.ASNDetailCollection.Select(c => c.CustomerID).FirstOrDefault())
+    @Html.Hidden("PowerCompany", (string)ViewBag.PowerCompany)
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nest" id="basicClose">
+                <div class="body-nest" id="basic">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-3">
+                            <label class="control-label" for="Name">ASN单号</label>
+                            <div class="controls">
+                                @Html.TextBox("AsnNumber", "", new { style = "width:100%", @class = "form-control AsnNumbercheck", placeholder = "双击选择ASN单号" })
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nest" id="basicClose">
+                <div class="body-nest" id="basic">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-3">
+                            <label class="control-label" for="Name">箱号</label>
+                            <div class="controls">
+                                @Html.TextBox("ScanBoxNumber", "", new { style = "width:78%", @class = "form-control" })
+                                <input type="button" id="CheckDiff" value="检查差异" class="btn btn-warning" />
+                                <audio src="/Areas/WMS/1.mp3" id="Audio">
+                                    您的浏览器不支持 audio 标签。
+                                </audio>
+                                <audio src="/Areas/WMS/success.mp3" id="SuccessAudio">
+                                    您的浏览器不支持 audio 标签。
+                                </audio>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-3">
+                            <label class="control-label" for="Name">SKU</label>
+                            <div class="controls">
+                                @Html.TextBox("ScanSKU", "", new { style = "width:100%", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div id="showdata" class="col-lg-9 col-sm-9" style="max-height: 100px; background-color: gray; border: solid 1px #add9c0; color: white; margin: 0px; padding: 0px">
+                            <table id="showtable" style="width: 100%; border: 1px solid;">
+                                <tr style="border: 1px solid; text-align: center">
+                                    <td style="border: 1px solid; text-align: center">箱号</td>
+                                    <td style="border: 1px solid; text-align: center">SKU</td>
+                                    <td style="border: 1px solid; text-align: center">期望数量</td>
+                                    <td style="border: 1px solid; text-align: center">扫描数量</td>
+
+                                </tr>
+                                <tr style="border: 1px solid">
+                                    <td id="box" style="border: 1px solid; width: 30%; text-align: center"></td>
+                                    <td id="sku" style="border: 1px solid; width: 30%; text-align: center"></td>
+                                    <td style="border: 1px solid; width: 20%; text-align: center"><font id="expectedQty" color="blue"></font></td>
+                                    <td style="border: 1px solid; width: 20%; text-align: center"><font id="receivedQty" color="red"></font></td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="nest" id="asdlose">
+                <div class="title-alt">
+                    <h3>
+                        ASN明细列表
+                        @if (Model.ASNDetailCollection != null && Model.ASNDetailCollection.Any())
+                        {
+                            @Html.Raw("(" + Model.ASNDetailCollection.Count() + ")");
+                        }
+                        <input type="button" id="ShowDiff" value="查看差异" class="btn btn-success" />
+                        <input type="button" id="ExportDiff" value="导出差异" class="btn btn-primary" />
+                    </h3>
+                    <div class="titleClose">
+                    </div>
+                    <div class="titleToggle">
+                        <a class="nav-toggle-alt" href="#asd">
+                            <span class="entypo-up-open"></span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="body-nest" id="asd">
+                    <section id="flip-scroll">
+                        <div id="tables" style="overflow-X: scroll; min-height: 180px">
+                            <table id="Newtable" class="table table-bordered table-striped cf">
+                                <thead>
+                                    <tr>
+                                        <th>箱号</th>
+                                        <th>SKU</th>
+                                        <th>产品名称</th>
+                                        <th>期望数量</th>
+                                        <th>扫描数量</th>
+                                        @*<th>差异数量</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ASNDetailCollection != null && Model.ASNDetailCollection.Any())
+                                    {
+                                        foreach (var crminfo in Model.ASNDetailCollection)
+                                        {
+                                            var colors = crminfo.QtyExpected == 0 ? "gray" : "";
+                                            //var diffQty = crminfo.QtyReceived - crminfo.QtyExpected;
+                                            //var diffQtyShow = diffQty >= 0 ?(diffQty>0?"+"+diffQty:""+diffQty): "-" + diffQty;
+                                            <tr style="background-color:@colors">
+                                                <td>@crminfo.str2</td>
+                                                <td>@crminfo.SKU</td>
+                                                <td>@crminfo.GoodsName</td>
+                                                <td>@crminfo.QtyExpected</td>
+                                                <td>@crminfo.QtyReceived</td>
+                                                @*<td>@diffQtyShow</td>*@
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<style>
+    .bcTarget {
+        font-size: 25px;
+    }
+</style>
+<script id="CheckRFDifference" type="text/x-jsrender">
+    <tr>
+        <td>{{:str2}}</td>
+        <td>{{:SKU}}</td>
+        <td>{{:QtyReceived-QtyExpected}}</td>
+    </tr>
+
+</script>
+
+<div id="page1" style="width:280px;height:160px;display:none">
+    <table style="margin:0 auto;border:none;border-spacing:5px">
+        <tr>
+            <td style="text-align:right;font-size:20px;border:none;width:80px">单号:</td>
+            <td style="text-align:left;font-size:20px;border:none;width:200px" id="externnumber"></td>
+        </tr>
+        <tr>
+            <td style="text-align:right;font-size:20px;border:none;width:80px">箱条码:</td>
+            <td style="border:none;text-align:left"><div style="font-size:20px;text-align:left;" id="boxbarcode" class="bcTarget"></div></td>
+        </tr>
+        <tr>
+            <td style="text-align:right;font-size:20px;border:none;width:80px">总件数:</td>
+            <td style="text-align:left;font-size:20px;border:none;width:200px" id="skucount"></td>
+        </tr>
+    </table>
+</div>
+
+<object id="ojatoolsPrinter" codebase="JatoolsPrinter/jatoolsPrinter.cab#version=5,4,0,0" classid="clsid:B43D3361-D075-4BE2-87FE-057188254255" width="0" height="0">
+    <embed id="ejatoolsPrinter" type="application/x-vnd.jatoolsPrinter" pluginspage="JatoolsPrinter/setup.exe" width="0" height="0" />
+</object>

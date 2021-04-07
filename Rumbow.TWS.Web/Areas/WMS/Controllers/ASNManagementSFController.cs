@@ -26,432 +26,203 @@ using System.Web.Script.Serialization;
 
 namespace Runbow.TWS.Web.Areas.WMS.Controllers
 {
-    public class ASNManagementController : BaseController
+    public class ASNManagementSFController : BaseController
     {
-        /// <summary>
-        /// 查看扫描ASN差异
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        /// <returns></returns>
-        //public ActionResult ShowDiff(string AsnNumber)
-        //{
-        //    IndexViewModel vm = new IndexViewModel();
-        //    var response = new ASNManagementService().GetASNScanByAsnNumber(AsnNumber);
-        //    if (response.IsSuccess)
-        //    {
-        //        vm.ExpectTotalBox = response.Result.ExpectTotalBox;
-        //        vm.ReceiveTotalBox = response.Result.ReceiveTotalBox;
-        //        vm.ExpectTotalSKU = response.Result.ExpectTotalSKU;
-        //        vm.ReceiveTotalSKU = response.Result.ReceiveTotalSKU;
-        //        vm.ASNScanBoxSKUCollection = response.Result.ASNScanBoxSKUCollection;
-        //        vm.ASNScanBoxDetailSKUCollection = response.Result.ASNScanBoxDetailSKUCollection;
-        //    }
-        //    return View(vm);
-        //}
 
-        /// <summary>
-        /// 扫描更新数量
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        /// <param name="str2"></param>
-        /// <param name="SKU"></param>
-        /// <returns></returns>
-        //public string AsnScanQtyUpdate(string AsnNumber, string str2, string SKU)
-        //{
-        //    var response = "";
-        //    try
-        //    {
-        //        response = new ASNManagementService().AsnScanQtyUpdate(AsnNumber, str2, SKU, base.UserInfo.Name);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response = ex.Message;
-        //    }
-        //    return response;
-        //}
-        //[HttpGet]
-        //public ActionResult AsnScanIndex(string AsnNumber)
-        //{
-        //    IndexViewModel vm = new IndexViewModel();
-        //    var response = new ASNManagementService().GetASNDetailForScanByAsnNumber(AsnNumber);
-        //    if (response.IsSuccess)
-        //    {
-        //        vm.ASNDetailCollection = response.Result.AsnDetailCollection;
-        //    }
-        //    return View(vm);
-        //}
-        //[HttpGet]
-        //public ActionResult AsnScanLocationPrint(string AsnNumber)
-        //{
-        //    IndexViewModel vm = new IndexViewModel();
-        //    var response = new ASNManagementService().GetASNDetailForScanByAsnNumber(AsnNumber);
-        //    if (response.IsSuccess)
-        //    {
-        //        vm.ASNDetailCollection = response.Result.AsnDetailCollection;
-        //    }
-        //    return View(vm);
-        //}
-        //[HttpGet]
-        //public ActionResult PopupIndex(int? PageIndex, long? customerID)
-        //{
-        //    Session["ASNConditionModel"] = null;
-        //    var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
-        //    var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
-        //    var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
-        //    ViewBag.CustomerList = CustomerList;
-        //    IndexViewModel vm = new IndexViewModel();
-        //    IEnumerable<WMSConfig> wms = null;
-        //    try
-        //    {
-        //        wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
 
-        //    if (wms == null)
-        //    {
-        //        wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
-        //    }
-        //    List<SelectListItem> st = new List<SelectListItem>();
-        //    foreach (WMSConfig w in wms)
-        //    {
-        //        st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
-        //    }
-        //    vm.ASNTypes = st;
-        //    vm.ASNCondition = new ASNSearchCondition();
-        //    vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
+        [HttpGet]
+        public ActionResult Index(int? PageIndex, long? customerID)
+        {
+            Session["ASNConditionModel"] = null;
+            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
+            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
+            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            ViewBag.CustomerList = CustomerList;
+            ViewBag.ProjectName = base.UserInfo.ProjectName;
+            IndexViewModel vm = new IndexViewModel();
+            IEnumerable<WMSConfig> wms = null;
+            try
+            {
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
+            }
+            catch (Exception)
+            {
+            }
 
-        //    if (base.UserInfo.UserType == 0)
-        //    {
-        //        vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
-        //    }
-        //    else if (base.UserInfo.UserType == 2)
-        //    {
-        //        if (customerID.HasValue)
-        //        {
-        //            vm.ASNCondition.CustomerID = customerID;
-        //        }
-        //        else
-        //        {
-        //            var customerIDs = ApplicationConfigHelper.GetApplicationCustomer().Where(m => m.UserID == base.UserInfo.ID).Select(c => c.ID);
-        //            if (customerIDs != null && customerIDs.Count() == 1)
-        //            {
-        //                vm.ASNCondition.CustomerID = customerIDs.First();
-        //            }
-        //            else
-        //            {
-        //                vm.ASNCondition.CustomerID = 0;
-        //            }
-        //        }
-        //    }
-        //    IEnumerable<SelectListItem> WarehouseList = null;
-        //    if (vm.ASNCondition.CustomerID == 0)
-        //    {
-        //        WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-        //                                            .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-        //        StringBuilder sb = new StringBuilder();
+            if (wms == null)
+            {
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
+            }
+            List<SelectListItem> st = new List<SelectListItem>();
+            foreach (WMSConfig w in wms)
+            {
+                st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
+            }
+            vm.ASNTypes = st;
+            vm.ASNCondition = new ASNSearchCondition();
+            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
 
-        //        foreach (var i in CustomerListID)
-        //        {
-        //            sb.Append("" + i + ",");
-        //        }
-        //        if (sb.Length > 1)
-        //        {
-        //            vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-        //        }
-        //        else
-        //        {
-        //            vm.ASNCondition.CustomerIDs = "0";
-        //        }
-        //    }
-        //    else
-        //    {
-        //        WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-        //                             .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+            if (base.UserInfo.UserType == 0)
+            {
+                vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
+            }
+            else if (base.UserInfo.UserType == 2)
+            {
+                if (customerID.HasValue)
+                {
+                    vm.ASNCondition.CustomerID = customerID;
+                }
+                else
+                {
+                    var customerIDs = ApplicationConfigHelper.GetApplicationCustomer().Where(m => m.UserID == base.UserInfo.ID).Select(c => c.ID);
+                    if (customerIDs != null)//&& customerIDs.Count() == 1
+                    {
+                        vm.ASNCondition.CustomerID = customerIDs.First();
+                    }
+                    else
+                    {
+                        vm.ASNCondition.CustomerID = 0;
+                    }
+                }
+            }
+            IEnumerable<SelectListItem> WarehouseList = null;
+            if (vm.ASNCondition.CustomerID == 0)
+            {
+                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+                                                    .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+                StringBuilder sb = new StringBuilder();
 
-        //    }
-        //    if (WarehouseList != null)
-        //    {
-        //        StringBuilder sb = new StringBuilder();
-        //        foreach (var i in WarehouseList)
-        //        {
-        //            //sb.Append("'" + i.Value + "',");
-        //            sb.Append("" + i.Value + ",");
-        //        }
-        //        if (sb.Length > 1)
-        //        {
-        //            vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
-        //            //vm.ASNCondition.WarehouseID = Int64.Parse(vm.ASNCondition.WarehouseName);
-        //        }
-        //    }
-        //    ViewBag.WarehouseList = WarehouseList;
+                foreach (var i in CustomerListID)
+                {
+                    sb.Append("" + i + ",");
+                }
+                if (sb.Length > 1)
+                {
+                    vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
+                }
+                else
+                {
+                    vm.ASNCondition.CustomerIDs = "0";
+                }
+            }
+            else
+            {
+                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+                                     .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
 
-        //    #region 屏蔽
+            }
+            if (WarehouseList != null)
+            {
+                vm.ASNCondition.WarehouseID = Int64.Parse(WarehouseList.FirstOrDefault().Value);//add default warehouse
+                StringBuilder sb = new StringBuilder();
+                foreach (var i in WarehouseList)
+                {
+                    //sb.Append("'" + i.Value + "',");
+                    sb.Append("" + i.Value + ",");
+                }
+                if (sb.Length > 1)
+                {
+                    vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
+                    //vm.ASNCondition.WarehouseID = Int64.Parse(vm.ASNCondition.WarehouseName);
+                }
+            }
+            ViewBag.WarehouseList = WarehouseList;
 
-        //    //if (base.UserInfo.UserType == 0)
-        //    //{
-        //    //    vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
-        //    //}
-        //    //else if (base.UserInfo.UserType == 2)
-        //    //{
-        //    //    if (customerID.HasValue)
-        //    //    {
-        //    //        vm.ASNCondition.CustomerID = customerID;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
-        //    //        if (customerIDs != null && customerIDs.Count() == 1)
-        //    //        {
-        //    //            vm.ASNCondition.CustomerID = customerIDs.First();
-        //    //        }
-        //    //    }
-        //    //}
-        //    //IEnumerable<SelectListItem> WarehouseList = null;
-        //    //var WarehouseListAll = ApplicationConfigHelper.GetCacheInfo();
-        //    //if (vm.ASNCondition.CustomerID == null)
-        //    //{
-        //    //    WarehouseList = WarehouseListAll.Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-        //    //                                        .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-        //    //    StringBuilder sb = new StringBuilder();
+            #region 屏蔽
 
-        //    //    foreach (var i in CustomerListID)
-        //    //    {
-        //    //        sb.Append("" + i + ",");
-        //    //    }
-        //    //    if (sb.Length > 1)
-        //    //    {
-        //    //        vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        vm.ASNCondition.CustomerIDs = "0";
-        //    //    }
-        //    //}
-        //    //else
-        //    //{
-        //    //    WarehouseList = WarehouseListAll.Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-        //    //                         .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-        //    //}
+            //if (base.UserInfo.UserType == 0)
+            //{
+            //    vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
+            //}
+            //else if (base.UserInfo.UserType == 2)
+            //{
+            //    if (customerID.HasValue)
+            //    {
+            //        vm.ASNCondition.CustomerID = customerID;
+            //    }
+            //    else
+            //    {
+            //        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
+            //        if (customerIDs != null && customerIDs.Count() == 1)
+            //        {
+            //            vm.ASNCondition.CustomerID = customerIDs.First();
+            //        }
+            //    }
+            //}
+            //IEnumerable<SelectListItem> WarehouseList = null;
+            //var WarehouseListAll = ApplicationConfigHelper.GetCacheInfo();
+            //if (vm.ASNCondition.CustomerID == null)
+            //{
+            //    WarehouseList = WarehouseListAll.Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+            //                                        .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+            //    StringBuilder sb = new StringBuilder();
 
-        //    //ViewBag.WarehouseList = WarehouseList;
-        //    //if (CustomerList.Count() == 1)
-        //    //{
-        //    //    vm.ASNCondition.CustomerID = CustomerList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-        //    //}
-        //    //if (WarehouseList.Count() == 1)
-        //    //{
-        //    //    vm.ASNCondition.WarehouseID = WarehouseList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-        //    //}
+            //    foreach (var i in CustomerListID)
+            //    {
+            //        sb.Append("" + i + ",");
+            //    }
+            //    if (sb.Length > 1)
+            //    {
+            //        vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
+            //    }
+            //    else
+            //    {
+            //        vm.ASNCondition.CustomerIDs = "0";
+            //    }
+            //}
+            //else
+            //{
+            //    WarehouseList = WarehouseListAll.Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
+            //                         .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
+            //}
 
-        //    //vm.ASNCondition.StartExpectDate = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-        //    //vm.ASNCondition.EndExpectDate = DateTime.Now.ToString("yyyy-MM-dd").ObjectToNullableDateTime();
-        //    #endregion 
+            //ViewBag.WarehouseList = WarehouseList;
+            //if (CustomerList.Count() == 1)
+            //{
+            //    vm.ASNCondition.CustomerID = CustomerList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
+            //}
+            //if (WarehouseList.Count() == 1)
+            //{
+            //    vm.ASNCondition.WarehouseID = WarehouseList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
+            //}
 
-        //    vm.ASNCondition.StartCreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-        //    vm.ASNCondition.EndCreateTime = DateTime.Now;
-        //    //vm.ASNCondition.Status = 1;
-        //    Session["ASNConditionModel"] = vm.ASNCondition;
-        //    this.GenQueryASNViewModel(vm);
-        //    GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
-        //    getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
-        //    getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-        //    getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
-        //    var getReceiptByConditionResponse = new ASNManagementService().GetASNByCondition(getAsnByConditionRequest);
-        //    if (getReceiptByConditionResponse.IsSuccess)
-        //    {
-        //        vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
-        //        vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
-        //        vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
-        //    }
+            //vm.ASNCondition.StartExpectDate = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
+            //vm.ASNCondition.EndExpectDate = DateTime.Now.ToString("yyyy-MM-dd").ObjectToNullableDateTime();
+            #endregion 
 
-        //    return View(vm);
-        //}
+            vm.ASNCondition.StartCreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
+            vm.ASNCondition.EndCreateTime = DateTime.Now;
+            Session["ASNConditionModel"] = vm.ASNCondition;
 
-        /// <summary>
-        /// ASN预检删除重扫本箱
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        /// <param name="ScanBoxNumber"></param>
-        /// <returns></returns>
-        //public string ClearAsnBoxNumber(string AsnNumber, string ScanBoxNumber)
-        //{
-        //    string msg = "";
-        //    try
-        //    {
-        //        msg = new ASNManagementService().ClearAsnBoxNumber(AsnNumber, ScanBoxNumber);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        msg = ex.Message;
-        //    }
-        //    return msg;
-        //}
+            this.GenQueryASNViewModel(vm);
 
-        /// <summary>
-        /// 检查箱差异
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        /// <param name="ScanBoxNumber"></param>
-        /// <returns></returns>
-        //public string CheckDiff(string AsnNumber, string ScanBoxNumber)
-        //{
-        //    var response = new ASNManagementService().CheckDiff(AsnNumber, ScanBoxNumber);
-        //    //if (response == "Diff")
-        //    //{
-        //    //    PlayError();
-        //    //}
-        //    return response;
-        //}
+            GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
+            getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
+            getAsnByConditionRequest.SearchCondition.Model = "";
+            //getAsnByConditionRequest.SearchCondition.Status = 1;
 
-        /// <summary>
-        /// 检查箱差异退货仓
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        /// <param name="ScanBoxNumber"></param>
-        /// <returns></returns>
-        //public JsonResult CheckDiffReturn(string AsnNumber, string ScanBoxNumber)
-        //{
-        //    List<ASNDetail> lists = new List<ASNDetail>();
-        //    try
-        //    {
-        //        lists = new ASNManagementService().CheckDiffReturn(AsnNumber, ScanBoxNumber);
-        //        if (lists.Count() > 0)
-        //        {
-        //            return Json(new { Code = "1", data = lists });
-        //        }
-        //        else
-        //        {
-        //            return Json(new { Code = "0" });
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { Code = "-1" });
-        //    }
+            getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
+            getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
+            var getReceiptByConditionResponse = new ASNManagementService().GetASNByConditionSF(getAsnByConditionRequest);
+            if (getReceiptByConditionResponse.IsSuccess)
+            {
+                vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
+                vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
+                vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
+            }
 
-        //}
-        /// <summary>
-        /// 获取ASN预检当前箱总件数
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        /// <param name="ScanBoxNumber"></param>
-        /// <returns></returns>
-        //public JsonResult GetAsnScanBoxSum(string AsnNumber, string ScanBoxNumber)
-        //{
-        //    List<ASNDetail> lists = new List<ASNDetail>();
-        //    try
-        //    {
-        //        lists = new ASNManagementService().GetAsnScanBoxSum(AsnNumber, ScanBoxNumber);
-        //        if (lists.Count() > 0)
-        //        {
-        //            return Json(new { Code = "1", data = lists });
-        //        }
-        //        else
-        //        {
-        //            return Json(new { Code = "0" });
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { Code = "-1" });
-        //    }
+            return View(vm);
+        }
 
-        //}
-        /// <summary>
-        /// 导出差异
-        /// </summary>
-        /// <param name="AsnNumber"></param>
-        //public void ExportDiff(string AsnNumber)
-        //{
-        //    IndexViewModel vm = new IndexViewModel();
-        //    var response = new ASNManagementService().GetASNScanByAsnNumber(AsnNumber);
-        //    if (response.IsSuccess)
-        //    {
-        //        vm.ExpectTotalBox = response.Result.ExpectTotalBox;
-        //        vm.ReceiveTotalBox = response.Result.ReceiveTotalBox;
-        //        vm.ExpectTotalSKU = response.Result.ExpectTotalSKU;
-        //        vm.ReceiveTotalSKU = response.Result.ReceiveTotalSKU;
-        //        vm.ASNScanBoxSKUCollection = response.Result.ASNScanBoxSKUCollection;
-        //        vm.ASNScanBoxDetailSKUCollection = response.Result.ASNScanBoxDetailSKUCollection;
-        //        IEnumerable<ASNScan> TotalBox = null;
-        //        DataSet ds = new DataSet();
-        //        DataTable dtTotalBox = new DataTable();
-        //        DataRow drTotalBox = dtTotalBox.NewRow();
-        //        dtTotalBox.Columns.Add("期望总箱数");
-        //        dtTotalBox.Columns.Add("实收总箱数");
-        //        drTotalBox["期望总箱数"] = vm.ExpectTotalBox.ExpectTotalBox;
-        //        drTotalBox["实收总箱数"] = vm.ReceiveTotalBox.ReceiveTotalBox;
-        //        dtTotalBox.Rows.Add(drTotalBox);
-        //        dtTotalBox.TableName = "总箱数差异";
 
-        //        DataTable dtTotalSku = new DataTable();
-        //        DataRow drTotalSku = dtTotalSku.NewRow();
-        //        dtTotalSku.Columns.Add("期望总件数");
-        //        dtTotalSku.Columns.Add("实收总件数");
-        //        drTotalSku["期望总件数"] = vm.ExpectTotalSKU.ExpectTotalSKU;
-        //        drTotalSku["实收总件数"] = vm.ReceiveTotalSKU.ReceiveTotalSKU;
-        //        dtTotalSku.Rows.Add(drTotalSku);
-        //        dtTotalSku.TableName = "总件数差异";
-
-        //        DataTable dtBoxSKU = new DataTable();
-        //        dtBoxSKU.Columns.Add("箱号");
-        //        dtBoxSKU.Columns.Add("期望件数");
-        //        dtBoxSKU.Columns.Add("实收件数");
-        //        foreach (var item in vm.ASNScanBoxSKUCollection)
-        //        {
-        //            DataRow drBoxSKU = dtBoxSKU.NewRow();
-        //            drBoxSKU["箱号"] = item.str2;
-        //            drBoxSKU["期望件数"] = item.ExpectBoxSKU;
-        //            drBoxSKU["实收件数"] = item.ReceiveBoxSKU;
-        //            dtBoxSKU.Rows.Add(drBoxSKU);
-        //        }
-        //        dtBoxSKU.TableName = "箱件数差异";
-
-        //        DataTable dtBoxDetailSKU = new DataTable();
-        //        dtBoxDetailSKU.Columns.Add("箱号");
-        //        dtBoxDetailSKU.Columns.Add("产品编码");
-        //        dtBoxDetailSKU.Columns.Add("期望数量");
-        //        dtBoxDetailSKU.Columns.Add("实收数量");
-        //        foreach (var item in vm.ASNScanBoxDetailSKUCollection)
-        //        {
-        //            DataRow drBoxDetailSKU = dtBoxDetailSKU.NewRow();
-        //            drBoxDetailSKU["箱号"] = item.str2;
-        //            drBoxDetailSKU["产品编码"] = item.SKU;
-        //            drBoxDetailSKU["期望数量"] = item.ExpectBoxDetailSKU;
-        //            drBoxDetailSKU["实收数量"] = item.BoxDetailSKU;
-        //            dtBoxDetailSKU.Rows.Add(drBoxDetailSKU);
-        //        }
-        //        dtBoxDetailSKU.TableName = "箱明细差异";
-        //        ds.Tables.Add(dtTotalBox);
-        //        ds.Tables.Add(dtTotalSku);
-        //        ds.Tables.Add(dtBoxSKU);
-        //        ds.Tables.Add(dtBoxDetailSKU);
-        //        //ExportDataToExcelHelper.ExportDataSetToExcel(ds, "ASN差异明细_" + AsnNumber.ToString());
-        //        EPPlusOperation.ExportDataSetByEPPlus(ds, "ASN差异明细_" + AsnNumber.ToString());
-        //    }
-        //}
-
-        /// <summary>
-        /// 播放错误提示音
-        /// </summary>
-        //public void PlayError()
-        //{
-        //    string path = AppDomain.CurrentDomain.BaseDirectory;
-        //    SMedia.SoundPlayer player = new SMedia.SoundPlayer();
-        //    player.SoundLocation = path + "Media\\error.wav";
-        //    player.Load();
-        //    player.Play();
-        //}
         //查询和导出
         [HttpPost]
-        public ActionResult PopupIndex(IndexViewModel vm, int? PageIndex, string Action)
+        public ActionResult Index(IndexViewModel vm, int? PageIndex, string Action)
         {
             IEnumerable<WMSConfig> wms = null;
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
             }
             catch (Exception)
             {
@@ -478,6 +249,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 Session["ASNConditionModel"] = null;
                 Session["ASNConditionModel"] = vm.ASNCondition;
             }
+            ViewBag.ProjectName = base.UserInfo.ProjectName;
             var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
             var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
             var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
@@ -532,9 +304,9 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             vm.ASNCondition.UserType = base.UserInfo.UserType;
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
             var getASNByConditionRequest = new GetASNByConditionRequest();
-            getASNByConditionRequest.SearchCondition.Model = "物料";
 
-            if (Action == "查询" || Action == "PopupIndex")
+
+            if (Action == "查询" || Action == "Index")
             {
                 getASNByConditionRequest.SearchCondition = vm.ASNCondition;
                 getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
@@ -546,8 +318,11 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
                 getASNByConditionRequest.PageIndex = 0;
             }
+            getASNByConditionRequest.SearchCondition.Model = "";
+            //getASNByConditionRequest.SearchCondition.Status = 1;
 
-            var getASNByConditionResponse = new ASNManagementService().GetASNDetailByConditionResponse(getASNByConditionRequest);
+
+            var getASNByConditionResponse = new ASNManagementService().GetASNDetailByConditionResponseSF(getASNByConditionRequest);
 
             if (getASNByConditionResponse.IsSuccess || Action == "下载模板")
             {
@@ -560,21 +335,21 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     IEnumerable<Column> columnasnDetail;
                     var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.ASNCondition.CustomerID).ProjectCollection.First();
                     Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASN").Count() == 0)
+                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNSF").Count() == 0)
                     {
-                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
+                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
                     }
                     else
                     {
-                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
+                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
                     }
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
                     {
-                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
                     }
                     else
                     {
-                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
                     }
 
 
@@ -586,40 +361,9 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     else
                     {
                         var notKeyColumns1 = columnasn.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
-                        //             .Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID)))
-                        //.Select(c =>
-                        //{
-                        //    if (c.InnerColumns.Count == 0)
-                        //    {
-                        //        return c;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID))
-                        //        {
-                        //            return c.InnerColumns.First(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID);
-                        //        }
 
-                        //        return c;
-                        //    }
-                        //});
                         var notKeyColumns2 = columnasnDetail.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
-                        //             .Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID)))
-                        //.Select(c =>
-                        //{
-                        //    if (c.InnerColumns.Count == 0)
-                        //    {
-                        //        return c;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID))
-                        //        {
-                        //            return c.InnerColumns.First(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID);
-                        //        }
-                        //        return c;
-                        //    }
-                        //});
+
                         columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true && c.DbColumnName != "Status")).Union(notKeyColumns1.Where(c => c.IsShowInList));
                         columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true)).Union(notKeyColumns2.Where(c => c.IsShowInList));
                     }
@@ -644,8 +388,10 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             return View(vm);
         }
 
+
+
         [HttpGet]
-        public ActionResult Index(int? PageIndex, long? customerID)
+        public ActionResult IndexCG(int? PageIndex, long? customerID)
         {
             Session["ASNConditionModel"] = null;
             var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
@@ -657,7 +403,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<WMSConfig> wms = null;
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
             }
             catch (Exception)
             {
@@ -744,65 +490,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             #region 屏蔽
 
-            //if (base.UserInfo.UserType == 0)
-            //{
-            //    vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
-            //}
-            //else if (base.UserInfo.UserType == 2)
-            //{
-            //    if (customerID.HasValue)
-            //    {
-            //        vm.ASNCondition.CustomerID = customerID;
-            //    }
-            //    else
-            //    {
-            //        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
-            //        if (customerIDs != null && customerIDs.Count() == 1)
-            //        {
-            //            vm.ASNCondition.CustomerID = customerIDs.First();
-            //        }
-            //    }
-            //}
-            //IEnumerable<SelectListItem> WarehouseList = null;
-            //var WarehouseListAll = ApplicationConfigHelper.GetCacheInfo();
-            //if (vm.ASNCondition.CustomerID == null)
-            //{
-            //    WarehouseList = WarehouseListAll.Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-            //                                        .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            //    StringBuilder sb = new StringBuilder();
 
-            //    foreach (var i in CustomerListID)
-            //    {
-            //        sb.Append("" + i + ",");
-            //    }
-            //    if (sb.Length > 1)
-            //    {
-            //        vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-            //    }
-            //    else
-            //    {
-            //        vm.ASNCondition.CustomerIDs = "0";
-            //    }
-            //}
-            //else
-            //{
-            //    WarehouseList = WarehouseListAll.Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-            //                         .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            //}
-
-            //ViewBag.WarehouseList = WarehouseList;
-            //if (CustomerList.Count() == 1)
-            //{
-            //    vm.ASNCondition.CustomerID = CustomerList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-            //}
-            //if (WarehouseList.Count() == 1)
-            //{
-            //    vm.ASNCondition.WarehouseID = WarehouseList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-            //}
-
-            //vm.ASNCondition.StartExpectDate = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-            //vm.ASNCondition.EndExpectDate = DateTime.Now.ToString("yyyy-MM-dd").ObjectToNullableDateTime();
-            #endregion 
+            #endregion
 
             vm.ASNCondition.StartCreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
             vm.ASNCondition.EndCreateTime = DateTime.Now;
@@ -812,11 +501,13 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
             getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
-            getAsnByConditionRequest.SearchCondition.Model = "物料";
+            getAsnByConditionRequest.SearchCondition.Model = "";
+            getAsnByConditionRequest.SearchCondition.Status = 5;
+
 
             getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
             getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
-            var getReceiptByConditionResponse = new ASNManagementService().GetASNByCondition(getAsnByConditionRequest);
+            var getReceiptByConditionResponse = new ASNManagementService().GetASNByConditionSF(getAsnByConditionRequest);
             if (getReceiptByConditionResponse.IsSuccess)
             {
                 vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
@@ -828,20 +519,14 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         }
 
 
-        [HttpGet]
-        public ActionResult IndexSF(int? PageIndex, long? customerID)
+        //查询和导出
+        [HttpPost]
+        public ActionResult IndexCG(IndexViewModel vm, int? PageIndex, string Action)
         {
-            Session["ASNConditionModel"] = null;
-            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
-            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
-            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
-            ViewBag.CustomerList = CustomerList;
-            ViewBag.ProjectName = base.UserInfo.ProjectName;
-            IndexViewModel vm = new IndexViewModel();
             IEnumerable<WMSConfig> wms = null;
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
             }
             catch (Exception)
             {
@@ -857,34 +542,26 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
             }
             vm.ASNTypes = st;
-            vm.ASNCondition = new ASNSearchCondition();
-            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
 
-            if (base.UserInfo.UserType == 0)
+            if (vm.ASNCondition == null && Session["ASNConditionModel"] != null)
             {
-                vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
+                vm.ASNCondition = (ASNSearchCondition)Session["ASNConditionModel"];
             }
-            else if (base.UserInfo.UserType == 2)
+            else if (vm.ASNCondition == null && Session["ASNConditionModel"] == null)
             {
-                if (customerID.HasValue)
-                {
-                    vm.ASNCondition.CustomerID = customerID;
-                }
-                else
-                {
-                    var customerIDs = ApplicationConfigHelper.GetApplicationCustomer().Where(m => m.UserID == base.UserInfo.ID).Select(c => c.ID);
-                    if (customerIDs != null)//&& customerIDs.Count() == 1
-                    {
-                        vm.ASNCondition.CustomerID = customerIDs.First();
-                    }
-                    else
-                    {
-                        vm.ASNCondition.CustomerID = 0;
-                    }
-                }
+                vm.ASNCondition = new ASNSearchCondition();
+                Session["ASNConditionModel"] = null;
+                Session["ASNConditionModel"] = vm.ASNCondition;
             }
+            ViewBag.ProjectName = base.UserInfo.ProjectName;
+            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
+            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
+            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+            ViewBag.CustomerList = CustomerList;
+            //ApplicationConfigHelper.GetApplicationCustomer().Where(c => c.UserID == UserInfo.ID)
+            //.Select(c => new SelectListItem() { Value = c.ID.ToString(), Text = c.Name });
             IEnumerable<SelectListItem> WarehouseList = null;
-            if (vm.ASNCondition.CustomerID == 0)
+            if (vm.ASNCondition.CustomerID == null)
             {
                 WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
                                                     .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
@@ -902,16 +579,20 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 {
                     vm.ASNCondition.CustomerIDs = "0";
                 }
+                vm.ASNCondition.CustomerID = 0;
             }
             else
             {
                 WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
                                      .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-
             }
-            if (WarehouseList != null)
+
+            if (vm.ASNCondition.WarehouseID != 0)
             {
-                vm.ASNCondition.WarehouseID = Int64.Parse(WarehouseList.FirstOrDefault().Value);//add default warehouse
+                //vm.AdjustmentCondition.Warehouse = "'" + WarehouseList.Where(a => a.Value == vm.AdjustmentCondition.Warehouse.ToString()).First().Value + "'";
+            }
+            else
+            {
                 StringBuilder sb = new StringBuilder();
                 foreach (var i in WarehouseList)
                 {
@@ -921,95 +602,134 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 if (sb.Length > 1)
                 {
                     vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
-                    //vm.ASNCondition.WarehouseID = Int64.Parse(vm.ASNCondition.WarehouseName);
                 }
             }
             ViewBag.WarehouseList = WarehouseList;
+            vm.ASNCondition.UserType = base.UserInfo.UserType;
+            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
+            var getASNByConditionRequest = new GetASNByConditionRequest();
 
-            #region 屏蔽
 
-            //if (base.UserInfo.UserType == 0)
-            //{
-            //    vm.ASNCondition.CustomerID = base.UserInfo.CustomerOrShipperID;
-            //}
-            //else if (base.UserInfo.UserType == 2)
-            //{
-            //    if (customerID.HasValue)
-            //    {
-            //        vm.ASNCondition.CustomerID = customerID;
-            //    }
-            //    else
-            //    {
-            //        var customerIDs = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Select(c => c.CustomerID);
-            //        if (customerIDs != null && customerIDs.Count() == 1)
-            //        {
-            //            vm.ASNCondition.CustomerID = customerIDs.First();
-            //        }
-            //    }
-            //}
-            //IEnumerable<SelectListItem> WarehouseList = null;
-            //var WarehouseListAll = ApplicationConfigHelper.GetCacheInfo();
-            //if (vm.ASNCondition.CustomerID == null)
-            //{
-            //    WarehouseList = WarehouseListAll.Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-            //                                        .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            //    StringBuilder sb = new StringBuilder();
-
-            //    foreach (var i in CustomerListID)
-            //    {
-            //        sb.Append("" + i + ",");
-            //    }
-            //    if (sb.Length > 1)
-            //    {
-            //        vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-            //    }
-            //    else
-            //    {
-            //        vm.ASNCondition.CustomerIDs = "0";
-            //    }
-            //}
-            //else
-            //{
-            //    WarehouseList = WarehouseListAll.Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-            //                         .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            //}
-
-            //ViewBag.WarehouseList = WarehouseList;
-            //if (CustomerList.Count() == 1)
-            //{
-            //    vm.ASNCondition.CustomerID = CustomerList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-            //}
-            //if (WarehouseList.Count() == 1)
-            //{
-            //    vm.ASNCondition.WarehouseID = WarehouseList.Select(c => c.Value).FirstOrDefault().ObjectToInt64();
-            //}
-
-            //vm.ASNCondition.StartExpectDate = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-            //vm.ASNCondition.EndExpectDate = DateTime.Now.ToString("yyyy-MM-dd").ObjectToNullableDateTime();
-            #endregion 
-
-            vm.ASNCondition.StartCreateTime = DateTime.Parse(DateTime.Now.AddDays(-10).ToString("yyyy-MM-dd"));
-            vm.ASNCondition.EndCreateTime = DateTime.Now;
-            Session["ASNConditionModel"] = vm.ASNCondition;
-
-            this.GenQueryASNViewModel(vm);
-
-            GetASNByConditionRequest getAsnByConditionRequest = new GetASNByConditionRequest();
-            getAsnByConditionRequest.SearchCondition = vm.ASNCondition;
-            getAsnByConditionRequest.SearchCondition.Model = "物料";
-
-            getAsnByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-            getAsnByConditionRequest.PageIndex = PageIndex ?? 0;
-            var getReceiptByConditionResponse = new ASNManagementService().GetASNByCondition(getAsnByConditionRequest);
-            if (getReceiptByConditionResponse.IsSuccess)
+            if (Action == "查询" || Action == "Index")
             {
-                vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
-                vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
-                vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
+                getASNByConditionRequest.SearchCondition = vm.ASNCondition;
+                getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
+                getASNByConditionRequest.PageIndex = PageIndex ?? 0;
             }
+            else if (Action == "导出")
+            {
+                getASNByConditionRequest.SearchCondition = vm.ASNCondition;
+                getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
+                getASNByConditionRequest.PageIndex = 0;
+            }
+            getASNByConditionRequest.SearchCondition.Model = "";
+            getASNByConditionRequest.SearchCondition.Status = 5;
 
+
+            var getASNByConditionResponse = new ASNManagementService().GetASNDetailByConditionResponseSF(getASNByConditionRequest);
+
+            if (getASNByConditionResponse.IsSuccess || Action == "下载模板")
+            {
+                vm.ASNCollection = getASNByConditionResponse.Result.AsnCollection;
+                vm.PageIndex = getASNByConditionResponse.Result.PageIndex;
+                vm.PageCount = getASNByConditionResponse.Result.PageCount;
+                if (Action == "导出" || Action == "下载模板")
+                {
+                    IEnumerable<Column> columnasn;
+                    IEnumerable<Column> columnasnDetail;
+                    var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.ASNCondition.CustomerID).ProjectCollection.First();
+                    Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
+                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNSF").Count() == 0)
+                    {
+                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
+                    }
+                    else
+                    {
+                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
+                    }
+                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
+                    {
+                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
+                    }
+                    else
+                    {
+                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
+                    }
+
+
+                    if (vm.ASNCondition.CustomerID == 0)
+                    {
+                        columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true));
+                        columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true));
+                    }
+                    else
+                    {
+                        var notKeyColumns1 = columnasn.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
+
+                        var notKeyColumns2 = columnasnDetail.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
+
+                        columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true && c.DbColumnName != "Status")).Union(notKeyColumns1.Where(c => c.IsShowInList));
+                        columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true)).Union(notKeyColumns2.Where(c => c.IsShowInList));
+                    }
+                    if (Action == "导出")
+                    {
+                        //查询要导出的数据
+                        getASNByConditionResponse = new ASNManagementService().GetExportAsnandDetailByCondition(getASNByConditionRequest);//导出数据的查询
+
+                        Export(getASNByConditionResponse.Result, columnasn, columnasnDetail, 1);
+                    }
+                    else if (Action == "下载模板")
+                    {
+                        Export(getASNByConditionResponse.Result, columnasn.Where(c => (c.DbColumnName != "ASNNumber" &&
+                            c.DbColumnName != "ASNStatusName" && c.DbColumnName != "CompleteDate" && c.DbColumnName != "CustomerName")),
+                            columnasnDetail.Where(m => (m.DbColumnName != "ASNNumber" && m.DbColumnName != "LineNumber"
+                                && m.DbColumnName != "GoodsName" && m.DbColumnName != "Qty" && m.DbColumnName != "CustomerName")), 2);
+                    }
+
+                }
+            }
+            GenQueryASNViewModel(vm);
             return View(vm);
         }
+
+        public JsonResult TurnCG(int Id, int CustomerID)
+        {
+
+            var getReceiptByConditionResponse = new ASNManagementService().TurnCG(Id, CustomerID);
+            if (getReceiptByConditionResponse.IsSuccess)
+            {
+                if (getReceiptByConditionResponse.Result > 0)
+                {
+                    return Json(new { Code = 1 });
+
+                }
+
+                //vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
+                //vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
+                //vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
+            }
+            return Json(new { Code = 0 });
+        }
+
+        public JsonResult TurnASN(int Id, int CustomerID)
+        {
+
+            var getReceiptByConditionResponse = new ASNManagementService().TurnASN(Id, CustomerID);
+            if (getReceiptByConditionResponse.IsSuccess)
+            {
+                if (getReceiptByConditionResponse.Result > 0)
+                {
+                    return Json(new { Code = 1 });
+
+                }
+
+                //vm.ASNCollection = getReceiptByConditionResponse.Result.ASNCollection;
+                //vm.PageIndex = getReceiptByConditionResponse.Result.PageIndex;
+                //vm.PageCount = getReceiptByConditionResponse.Result.PageCount;
+            }
+            return Json(new { Code = 0 });
+        }
+        
         /// <summary>
         /// 入库单状态统计
         /// </summary>
@@ -1156,23 +876,23 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         private void GenQueryASNViewModel(IndexViewModel vm)
         {
             var Configs = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.ASNCondition.CustomerID)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection;
-            if (Configs.Where(t => t.Name == "WMS_ASN").Count() == 0)
+            if (Configs.Where(t => t.Name == "WMS_ASNSF").Count() == 0)
             {
-                vm.Config1 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN");
+                vm.Config1 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF");
             }
             else
             {
-                vm.Config1 = Configs.First(t => t.Name == "WMS_ASN");
+                vm.Config1 = Configs.First(t => t.Name == "WMS_ASNSF");
             }
-            if (Configs.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (Configs.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                vm.Config2 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail");
+                vm.Config2 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF");
             }
             else
             {
-                vm.Config2 = Configs.First(t => t.Name == "WMS_ASNDetail");
+                vm.Config2 = Configs.First(t => t.Name == "WMS_ASNDetailSF");
             }
-            ////vm.Config = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, base.UserInfo.CustomerOrShipperID))).ProjectCollection.First(p => p.Id == base.UserInfo.ProjectID.ToString()).ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN");
+            ////vm.Config = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, base.UserInfo.CustomerOrShipperID))).ProjectCollection.First(p => p.Id == base.UserInfo.ProjectID.ToString()).ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF");
             //var Projectss = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.ASNCondition.CustomerID)).ProjectCollection.FirstOrDefault();
             ////.FirstOrDefault(p => p.Id == base.UserInfo.ProjectID.ToString());
             ////var Projectss = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, base.UserInfo.CustomerOrShipperID))).ProjectCollection.FirstOrDefault(p => p.Id == base.UserInfo.ProjectID.ToString());
@@ -1184,12 +904,12 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             //if (ModuleCollection != null)
             //{
 
-            //    if (Projectss.ModuleCollection.FirstOrDefault().Tables.TableCollection.FirstOrDefault(t => t.Name == "WMS_ASN") == null)
+            //    if (Projectss.ModuleCollection.FirstOrDefault().Tables.TableCollection.FirstOrDefault(t => t.Name == "WMS_ASNSF") == null)
             //    {
             //        Projectss = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.FirstOrDefault();
             //        //.First(p => p.Id == base.UserInfo.ProjectID.ToString());
             //    }
-            //    vm.Config = ModuleCollection.FirstOrDefault(m => m.Id == "M002").Tables.TableCollection.FirstOrDefault(t => t.Name == "WMS_ASN");
+            //    vm.Config = ModuleCollection.FirstOrDefault(m => m.Id == "M002").Tables.TableCollection.FirstOrDefault(t => t.Name == "WMS_ASNSF");
             //}
 
             if (base.UserInfo.UserType == 2)
@@ -1205,25 +925,33 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             {
                 vm.CustomerList = Enumerable.Empty<SelectListItem>();
             }
+            IEnumerable<WMSConfig> wms = ApplicationConfigHelper.GetWMS_Config("ASNStatus");
+            List<SelectListItem> st = new List<SelectListItem>();
+            foreach (WMSConfig w in wms)
+            {
+                st.Add(new SelectListItem() { Value = w.Code, Text = w.Name });
+            }
+
+            //vm.Statuss = st;
         }
         private void GenQueryASNDetailViewModel(IndexViewModel vm)
         {
             var Configs = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.AsnandDetails.asn.CustomerID)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection;
-            if (Configs.Where(t => t.Name == "WMS_ASN").Count() == 0)
+            if (Configs.Where(t => t.Name == "WMS_ASNSF").Count() == 0)
             {
-                vm.Config1 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN");
+                vm.Config1 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF");
             }
             else
             {
-                vm.Config1 = Configs.First(t => t.Name == "WMS_ASN");
+                vm.Config1 = Configs.First(t => t.Name == "WMS_ASNSF");
             }
-            if (Configs.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (Configs.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                vm.Config2 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail");
+                vm.Config2 = ((Projects)ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF");
             }
             else
             {
-                vm.Config2 = Configs.First(t => t.Name == "WMS_ASNDetail");
+                vm.Config2 = Configs.First(t => t.Name == "WMS_ASNDetailSF");
             }
             if (base.UserInfo.UserType == 2)
             {
@@ -1239,410 +967,8 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 vm.CustomerList = Enumerable.Empty<SelectListItem>();
             }
         }
-        //查询和导出
-        [HttpPost]
-        public ActionResult Index(IndexViewModel vm, int? PageIndex, string Action)
-        {
-            IEnumerable<WMSConfig> wms = null;
-            try
-            {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
-            }
-            catch (Exception)
-            {
-            }
-
-            if (wms == null)
-            {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
-            }
-            List<SelectListItem> st = new List<SelectListItem>();
-            foreach (WMSConfig w in wms)
-            {
-                st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
-            }
-            vm.ASNTypes = st;
-
-            if (vm.ASNCondition == null && Session["ASNConditionModel"] != null)
-            {
-                vm.ASNCondition = (ASNSearchCondition)Session["ASNConditionModel"];
-            }
-            else if (vm.ASNCondition == null && Session["ASNConditionModel"] == null)
-            {
-                vm.ASNCondition = new ASNSearchCondition();
-                Session["ASNConditionModel"] = null;
-                Session["ASNConditionModel"] = vm.ASNCondition;
-            }
-            ViewBag.ProjectName = base.UserInfo.ProjectName;
-            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
-            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
-            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
-            ViewBag.CustomerList = CustomerList;
-            //ApplicationConfigHelper.GetApplicationCustomer().Where(c => c.UserID == UserInfo.ID)
-            //.Select(c => new SelectListItem() { Value = c.ID.ToString(), Text = c.Name });
-            IEnumerable<SelectListItem> WarehouseList = null;
-            if (vm.ASNCondition.CustomerID == null)
-            {
-                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-                                                    .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-                StringBuilder sb = new StringBuilder();
-
-                foreach (var i in CustomerListID)
-                {
-                    sb.Append("" + i + ",");
-                }
-                if (sb.Length > 1)
-                {
-                    vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-                }
-                else
-                {
-                    vm.ASNCondition.CustomerIDs = "0";
-                }
-                vm.ASNCondition.CustomerID = 0;
-            }
-            else
-            {
-                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-                                     .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            }
-
-            if (vm.ASNCondition.WarehouseID != 0)
-            {
-                //vm.AdjustmentCondition.Warehouse = "'" + WarehouseList.Where(a => a.Value == vm.AdjustmentCondition.Warehouse.ToString()).First().Value + "'";
-            }
-            else
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (var i in WarehouseList)
-                {
-                    //sb.Append("'" + i.Value + "',");
-                    sb.Append("" + i.Value + ",");
-                }
-                if (sb.Length > 1)
-                {
-                    vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
-                }
-            }
-            ViewBag.WarehouseList = WarehouseList;
-            vm.ASNCondition.UserType = base.UserInfo.UserType;
-            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
-            var getASNByConditionRequest = new GetASNByConditionRequest();
-       
-
-            if (Action == "查询" || Action == "Index")
-            {
-                getASNByConditionRequest.SearchCondition = vm.ASNCondition;
-                getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-                getASNByConditionRequest.PageIndex = PageIndex ?? 0;
-            }
-            else if (Action == "导出")
-            {
-                getASNByConditionRequest.SearchCondition = vm.ASNCondition;
-                getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-                getASNByConditionRequest.PageIndex = 0;
-            }
-            getASNByConditionRequest.SearchCondition.Model = "物料";
-
-            var getASNByConditionResponse = new ASNManagementService().GetASNDetailByConditionResponse(getASNByConditionRequest);
-
-            if (getASNByConditionResponse.IsSuccess || Action == "下载模板")
-            {
-                vm.ASNCollection = getASNByConditionResponse.Result.AsnCollection;
-                vm.PageIndex = getASNByConditionResponse.Result.PageIndex;
-                vm.PageCount = getASNByConditionResponse.Result.PageCount;
-                if (Action == "导出" || Action == "下载模板")
-                {
-                    IEnumerable<Column> columnasn;
-                    IEnumerable<Column> columnasnDetail;
-                    var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.ASNCondition.CustomerID).ProjectCollection.First();
-                    Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASN").Count() == 0)
-                    {
-                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
-                    }
-                    else
-                    {
-                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
-                    }
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
-                    {
-                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
-                    }
-                    else
-                    {
-                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
-                    }
 
 
-                    if (vm.ASNCondition.CustomerID == 0)
-                    {
-                        columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true));
-                        columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true));
-                    }
-                    else
-                    {
-                        var notKeyColumns1 = columnasn.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
-                        //             .Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID)))
-                        //.Select(c =>
-                        //{
-                        //    if (c.InnerColumns.Count == 0)
-                        //    {
-                        //        return c;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID))
-                        //        {
-                        //            return c.InnerColumns.First(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID);
-                        //        }
-
-                        //        return c;
-                        //    }
-                        //});
-                        var notKeyColumns2 = columnasnDetail.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
-                        //             .Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID)))
-                        //.Select(c =>
-                        //{
-                        //    if (c.InnerColumns.Count == 0)
-                        //    {
-                        //        return c;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID))
-                        //        {
-                        //            return c.InnerColumns.First(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID);
-                        //        }
-                        //        return c;
-                        //    }
-                        //});
-                        columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true && c.DbColumnName != "Status")).Union(notKeyColumns1.Where(c => c.IsShowInList));
-                        columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true)).Union(notKeyColumns2.Where(c => c.IsShowInList));
-                    }
-                    if (Action == "导出")
-                    {
-                        //查询要导出的数据
-                        getASNByConditionResponse = new ASNManagementService().GetExportAsnandDetailByCondition(getASNByConditionRequest);//导出数据的查询
-
-                        Export(getASNByConditionResponse.Result, columnasn, columnasnDetail, 1);
-                    }
-                    else if (Action == "下载模板")
-                    {
-                        Export(getASNByConditionResponse.Result, columnasn.Where(c => (c.DbColumnName != "ASNNumber" &&
-                            c.DbColumnName != "ASNStatusName" && c.DbColumnName != "CompleteDate" && c.DbColumnName != "CustomerName")),
-                            columnasnDetail.Where(m => (m.DbColumnName != "ASNNumber" && m.DbColumnName != "LineNumber"
-                                && m.DbColumnName != "GoodsName" && m.DbColumnName != "Qty" && m.DbColumnName != "CustomerName")), 2);
-                    }
-
-                }
-            }
-            GenQueryASNViewModel(vm);
-            return View(vm);
-        }
-
-
-        //查询和导出
-        [HttpPost]
-        public ActionResult IndexSF(IndexViewModel vm, int? PageIndex, string Action)
-        {
-            IEnumerable<WMSConfig> wms = null;
-            try
-            {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
-            }
-            catch (Exception)
-            {
-            }
-
-            if (wms == null)
-            {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType");
-            }
-            List<SelectListItem> st = new List<SelectListItem>();
-            foreach (WMSConfig w in wms)
-            {
-                st.Add(new SelectListItem() { Value = w.Name, Text = w.Name });
-            }
-            vm.ASNTypes = st;
-
-            if (vm.ASNCondition == null && Session["ASNConditionModel"] != null)
-            {
-                vm.ASNCondition = (ASNSearchCondition)Session["ASNConditionModel"];
-            }
-            else if (vm.ASNCondition == null && Session["ASNConditionModel"] == null)
-            {
-                vm.ASNCondition = new ASNSearchCondition();
-                Session["ASNConditionModel"] = null;
-                Session["ASNConditionModel"] = vm.ASNCondition;
-            }
-            ViewBag.ProjectName = base.UserInfo.ProjectName;
-            var CustomerListAll = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID).Where(t => t.StoreType == 2 || t.StoreType == 3);
-            var CustomerListID = CustomerListAll.Select(t => t.CustomerID);
-            var CustomerList = CustomerListAll.Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
-            ViewBag.CustomerList = CustomerList;
-            //ApplicationConfigHelper.GetApplicationCustomer().Where(c => c.UserID == UserInfo.ID)
-            //.Select(c => new SelectListItem() { Value = c.ID.ToString(), Text = c.Name });
-            IEnumerable<SelectListItem> WarehouseList = null;
-            if (vm.ASNCondition.CustomerID == null)
-            {
-                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => c.UserID == base.UserInfo.ID && CustomerListID.Contains(c.CustomerID.Value)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-                                                    .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-                StringBuilder sb = new StringBuilder();
-
-                foreach (var i in CustomerListID)
-                {
-                    sb.Append("" + i + ",");
-                }
-                if (sb.Length > 1)
-                {
-                    vm.ASNCondition.CustomerIDs = sb.Remove(sb.Length - 1, 1).ToString();
-                }
-                else
-                {
-                    vm.ASNCondition.CustomerIDs = "0";
-                }
-                vm.ASNCondition.CustomerID = 0;
-            }
-            else
-            {
-                WarehouseList = ApplicationConfigHelper.GetCacheInfo().Where(c => (c.CustomerID == vm.ASNCondition.CustomerID && c.UserID == base.UserInfo.ID)).Select(t => new { WarehouseID = t.WarehouseID, WarehouseName = t.WarehouseName }).Distinct()
-                                     .Select(c => new SelectListItem() { Value = c.WarehouseID.ToString(), Text = c.WarehouseName });
-            }
-
-            if (vm.ASNCondition.WarehouseID != 0)
-            {
-                //vm.AdjustmentCondition.Warehouse = "'" + WarehouseList.Where(a => a.Value == vm.AdjustmentCondition.Warehouse.ToString()).First().Value + "'";
-            }
-            else
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (var i in WarehouseList)
-                {
-                    //sb.Append("'" + i.Value + "',");
-                    sb.Append("" + i.Value + ",");
-                }
-                if (sb.Length > 1)
-                {
-                    vm.ASNCondition.WarehouseName = sb.Remove(sb.Length - 1, 1).ToString();
-                }
-            }
-            ViewBag.WarehouseList = WarehouseList;
-            vm.ASNCondition.UserType = base.UserInfo.UserType;
-            vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
-            var getASNByConditionRequest = new GetASNByConditionRequest();
-
-
-            if (Action == "查询" || Action == "Index")
-            {
-                getASNByConditionRequest.SearchCondition = vm.ASNCondition;
-                getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-                getASNByConditionRequest.PageIndex = PageIndex ?? 0;
-            }
-            else if (Action == "导出")
-            {
-                getASNByConditionRequest.SearchCondition = vm.ASNCondition;
-                getASNByConditionRequest.PageSize = UtilConstants.PAGESIZE;
-                getASNByConditionRequest.PageIndex = 0;
-            }
-            getASNByConditionRequest.SearchCondition.Model = "物料";
-
-            var getASNByConditionResponse = new ASNManagementService().GetASNDetailByConditionResponse(getASNByConditionRequest);
-
-            if (getASNByConditionResponse.IsSuccess || Action == "下载模板")
-            {
-                vm.ASNCollection = getASNByConditionResponse.Result.AsnCollection;
-                vm.PageIndex = getASNByConditionResponse.Result.PageIndex;
-                vm.PageCount = getASNByConditionResponse.Result.PageCount;
-                if (Action == "导出" || Action == "下载模板")
-                {
-                    IEnumerable<Column> columnasn;
-                    IEnumerable<Column> columnasnDetail;
-                    var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, vm.ASNCondition.CustomerID).ProjectCollection.First();
-                    Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASN").Count() == 0)
-                    {
-                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
-                    }
-                    else
-                    {
-                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
-                    }
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
-                    {
-                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
-                    }
-                    else
-                    {
-                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
-                    }
-
-
-                    if (vm.ASNCondition.CustomerID == 0)
-                    {
-                        columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true));
-                        columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true));
-                    }
-                    else
-                    {
-                        var notKeyColumns1 = columnasn.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
-                        //             .Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID)))
-                        //.Select(c =>
-                        //{
-                        //    if (c.InnerColumns.Count == 0)
-                        //    {
-                        //        return c;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID))
-                        //        {
-                        //            return c.InnerColumns.First(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID);
-                        //        }
-
-                        //        return c;
-                        //    }
-                        //});
-                        var notKeyColumns2 = columnasnDetail.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true && c.CustomerID == vm.ASNCondition.CustomerID));
-                        //             .Where(c => (c.IsKey == false && c.IsHide == false) || (c.IsKey == false && c.IsHide == true && c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID)))
-                        //.Select(c =>
-                        //{
-                        //    if (c.InnerColumns.Count == 0)
-                        //    {
-                        //        return c;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (c.InnerColumns.Any(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID))
-                        //        {
-                        //            return c.InnerColumns.First(innerc => innerc.CustomerID == vm.ASNCondition.CustomerID);
-                        //        }
-                        //        return c;
-                        //    }
-                        //});
-                        columnasn = columnasn.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true && c.DbColumnName != "Status")).Union(notKeyColumns1.Where(c => c.IsShowInList));
-                        columnasnDetail = columnasnDetail.Where(c => (c.IsKey == true && c.ForView == true && c.IsImportColumn == true)).Union(notKeyColumns2.Where(c => c.IsShowInList));
-                    }
-                    if (Action == "导出")
-                    {
-                        //查询要导出的数据
-                        getASNByConditionResponse = new ASNManagementService().GetExportAsnandDetailByCondition(getASNByConditionRequest);//导出数据的查询
-
-                        Export(getASNByConditionResponse.Result, columnasn, columnasnDetail, 1);
-                    }
-                    else if (Action == "下载模板")
-                    {
-                        Export(getASNByConditionResponse.Result, columnasn.Where(c => (c.DbColumnName != "ASNNumber" &&
-                            c.DbColumnName != "ASNStatusName" && c.DbColumnName != "CompleteDate" && c.DbColumnName != "CustomerName")),
-                            columnasnDetail.Where(m => (m.DbColumnName != "ASNNumber" && m.DbColumnName != "LineNumber"
-                                && m.DbColumnName != "GoodsName" && m.DbColumnName != "Qty" && m.DbColumnName != "CustomerName")), 2);
-                    }
-
-                }
-            }
-            GenQueryASNViewModel(vm);
-            return View(vm);
-        }
         //导出
         private void Export(GetASNDetailByConditionResponse response, IEnumerable<Column> columnasn, IEnumerable<Column> columnasnDetail, int flag)
         {
@@ -1774,21 +1100,21 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<Column> columnReceiptDetail;
             var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, CustomerID).ProjectCollection.First();
             Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASN").Count() == 0)
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNSF").Count() == 0)
             {
-                columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
+                columnReceipt = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
             }
             else
             {
-                columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
+                columnReceipt = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
             }
-            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                columnReceiptDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columnReceiptDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             else
             {
-                columnReceiptDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columnReceiptDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             if (CustomerID == 0)
             {
@@ -1833,6 +1159,36 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                 return Json(new { Message = "取消失败！", IsSuccess = false }).ToString();
             }
         }
+        //单条取消
+        [HttpPost]
+        public string ASNDeleteSF(int ID)
+        {
+            //ApplicationConfigHelper.RefreshASNInfo();
+            if (new ASNManagementService().ASNDeleteSF(ID).IsSuccess)
+            {
+                #region 操作日志
+                List<WMS_Log_Operation> logs = new List<WMS_Log_Operation>();
+                WMS_Log_Operation operation = new WMS_Log_Operation();
+                operation.MenuName = "ASN管理";
+                operation.Operation = "ASN-取消";
+                operation.OrderType = "ASN";
+                operation.Controller = Request.RawUrl;
+                operation.Creator = base.UserInfo.Name;
+                operation.CreateTime = DateTime.Now;
+                operation.ProjectID = (int)base.UserInfo.ProjectID;
+                operation.ProjectName = base.UserInfo.ProjectName;
+                operation.OrderID = ID.ToString();
+                logs.Add(operation);
+                new LogOperationService().AddLogOperation(logs);
+                #endregion
+                return Json(new { Message = "取消成功", IsSuccess = true }).ToString();
+            }
+            else
+            {
+                return Json(new { Message = "取消失败！", IsSuccess = false }).ToString();
+            }
+        }
+
         //批量取消
         [HttpPost]
         public string ASNStatusReturn(string asnnumberlist)
@@ -1933,7 +1289,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<WMSConfig> wms = null;
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
             }
             catch (Exception)
             {
@@ -2011,7 +1367,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
 
             vm.ASNCondition.UserType = base.UserInfo.UserType;
             vm.IsInnerUser = vm.ShowCustomerOrShipperDrop = base.UserInfo.UserType == 2;
-            var getASNByConditionResponse = new ASNManagementService().GetASNInfos(new GetASNByConditionRequest() { ID = ID, SearchCondition=new ASNSearchCondition() {  Model="物料"} });
+            var getASNByConditionResponse = new ASNManagementService().GetASNInfosSF(new GetASNByConditionRequest() { ID = ID, SearchCondition = new ASNSearchCondition() });
 
 
             if (getASNByConditionResponse.IsSuccess)
@@ -2088,7 +1444,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<WMSConfig> wms = null;
             try
             {
-                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
             }
             catch (Exception)
             {
@@ -2248,7 +1604,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
         [HttpPost]
         public string AddASNAndASNDetails(string JsonTable, string ExternReceiptNumber, string CustomerName, int CustomerID, string ASNType, string Remark, int WarehouseID, string Warehousename, DateTime ExpectDate, string JsonField)
         {
-            var countAsn = new ASNManagementService().ExternKeyCheck(ExternReceiptNumber, "1", long.Parse(CustomerID.ToString()));
+            var countAsn = new ASNManagementService().ExternKeyCheckSF(ExternReceiptNumber, "1", long.Parse(CustomerID.ToString()));
             if (countAsn > 0)
             {
                 return "外部单号已存在";
@@ -2256,13 +1612,13 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<Column> columns;
             var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, CustomerID).ProjectCollection.First();
             Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             else
             {
-                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
 
             var customerColumn = columns.First(c => c.DbColumnName == "CustomerName").DisplayName;
@@ -2404,7 +1760,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             }
             request.asn = responseJsonFieldsets;
             request.asnDetails = ASNDetails;
-            var response = new ASNManagementService().AddasnAndasnDetail(request);
+            var response = new ASNManagementService().AddasnAndasnDetailSF(request);
             #region 记录操作日志
             new LogOperationService().AddLogOperation(logs);
             #endregion
@@ -2417,17 +1773,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<Column> columns;
             var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, CustomerID).ProjectCollection.First();
             Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             else
             {
-                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID,CustomerID).ProjectCollection.First(p => p.Id == base.UserInfo.ProjectID.ToString());
             //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            //IEnumerable<Column> columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+            //IEnumerable<Column> columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             var customerColumn = columns.First(c => c.DbColumnName == "CustomerName").DisplayName;
             DataTable dt = JsonToDataTable(JsonTable);
             //columns = columns
@@ -2584,7 +1940,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             }
             request.asn = asn;
             request.asnDetails = asnDetails;
-            if (new ASNManagementService().UpdateasnAndasnDetail(request).IsSuccess)
+            if (new ASNManagementService().UpdateasnAndasnDetailSF(request).IsSuccess)
             {
                 #region 记录操作日志
                 new LogOperationService().AddLogOperation(logs);
@@ -2612,13 +1968,13 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<Column> columns;
             var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, CustomerID).ProjectCollection.First();
             Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             else
             {
-                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
 
             var customerColumn = columns.First(c => c.DbColumnName == "CustomerName").DisplayName;
@@ -2773,17 +2129,17 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
             IEnumerable<Column> columns;
             var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, CustomerID).ProjectCollection.First();
             Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+            if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
             {
-                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             else
             {
-                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             }
             //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID,CustomerID).ProjectCollection.First(p => p.Id == base.UserInfo.ProjectID.ToString());
             //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-            //IEnumerable<Column> columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+            //IEnumerable<Column> columns = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
             var customerColumn = columns.First(c => c.DbColumnName == "CustomerName").DisplayName;
             DataTable dt = JsonToDataTable(JsonTable);
             //columns = columns
@@ -3029,26 +2385,26 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     IEnumerable<Column> columnasnDetail;
                     var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, customerid.ObjectToInt64()).ProjectCollection.First();
                     Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASN").Count() == 0)
+                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNSF").Count() == 0)
                     {
-                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
+                        columnasn = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
                     }
                     else
                     {
-                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
+                        columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
                     }
-                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetail").Count() == 0)
+                    if (project.ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.Where(t => t.Name == "WMS_ASNDetailSF").Count() == 0)
                     {
-                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                        columnasnDetail = (ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, null)).ProjectCollection.First().ModuleCollection.First(m => m.Id == "M002").Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
                     }
                     else
                     {
-                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                        columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
                     }
                     //var project = ApplicationConfigHelper.GetApplicationConfigNew(base.UserInfo.ProjectID, customerid.ObjectToInt64()).ProjectCollection.First(p => p.Id == base.UserInfo.ProjectID.ToString());
                     //Runbow.TWS.Entity.Module module = project.ModuleCollection.First(m => m.Id == "M002");
-                    //IEnumerable<Column> columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASN").ColumnCollection;
-                    //IEnumerable<Column> columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetail").ColumnCollection;
+                    //IEnumerable<Column> columnasn = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNSF").ColumnCollection;
+                    //IEnumerable<Column> columnasnDetail = module.Tables.TableCollection.First(t => t.Name == "WMS_ASNDetailSF").ColumnCollection;
 
                     bool useCustomerOrderNumber = module.UseCustomerOrderNumber;
                     StringBuilder sb = new StringBuilder();
@@ -3125,7 +2481,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Controllers
                     IEnumerable<WMSConfig> wms = null;
                     try
                     {
-                        wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName);
+                        wms = ApplicationConfigHelper.GetWMS_Config("ASNType_" + base.UserInfo.ProjectName + "SF");
                     }
                     catch (Exception)
                     {

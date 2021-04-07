@@ -1,0 +1,315 @@
+﻿<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="~/Assets/bootstrap-3.3.4-dist/bootstrap.min.css">
+<script src="~/Assets/JS/bootstrap-3.3.4-dist/bootstrap3.3.0.min.js"></script>
+<script src="../../../../Scripts/System/Layer/layer.js"></script>
+@Url.FrameworkJs("ajaxfileupload.js")
+@Html.Partial("MsgMask")
+@Url.PopupJs()
+@using Runbow.TWS.Common;
+@using Runbow.TWS.Entity;
+@model Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel
+@{
+    var shipmentprinttype1 = "未发送";
+    var shipmentprinttype2 = "已发送";
+    //IEnumerable<Runbow.TWS.Entity.Column> tmpDynamicSearchColumns;
+    //var notKeyColumns = Model.Config.ColumnCollection.Where(c => (c.IsKey == false && c.IsHide == false && c.ForView == true));
+    //tmpDynamicSearchColumns = notKeyColumns.Where(c => c.IsSearchCondition).ToList();
+    //IList<Runbow.TWS.Entity.Column> dynamicSearchColumns = tmpDynamicSearchColumns.OrderBy(c => c.SearchConditionOrder).ToList();
+    //int dynamicSearchColumnRowCount = dynamicSearchColumns.Count % 3 > 0 ? dynamicSearchColumns.Count / 3 + 1 : dynamicSearchColumns.Count / 3;
+    //var showColumns = Model.IsInnerUser ? Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.DbColumnName != "ASNStatusName" && c.DbColumnName != "ASNTypeName").Union(notKeyColumns.Where(c => c.IsShowInList)) : Model.Config.ColumnCollection.Where(c => c.IsShowInList && c.DbColumnName != "ASNStatusName" && c.DbColumnName != "ASNTypeName").Union(notKeyColumns.Where(c => c.IsShowInList));
+    var cols = 4;
+    IList<Column> dynamicSearchColumns = Model.Config1.ColumnCollection.Where(i => i.IsSearchCondition == true && i.DbColumnName != "ASNTypeName").OrderBy(i => i.SearchConditionOrder).ToList();
+    IList<Column> dynamicShowColumns = Model.Config1.ColumnCollection.Where(i => i.IsShowInList == true && i.DbColumnName != "ASNTypeName").OrderBy(i => i.SearchConditionOrder).ToList();
+    var dynamicSearchColumnRows = dynamicSearchColumns.Count % cols == 0 ? dynamicSearchColumns.Count / cols : dynamicSearchColumns.Count / cols + 1;
+}
+@using (Html.BeginForm())
+{@Html.HiddenFor(m => m.ASNCondition.StartDateTime1)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime1)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime2)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime2)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime3)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime3)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime4)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime4)
+@Html.HiddenFor(m => m.ASNCondition.StartDateTime5)
+@Html.HiddenFor(m => m.ASNCondition.EndDateTime5)
+@Html.HiddenFor(m => m.ASNCondition.StartExpectDate)
+@Html.HiddenFor(m => m.ASNCondition.EndExpectDate)
+@Html.HiddenFor(m => m.ASNCondition.StartCreateTime)
+@Html.HiddenFor(m => m.ASNCondition.EndCreateTime)
+<fieldset>
+
+    <legend>采购单查询条件</legend>
+    @{
+        var CustomerList = (IEnumerable<SelectListItem>)ViewBag.CustomerList;
+        var WarehouseList = (IEnumerable<SelectListItem>)ViewBag.WarehouseList;
+    }
+    <table id="conditionTable">
+        @for (int i = 0; i < dynamicSearchColumnRows; i++)
+        {
+            <tr>
+                @for (int j = 0; j < cols; j++)
+                {
+                    var index = i * cols + j;
+                    if (index >= dynamicSearchColumns.Count)
+                    {
+                        @*<td colspan="2"></td>*@
+                    }
+                    else
+                    {
+                        var column = dynamicSearchColumns[index];
+                        //查询条件默认值
+                        var o = typeof(ASNSearchCondition).GetProperty(column.DbColumnName).GetValue(Model.ASNCondition);
+                        //查询model类别名,前台name，查询取值用，命名不规范，多此一举，写规范点不行吗
+                        var scName = typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperties().Where(p => p.PropertyType == typeof(ASNSearchCondition)).Select(a => a.Name).FirstOrDefault();
+                        <td class="TableColumnTitle">
+                            @Html.Label("lbl" + column.DbColumnName, column.DisplayName)
+                        </td>
+                        <td style="width: 15%;">
+                            @if (column.Type == "DateTime" || column.Type == "DateTimeWithTime")
+                            {
+                                //时间name一律以Start或End加字段名格式
+                                var startTime = typeof(ASNSearchCondition).GetProperty("Start" + column.DbColumnName).GetValue(Model.ASNCondition);
+                                var endTime = typeof(ASNSearchCondition).GetProperty("End" + column.DbColumnName).GetValue(Model.ASNCondition);
+
+                                if (column.Type == "DateTime")
+                                {
+                                    @Html.CalendarRange(column.DbColumnName, "calendarRange form-control calendarRangeReWrite", (DateTime?)startTime, (DateTime?)endTime)
+                                }
+                                else
+                                {
+                                    @Html.CalendarRangeDateTime(column.DbColumnName, "calendarRange form-control calendarRangeReWrite", (DateTime?)startTime, (DateTime?)endTime)
+                                }
+                            }
+                            else if (column.Type == "CheckBox")
+                            {
+
+                            }
+                            else if (column.Type == "DropDownList")
+                            {
+                                //除客户和仓库外，其他下拉取值全部以字段名加s结尾
+                                var list = new List<SelectListItem>();
+                                if (column.DbColumnName == "CustomerID")
+                                {
+                                    list = CustomerList.ToList();
+                                }
+                                else if (column.DbColumnName == "WarehouseID")
+                                {
+                                    list = WarehouseList.ToList();
+                                }
+                                else if (column.DbColumnName == "Status")
+                                {
+                                    list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "ss").GetValue(Model)).ToList();
+                                }
+                                else
+                                {
+                                    list = ((IEnumerable<SelectListItem>)typeof(Runbow.TWS.Web.Areas.WMS.Models.ASNManagement.IndexViewModel).GetProperty(column.DbColumnName + "s").GetValue(Model)).ToList();
+                                }
+                                @Html.DropDownList(scName + "." + column.DbColumnName, list, "==请选择==", new { @class = "form-control" })
+                            }
+                            else if (column.Type == "TextArea")
+                            {
+                                @Html.TextArea(scName + "." + column.DbColumnName, o == null ? "" : o.ToString(), new { @class = "form-control" })
+                            }
+                            else if (column.Type == "RegionPicker")
+                            {
+                                if (column.DbColumnName == "StartCityName")
+                                {
+                                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "startCityTreeID", NameKey = "startCityTreeName", TreeKey = "startCity" })
+                                    <a id="startCityClear" href="#">清空</a>
+                                }
+                                else
+                                {
+                                    @Html.RegionSelector(new Runbow.TWS.Web.Models.RegionSelector() { IDKey = "endCityTreeID", NameKey = "endCityTreeName", TreeKey = "endCity" })
+                                    <a id="endCityClear" href="#">清空</a>
+                                }
+                            }
+                            else
+                            {
+                                @Html.TextBox(scName + "." + column.DbColumnName, o, new { @class = "form-control" })
+                            }
+                        </td>
+                    }
+                }
+
+
+            </tr>
+        }
+    </table>
+    <div class="actionButtonDiv">
+        <input type="submit" class="btn btn-success" value="查询" id="searchButton" name="Action" />
+        @*<input type="button" class="btn btn-success" value="新增" id="addButton" onclick="createasn()" name="Action" />*@
+        
+    </div>
+</fieldset>
+<fieldset>
+    <legend>
+        采购单列表
+        @if (Model.ASNCollection != null && Model.ASNCollection.Any())
+        {
+            @Html.Raw("(" + Model.ASNCollection.Count() + ")");
+        }
+    </legend>
+    <div id="tables" style="overflow-X: scroll; min-height: 180px">
+        <table id="resultTable" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <th id="OperateTh" style="width: 50px;">操作</th>
+                    <th class="checkBoxHead">@Html.CheckBox("selectAll")</th>
+                    @foreach (var column in dynamicShowColumns)
+                    {
+                        <th style="width: 160px">
+                            @column.DisplayName
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody id="resultTbody">
+                @if (Model.ASNCollection != null && Model.ASNCollection.Any())
+                {
+                    foreach (var asn in Model.ASNCollection)
+                    {
+                        var tdd = "operateTD" + @asn.ID;
+                        <tr id="@asn.ASNNumber">
+                            <td style="position: relative">
+                                <div class="Adiv" style="position: absolute; display: none; width: 500px; left: 50px; height: 31px;">
+                                    @if (asn.Status == 5)
+                                    {
+                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs   edit" onclick="edit('@asn.ID')">编辑</label>*@
+                                        @*<label style="cursor: pointer;" class="btn btn-primary btn-xs   ASNDelete" onclick="ASNDelete('@asn.ID')">取消</label>*@
+                                        <label style="cursor: pointer;" class="btn btn-primary btn-xs   Receipt" onclick="Receipt('@asn.ID',@asn.CustomerID)">转预入库单</label>
+                                    }
+                                
+                                </div>
+                                @if (asn.Status == 9 || asn.Status == -1)
+                                {
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs" disabled="disabled">操作</label>
+                                }
+                                else
+                                {
+                                    <label style="cursor: pointer;" class="btn btn-primary btn-xs Ooperation">操作</label>
+                                }
+                            </td>
+                            <td class="checkBox">
+                                @Html.CheckBox("check" + @asn.ASNNumber.ToString(), new { data_ID = @asn.ID, data_name = @asn.Status, data_Status = @asn.Status, @class = "checkForSelect" })
+                            </td>
+
+                            @foreach (var column in dynamicShowColumns)
+                            {
+                                var o = typeof(ASN).GetProperty(column.DbColumnName).GetValue(asn);
+                                <td class="@column.DbColumnName">
+                                    @if (o != null)
+                                    {
+                                        switch (column.Type)
+                                        {
+                                            case "DateTime":
+                                                var temp = (DateTime?)o;
+                                                if (temp.HasValue)
+                                                {
+                                                    @temp.Value
+                                                }
+                                                break;
+                                            case "DateTimeWithTime":
+                                                var temp1 = (DateTime?)o;
+                                                if (temp1.HasValue)
+                                                {
+                                                    @temp1.Value.ToString("yyyy-MM-dd HH:mm")
+                                                }
+                                                break;
+                                            case "CheckBox":
+                                                break;
+                                            case "DropDownList":
+                                                if (column.DbColumnName == "Status")
+                                                {
+                                                    @(Model.Statusss.SingleOrDefault(s => s.Value == o.ToString()).Text ?? "")
+                                                }
+                                                else
+                                                {
+                                                    @o.ToString();
+                                                }
+                                                break;
+                                            default:
+                                                if (column.DbColumnName == "ASNNumber")
+                                                {
+                                                    <a href="/WMS/ASNManagementSF/ASNCreateOrEdit/?ID=@asn.ID&ViewType=0"> @asn.ASNNumber </a>
+                                                }
+                                                else
+                                                {
+                                                    @o.ToString()
+                                                }
+                                                break;
+                                        }
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Pager(Model.PageIndex, Model.PageCount, "")
+</fieldset>
+@*<div style="padding-top: 100px">
+    <div style="float: left; width: 100%">
+        <fieldset>
+            <legend>导入提示</legend>
+            <div>
+                1,请根据批量导入模板进行导入
+                <br>
+                2,尽量不要长时间段的导入,减轻服务器压力
+                <br>
+                3,如果需要批量修改,请先导出需要修改的单据,修改之后再进行导入
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>
+                选择Excel导入预入库单信息
+            </legend>
+            <div id="importDiv">
+                <label>客户：</label>
+                @Html.DropDownList("CustomerIDImport", CustomerList, new { @class = "form-control", style = "width:20%;padding-bottom:1px" })
+                <input type="file" id="importExcel" name="importExcel" class="form-control file " style="width: 30%" />
+                <input type="submit" value="导入" style="margin-top: -9px;" class="btn btn-primary" onclick="return fileImportClick();" />
+                <input type="submit" style="margin-top: -9px;" class="btn btn-primary" value="下载模板" id="portButtonTemplet" name="Action" />
+            </div>
+        </fieldset>
+        <fieldset style="margin-top: 20px;">
+            <legend>
+                导入结果
+            </legend>
+            <div id="outPutResult">
+            </div>
+        </fieldset>
+    </div>
+</div>*@
+<div id="confirm" style="display: none">
+    <table>
+        <tr>
+            <td class="TableColumnTitle" style="width: 100px">提示</td>
+        </tr>
+        <tr>
+            <td class="TableColumnTitle" style="width: 100px">&nbsp;&nbsp;&nbsp;&nbsp;您确定取消吗？</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <div class="actionButtonDiv">
+        <input type="button" class="btn btn-success" value="确定" id="confirmOK" />
+        <input type="button" class="btn btn-success" value="返回" id="confirmReturn" />
+    </div>
+</div>
+<div id="ReceiptID" style="display: none">
+    <table id="ReceiptTableID">
+        <thead>
+            <tr>
+                <th style="display: none">ID</th>
+                <th>入库单号</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+}
+

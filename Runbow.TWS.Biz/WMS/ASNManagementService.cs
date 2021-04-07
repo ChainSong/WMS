@@ -91,7 +91,7 @@ namespace Runbow.TWS.Biz.WMS
             }
             catch (Exception ex)
             {
-                
+
             }
 
             return lists;
@@ -117,7 +117,7 @@ namespace Runbow.TWS.Biz.WMS
             string message = "";
             try
             {
-                message = new ASNManagementAccessor().AsnScanQtyUpdate(AsnNumber, str2, SKU,  Creator);
+                message = new ASNManagementAccessor().AsnScanQtyUpdate(AsnNumber, str2, SKU, Creator);
             }
             catch (Exception ex)
             {
@@ -159,6 +159,42 @@ namespace Runbow.TWS.Biz.WMS
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        public Response<GetASNByConditionResponse> GetASNByConditionSF(GetASNByConditionRequest request)
+        {
+            Response<GetASNByConditionResponse> response = new Response<GetASNByConditionResponse>() { Result = new GetASNByConditionResponse() };
+
+            if (request == null || request.SearchCondition == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetASNByConditionRequest request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+
+            try
+            {
+                ASNManagementAccessor accessor = new ASNManagementAccessor();
+                int RowCount;
+                if (request.PageSize > 0)
+                {
+                    response.Result.ASNCollection = accessor.GetASNByConditionSF(request.SearchCondition, request.PageIndex, request.PageSize, out RowCount);
+                    response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                    response.Result.PageIndex = request.PageIndex;
+                }
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
         public Response<GetASNByConditionResponse> GetASNByCondition(GetASNByConditionRequest request)
         {
             Response<GetASNByConditionResponse> response = new Response<GetASNByConditionResponse>() { Result = new GetASNByConditionResponse() };
@@ -265,6 +301,60 @@ namespace Runbow.TWS.Biz.WMS
 
             return response;
         }
+
+        /// <summary>
+        /// 根据状态查询明细
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public Response<int> TurnCG(int Id, int CustomerId)
+        {
+            Response<int> response = new Response<int>() { Result = 0 };
+
+            try
+            {
+                ASNManagementAccessor accessor = new ASNManagementAccessor();
+                response.Result = accessor.TurnCG(Id, CustomerId);
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+        /// <summary>
+        /// 根据状态查询明细
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public Response<int> TurnASN(int Id, int CustomerId)
+        {
+            Response<int> response = new Response<int>() { Result = 0 };
+
+            try
+            {
+                ASNManagementAccessor accessor = new ASNManagementAccessor();
+                response.Result = accessor.TurnASN(Id, CustomerId);
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
         ///查询
         public Response<GetASNDetailByConditionResponse> GetASNDetailByConditionResponse(GetASNByConditionRequest request)
         {
@@ -299,6 +389,39 @@ namespace Runbow.TWS.Biz.WMS
             return response;
         }
 
+
+        public Response<GetASNDetailByConditionResponse> GetASNDetailByConditionResponseSF(GetASNByConditionRequest request)
+        {
+            Response<GetASNDetailByConditionResponse> response = new Response<GetASNDetailByConditionResponse>() { Result = new GetASNDetailByConditionResponse() };
+
+            if (request == null || request.SearchCondition == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetASNDetailByConditionResponse request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                ASNManagementAccessor accessor = new ASNManagementAccessor();
+                int RowCount;
+                response.Result = accessor.GetASNandasndetailByConditionSF(request.SearchCondition, request.PageIndex, request.PageSize, out RowCount);
+                response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                response.Result.PageIndex = request.PageIndex;
+
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.Exception = ex;
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
         /// <summary>
         /// 导出
         /// </summary>
@@ -481,6 +604,36 @@ namespace Runbow.TWS.Biz.WMS
             return response;
         }
 
+        //明细单条的查看或者编辑
+        public Response<ASNAndASNDetail> GetASNInfosSF(GetASNByConditionRequest request)
+        {
+            Response<ASNAndASNDetail> response = new Response<ASNAndASNDetail>();
+
+            if (request == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetASNByConditionRequest request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+
+            try
+            {
+                ASNManagementAccessor accessor = new ASNManagementAccessor();
+                response.Result = accessor.GetASNInfosSF(request.ID);
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
         /// <summary>
         /// 添加操作
         /// </summary>
@@ -559,6 +712,86 @@ namespace Runbow.TWS.Biz.WMS
             }
             return response;
         }
+
+
+        /// <summary>
+        /// 添加操作
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Response<string> AddasnAndasnDetailSF(AddASNandASNDetailRequest request)
+        {
+            Response<string> response = new Response<string>();
+
+            string message = "";
+            if (request == null || request.asn == null || !request.asn.Any())
+            {
+                ArgumentNullException ex = new ArgumentNullException("AddasnAndasnDetail request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                response.Result = ex.ToString();
+                response.IsSuccess = false;
+                return response;
+            }
+            try
+            {
+                //判断明细中同一外部单号中是否存在相同的sku   如果存在就提示
+                DataTable dt = request.asnDetails.ToDataTable();
+                if (request.asn.Select(c => c.CustomerID).ToArray().FirstOrDefault() != 71)
+                {//永兴判断
+                    var dt1 = from t in dt.AsEnumerable()
+                              group t by new { t1 = t.Field<string>("ExternReceiptNumber"), t2 = t.Field<string>("SKU"), UPC = t.Field<string>("UPC"), t3 = t.Field<string>("BoxNumber"), t4 = t.Field<string>("BatchNumber"), t5 = t.Field<string>("Unit"), t6 = t.Field<string>("Specifications") } into m
+                              select new
+                              {
+                                  SKU = m.Select(p => p.Field<string>("SKU")).First(),
+                                  UPC = m.Select(p => p.Field<string>("UPC")).First(),
+                                  ExternReceiptNumber = m.Select(p => p.Field<string>("ExternReceiptNumber")).First(),
+                                  BoxNumber = m.Select(p => p.Field<string>("BoxNumber")).First(),
+                                  BatchNumber = m.Select(p => p.Field<string>("BatchNumber")).First(),
+                                  Unit = m.Select(p => p.Field<string>("Unit")).First(),
+                                  Specifications = m.Select(p => p.Field<string>("Specifications")).First(),
+                                  count = m.Count(),
+                              };
+
+                    var dr1 = dt1.Where(c => c.count > 1);
+                    var results = "";
+                    if (request.asn.Select(c => c.CustomerID).ToArray().FirstOrDefault() != 74 && request.asn.Select(c => c.CustomerID).ToArray().FirstOrDefault() != 75)
+                    {
+                        //if (dr1.Count() > 0)
+                        //{
+                        //    foreach (var item in dr1)
+                        //    {
+                        //        results += "<p><font color='#FF0000'>外部单号" + item.ExternReceiptNumber + "中的SKU" + item.SKU + "存在重复值！" + "</font></p>";
+                        //    }
+                        //    response.Result = results;
+                        //    response.IsSuccess = false;
+                        //    return response;
+                        //}
+                    }
+                }//永兴判断
+                message = new ASNManagementAccessor().AddasnAndasnDetailSF(request);
+
+                if (message.Contains("添加成功") || message == "")
+                {
+                    response.Result = message;
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.Result = message;
+                    response.IsSuccess = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.Result = ex.ToString();
+                response.ErrorCode = ErrorCode.Technical;
+            }
+            return response;
+        }
         public int ExternKeyCheck(string keys, string flag, long CustomerID)
         {
             int i = 0;
@@ -567,6 +800,25 @@ namespace Runbow.TWS.Biz.WMS
 
 
                 i = new ASNManagementAccessor().ExternKeyCheck(keys, flag, CustomerID);
+
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+
+            }
+            return i;
+        }
+
+        public int ExternKeyCheckSF(string keys, string flag, long CustomerID)
+        {
+            int i = 0;
+            try
+            {
+
+
+                i = new ASNManagementAccessor().ExternKeyCheckSF(keys, flag, CustomerID);
 
 
             }
@@ -721,6 +973,39 @@ namespace Runbow.TWS.Biz.WMS
             }
             return response;
         }
+
+
+        /// <summary>
+        /// 编辑操作
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Response<bool> UpdateasnAndasnDetailSF(AddASNandASNDetailRequest request)
+        {
+            Response<bool> response = new Response<bool>();
+            if (request == null || request.asn == null || !request.asn.Any())
+            {
+                ArgumentNullException ex = new ArgumentNullException("UpdateasnAndasnDetail request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                if (new ASNManagementAccessor().UpdateasnAndasnDetailSF(request))
+                {
+                    response.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+            return response;
+        }
         /// <summary>
         /// 批量转入库单
         /// </summary>
@@ -780,6 +1065,25 @@ namespace Runbow.TWS.Biz.WMS
             try
             {
                 if (new ASNManagementAccessor().ASNDelete(id))
+                {
+                    response.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+            return response;
+        }
+        //取消操作
+        public Response<bool> ASNDeleteSF(int id)
+        {
+            Response<bool> response = new Response<bool>();
+            try
+            {
+                if (new ASNManagementAccessor().ASNDeleteSF(id))
                 {
                     response.IsSuccess = true;
                 }
@@ -1023,7 +1327,7 @@ namespace Runbow.TWS.Biz.WMS
             return response;
         }
         //NIKE退货仓-
-        public int Insertnewbox(string customerid, string ExternReceiptNumber, int total,string warehouseid,string GoodsType)
+        public int Insertnewbox(string customerid, string ExternReceiptNumber, int total, string warehouseid, string GoodsType)
         {
             int s = 0;
             try
@@ -1049,11 +1353,11 @@ namespace Runbow.TWS.Biz.WMS
             }
         }
         //NIKE退货仓-
-        public string GetLocationLabelBySKU(string AsnNumber, string ScanSKU,string GoodsType)
+        public string GetLocationLabelBySKU(string AsnNumber, string ScanSKU, string GoodsType)
         {
             try
             {
-                return new ASNManagementAccessor().GetLocationLabelBySKU( AsnNumber,  ScanSKU, GoodsType);
+                return new ASNManagementAccessor().GetLocationLabelBySKU(AsnNumber, ScanSKU, GoodsType);
             }
             catch (Exception ex)
             {
@@ -1077,7 +1381,7 @@ namespace Runbow.TWS.Biz.WMS
             try
             {
                 i = new ASNManagementAccessor().ExternKeyCheck_TH(pon, ern, plno, flag, CustomerID);
-                
+
             }
             catch (Exception ex)
             {

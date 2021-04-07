@@ -82,6 +82,7 @@
                         <th>数量</th>
                         <th>预警数量</th>
                         <th>状态</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,15 +93,18 @@
                         {
 
                             var tdd = "operateTD" + rows;
-                            <tr>
-                                <td>@item.CustomerName</td>
-                                <td>@item.Warehouse</td>
-                                <td>@item.SKU</td>
-                                <td>@item.GoodsName</td>
-                                <td>@item.Qty</td>
-                                <td>@item.QtyWarning</td>
-                                <td>可用库存</td>
-                            </tr>
+                    <tr>
+                        <td>@item.CustomerName</td>
+                        <td>@item.Warehouse</td>
+                        <td>@item.SKU</td>
+                        <td>@item.GoodsName</td>
+                        <td>@item.Qty</td>
+                        <td>@item.QtyWarning</td>
+                        <td>可用库存</td>
+                        <td>
+                            <input type="button" class="btn btn-success" value="补货" id="ReplenishmentButton" />
+                        </td>
+                    </tr>
                             rows++;
                         }
                     }

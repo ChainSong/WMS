@@ -53,7 +53,7 @@ namespace Runbow.TWS.Web.Areas.WMS.Models.ASNManagement
             get;
             set;
         }
-        public IEnumerable<SelectListItem> Statuss
+        public  IEnumerable<SelectListItem> Statuss
         {
             get
             {
@@ -66,6 +66,23 @@ namespace Runbow.TWS.Web.Areas.WMS.Models.ASNManagement
 
                 return st;
             }
+           
+        }
+
+        public IEnumerable<SelectListItem> Statusss
+        {
+            get
+            {
+                IEnumerable<WMSConfig> wms = ApplicationConfigHelper.GetWMS_Config("ASNStatuss");
+                List<SelectListItem> st = new List<SelectListItem>();
+                foreach (WMSConfig w in wms)
+                {
+                    st.Add(new SelectListItem() { Value = w.Code, Text = w.Name });
+                }
+
+                return st;
+            }
+
         }
         public IEnumerable<SelectListItem> WarehouseList
         {
