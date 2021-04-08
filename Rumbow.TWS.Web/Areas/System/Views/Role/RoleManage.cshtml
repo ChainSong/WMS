@@ -14,13 +14,13 @@
         <table>
             <tr>
                 <td class="TableColumnTitle">
-                    <label>角色名称</label>
+                    <label>部门名称</label>
                 </td>
                 <td>
                     @Html.TextBoxFor(model => model.Role.Name, new { @class = "form-control", style = "width:40%" })
                 </td>
                 <td class="TableColumnTitle">
-                    <label>角色描述</label>
+                    <label>部门描述</label>
                 </td>
                 <td>
                     @Html.TextBoxFor(model => model.Role.Description, new { @class = "form-control", style = "width:40%" })
@@ -52,8 +52,8 @@
                 <thead>
                 <tr>
                     <th style=" width:50px;text-align:center;">@Html.CheckBox("chdAll", false) </th>
-                    <th>角色名称</th>
-                    <th>角色描述</th>
+                    <th>部门名称</th>
+                    <th>部门描述</th>
                     <th>创建时间</th>
                     <th>是否可用</th>
                     <th style="width:250px;">操作</th>

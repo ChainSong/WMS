@@ -17,7 +17,9 @@
         $("#txtName").blur(function () {
             var tempvalue = $(this).val();
             var id = $("#ID").val();
-
+            if (tempvalue == "") {
+                return;
+            }
             $.ajax({
                 type: 'POST',
                 url: "/System/Role/CheckName",
@@ -27,6 +29,7 @@
                         layer.msg(data, function () { });
                         $("#txtName").focus();
                         $('#btnSave').prop('disabled', true);
+
                     } else {
                         $('#btnSave').prop('disabled', false);
                     }
@@ -39,9 +42,9 @@
 
 
         var objtemp = '@ViewBag.Message';
-        if (objtemp != undefined && objtemp != "" && objtemp != "新增角色" && objtemp != "修改角色") {
-            if (objtemp == "该角色已存在！")
-                layer.msg('该角色已存在！', function () { });
+        if (objtemp != undefined && objtemp != "" && objtemp != "新增部门" && objtemp != "修改部门") {
+            if (objtemp == "该部门已存在！")
+                layer.msg('该部门已存在！', function () { });
             else
                 layer.msg('操作成功！', function () { window.location.href = '/System/Role/RoleManage'; });
         }
@@ -79,9 +82,9 @@
         <legend>@ViewBag.Message</legend>
         <table>
             <tr>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.Name)</td>
+                <td class="TableColumnTitle">部门名称</td>
                 <td>@Html.TextBoxFor(model => model.Name, new { @class = "form-control", id = "txtName" }) </td>
-                <td class="TableColumnTitle">@Html.LabelFor(model => model.Description)</td>
+                <td class="TableColumnTitle">部门描述</td>
                 <td>@Html.TextBoxFor(model => model.Description, new { @class = "form-control", id = "txtD" })</td>
             </tr>
             <tr>

@@ -118,7 +118,7 @@
                     @Html.HiddenFor(m => m.RuleArea)
                     @Html.HiddenFor(m => m.RuleAreaName)
                 </td>
-                <td class="TableColumnTitle">@Html.Label("选择角色")</td>
+                <td class="TableColumnTitle">@Html.Label("选择部门")</td>
                 <td>
                     @Html.DropDownList("cRole", (IEnumerable<SelectListItem>)ViewBag.Roles, "==请选择==", new { @class = "form-control",@style = "width:200px;" })
                     @* @Html.DropDownListFor(model => model.ID, (IEnumerable<SelectListItem>)ViewBag.Roles, "==请选择==", new { @style="width:200px;" })*@
