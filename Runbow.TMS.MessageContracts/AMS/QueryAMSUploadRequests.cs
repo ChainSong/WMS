@@ -13,6 +13,10 @@ namespace Runbow.TWS.MessageContracts.AMS
 
         public WMS_Package WMS_PackageSearch { get; set; }
 
+        public WMS_SFDetail WMS_SFDetailSearch { get; set; }
+
+        public IEnumerable<WMS_SFDetail> WMS_SFDetailList { get; set; }
+
         public int PageIndex { get; set; }
 
         public int PageSize { get; set; }

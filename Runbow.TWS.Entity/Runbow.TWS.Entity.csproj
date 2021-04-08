@@ -169,6 +169,7 @@
     <Compile Include="DataBaseEntity\QuotedPricesToDb.cs" />
     <Compile Include="DataBaseEntity\ReceiptReceivingToDbRF.cs" />
     <Compile Include="DataBaseEntity\WMSOrderExpressInfoToDB.cs" />
+    <Compile Include="DataBaseEntity\WMS_SFDetailToDb.cs" />
     <Compile Include="DataBaseEntity\WXSoldRefundDetailToDb.cs" />
     <Compile Include="DataBaseEntity\WarehouseCheckDetailToDb.cs" />
     <Compile Include="DataBaseEntity\WMSOrderShipmentDetailToDb.cs" />
@@ -376,6 +377,7 @@
     <Compile Include="WMS.WXApp\UpdateProductQuantityResponse.cs" />
     <Compile Include="WMS\DMS\WMS_Package.cs" />
     <Compile Include="WMS\DMS\WMS_PackageTrack.cs" />
+    <Compile Include="WMS\DMS\WMS_SFDetail.cs" />
     <Compile Include="WMS\Log\CustomIsoDateTimeConverter.cs" />
     <Compile Include="WMS\Log\LogOperationRFSearchCondition.cs" />
     <Compile Include="WMS\Log\LogOperationSearchCondition.cs" />

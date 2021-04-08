@@ -54,5 +54,6 @@ namespace Runbow.TWS.Web.Areas.AMS.Models
         public WMS_Package packageSearch { get; set; }
         public IEnumerable<WMS_Package> packageList { get; set; }
         public IEnumerable<WMS_PackageTrack> packageTrackList { get; set; }
+        public IEnumerable<WMS_SFDetail> sfDetailList { get; set; }
     }
 }

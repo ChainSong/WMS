@@ -354,11 +354,10 @@ namespace Runbow.TWS.Dao
         /// <summary>
         /// 成品订单查询
         /// </summary>
-        public IEnumerable<WMS_Package> GetWMS_PackageByCondition(WMS_Package SearchCondition, string Customers, int PageIndex,
-            int PageSize, out int RowCount)
+        public IEnumerable<WMS_Package> GetWMS_PackageByCondition(WMS_Package SearchCondition, string Customers, int PageIndex, int PageSize, out int RowCount)
         {
 
-            string sqlWhere = "'";//this.GenQueryAttachmentSql(SearchCondition, Customers);
+            string sqlWhere = this.GetWMS_PackageSql(SearchCondition, Customers);
             int tempRowCount = 0;
             DbParam[] dbParams = new DbParam[]
             {
@@ -370,6 +369,185 @@ namespace Runbow.TWS.Dao
             DataTable dt = this.ExecuteDataTable("Proc_GetWMS_PackageByCondition", dbParams);
             RowCount = (int)dbParams[3].Value;
             return dt.ConvertToEntityCollection<WMS_Package>();
+        }
+        /// <summary>
+        /// 查询成品订单拼接sql
+        /// </summary>
+        private string GetWMS_PackageSql(WMS_Package condition, string Customers)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            //成品订单号
+            if (!string.IsNullOrEmpty(condition.PackageNumber))
+            {
+                IEnumerable<string> numbers = Enumerable.Empty<string>();
+                if (condition.PackageNumber.IndexOf("\n") > 0)
+                {
+                    numbers = condition.PackageNumber.Split('\n').Select(s => { return s.Trim(); });
+                }
+                if (condition.PackageNumber.IndexOf(',') > 0)
+                {
+                    numbers = condition.PackageNumber.Split(',').Select(s => { return s.Trim(); });
+                }
+                if (numbers != null && numbers.Any())
+                {
+                    numbers = numbers.Where(c => !string.IsNullOrEmpty(c));
+                }
+                if (numbers != null && numbers.Any())
+                {
+                    sb.Append(" and PackageNumber in ( ");
+                    foreach (string s in numbers)
+                    {
+                        sb.Append("'").Append(s).Append("',");
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append(" ) ");
+                }
+                else
+                {
+                    sb.Append(" and PackageNumber  like '%" + condition.PackageNumber.Trim() + "%' ");
+                }
+            }
+            //出库单号
+            if (!string.IsNullOrEmpty(condition.OrderNumber))
+            {
+                IEnumerable<string> ordernumber = Enumerable.Empty<string>();
+                if (condition.OrderNumber.IndexOf("\n") > 0)
+                {
+                    ordernumber = condition.OrderNumber.Split('\n').Select(s => { return s.Trim(); });
+                }
+                if (condition.OrderNumber.IndexOf(',') > 0)
+                {
+                    ordernumber = condition.OrderNumber.Split(',').Select(s => { return s.Trim(); });
+                }
+                if (ordernumber != null && ordernumber.Any())
+                {
+                    ordernumber = ordernumber.Where(c => !string.IsNullOrEmpty(c));
+                }
+                if (ordernumber != null && ordernumber.Any())
+                {
+                    sb.Append(" and OrderNo in ( ");
+                    foreach (string s in ordernumber)
+                    {
+                        sb.Append("'").Append(s).Append("',");
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append(" ) ");
+                }
+                else
+                {
+                    sb.Append(" and OrderNumber  like '%" + condition.OrderNumber.Trim() + "%' ");
+                }
+            }
+            //快递单号
+            if (!string.IsNullOrEmpty(condition.ExpressNumber))
+            {
+                IEnumerable<string> ordernumber = Enumerable.Empty<string>();
+                if (condition.ExpressNumber.IndexOf("\n") > 0)
+                {
+                    ordernumber = condition.ExpressNumber.Split('\n').Select(s => { return s.Trim(); });
+                }
+                if (condition.ExpressNumber.IndexOf(',') > 0)
+                {
+                    ordernumber = condition.ExpressNumber.Split(',').Select(s => { return s.Trim(); });
+                }
+                if (ordernumber != null && ordernumber.Any())
+                {
+                    ordernumber = ordernumber.Where(c => !string.IsNullOrEmpty(c));
+                }
+                if (ordernumber != null && ordernumber.Any())
+                {
+                    sb.Append(" and OrderNo in ( ");
+                    foreach (string s in ordernumber)
+                    {
+                        sb.Append("'").Append(s).Append("',");
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append(" ) ");
+                }
+                else
+                {
+                    sb.Append("and ExpressNumber  like '%" + condition.ExpressNumber.Trim() + "%' ");
+                }
+            }
+            //出库日期
+            if (condition.PackageTime.HasValue)
+            {
+                sb.Append(" and (Convert(date, PackageTime)>='" + condition.PackageTime.Value.ToString("yyyy-MM-dd") + "')");
+            }
+            if (condition.HandoverTime.HasValue)
+            {
+                sb.Append(" and (Convert (date, PackageTime)<='" + condition.HandoverTime.Value.ToString("yyyy-MM-dd") + "')");
+
+            }
+            //客户名称
+            //if (condition.CustomerID.HasValue)
+            //{
+            //    sb.Append("and ProjectID=" + (int)condition.CustomerID.Value);
+            //}
+
+
+            return sb.ToString();
+        }
+
+
+        /// <summary>
+        /// 查询顺丰下单返回明细
+        /// </summary>
+        public IEnumerable<WMS_SFDetail> GetWMS_SFDetailByCondition(WMS_SFDetail SearchCondition, int PageIndex, int PageSize, out int RowCount)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (SearchCondition.ID >= 0)
+            {
+                sb.Append(" and ID=" + SearchCondition.ID);
+            }
+            if (SearchCondition.OID.HasValue)
+            {
+                sb.Append(" and OID=" + SearchCondition.OID.GetValueOrDefault());
+            }
+            if(!string.IsNullOrEmpty(SearchCondition.OrderNumber))
+            {
+                sb.Append("and OrderNumber='" + SearchCondition.OrderNumber.Trim() + "' ");
+            }
+            if (!string.IsNullOrEmpty(SearchCondition.waybillNo))
+            {
+                sb.Append("and waybillNo='" + SearchCondition.waybillNo.Trim() + "' ");
+            }
+
+            int tempRowCount = 0;
+            DbParam[] dbParams = new DbParam[]
+            {
+                new DbParam("@Where", DbType.String, sb.ToString(), ParameterDirection.Input),
+                new DbParam("@PageIndex", DbType.Int32, PageIndex, ParameterDirection.Input),
+                new DbParam("@PageSize", DbType.Int32, PageSize, ParameterDirection.Input),
+                new DbParam("@RowCount", DbType.Int32, tempRowCount, ParameterDirection.Output)
+            };
+            DataTable dt = this.ExecuteDataTable("Proc_GetWMS_SFDetailByCondition", dbParams);
+            RowCount = (int)dbParams[3].Value;
+            return dt.ConvertToEntityCollection<WMS_SFDetail>();
+        }
+
+        /// <summary>
+        /// 新增顺丰下单明细
+        /// </summary>
+        public IEnumerable<WMS_SFDetail> AddWMS_SFDetail(IEnumerable<WMS_SFDetail> sfDetail)
+        {
+            using (SqlConnection conn = new SqlConnection(BaseAccessor._dataBase.ConnectionString))
+            {
+                IList<AMSUpload> result = new List<AMSUpload>();
+                SqlCommand cmd = new SqlCommand("Proc_AddWMS_SFDetail", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@SFDetail", sfDetail == null ? null : sfDetail.Select(wsd => new WMS_SFDetailToDb(wsd)));
+                cmd.Parameters[0].SqlDbType = SqlDbType.Structured;
+                conn.Open();
+                DataTable dt = new DataTable();
+                SqlDataAdapter sda = new SqlDataAdapter();
+                sda.SelectCommand = cmd;
+                sda.Fill(dt);
+                conn.Close();
+                return dt.ConvertToEntityCollection<WMS_SFDetail>(); ;
+            }
+
         }
 
     }

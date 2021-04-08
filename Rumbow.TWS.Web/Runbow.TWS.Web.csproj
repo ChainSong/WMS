@@ -492,6 +492,7 @@
     <Compile Include="Common\ProvincesAndCity.cs" />
     <Compile Include="Common\RequestModel.cs" />
     <Compile Include="Common\ResponseModel.cs" />
+    <Compile Include="Common\SFDetailHelper.cs" />
     <Compile Include="Common\SqlHelper.cs" />
     <Compile Include="Common\UrlHelperExtension.cs" />
     <Compile Include="Common\XMLHelper.cs" />
@@ -604,6 +605,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\sfservice\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="SettledMethod\ApplicationPaySettlement.cs" />
     <Compile Include="SettledMethod\ApplicationReceiveSettlement.cs" />
@@ -2441,6 +2447,12 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </Content>
     <Content Include="MaryKay Web References\MaryKayHDtoLIPS\hdtolips.disco" />
+    <None Include="Service References\sfservice\configuration91.svcinfo" />
+    <None Include="Service References\sfservice\configuration.svcinfo" />
+    <None Include="Service References\sfservice\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -2487,6 +2499,13 @@
     <Content Include="Views\Shared\_Layout.Phone.cshtml" />
     <Content Include="Views\Shared\PagerNew.cshtml" />
     <Content Include="Views\Shared\DateHHmmss.cshtml" />
+    <None Include="Service References\sfservice\CommonServiceService.wsdl" />
+    <Content Include="Service References\sfservice\Runbow.TWS.Web.sfservice.expressServiceForRouteLabelResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Service References\sfservice\Runbow.TWS.Web.sfservice.sfexpressServiceResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\AMS\Views\Shared\" />
@@ -2558,6 +2577,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\ESPService\" />
+    <WCFMetadataStorage Include="Service References\sfservice\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="MaryKay Web References\" />

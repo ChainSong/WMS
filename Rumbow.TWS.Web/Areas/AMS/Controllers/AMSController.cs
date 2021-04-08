@@ -548,6 +548,36 @@ namespace Runbow.TWS.Web.Areas.AMS.Controllers
             vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
 
+            #region 顺丰下单
+            //RequestSFModel sFModel = new RequestSFModel()
+            //{
+            //    OID = 3,
+            //    orderid = "OR1082021030000003",
+            //    j_company = "玫琳凯(中国)",
+            //    j_province = "四川",
+            //    j_city = "成都",
+            //    //j_county = "成都",
+            //    j_contact = "玫琳凯(中国)",
+            //    j_tel = "4008201655",
+            //    j_address = "成都仓",
+            //    d_company = "黄玉玲",
+            //    d_province = "重庆",
+            //    d_city = "重庆市",
+            //    d_county = "北碚区",               
+            //    d_contact = "黄玉玲",
+            //    d_tel = "13224008664",
+            //    d_address = "龙凤桥香洲心城11栋1单元62",
+            //    cargo_total_weight = "1",
+            //    parcel_quantity = "1",
+            //    pay_method = "1",
+            //    custid = "",
+            //    customs_batchs = "",
+            //    cargo = "服装",
+            //    Creator = base.UserInfo.Name,
+            //};
+            //var res = SFDetailHelper.CreateSFOrder(sFModel); 
+            #endregion
+
             var response = new AMSUploadService().GetWMS_PackageByCondition(new QueryAMSUploadRequests()
             {
                 PageIndex = 0,
@@ -577,11 +607,11 @@ namespace Runbow.TWS.Web.Areas.AMS.Controllers
                 sb.Append("'" + i.Text + "',");
             }
 
-            var response = new AMSUploadService().QueryAMSUpload(new QueryAMSUploadRequests()
+            var response = new AMSUploadService().GetWMS_PackageByCondition(new QueryAMSUploadRequests()
             {
                 PageIndex = PageIndex ?? 0,
                 PageSize = UtilConstants.PAGESIZE,
-                SearchCondition = vm.SearchCondition,
+                WMS_PackageSearch = vm.packageSearch,
                 Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
             });
 

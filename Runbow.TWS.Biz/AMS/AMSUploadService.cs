@@ -316,5 +316,62 @@ namespace Runbow.TWS.Biz
             return response;
         }
 
+        /// <summary>
+        /// 查询顺丰下单返回明细
+        /// </summary>
+        public Response<QueryAMSUploadResponses> GetWMS_SFDetailByCondition(QueryAMSUploadRequests request)
+        {
+            Response<QueryAMSUploadResponses> response = new Response<QueryAMSUploadResponses>() { Result = new QueryAMSUploadResponses() };
+            if (request == null || request.WMS_PackageSearch == null)
+            {
+                ArgumentNullException ex = new ArgumentNullException("GetWMS_SFDetailByCondition request");
+                LogError(ex);
+                response.ErrorCode = ErrorCode.Argument;
+                response.Exception = ex;
+                return response;
+            }
+            try
+            {
+                AMSUploadAccessor accessor = new AMSUploadAccessor();
+                int RowCount;
+                response.Result.WMS_SFDetaileCollection = accessor.GetWMS_SFDetailByCondition(request.WMS_SFDetailSearch, request.PageIndex, request.PageSize, out RowCount);
+                response.Result.PageCount = RowCount % request.PageSize == 0 ? RowCount / request.PageSize : RowCount / request.PageSize + 1;
+                response.Result.PageIndex = request.PageIndex;
+                response.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                response.IsSuccess = false;
+                response.ErrorCode = ErrorCode.Technical;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// 新增顺丰下单返回明细
+        /// </summary>
+        public IEnumerable<WMS_SFDetail> AddWMS_SFDetail(IEnumerable<WMS_SFDetail> sfDetailList)
+        {
+            if (sfDetailList == null || !sfDetailList.Any())
+            {
+                ArgumentNullException ex = new ArgumentNullException("AddWMS_SFDetail request");
+                LogError(ex);
+                return null;
+            }
+            AMSUploadAccessor accessor = new AMSUploadAccessor();
+            try
+            {                
+                return accessor.AddWMS_SFDetail(sfDetailList);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            return null;
+        }
+
     }
 }
