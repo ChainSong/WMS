@@ -30,8 +30,29 @@ namespace Runbow.TWS.Web.Areas.AMS.Models
             }
         }
 
+        /// <summary>
+        /// 跟踪状态
+        /// </summary>
+        public IEnumerable<SelectListItem> CurrentStateList
+        {
+            get
+            {
+                return new List<SelectListItem>()
+                {
+                    new SelectListItem() { Value = "-1", Text = "==请选择==" },
+                    new SelectListItem() { Value = "1", Text = "运输中" },
+                    new SelectListItem() { Value = "2", Text = "已签收" }
+                };
+
+            }
+        }
+
         public AMSSearchCondition SearchCondition { get; set; }
          
         public IEnumerable<AMSUpload> AMSUploadCollection { get; set; } 
+
+        public WMS_Package packageSearch { get; set; }
+        public IEnumerable<WMS_Package> packageList { get; set; }
+        public IEnumerable<WMS_PackageTrack> packageTrackList { get; set; }
     }
 }

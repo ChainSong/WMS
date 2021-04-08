@@ -541,12 +541,28 @@ namespace Runbow.TWS.Web.Areas.AMS.Controllers
         public ActionResult ExpressTrack()
         {
             QueryReplyDocumentViewModel vm = new QueryReplyDocumentViewModel();
-            vm.SearchCondition = new AMSSearchCondition();
+            vm.packageSearch = new WMS_Package();
             vm.Type = 0;
             vm.PageIndex = 0;
             vm.PageCount = 0;
             vm.Customers = ApplicationConfigHelper.GetProjectUserCustomers(base.UserInfo.ProjectID, base.UserInfo.ID)
                                         .Select(c => new SelectListItem() { Value = c.CustomerID.ToString(), Text = c.CustomerName });
+
+            var response = new AMSUploadService().GetWMS_PackageByCondition(new QueryAMSUploadRequests()
+            {
+                PageIndex = 0,
+                PageSize = UtilConstants.PAGESIZE,
+                WMS_PackageSearch = vm.packageSearch,
+                // Customers = sb.ToString().Substring(0, sb.Length - 1).ToString()
+            });
+
+            if (response.IsSuccess)
+            {
+                vm.packageList = response.Result.WMS_PackageCollection;
+                vm.PageCount = response.Result.PageCount;
+                vm.PageIndex = response.Result.PageIndex;
+            }
+
             return View(vm);
         }
         [HttpPost]
@@ -571,7 +587,7 @@ namespace Runbow.TWS.Web.Areas.AMS.Controllers
 
             if (response.IsSuccess)
             {
-                vm.AMSUploadCollection = response.Result.AMSUploadCollection;
+                vm.packageList = response.Result.WMS_PackageCollection;
                 vm.PageCount = response.Result.PageCount;
                 vm.PageIndex = response.Result.PageIndex;
             }
